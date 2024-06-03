@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 package ifneeded pix 0.1 [list apply {dir {
-    # <REMINDER ME> : Change the 3 values for the version.
+    # REMINDER ME : Change the 3 values for the version.
     package require platform
 
     set os [platform::generic]

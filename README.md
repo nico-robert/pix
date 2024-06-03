@@ -38,6 +38,7 @@ pix::ctx::writeFile $ctx rectangle.png
 set p [image create photo]
 pix::drawSurface $ctx $p
 label .l -image $p ; pack .l
+
 ```
 See **[examples folder](/examples)** for more demos.
 
