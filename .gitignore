@@ -1,0 +1,6 @@
+.DS_Store
+test_internal/
+macosx-x86_64/
+win32-x86_64/
+dist/
+.vscode
