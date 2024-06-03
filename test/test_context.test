@@ -1,0 +1,544 @@
+lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
+
+package require pix
+
+set font [file join [file dirname [file dirname [info script]]] examples data Roboto-Regular_1.ttf]
+
+# test 1
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+pix::ctx::beginPath $ctx
+pix::ctx::fillStyle $ctx "#ff6"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+pix::ctx::beginPath $ctx
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::moveTo $ctx {20 20}
+pix::ctx::lineTo $ctx {180 20}
+pix::ctx::lineTo $ctx {130 130}
+pix::ctx::closePath $ctx
+pix::ctx::fill $ctx
+
+pix::ctx::clearRect $ctx {10 10} {120 100}
+
+# test 2
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::strokeStyle $ctx "blue"
+pix::ctx::moveTo $ctx {20 20}
+pix::ctx::lineTo $ctx {200 20}
+pix::ctx::stroke $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::strokeStyle $ctx "green"
+pix::ctx::moveTo $ctx {20 20}
+pix::ctx::lineTo $ctx {120 120}
+pix::ctx::stroke $ctx
+
+# test 3
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::moveTo $ctx {50 50}
+pix::ctx::lineTo $ctx {200 50}
+pix::ctx::moveTo $ctx {50 90}
+pix::ctx::lineTo $ctx {280 120}
+pix::ctx::stroke $ctx
+
+# test 4
+set ctx [pix::ctx::new {300 150} white]
+
+set region [pix::path::new]
+pix::path::moveTo $region {30 90}
+pix::path::lineTo $region {110 20}
+pix::path::lineTo $region {240 130}
+pix::path::lineTo $region {60 130}
+pix::path::lineTo $region {190 20}
+pix::path::lineTo $region {270 90}
+pix::path::closePath $region
+
+pix::ctx::fillStyle $ctx "green"
+pix::ctx::fill $ctx $region "EvenOdd"
+
+# test 5
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::rect $ctx {10 10} {150 100}
+pix::ctx::stroke $ctx
+
+# test 6
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::lineWidth $ctx 26
+pix::ctx::strokeStyle $ctx "orange"
+pix::ctx::moveTo $ctx {20 20}
+pix::ctx::lineTo $ctx {160 20}
+pix::ctx::stroke $ctx
+
+pix::ctx::lineWidth $ctx 14
+pix::ctx::strokeStyle $ctx "green"
+pix::ctx::moveTo $ctx {20 80}
+pix::ctx::lineTo $ctx {220 80}
+pix::ctx::stroke $ctx
+
+pix::ctx::lineWidth $ctx 4
+pix::ctx::strokeStyle $ctx "pink"
+pix::ctx::moveTo $ctx {20 140}
+pix::ctx::lineTo $ctx {280 140}
+pix::ctx::stroke $ctx
+
+# test 7
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::lineWidth $ctx 26
+pix::ctx::strokeStyle $ctx "red"
+
+pix::ctx::beginPath $ctx
+pix::ctx::rect $ctx {25 25} {100 100}
+pix::ctx::fill $ctx
+pix::ctx::stroke $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::rect $ctx {175 25} {100 100}
+pix::ctx::stroke $ctx
+pix::ctx::fill $ctx
+
+# test 8
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::moveTo $ctx {20 140}
+pix::ctx::lineTo $ctx {120 10}
+pix::ctx::lineTo $ctx {220 140}
+pix::ctx::closePath $ctx
+pix::ctx::stroke $ctx
+
+# test 9
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::moveTo $ctx {50 20}
+pix::ctx::bezierCurveTo $ctx {230 30} {150 80} {250 100}
+pix::ctx::stroke $ctx
+
+# test 10
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::moveTo $ctx {30 30}
+pix::ctx::bezierCurveTo $ctx {120 160} {180 10} {220 140}
+pix::ctx::stroke $ctx
+
+# test 11
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::moveTo $ctx {50 20}
+pix::ctx::quadraticCurveTo $ctx {230 150} {250 20}
+pix::ctx::stroke $ctx
+
+# test 12
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::beginPath $ctx
+pix::ctx::ellipse $ctx {100 75} 75 50
+pix::ctx::stroke $ctx
+
+# test 13
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::strokeStyle $ctx "green"
+pix::ctx::strokeRect $ctx {20 10} {160 100}
+
+# test 14
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::lineJoin $ctx "BevelJoin"
+pix::ctx::lineWidth $ctx 15
+pix::ctx::strokeStyle $ctx "#38f"
+pix::ctx::strokeRect $ctx {30 30} {160 90}
+
+# test 15
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::setTransform $ctx {1 0.2 0 0.8 1 0 0 0 1}
+pix::ctx::fillRect $ctx {0 0} {100 100}
+
+# test 16
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::rotate $ctx [expr {45 * 3.14 /180.}]
+pix::ctx::fillRect $ctx {60 0} {100 30}
+
+# test 17
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::transform $ctx {1 0 0 1.7 1 0 0 0 1}
+pix::ctx::fillStyle $ctx "gray"
+pix::ctx::fillRect $ctx {40 40} {50 20}
+pix::ctx::fillRect $ctx {40 90} {50 20}
+
+pix::ctx::resetTransform $ctx
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {40 40} {50 20}
+pix::ctx::fillRect $ctx {40 90} {50 20}
+
+# test 18
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::translate $ctx {110 30}
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {0 0} {80 80}
+
+pix::ctx::setTransform $ctx {1 0 0 0 1 0 0 0 1}
+
+pix::ctx::fillStyle $ctx "gray"
+pix::ctx::fillRect $ctx {0 0} {80 80}
+
+# test 19
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::scale $ctx {9 3}
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {10 10} {8 20}
+
+pix::ctx::setTransform $ctx {1 0 0 0 1 0 0 0 1}
+pix::ctx::fillStyle $ctx "gray"
+pix::ctx::fillRect $ctx {10 10} {8 20}
+
+# test 20
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::fillStyle $ctx "gray"
+pix::ctx::fillRect $ctx {100 0} {80 20}
+
+pix::ctx::rotate $ctx [expr {45 * 3.14 / 180.}]
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {100 0} {80 20}
+
+# test 21
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::font $ctx $font
+pix::ctx::fontSize $ctx 50
+pix::ctx::save $ctx
+pix::ctx::fontSize $ctx 30
+pix::ctx::restore $ctx
+
+pix::ctx::fillText $ctx "Hello world" {50 90}
+
+# test 22
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::font $ctx $font
+pix::ctx::fontSize $ctx 50
+
+pix::ctx::strokeText $ctx "Hello world" {50 90}
+
+# test 23
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::save $ctx
+pix::ctx::fillStyle $ctx "green"
+
+pix::ctx::fillRect $ctx {10 10} {100 100}
+pix::ctx::restore $ctx
+pix::ctx::fillRect $ctx {150 40} {100 100}
+
+# test 24
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+pix::ctx::beginPath $ctx
+pix::ctx::circle $ctx {100 75} 50
+pix::ctx::clip $ctx
+
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillStyle $ctx "orange"
+pix::ctx::fillRect $ctx {0 0} {100 100}
+
+# test 25
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+pix::ctx::beginPath $ctx
+pix::ctx::circle $ctx {100 75} 50
+pix::ctx::clip $ctx
+
+pix::ctx::saveLayer $ctx
+
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillStyle $ctx "orange"
+pix::ctx::fillRect $ctx {0 0} {100 100}
+
+pix::ctx::restore $ctx
+
+# test 26
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+pix::ctx::save $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::circle $ctx {100 75} 50
+pix::ctx::clip $ctx
+
+pix::ctx::saveLayer $ctx
+
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillStyle $ctx "orange"
+pix::ctx::fillRect $ctx {0 0} {100 100}
+
+pix::ctx::restore $ctx
+pix::ctx::restore $ctx
+
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+# test 27
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+pix::ctx::save $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::circle $ctx {100 75} 50
+pix::ctx::clip $ctx
+
+pix::ctx::saveLayer $ctx
+
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+pix::ctx::restore $ctx
+pix::ctx::saveLayer $ctx
+
+pix::ctx::fillStyle $ctx "orange"
+pix::ctx::fillRect $ctx {0 0} {100 100}
+
+pix::ctx::restore $ctx
+
+# test 28
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+set region [pix::path::new]
+
+pix::path::rect $region {80 10} {20 130}
+pix::path::rect $region {40 50} {100 50}
+
+pix::ctx::clip $ctx $region "EvenOdd"
+
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+# test 29
+set ctx [pix::ctx::new {300 150} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+set circlePath [pix::path::new]
+pix::path::circle $circlePath {150 75} 75
+set squarePath [pix::path::new]
+pix::path::rect $squarePath {85 10} {130 130}
+
+pix::ctx::clip $ctx $circlePath
+pix::ctx::clip $ctx $squarePath
+
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+# test 30
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::font $ctx $font
+pix::ctx::fontSize $ctx 50
+pix::ctx::fillStyle $ctx "blue"
+
+pix::ctx::saveLayer $ctx
+
+set circlePath [pix::path::new]
+pix::path::circle $circlePath {150 75} 75
+
+pix::ctx::clip $ctx $circlePath
+
+pix::ctx::fillText $ctx "Hello world" {50 90}
+
+pix::ctx::restore $ctx
+
+# test 31
+set ctx [pix::ctx::new {300 150} white]
+pix::ctx::font $ctx $font
+
+set metrics [pix::ctx::measureText $ctx "Hello world"]
+
+if {[dict get $metrics width] != 60} {
+    error "metrics width should be '60' and not '[dict get $metrics width]'"
+}
+
+# test 32
+set ctx [pix::ctx::new {300 150} white]
+set y 15
+
+foreach pattern {
+    {} {1 1} {10 10} {20 5} 
+    {15 3 3 3} {20 3 3 3 3 3 3 3} {12 3 3}
+} {
+    pix::ctx::beginPath $ctx
+    pix::ctx::setLineDash $ctx $pattern
+    pix::ctx::moveTo $ctx [list 0 $y]
+    pix::ctx::lineTo $ctx [list 300 $y]
+    pix::ctx::stroke $ctx
+    incr y 20
+}
+
+# test 32
+set ctx [pix::ctx::new {300 150} white]
+
+set paint [pix::paint::new "SolidPaint"]
+pix::paint::dict $paint {color "rgb(0,0,255)" blendMode "ExclusionBlend"}
+
+pix::ctx::fillStyle $ctx $paint
+pix::ctx::fillRect $ctx {0 0} {100 100}
+
+# test 33
+set ctx [pix::ctx::new {300 150} white]
+
+pix::ctx::globalAlpha $ctx 0.5
+
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::fillRect $ctx {10 10} {100 100}
+
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::fillRect $ctx {50 50} {100 100}
+
+# test 34
+set ctx [pix::ctx::new {100 100} white]
+
+set file [file join [file dirname [info script]] images pip1.png]
+
+set testImage [pix::img::read $file]
+pix::ctx::drawImage $ctx $testImage {0 0}
+pix::ctx::drawImage $ctx $testImage {30 30}
+
+# test 35
+set ctx [pix::ctx::new {100 100} white]
+
+set file [file join [file dirname [info script]] images pip1.png]
+set testImage [pix::img::read $file]
+
+pix::ctx::translate $ctx {30 30}
+pix::ctx::drawImage $ctx $testImage {-30 -30}
+pix::ctx::drawImage $ctx $testImage {0 0}
+
+# test 36
+set ctx [pix::ctx::new {100 100} white]
+
+set file [file join [file dirname [info script]] images pip1.png]
+set testImage [pix::img::read $file]
+
+pix::ctx::scale $ctx {2 2}
+pix::ctx::drawImage $ctx $testImage {0 0}
+pix::ctx::scale $ctx {0.25 0.25}
+pix::ctx::drawImage $ctx $testImage {0 0}
+
+# test 37
+set ctx [pix::ctx::new {100 100} white]
+
+set file [file join [file dirname [info script]] images pip1.png]
+set testImage [pix::img::read $file]
+
+pix::ctx::drawImage $ctx $testImage {30 30} {20 20}
+
+# test 38
+set ctx [pix::ctx::new {300 227} white]
+
+set file [file join [file dirname [info script]] images rhino.png]
+set testImage [pix::img::read $file]
+
+pix::ctx::drawImage $ctx $testImage {30 71} {104 124} {21 20} {87 104}
+
+
+# test 39
+set ctx [pix::ctx::new {100 100} white]
+pix::ctx::rect $ctx {10 10} {100 100}
+if {![pix::ctx::isPointInPath $ctx {30 70}]} {
+    error "Point {30 70} should be in rectangle"
+}
+
+# test 40
+set ctx [pix::ctx::new {300 150} white]
+pix::ctx::arc $ctx {150 75} 50 0 6.28
+if {![pix::ctx::isPointInPath $ctx {150 50}]} {
+    error "Point {150 50} should be in arc"
+}
+
+# test 41
+set ctx [pix::ctx::new {100 100} white]
+pix::ctx::rect $ctx {10 10} {100 100}
+if {![pix::ctx::isPointInStroke $ctx {50 10}]} {
+    error "Point {50 10} should be in rectangle"
+}
+
+# test 42
+set ctx [pix::ctx::new {300 150} white]
+pix::ctx::ellipse $ctx {150 75} 40 60
+pix::ctx::lineWidth $ctx 25
+if {![pix::ctx::isPointInStroke $ctx {110 75}]} {
+    error "Point {110 75} should be in ellipse"
+}
+
+
+# test 43
+set ctx [pix::ctx::new {100 100} white]
+set ctxsize [pix::ctx::getSize $ctx]
+
+pix::ctx::fillStyle $ctx "rgba(255,0,0,1)"
+pix::ctx::save $ctx
+pix::ctx::fillStyle $ctx "rgba(0,0,255,1)"
+pix::ctx::restore $ctx
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+
+# test 44
+# From https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline
+set ctx [pix::ctx::new {550 500} white]
+
+pix::ctx::font $ctx $font
+pix::ctx::fontSize $ctx 28
+pix::ctx::strokeStyle $ctx "red"
+
+set index 0
+foreach baseline {
+    TopBaseline HangingBaseline MiddleBaseline
+    AlphabeticBaseline IdeographicBaseline BottomBaseline
+} {
+    pix::ctx::textBaseline $ctx $baseline
+    set y [expr {75 + $index * 75}]
+    pix::ctx::beginPath $ctx
+    pix::ctx::moveTo $ctx [list 0 [expr {$y + 0.5}]]
+    pix::ctx::lineTo $ctx [list 550 [expr {$y + 0.5}]]
+    pix::ctx::stroke $ctx
+    pix::ctx::fillText $ctx "Abcdefghijklmnop ($baseline)" [list 0 $y]
+    incr index
+}
+
+# test 45
+set ctx [pix::ctx::new {100 100}]
+
+set pathstr "M 10 10 H 90 V 90 H 10 L 10 10"
+set color "rgba(0,0,0,255)"
+
+pix::ctx::fillPath $ctx $pathstr $color
+
+set p [image create photo]
+pix::drawSurface $ctx $p
+
+label .l1 -image $p -borderwidth 0
+pack .l1 -fill both -expand 1
