@@ -5,7 +5,7 @@ Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-feature
 
 Compatibility :
 -------------------------
-- This package requires **Tcl/Tk 8.6** or later (Only tested with Tcl/Tk _8.6.14_).
+- This package requires **Tcl/Tk 8.6** (Only tested with Tcl/Tk _8.6.14_).
 
 Platforms :
 -------------------------
