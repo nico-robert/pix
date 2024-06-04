@@ -2,6 +2,7 @@
 # ported to Tcl for package pix.
 
 # 02-Jun-2024 : v1.0 : Initial example
+# 04-Jun-2024 : v2.0 : bad definition mask.
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
@@ -23,7 +24,7 @@ pix::img::fillPath $mask $path "rgba(255,255,255,1)"
 
 pix::img::blur $blur 20
 
-pix::img::draw $image $mask "MaskBlend"
+pix::img::draw $blur $mask "MaskBlend"
 
 pix::img::draw $image $trees
 pix::img::draw $image $blur
