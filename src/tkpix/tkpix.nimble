@@ -8,6 +8,6 @@ license     = "MIT"
 # Deps
 
 requires "nim >= 1.4.8"
-requires "tclpix >= 0.0.1"
+requires "tclpix >= 0.0.2"
 
 installDirs = @["private"]
