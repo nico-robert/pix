@@ -717,6 +717,7 @@ proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl
   DictObjNext = tclStubsPtr.DictObjNext
   DictObjDone = tclStubsPtr.DictObjDone
   DictObjPutKeyList = tclStubsPtr.DictObjPutKeyList
+  DictObjPut = tclStubsPtr.DictObjPut
   DictObjRemoveKeyList = tclStubsPtr.DictObjRemoveKeyList
   NewDictObj = tclStubsPtr.NewDictObj
   DbNewDictObj = tclStubsPtr.DbNewDictObj
