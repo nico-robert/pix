@@ -1,5 +1,5 @@
 # Package
-version     = "0.0.1"
+version     = "0.0.2"
 author      = "Nicolas ROBERT"
 description = """
 Wrapper Tcl for 'pix' library
