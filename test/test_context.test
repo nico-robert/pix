@@ -6,11 +6,11 @@ set font [file join [file dirname [file dirname [info script]]] examples data Ro
 
 # test 1
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 pix::ctx::beginPath $ctx
 pix::ctx::fillStyle $ctx "#ff6"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 pix::ctx::beginPath $ctx
 pix::ctx::fillStyle $ctx "blue"
@@ -249,23 +249,23 @@ pix::ctx::fillRect $ctx {150 40} {100 100}
 
 # test 24
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 pix::ctx::beginPath $ctx
 pix::ctx::circle $ctx {100 75} 50
 pix::ctx::clip $ctx
 
 pix::ctx::fillStyle $ctx "blue"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 pix::ctx::fillStyle $ctx "orange"
 pix::ctx::fillRect $ctx {0 0} {100 100}
 
 # test 25
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 pix::ctx::fillStyle $ctx "blue"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 pix::ctx::beginPath $ctx
 pix::ctx::circle $ctx {100 75} 50
@@ -274,7 +274,7 @@ pix::ctx::clip $ctx
 pix::ctx::saveLayer $ctx
 
 pix::ctx::fillStyle $ctx "red"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 pix::ctx::fillStyle $ctx "orange"
 pix::ctx::fillRect $ctx {0 0} {100 100}
 
@@ -282,7 +282,7 @@ pix::ctx::restore $ctx
 
 # test 26
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 pix::ctx::save $ctx
 
@@ -293,7 +293,7 @@ pix::ctx::clip $ctx
 pix::ctx::saveLayer $ctx
 
 pix::ctx::fillStyle $ctx "red"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 pix::ctx::fillStyle $ctx "orange"
 pix::ctx::fillRect $ctx {0 0} {100 100}
 
@@ -301,11 +301,11 @@ pix::ctx::restore $ctx
 pix::ctx::restore $ctx
 
 pix::ctx::fillStyle $ctx "blue"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 # test 27
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 pix::ctx::save $ctx
 
@@ -316,7 +316,7 @@ pix::ctx::clip $ctx
 pix::ctx::saveLayer $ctx
 
 pix::ctx::fillStyle $ctx "red"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 pix::ctx::restore $ctx
 pix::ctx::saveLayer $ctx
@@ -328,7 +328,7 @@ pix::ctx::restore $ctx
 
 # test 28
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 set region [pix::path::new]
 
@@ -338,11 +338,11 @@ pix::path::rect $region {40 50} {100 50}
 pix::ctx::clip $ctx $region "EvenOdd"
 
 pix::ctx::fillStyle $ctx "blue"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 # test 29
 set ctx [pix::ctx::new {300 150} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 set circlePath [pix::path::new]
 pix::path::circle $circlePath {150 75} 75
@@ -353,7 +353,7 @@ pix::ctx::clip $ctx $circlePath
 pix::ctx::clip $ctx $squarePath
 
 pix::ctx::fillStyle $ctx "blue"
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 # test 30
 set ctx [pix::ctx::new {300 150} white]
@@ -498,13 +498,13 @@ if {![pix::ctx::isPointInStroke $ctx {110 75}]} {
 
 # test 43
 set ctx [pix::ctx::new {100 100} white]
-set ctxsize [pix::ctx::getSize $ctx]
+set ctxinfo [pix::ctx::get $ctx]
 
 pix::ctx::fillStyle $ctx "rgba(255,0,0,1)"
 pix::ctx::save $ctx
 pix::ctx::fillStyle $ctx "rgba(0,0,255,1)"
 pix::ctx::restore $ctx
-pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxsize width] [dict get $ctxsize height]]
+pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
 # test 44
 # From https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline
