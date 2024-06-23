@@ -1,5 +1,9 @@
 {.deadCodeElim: on.}
 
+const 
+  PHOTO_COMPOSITE_OVERLAY* = 0
+  PHOTO_COMPOSITE_SET* = 1
+
 type
   PhotoImageBlock* = TBlock
   TBlock*{.final.} = object 
