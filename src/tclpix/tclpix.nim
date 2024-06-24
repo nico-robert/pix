@@ -40,6 +40,7 @@ var DbNewDictObj*: proc(file: cstring, line: int):PObj {.cdecl.}
 var CreateNamespace*: proc(interp: PInterp, name: cstring, clientData: TClientData, deleteProc: PNamespaceDeleteProc):PNamespace {.cdecl.}
 var DeleteNamespace*: proc(nsPtr: PNamespace) {.cdecl.}
 var FindNamespace*: proc(interp: PInterp, name: cstring, contextNsPtr: PNamespace, flags: int):PNamespace {.cdecl.}
+var WrongNumArgs*: proc(interp: PInterp, objc: int, objv: PPObj, message: cstring) {.cdecl.}
 
 # Generated stubs structure
 ###########################
@@ -724,4 +725,5 @@ proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl
   CreateNamespace = tclStubsPtr.CreateNamespace
   DeleteNamespace = tclStubsPtr.DeleteNamespace
   FindNamespace = tclStubsPtr.FindNamespace
+  WrongNumArgs = tclStubsPtr.WrongNumArgs
   return result 
