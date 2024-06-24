@@ -3,6 +3,7 @@
 
 # 02-Jun-2024 : v1.0 : Initial example
 # 04-Jun-2024 : v2.0 : bad definition mask.
+# 22-Jun-2024 : v3.0 : rename proc 'pix::img::read' by 'pix::img::readImage'.
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
@@ -10,7 +11,7 @@ package require pix
 
 set file [file join [file dirname [info script]] data trees.png]
 
-set trees [pix::img::read $file]
+set trees [pix::img::readImage $file]
 set blur  [pix::img::copy $trees]
 set image [pix::img::new {200 200}]
 
