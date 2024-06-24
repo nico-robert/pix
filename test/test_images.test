@@ -1,0 +1,146 @@
+lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
+
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
+
+# Test 1
+set image [pix::img::new {10 10}]
+pix::img::setPixel $image {0 0} "rgba(255, 255, 255, 255)"
+set data [pix::img::getPixel $image {0 0}]
+
+if {$data ne "r 255 g 255 b 255 a 255"} {
+    error "pix::img::getPixel test 1"
+}
+
+# Test 2
+set image [pix::img::new {10 10}]
+pix::img::fill $image "rgba(255, 0, 0, 255)"
+set data [pix::img::getPixel $image {0 0}]
+
+if {$data ne "r 255 g 0 b 0 a 255"} {
+    error "pix::img::getPixel test 2"
+}
+
+# Test 3
+set image [pix::img::new {10 10}]
+pix::img::fill $image "rgba(255, 255, 255, 1)"
+pix::img::applyOpacity $image 0.5
+set data [pix::img::getColor $image {0 0}]
+
+if {[format %.1f [dict get $data a]] != 0.5} {
+    error "pix::img::getColor test 3"
+}
+
+# Test 4
+set a [pix::img::new {101 101}]
+set b [pix::img::new {50 50}]
+
+pix::img::fill $a "rgba(255, 0, 0, 255)"
+pix::img::fill $b "rgba(0, 255, 0, 255)"
+
+pix::img::draw $a $b
+
+pix::img::flipVertical $a
+pix::img::flipHorizontal $a
+
+# Test 5
+set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
+set b [pix::img::superImage $a {-10 0} {20 20}]
+
+# Test 6
+set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
+set b [pix::img::minifyBy2 $a]
+
+# Test 7
+set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
+set b [pix::img::magnifyBy2 $a]
+
+# Test 8
+set a [pix::img::new {100 100}]
+pix::img::fill $a "rgbx(50, 100, 150, 200)"
+pix::img::invert $a
+set data [pix::img::getPixel $a {0 0}]
+
+if {$data ne "r 44 g 33 b 23 a 55"} {
+    error "pix::img::getPixel test 8"
+}
+
+# Test 9
+set ctx [pix::ctx::new {100 100}]
+pix::ctx::fillStyle $ctx "rgba(255, 255, 255, 255)"
+set img [dict get [pix::ctx::get $ctx] image addr]
+pix::img::fill $img "rgba(0, 0, 0, 255)"
+pix::ctx::fillRect $ctx {25 25} {50 50}
+pix::img::blur $img 20
+
+# Test 10
+set ctx [pix::ctx::new {100 100}]
+pix::ctx::fillStyle $ctx "rgba(255, 255, 255, 255)"
+set img [dict get [pix::ctx::get $ctx] image addr]
+pix::img::fill $img "rgba(0, 0, 0, 255)"
+pix::ctx::fillRect $ctx {25 25} {50 50}
+pix::img::blur $img 20 "rgba(0, 0, 0, 255)"
+
+# Test 11
+set image [pix::img::new {100 100}]
+if {![pix::img::isOneColor $image]} {
+    error "pix::img::isOneColor test 11"
+}
+
+# Test 12
+set image [pix::img::new {100 100}]
+pix::img::fill $img "rgba(1, 2, 3, 4)"
+if {![pix::img::isOneColor $image]} {
+    error "pix::img::isOneColor test 12"
+}
+
+# Test 13
+set image [pix::img::new {100 100}]
+pix::img::setPixel $image {99 99} "rgba(255, 255, 255, 255)"
+if {[pix::img::isOneColor $image]} {
+    error "pix::img::isOneColor test 13"
+}
+
+# Test 14
+set image [pix::img::new {100 100}]
+if {![pix::img::isTransparent $image]} {
+    error "pix::img::isOneColor test 14"
+}
+
+# Test 15
+set image [pix::img::new {100 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+if {[pix::img::isTransparent $image]} {
+    error "pix::img::isTransparent test 15"
+}
+
+# Test 16
+set image [pix::img::new {100 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+if {![pix::img::isOpaque $image]} {
+    error "pix::img::isOpaque test 16"
+}
+
+# Test 17
+set image [pix::img::new {100 100}]
+pix::img::fill $image "rgbx(255, 255, 255, 255)"
+set rect [pix::img::opaqueBounds $image]
+if {$rect ne "x 0.0 y 0.0 w 100.0 h 100.0"} {
+    error "pix::img::opaqueBounds test 17"
+}
+
+# Test 18
+set image [pix::img::new {160 160}]
+pix::img::fillPath $image {
+    M 20 20
+    L 140 20
+    L 80 140
+    z
+} "#FC427B" {0.3 0 0 0 0.3 0 0 0 1}
+set rect [pix::img::opaqueBounds $image]
+lassign $rect _ x _ y _ w _ h
+scan $x %d xtoInt
+scan $y %d ytoInt
+scan $w %d wtoInt
+scan $h %d htoInt
+set trimmedImage [pix::img::subImage $image [list $xtoInt $ytoInt] [list $wtoInt $htoInt]]

@@ -1,0 +1,217 @@
+lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
+
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
+
+# Test 1
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24}
+set bounds [pix::font::layoutBounds $font "Word"]
+if {$bounds ne "56.0 28.0"} {
+    error "pix::font::layoutBounds test 1"
+}
+
+# Test 2
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24}
+set bounds [pix::font::layoutBounds $font "Word\n"]
+if {$bounds ne "56.0 56.0"} {
+    error "pix::font::layoutBounds test 2"
+}
+
+# Test 3
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 64}
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "fill"
+
+# Test 4
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 64}
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::strokeText $image $font "stroke"
+
+# Test 5
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Changa-Bold.svg]]
+pix::font::configure $font {size 48}
+set image [pix::img::new {200 100}]
+pix::img::fillText $image $font "Changa"
+
+# Test 6
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24 lineHeight 200}
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "Line height"
+
+# Test 7
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24}
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "First line"
+set defaultLH [pix::font::defaultLineHeight $font]
+pix::img::fillText $image $font "Second line" [list transform [list 1 0 0 0 1 0 0 $defaultLH 1]]
+
+# Test 8
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24}
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "Wrapping text to new line" {bounds {200 0}}
+
+# Test 9
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24}
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "a b c d e f g h i j k l m n o p" {bounds {200 0} hAlign "RightAlign"}
+
+# Test 10
+set paragraph "ShehadcometotheconclusionthatyoucouldtellalotaboutapersonbytheirearsThewaytheystuckoutandthesizeoftheearlobescouldgiveyou"
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 16 noKerningAdjustments true}
+set image [pix::img::new {1000 150}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font $paragraph {bounds {1000 150}}
+
+# Test 11
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 18}
+set image [pix::img::new {200 150}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font {First line
+Second line
+Third line
+Fourth line
+Fifth line
+Sixth line
+Seventh line
+} {bounds {200 150}}
+
+# Test 12
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 36}
+set image [pix::img::new {800 800}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "TopLeft"       {bounds {800 800} hAlign "LeftAlign" vAlign "TopAlign"}
+pix::img::fillText $image $font "TopCenter"     {bounds {800 800} hAlign "CenterAlign" vAlign "TopAlign"}
+pix::img::fillText $image $font "TopRight"      {bounds {800 800} hAlign "RightAlign" vAlign "TopAlign"}
+pix::img::fillText $image $font "MiddleLeft"    {bounds {800 800} hAlign "LeftAlign" vAlign "MiddleAlign"}
+pix::img::fillText $image $font "MiddleCenter"  {bounds {800 800} hAlign "CenterAlign" vAlign "MiddleAlign"}
+pix::img::fillText $image $font "MiddleRight"   {bounds {800 800} hAlign "RightAlign" vAlign "MiddleAlign"}
+pix::img::fillText $image $font "BottomLeft"    {bounds {800 800} hAlign "LeftAlign" vAlign "BottomAlign"}
+pix::img::fillText $image $font "BottomCenter"  {bounds {800 800} hAlign "CenterAlign" vAlign "BottomAlign"}
+pix::img::fillText $image $font "BottomRight"   {bounds {800 800} hAlign "RightAlign" vAlign "BottomAlign"}
+
+# Test 13
+set font [pix::font::readFont [file join [file dirname [info script]] fonts IBMPlexSans-Regular_2.ttf]]
+pix::font::configure $font {size 48}
+set paint [pix::paint::new "LinearGradientPaint"]
+pix::font::paint $font $paint
+pix::paint::configure $paint {
+    gradientHandlePositions {{0 50} {100 50}}
+    gradientStops {{{1 0 0 1} 0} {{1 0 0 0.5} 1}}
+}
+
+set image [pix::img::new {100 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+pix::img::fillText $image $font "Text"
+
+# Test 14
+set font1 [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font1 {size 80}
+set font2 [pix::font::readFont [file join [file dirname [info script]] fonts Aclonica-Regular_1.ttf]]
+pix::font::configure $font2 {size 100}
+set font3 [pix::font::readFont [file join [file dirname [info script]] fonts Ubuntu-Regular_1.ttf]]
+pix::font::configure $font3 {size 48}
+
+lappend spans [pix::font::newSpan $font1 "One span "]
+lappend spans [pix::font::newSpan $font2 "Two span"]
+lappend spans [pix::font::newSpan $font3 " Three span"]
+
+set image [pix::img::new {475 400}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+
+set arr [pix::font::typeset $spans {bounds {475 400}}]
+
+pix::img::fillText $image $arr
+
+set ctx [pix::ctx::new $image]
+pix::ctx::fillStyle $ctx "rgba(127, 127, 127, 0.5)"
+
+foreach {index arrangement} [pix::font::selectionRects $arr] {
+    set x [dict get $arrangement x] 
+    set y [dict get $arrangement y] 
+    set w [dict get $arrangement w] 
+    set h [dict get $arrangement h]
+
+    pix::ctx::fillRect $ctx [list $x $y] [list $w $h]
+}
+
+# Test 15
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 16}
+
+set image [pix::img::new {75 75}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+
+set arr [pix::font::typeset $font "Wrapping text to the next line" {bounds {75 75}}]
+
+pix::img::fillText $image $arr
+
+set ctx [pix::ctx::new $image]
+pix::ctx::fillStyle $ctx "rgba(127, 127, 127, 0.5)"
+
+foreach {index arrangement} [pix::font::selectionRects $arr] {
+    set x [dict get $arrangement x] 
+    set y [dict get $arrangement y] 
+    set w [dict get $arrangement w] 
+    set h [dict get $arrangement h]
+
+    pix::ctx::fillRect $ctx [list $x $y] [list $w $h]
+}
+
+# Test 16
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24 underline true}
+
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+
+pix::img::strokeText $image $font "Wrapping text to new line" {bounds {200 0}}
+
+# Test 17
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 24 strikethrough true paint "rgba(0, 0, 0, 0.5)"}
+
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+
+pix::img::fillText $image $font "Wrapping text to new line" {bounds {200 0}}
+
+# Test 18
+set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+pix::font::configure $font {size 36}
+set paints {}
+foreach c {"rgba(0, 0, 255, 0.5)" "rgba(255, 0, 0, 0.5)"} {
+    set paint [pix::paint::new "SolidPaint"]
+    pix::paint::configure $paint [list color $c]
+    lappend paints $paint
+}
+
+pix::font::configure $font [list paints $paints]
+
+set image [pix::img::new {200 100}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+
+pix::img::fillText $image $font "Multiple fills" {bounds {200 0}}
+
+# Test 19
+set typeface [pix::font::readTypeface [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
+
+if {[pix::font::getKerningAdjustment $typeface "T" "e"] != -99.0} {
+    error "pix::font::getKerningAdjustment Test 19"
+}

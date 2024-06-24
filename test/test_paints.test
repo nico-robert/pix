@@ -1,0 +1,84 @@
+lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
+
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
+
+set heartShape {
+    M 10,30
+    A 20,20 0,0,1 50,30
+    A 20,20 0,0,1 90,30
+    Q 90,60 50,90
+    Q 10,60 10,30 z
+}
+
+# Test 1
+set paint [pix::paint::new "ImagePaint"]
+pix::paint::configure $paint [list \
+    image [pix::img::readImage [file join [file dirname [info script]] images mandrill.png]] \
+    imageMat {0.2 0 0 0 0.2 0 0 0 1} \
+]
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $heartShape $paint
+
+# Test 2
+set paint [pix::paint::new "ImagePaint"]
+pix::paint::configure $paint [list \
+    image [pix::img::readImage [file join [file dirname [info script]] images mandrill.png]] \
+    imageMat {0.2 0 0 0 0.2 0 0 0 1} \
+    opacity 0.5 \
+]
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $heartShape $paint
+
+# Test 3
+set paint [pix::paint::new "TiledImagePaint"]
+pix::paint::configure $paint [list \
+    image [pix::img::readImage [file join [file dirname [info script]] images mandrill.png]] \
+    imageMat {0.02 0 0 0 0.02 0 0 0 1} \
+]
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $heartShape $paint
+
+# Test 4
+set paint [pix::paint::new "LinearGradientPaint"]
+pix::paint::configure $paint {
+    gradientHandlePositions {{0 50} {100 50}}
+    gradientStops {{{1 0 0 1} 0} {{1 0 0 0.15665} 1}}
+}
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $heartShape $paint
+
+# Test 5
+set paint [pix::paint::new "RadialGradientPaint"]
+pix::paint::configure $paint {
+    gradientHandlePositions {{50 50} {100 50} {50 100}}
+    gradientStops {{{1 0 0 1} 0} {{1 0 0 0.15665} 1}}
+}
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $heartShape $paint
+
+# Test 6
+set paint [pix::paint::new "AngularGradientPaint"]
+pix::paint::configure $paint {
+    gradientHandlePositions {{50 50} {100 50} {50 100}}
+    gradientStops {{{1 0 0 1} 0} {{1 0 0 0.15665} 1}}
+}
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $heartShape $paint
+
+# Test 7
+set paint [pix::paint::new "ImagePaint"]
+pix::paint::configure $paint [list \
+    image [pix::img::readImage [file join [file dirname [info script]] images mandrill.png]] \
+    imageMat {0.2 0 0 0 0.2 0 0 0 1} \
+    opacity 0.5 \
+]
+
+set image [pix::img::new {100 100}]
+pix::img::fill $image $paint
