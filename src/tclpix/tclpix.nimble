@@ -9,6 +9,6 @@ Based on Mark Janssen's tclstubs package
 license     = "MIT"
 
 # Deps
-requires "nim >= 1.4.8"
+requires "nim >= 2.0.2"
 
 installDirs = @["private"]
