@@ -1,6 +1,7 @@
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
-package require pix
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
 
 # Test 0
 set testPath "m 1 2 3 4 5 6"
@@ -98,9 +99,86 @@ pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 65 1
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 85 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1}}
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 105 1} strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1 2 3 4 5 6 7 8 9}}
 
-set p [image create photo]
-pix::drawSurface $image $p
+# Test 11
+set path [pix::path::new]
+pix::path::rect $path {0 0} {10 10}
 
-label .l10 -image $p -borderwidth 0
-pack .l10 -fill both -expand 1
+if {![pix::path::fillOverlaps $path {5 5}]} {
+    error "Coordinates {5 5} should be in path."
+}
+if {![pix::path::fillOverlaps $path {0 0}]} {
+    error "Coordinates {0 0} should be in path."
+}
+if {![pix::path::fillOverlaps $path {9 0}]} {
+    error "Coordinates {9 0} should be in path."
+}
+if {![pix::path::fillOverlaps $path {9 0}]} {
+    error "Coordinates {0 9} should be in path."
+}
+if {[pix::path::fillOverlaps $path {10 10}]} {
+    error "Coordinates {10 10} should not be in path."
+}
 
+# Test 12
+set path [pix::path::new]
+pix::path::ellipse $path {20 20} 20 10
+
+if {[pix::path::fillOverlaps $path {0 0}]} {
+    error "Coordinates {0 0} should not be in path."
+}
+if {![pix::path::fillOverlaps $path {20 20}]} {
+    error "Coordinates {20 20} should be in path."
+}
+if {![pix::path::fillOverlaps $path {10 20}]} {
+    error "Coordinates {10 20} should be in path."
+}
+if {![pix::path::fillOverlaps $path {30 20}]} {
+    error "Coordinates {30 20} should be in path."
+}
+
+# Test 13
+set path [pix::path::new]
+pix::path::rect $path {10 10} {10 10}
+
+if {![pix::path::strokeOverlaps $path {10 10}]} {
+    error "Coordinates {10 10} should not be in path."
+}
+if {![pix::path::strokeOverlaps $path {20.1 20.1}]} {
+    error "Coordinates {20.1 20.1} should not be in path."
+}
+if {[pix::path::strokeOverlaps $path {5 5}]} {
+    error "Coordinates {5 5} should be in path."
+}
+
+# Test 14
+set path [pix::path::new]
+pix::path::ellipse $path {20 20} 20 10
+
+if {[pix::path::strokeOverlaps $path {0 0}]} {
+    error "Coordinates {0 0} should not be in path."
+}
+if {[pix::path::strokeOverlaps $path {20 20}]} {
+    error "Coordinates {20 20} should not be in path."
+}
+if {![pix::path::strokeOverlaps $path {0 20}]} {
+    error "Coordinates {0 20} should be in path."
+}
+if {![pix::path::strokeOverlaps $path {39.9 19.9}]} {
+    error "Coordinates {39.9 19.9} should be in path."
+}
+if {![pix::path::strokeOverlaps $path {19.8 30.2}]} {
+    error "Coordinates {39.9 19.9} should be in path."
+}
+if {[pix::path::strokeOverlaps $path {19.4 30.6}]} {
+    error "Coordinates {19.4 30.6} should not be in path."
+}
+
+# Test 15
+set path [pix::path::new]
+pix::path::circle $path {50 50} 30
+
+set paint [pix::paint::new "SolidPaint"]
+pix::paint::configure $paint {color "rgba(255,0,255,128)" opacity 0.5}
+
+set image [pix::img::new {100 100}]
+pix::img::fillPath $image $path $paint
