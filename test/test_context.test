@@ -1,6 +1,7 @@
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
-package require pix
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
 
 set font [file join [file dirname [file dirname [info script]]] examples data Roboto-Regular_1.ttf]
 
@@ -403,7 +404,7 @@ foreach pattern {
 set ctx [pix::ctx::new {300 150} white]
 
 set paint [pix::paint::new "SolidPaint"]
-pix::paint::dict $paint {color "rgb(0,0,255)" blendMode "ExclusionBlend"}
+pix::paint::configure $paint {color "rgb(0,0,255)" blendMode "ExclusionBlend"}
 
 pix::ctx::fillStyle $ctx $paint
 pix::ctx::fillRect $ctx {0 0} {100 100}
@@ -424,7 +425,7 @@ set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
 
-set testImage [pix::img::read $file]
+set testImage [pix::img::readImage $file]
 pix::ctx::drawImage $ctx $testImage {0 0}
 pix::ctx::drawImage $ctx $testImage {30 30}
 
@@ -432,7 +433,7 @@ pix::ctx::drawImage $ctx $testImage {30 30}
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
-set testImage [pix::img::read $file]
+set testImage [pix::img::readImage $file]
 
 pix::ctx::translate $ctx {30 30}
 pix::ctx::drawImage $ctx $testImage {-30 -30}
@@ -442,7 +443,7 @@ pix::ctx::drawImage $ctx $testImage {0 0}
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
-set testImage [pix::img::read $file]
+set testImage [pix::img::readImage $file]
 
 pix::ctx::scale $ctx {2 2}
 pix::ctx::drawImage $ctx $testImage {0 0}
@@ -453,7 +454,7 @@ pix::ctx::drawImage $ctx $testImage {0 0}
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
-set testImage [pix::img::read $file]
+set testImage [pix::img::readImage $file]
 
 pix::ctx::drawImage $ctx $testImage {30 30} {20 20}
 
@@ -461,7 +462,7 @@ pix::ctx::drawImage $ctx $testImage {30 30} {20 20}
 set ctx [pix::ctx::new {300 227} white]
 
 set file [file join [file dirname [info script]] images rhino.png]
-set testImage [pix::img::read $file]
+set testImage [pix::img::readImage $file]
 
 pix::ctx::drawImage $ctx $testImage {30 71} {104 124} {21 20} {87 104}
 
@@ -537,8 +538,32 @@ set color "rgba(0,0,0,255)"
 
 pix::ctx::fillPath $ctx $pathstr $color
 
-set p [image create photo]
-pix::drawSurface $ctx $p
+# test 46
+set image [pix::img::new {256 256}]
+set ctx [pix::ctx::new $image]
+pix::img::fill $image "rgba(255,255,255,255)" 
 
-label .l1 -image $p -borderwidth 0
-pack .l1 -fill both -expand 1
+pix::ctx::beginPath $ctx
+pix::ctx::strokeStyle $ctx "gray"
+pix::ctx::moveTo $ctx {200 20}
+pix::ctx::lineTo $ctx {200 130}
+pix::ctx::lineTo $ctx {50 20}
+pix::ctx::stroke $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::strokeStyle $ctx "black"
+pix::ctx::lineWidth $ctx 5
+pix::ctx::moveTo $ctx {200 20}
+pix::ctx::arcTo $ctx {200 130} {50 20} 40
+pix::ctx::stroke $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::fillStyle $ctx "blue"
+pix::ctx::arc $ctx {200 20} 5 0 6.28
+pix::ctx::fill $ctx
+
+pix::ctx::beginPath $ctx
+pix::ctx::fillStyle $ctx "red"
+pix::ctx::arc $ctx {200 130} 5 0 6.28
+pix::ctx::arc $ctx {50 20} 5 0 6.28
+pix::ctx::fill $ctx
