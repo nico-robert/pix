@@ -5,7 +5,7 @@ description = "Wrapper Tk for 'pix' library"
 license     = "MIT"
 
 # Deps
-requires "nim >= 1.4.8"
+requires "nim >= 2.0.2"
 requires "tclpix >= 0.0.2"
 
 installDirs = @["private"]
