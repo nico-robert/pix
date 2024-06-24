@@ -1,4 +1,5 @@
 # 02-Jun-2024 : v1.0 : Initial example
+# 22-Jun-2024 : v2.0 : Rename proc 'pix::svg::toImage' by 'pix::svg::newImage'.
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
@@ -9,10 +10,8 @@ set data [read $fp]
 close $fp
 
 set svg [pix::svg::parse $data]
-set image [pix::svg::toImage $svg]
+set image [pix::svg::newImage $svg]
 
 set p [image create photo]
-label .l1 -image $p -borderwidth 0
-pack .l1
+label .l1 -image $p -borderwidth 0 ; pack .l1
 pix::drawSurface $image $p
-update

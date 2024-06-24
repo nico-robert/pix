@@ -2,6 +2,8 @@
 # ported to Tcl for package pix.
 
 # 02-Jun-2024 : v1.0 : Initial example
+# 22-Jun-2024 : v2.0 : - Rename proc 'pix::img::read' by 'pix::img::readImage'.
+#                      - Pass <paint> options to 'pix::paint::configure' proc.               
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
@@ -16,7 +18,7 @@ set path [pix::path::new]
 pix::path::polygon $path {100 100} 70 8
 
 set paint [pix::paint::new "TiledImagePaint"]
-set f [pix::img::read $file]
+set f [pix::img::readImage $file]
 
 set mat3 {
     0.08 0.0 0.0
@@ -24,7 +26,7 @@ set mat3 {
     0.0 0.0 1.0
 }
 
-pix::paint::dict $paint [list image $f imageMat $mat3]
+pix::paint::configure $paint [list image $f imageMat $mat3]
 pix::img::fillPath $image $path $paint
 
 set p [image create photo]

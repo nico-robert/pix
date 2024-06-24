@@ -2,6 +2,7 @@
 # ported to Tcl for package pix.
 
 # 02-Jun-2024 : v1.0 : Initial example
+# 22-Jun-2024 : v2.0 : pass <paint> options to configure proc
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 
@@ -11,8 +12,10 @@ set image [pix::img::new {200 200}]
 pix::img::fill $image "rgba(255, 255, 255, 1)"
 
 set paint [pix::paint::new "RadialGradientPaint"]
-pix::paint::gradientHandlePositions $paint {100 100} {200 100} {100 200}
-pix::paint::gradientStops $paint {{1 0 0 1} 0} {{1 0 0 0.15625} 1}
+pix::paint::configure $paint {
+    gradientHandlePositions {{100 100} {200 100} {100 200}}
+    gradientStops {{{1 0 0 1} 0} {{1 0 0 0.15625} 1}}
+}
 
 set svg {
     M 20 60
