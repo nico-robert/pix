@@ -2,107 +2,59 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Sets a new paint.
+  # 
+  # PaintKind - Enum value
+  #
+  # Returns a 'new' paint object.
   try:
 
     if objc != 2:
-      let cmd = Tcl.GetStringFromObj(objv[0], nil)
-      let mess = "wrong # args: " & $cmd & " enum:PaintKind"
-      Tcl.SetResult(interp, mess.cstring , nil)
+      Tcl.WrongNumArgs(interp, 1, objv, "enum:PaintKind")
       return Tcl.ERROR
 
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
     let myEnum = parseEnum[PaintKind]($arg1)
 
     let paint = newPaint(myEnum)
-    let c = cast[pointer](paint)
-    let hex = "0x" & cast[uint64](c).toHex
+    let myPtr = cast[pointer](paint)
+    let hex = "0x" & cast[uint64](myPtr).toHex
     let p = (hex & "^paint").toLowerAscii
 
     paintTable[p] = paint
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(p), -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
     return Tcl.OK
   except Exception as e:
-    echo "pix(error): ", e.msg
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
     return Tcl.ERROR
-
-
-proc pix_paint_gradientHandlePositions(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-
-  try:
-    let x1, y1, x2, y2, x3, y3: cdouble = -1
-    let count: cint = 0
-    let elements : Tcl.PPObj = nil
-
-    if objc != 5:
-      let cmd = Tcl.GetStringFromObj(objv[0], nil)
-      let mess = "wrong # args: " & $cmd & " <paint> {x1 y1} {x2 y2} {x3 y3}"
-      Tcl.SetResult(interp, mess.cstring , nil)
-      return Tcl.ERROR
-      
-    # Paint
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
-    let paint = paintTable[$arg1]
     
-    # Positions
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
-      return Tcl.ERROR
-
-    if count != 2:
-      Tcl.SetResult(interp, "wrong # args: argument should be 'x1' 'y1'", nil)
-      return Tcl.ERROR
-      
-    if Tcl.GetDoubleFromObj(interp, elements[0], x1.addr) != Tcl.OK:
-      return Tcl.ERROR
-
-    if Tcl.GetDoubleFromObj(interp, elements[1], y1.addr) != Tcl.OK:
-      return Tcl.ERROR
-      
-    if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
-      return Tcl.ERROR
-
-    if count != 2:
-      Tcl.SetResult(interp, "wrong # args: argument should be 'x2' 'y2'", nil)
-      return Tcl.ERROR
-      
-    if Tcl.GetDoubleFromObj(interp, elements[0], x2.addr) != Tcl.OK:
-      return Tcl.ERROR
-
-    if Tcl.GetDoubleFromObj(interp, elements[1], y2.addr) != Tcl.OK:
-      return Tcl.ERROR
-      
-    if Tcl.ListObjGetElements(interp, objv[4], count.addr, elements.addr) != Tcl.OK:
-      return Tcl.ERROR
-
-    if count != 2:
-      Tcl.SetResult(interp, "wrong # args: argument should be 'x3' 'y3'", nil)
-      return Tcl.ERROR
-      
-    if Tcl.GetDoubleFromObj(interp, elements[0], x3.addr) != Tcl.OK:
-      return Tcl.ERROR
-
-    if Tcl.GetDoubleFromObj(interp, elements[1], y3.addr) != Tcl.OK:
-      return Tcl.ERROR
-      
-    paint.gradientHandlePositions = @[vec2(x1, y1), vec2(x2, y2), vec2(x3, y3)]
-
-    return Tcl.OK
-  except Exception as e:
-    echo "pix(error): ", e.msg
-    return Tcl.ERROR 
-    
-proc pix_paint_dict(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-
+proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Configure paint object parameters.
+  # 
+  # paint - object
+  # args  - dict options described below:
+  #   image                   - object
+  #   imageMat                - list matrix
+  #   color                   - string color
+  #   blendMode               - Enum value
+  #   opacity                 - double value
+  #   gradientHandlePositions - list positions
+  #   gradientStops           - list color + positions
+  # 
+  # Returns nothing.
   try:
-    let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let count, subcount, len: cint = 0
+    let x, y, p, opacity: cdouble = 0
+    let elements, subelements, position, stop: Tcl.PPObj = nil
     var matrix3: vmath.Mat3
+    var cseqColorP: Color
 
     if objc != 3:
-      let cmd = Tcl.GetStringFromObj(objv[0], nil)
-      let mess = "wrong # args: " & $cmd & " <paint> {image? ?value imageMat? ?value color? ?value blendMode? ?value}"
-      Tcl.SetResult(interp, mess.cstring , nil)
+      let msg = """
+       <paint> {image? ?value imageMat? ?value color? ?value blendMode? ?value gradientHandlePositions? ?value gradientStops? ?value opacity? ?value}"""
+      Tcl.WrongNumArgs(interp, 1, objv, msg.cstring)
       return Tcl.ERROR
       
     # Paint
@@ -114,7 +66,7 @@ proc pix_paint_dict(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     if count mod 2 == 1:
-      Tcl.SetResult(interp, "wrong # args: argument should key value key1 value1", nil)
+      Tcl.SetResult(interp, "wrong # args: 'dict options' should be key value ?key1 ?value1", nil)
       return Tcl.ERROR
       
     var i = 0
@@ -124,6 +76,10 @@ proc pix_paint_dict(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
         of "color":
           let value = Tcl.GetStringFromObj(elements[i+1], nil)
           paint.color = parseHtmlColor($value).color
+        of "opacity":
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], opacity.addr) != Tcl.OK:
+            return Tcl.ERROR
+          paint.opacity = opacity
         of "blendMode":
           let value = Tcl.GetStringFromObj(elements[i+1], nil)
           paint.blendMode = parseEnum[BlendMode]($value)
@@ -132,9 +88,47 @@ proc pix_paint_dict(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
           paint.image = imgTable[$value]
         of "imageMat":
           # Matrix 3x3 check
-          if matrix3(interp, elements[i+1], matrix3) != Tcl.OK:
+          if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
             return Tcl.ERROR
           paint.imageMat = matrix3
+        of "gradientHandlePositions":
+          # Positions
+          if Tcl.ListObjGetElements(interp, elements[i+1], subcount.addr, subelements.addr) != Tcl.OK:
+            return Tcl.ERROR
+          if subcount != 0:
+            var positions = newSeq[vmath.Vec2]()
+            for j in 0..subcount-1:
+              if Tcl.ListObjGetElements(interp, subelements[j], len.addr, position.addr) != Tcl.OK:
+                return Tcl.ERROR
+              if len != 2:
+                Tcl.SetResult(interp, "wrong # args: 'positions' should be 'x' 'y'", nil)
+                return Tcl.ERROR
+
+              if Tcl.GetDoubleFromObj(interp, position[0], x.addr) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, position[1], y.addr) != Tcl.OK: return Tcl.ERROR
+
+              positions.add(vec2(x, y))
+            paint.gradientHandlePositions = positions
+        of "gradientStops":
+          if Tcl.ListObjGetElements(interp, elements[i+1], subcount.addr, subelements.addr) != Tcl.OK:
+            return Tcl.ERROR
+          if subcount != 0:
+            var colorstops = newSeq[ColorStop]()
+            for j in 0..subcount-1:
+              if Tcl.ListObjGetElements(interp, subelements[j], len.addr, stop.addr) != Tcl.OK:
+                return Tcl.ERROR
+              if len != 2:
+                Tcl.SetResult(interp, "wrong # args: 'items' should be 'color' 'position'", nil)
+                return Tcl.ERROR
+              if isColorSimple(stop[0], cseqColorP) == false:
+                let arg2 = Tcl.GetStringFromObj(stop[0], nil)
+                cseqColorP = parseHtmlColor($arg2)
+
+              if Tcl.GetDoubleFromObj(interp, stop[1], p.addr) != Tcl.OK:
+                return Tcl.ERROR
+              
+              colorstops.add(ColorStop(color: cseqColorP, position: p))
+            paint.gradientStops = colorstops
         else:
           Tcl.SetResult(interp, cstring("wrong # args: Key '" & $mkey & "' not supported"), nil)
           return Tcl.ERROR
@@ -142,64 +136,89 @@ proc pix_paint_dict(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    echo "pix(error): ", e.msg
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
     return Tcl.ERROR 
-    
-proc pix_paint_gradientStops(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
 
+proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Create a new Paint with the same properties.
+  # 
+  # paint - object
+  #
+  # Returns a 'new' paint object.
   try:
-    let p1, p2: cdouble = 0
-    let count: cint = 0
-    let elements : Tcl.PPObj = nil
-    var cseqColorP1, cseqColorP2: Color
 
-    if objc != 4:
-      let cmd = Tcl.GetStringFromObj(objv[0], nil)
-      let mess = "wrong # args: " & $cmd & " <paint> {color 'position 1'} {color 'position 2'}"
-      Tcl.SetResult(interp, mess.cstring , nil)
+    if objc != 2:
+      Tcl.WrongNumArgs(interp, 1, objv, "<paint>")
       return Tcl.ERROR
-      
+    
     # Paint
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
     let paint = paintTable[$arg1]
     
-    # Color position
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
-      return Tcl.ERROR
+    let copy = paint.copy()
 
-    if count != 2:
-      Tcl.SetResult(interp, "wrong # args: argument should be 'color p1'", nil)
-      return Tcl.ERROR
-      
-    # Color simple check
-    if isColor_Simple(elements[0], cseqColorP1) == false:
-      let arg3 = Tcl.GetStringFromObj(elements[0], nil)
-      cseqColorP1 = parseHtmlColor($arg3).color
-    
-    if Tcl.GetDoubleFromObj(interp, elements[1], p1.addr) != Tcl.OK:
-      return Tcl.ERROR
-      
-    if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
-      return Tcl.ERROR
+    let myPtr = cast[pointer](copy)
+    let hex = "0x" & cast[uint64](myPtr).toHex
+    let p = (hex & "^paint").toLowerAscii
 
-    if count != 2:
-      Tcl.SetResult(interp, "wrong # args: argument should be 'color p2'", nil)
-      return Tcl.ERROR
-      
-    # Color simple check
-    if isColor_Simple(elements[0], cseqColorP2) == false:
-      let arg4 = Tcl.GetStringFromObj(elements[0], nil)
-      cseqColorP2 = parseHtmlColor($arg4).color
+    paintTable[p] = copy
 
-    if Tcl.GetDoubleFromObj(interp, elements[1], p2.addr) != Tcl.OK:
-      return Tcl.ERROR
-      
-    paint.gradientStops = @[
-      ColorStop(color: cseqColorP1, position: p1),
-      ColorStop(color: cseqColorP2, position: p2),
-    ]
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
     return Tcl.OK
   except Exception as e:
-    echo "pix(error): ", e.msg
-    return Tcl.ERROR 
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    return Tcl.ERROR
+
+proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Fills with the Paint gradient.
+  # 
+  # paint - object
+  # image - object
+  #
+  # Returns nothing.
+  try:
+
+    if objc != 3:
+      Tcl.WrongNumArgs(interp, 1, objv, "<paint> <img>")
+      return Tcl.ERROR
+    
+    # Paint
+    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let paint = paintTable[$arg1]
+
+    # Image
+    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let img = imgTable[$arg2]
+    
+    img.fillGradient(paint)
+
+    return Tcl.OK
+  except Exception as e:
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    return Tcl.ERROR
+
+proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Destroy current paint or all paints if special word `all` is specified.
+  # 
+  # value - paint object or string 
+  #
+  # Returns nothing.
+  try:
+
+    if objc != 2:
+      Tcl.WrongNumArgs(interp, 1, objv, "<paint>|string")
+      return Tcl.ERROR
+    
+    # Font
+    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    if arg1 == "all":
+      paintTable.clear()
+    else:
+      paintTable.del($arg1)
+
+    return Tcl.OK
+  except Exception as e:
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    return Tcl.ERROR
+
