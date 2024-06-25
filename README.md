@@ -5,15 +5,15 @@ Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-feature
 
 Compatibility :
 -------------------------
-- This package requires **Tcl/Tk 8.6** (Only tested with Tcl/Tk _8.6.14_).
+- **Tcl/Tk 8.6** (Only tested with Tcl/Tk _8.6.14_).
 
 Platforms :
 -------------------------
-- MacOS 14.4 x64
-- Windows 10
+- MacOS 14 x64
+- Windows 10 x64
+- Linux x64
 
-> [!NOTE]  
-> - Linux should work, but I don't have a system to test it on.   
+Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases).
 
 Example :
 -------------------------
@@ -44,17 +44,17 @@ See **[examples folder](/examples)** for more demos.
 
 Documentation :
 -------------------------
-Not really... But for `Pixie` there is this [one](https://treeform.github.io/pixie/).
+A large part of the `pix` [documentation](http://htmlpreview.github.io/?https://github.com/nico-robert/pix/blob/master/doc/pix.html) comes from the [Pixie API](https://treeform.github.io/pixie/) and source files. 
 
-#### Currently options tested and supported are :
+#### Currently API tested and supported are :
 - [x] context
-- [ ] font (Partially)
-- [ ] image (Partially)
-- [ ] paint
-- [ ] paths
-- [ ] svg (Partially)
+- [x] font
+- [x] image
+- [x] paint
+- [x] path
+- [x] svg
 
-Inspiration :
+Inspiration Nim to Tcl C API :
 -------------------------
 - [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble)
 
@@ -66,3 +66,14 @@ Release :
 -------------------------
 *  **03-Jun-2024** : 0.1
     - Initial release.
+*  **25-Jun-2024** : 0.2
+    - Add `font` namespace + test file.
+    - Add `image` namespace + test file.
+    - Add `paint` namespace + test file.
+    - Add `path` namespace + test file.
+    - Rename `pix::ctx::getSize` by `pix::ctx::get` 
+    - Rename `pix::img::read` by `pix::img::readImage`
+    - Rename `pix::font::read` by `pix::font::readFont`
+    - Add documentation based on Pixie API reference.
+    - Add binary for Linux.
+    - Code refactoring.
