@@ -2,7 +2,12 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-
+  # Parse SVG XML. Defaults to the SVG's view box size.
+  # 
+  # svg  - string data
+  # size - list width + height (optional:SVGviewbox)
+  #
+  # Returns a 'new' svg object.
   try:
     let width, height: cint = 0
     let count: cint = 0
@@ -10,9 +15,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     var svg: Svg
 
     if objc notin (2..3):
-      let cmd = Tcl.GetStringFromObj(objv[0], nil)
-      let mess = "wrong # args: " & $cmd & " 'svg_string {width height}:optional'"
-      Tcl.SetResult(interp, mess.cstring , nil)
+      Tcl.WrongNumArgs(interp, 1, objv, "'svg string' {width height}:optional")
       return Tcl.ERROR
       
     # Svg string
@@ -24,41 +27,40 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
         return Tcl.ERROR
 
       if count != 2:
-        Tcl.SetResult(interp, "wrong # args: argument should be 'width' 'height'", nil)
+        Tcl.SetResult(interp, "wrong # args: 'size' should be 'width' 'height'", nil)
         return Tcl.ERROR
 
-      if Tcl.GetIntFromObj(interp, elements[0], width.addr) != Tcl.OK:
-        return Tcl.ERROR
-
-      if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK:
-        return Tcl.ERROR
+      if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
+      if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
 
       svg = parseSvg($arg1, width, height)
 
     else:
       svg = parseSvg($arg1)
 
-    let sv = cast[pointer](svg)
-    let hex = "0x" & cast[uint64](sv).toHex
+    let myPtr = cast[pointer](svg)
+    let hex = "0x" & cast[uint64](myPtr).toHex
     let p = (hex & "^svg").toLowerAscii
 
     svgTable[p] = svg
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(p), -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
     return Tcl.OK
   except Exception as e:
-    echo "pix(error): ", e.msg
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
     return Tcl.ERROR
 
-proc pix_svg_toImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-
+proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Render SVG and return the image. 
+  # 
+  # svg - object
+  #
+  # Returns a 'new' img object.
   try:
 
     if objc != 2:
-      let cmd = Tcl.GetStringFromObj(objv[0], nil)
-      let mess = "wrong # args: " & $cmd & " <svg>"
-      Tcl.SetResult(interp, mess.cstring , nil)
+      Tcl.WrongNumArgs(interp, 1, objv, "<svg>")
       return Tcl.ERROR
       
     # Svg
@@ -67,15 +69,39 @@ proc pix_svg_toImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     
     let image = newImage(svg)
  
-    let im = cast[pointer](image)
-    let hex = "0x" & cast[uint64](im).toHex
-    let i = (hex & "^img").toLowerAscii
+    let myPtr = cast[pointer](image)
+    let hex = "0x" & cast[uint64](myPtr).toHex
+    let p = (hex & "^img").toLowerAscii
 
-    imgTable[i] = image
+    imgTable[p] = image
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(i), -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
     return Tcl.OK
   except Exception as e:
-    echo "pix(error): ", e.msg
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    return Tcl.ERROR
+
+proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Destroy current svg or all svgs if special word `all` is specified.
+  # 
+  # value - svg object or string 
+  #
+  # Returns nothing.
+  try:
+
+    if objc != 2:
+      Tcl.WrongNumArgs(interp, 1, objv, "<svg>|string")
+      return Tcl.ERROR
+    
+    # Image
+    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    if arg1 == "all":
+      svgTable.clear()
+    else:
+      svgTable.del($arg1)
+
+    return Tcl.OK
+  except Exception as e:
+    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
     return Tcl.ERROR
