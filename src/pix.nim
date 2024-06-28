@@ -260,8 +260,6 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc,dynlib.} =
     return Tcl.ERROR
   if Tcl.CreateObjCommand(interp, "pix::img::flipVertical", pix_image_flipVertical, nil, nil) == nil:
     return Tcl.ERROR
-  if Tcl.CreateObjCommand(interp, "pix::img::flipVertical", pix_image_flipVertical, nil, nil) == nil:
-    return Tcl.ERROR
   if Tcl.CreateObjCommand(interp, "pix::img::getColor", pix_image_getColor, nil, nil) == nil:
     return Tcl.ERROR
   if Tcl.CreateObjCommand(interp, "pix::img::getPixel", pix_image_getPixel, nil, nil) == nil:
