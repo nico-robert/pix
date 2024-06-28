@@ -627,7 +627,7 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     let dictObj = Tcl.NewDictObj()
     discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", -1), Tcl.NewDoubleObj(metrics.width))
 
-    Tcl.SetObjResult(interp, dictObj);
+    Tcl.SetObjResult(interp, dictObj)
 
     return Tcl.OK
   except Exception as e:
@@ -2343,7 +2343,7 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       for y in 0..2:
         discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewDoubleObj(mat[x][y]))
 
-    Tcl.SetObjResult(interp, newListobj);
+    Tcl.SetObjResult(interp, newListobj)
 
     return Tcl.OK
   except Exception as e:
@@ -2370,7 +2370,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     for _, value in ctx.getLineDash():
       discard Tcl.ListObjAppendElement(interp, newSeqListobj, Tcl.NewDoubleObj(value))
 
-    Tcl.SetObjResult(interp, newSeqListobj);
+    Tcl.SetObjResult(interp, newSeqListobj)
 
     return Tcl.OK
   except Exception as e:

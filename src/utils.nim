@@ -104,7 +104,7 @@ proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.b.int))
     discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.a.int))
 
-    Tcl.SetObjResult(interp, newobj);
+    Tcl.SetObjResult(interp, newobj)
 
     return Tcl.OK
   except Exception as e:

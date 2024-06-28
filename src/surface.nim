@@ -36,7 +36,7 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     var i = 0
     while i < (img.width * img.height * 4):
-      let a = float(imgpixie[i+3]) / 255.0;
+      let a = float(imgpixie[i+3]) / 255.0
       imgData[i+0] = uint8(float(imgpixie[i+0]) / a + 0.5)
       imgData[i+1] = uint8(float(imgpixie[i+1]) / a + 0.5)
       imgData[i+2] = uint8(float(imgpixie[i+2]) / a + 0.5)
