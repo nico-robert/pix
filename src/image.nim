@@ -130,7 +130,7 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # Fills the image with the color.
   # 
   # image   - object
-  # value   - string color or <paint> object
+  # value   - string color or paint object
   #
   # Returns nothing.
   try:
@@ -201,7 +201,7 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let cmd = Tcl.GetStringFromObj(objv[0], nil)
 
     if objc notin (4..5):
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> <path>|string color|<paint> matrix:optional")
+      Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|string' 'color|<paint>' matrix:optional")
       return Tcl.ERROR
 
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
