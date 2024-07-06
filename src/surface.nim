@@ -27,7 +27,7 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let source = Tk.FindPhoto(interp, photosource)
 
     if source == nil:
-      Tcl.SetResult(interp, "photo not found", nil)
+      ERROR_MSG(interp, "pix(error): photo not found")
       return Tcl.ERROR
 
     var pblock: Tk.PhotoImageBlock
@@ -61,5 +61,5 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR

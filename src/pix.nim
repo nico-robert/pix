@@ -55,7 +55,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc,dynlib.} =
   if ns == nil:
     ns = Tcl.FindNamespace(interp, "pix", nil, 0)
     if ns == nil:
-      Tcl.SetResult(interp, "Can't create or find namespace 'pix'", nil)
+      ERROR_MSG(interp, "Can't create or find namespace 'pix'")
       return Tcl.ERROR
 
   # Package

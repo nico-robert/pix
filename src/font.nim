@@ -28,7 +28,7 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -56,7 +56,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -87,7 +87,7 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
   
 proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -118,7 +118,7 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -154,7 +154,7 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -192,7 +192,7 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -222,7 +222,7 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -255,7 +255,7 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -280,7 +280,7 @@ proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -320,7 +320,7 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 
@@ -352,7 +352,7 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -377,7 +377,7 @@ proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
     
 proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -402,7 +402,7 @@ proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -436,7 +436,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       let newtface = tface.fallbackTypeface(c)
 
       if newtface == nil:
-        Tcl.SetResult(interp, cstring("pix(error): '<TypeFace>' the return object is 'null'."), nil)
+        ERROR_MSG(interp, "pix(error): '<TypeFace>' the return object is 'null'.")
         return Tcl.ERROR
       
       let myPtr = cast[pointer](newtface)
@@ -449,7 +449,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -481,7 +481,7 @@ proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -510,7 +510,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     let path = tface.getGlyphPath(c)
 
     if path == nil:
-      Tcl.SetResult(interp, cstring("pix(error): '<path>' the return object is 'null'."), nil)
+      ERROR_MSG(interp, "pix(error): '<path>' the return object is 'null'.")
       return Tcl.ERROR
 
     let myPtr = cast[pointer](path)
@@ -523,7 +523,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -559,7 +559,7 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -591,7 +591,7 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -623,7 +623,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       # Font + text
       let font = fontTable[$arg1]
       if objc != 3:
-        Tcl.SetResult(interp, cstring("pix(error): If <font> is present, a 'text' must be associated."), nil)
+        ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
         return Tcl.ERROR
       
       let arg2 = Tcl.GetStringFromObj(objv[2], nil)
@@ -635,7 +635,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       if Tcl.ListObjGetElements(interp, objv[1], count.addr, elements.addr) != Tcl.OK:
         return Tcl.ERROR
       if count == 0:
-        Tcl.SetResult(interp, cstring("pix(error): list <span> object is empty."), nil)
+        ERROR_MSG(interp, "pix(error): list <span> object is empty.")
         return Tcl.ERROR
       var spans = newSeq[Span]()
       var strSpan: cstring
@@ -652,7 +652,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -677,7 +677,7 @@ proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -702,7 +702,7 @@ proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -725,7 +725,7 @@ proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -756,7 +756,7 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -787,7 +787,7 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -818,7 +818,7 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -848,7 +848,7 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -888,7 +888,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       # Font
       font = fontTable[$arg1]
       if objc < 3:
-        Tcl.SetResult(interp, cstring("pix(error): If <font> is present, a 'text' must be associated."), nil)
+        ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
         return Tcl.ERROR
       let arg2 = Tcl.GetStringFromObj(objv[2], nil)
       text = $arg2
@@ -898,7 +898,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
         return Tcl.ERROR
 
       if count == 0:
-        Tcl.SetResult(interp, "wrong # args: list <span> is empty.", nil)
+        ERROR_MSG(interp, "wrong # args: list <span> is empty.")
         return Tcl.ERROR
 
       hasFont = false
@@ -913,7 +913,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
         return Tcl.ERROR
 
       if count mod 2 == 1:
-        Tcl.SetResult(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...", nil)
+        ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
         return Tcl.ERROR
 
       var i = 0
@@ -935,7 +935,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
             if Tcl.ListObjGetElements(interp, elements[i+1], veccount.addr, vecelements.addr) != Tcl.OK:
               return Tcl.ERROR
             if veccount != 2:
-              Tcl.SetResult(interp, "wrong # args: argument should be 'x' 'y'", nil)
+              ERROR_MSG(interp, "wrong # args: argument should be 'x' 'y'")
               return Tcl.ERROR
 
             if Tcl.GetDoubleFromObj(interp, vecelements[0], x.addr) != Tcl.OK: return Tcl.ERROR
@@ -943,7 +943,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
             vecBounds = vec2(x, y)
           else:
-            Tcl.SetResult(interp, cstring("wrong # args: Key '" & $mkey & "' not supported"), nil)
+            ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
             return Tcl.ERROR
         inc(i, 2)
         
@@ -970,7 +970,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -1004,7 +1004,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count mod 2 == 1:
-      Tcl.SetResult(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...", nil)
+      ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
       return Tcl.ERROR
 
     var i = 0
@@ -1047,11 +1047,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         of "color":
           var cseqColorP: Color
           if isColorSimple(elements[i+1], cseqColorP) == false:
-            Tcl.SetResult(
-              interp, 
-              cstring("pix(error): color should be a 'simple color' for 'color' field."),
-              nil
-            )
+            ERROR_MSG(interp, "pix(error): color should be a 'simple color' for 'color' field.")
             return Tcl.ERROR
           font.paint.color = cseqColorP
         of "paints":
@@ -1066,13 +1062,13 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
             font.paints = paints
         else:
-          Tcl.SetResult(interp, cstring("wrong # args: Key '" & $mkey & "' not supported"), nil)
+          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
           return Tcl.ERROR
       inc(i, 2)
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -1103,7 +1099,7 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -1127,5 +1123,5 @@ proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR

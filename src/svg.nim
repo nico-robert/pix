@@ -27,7 +27,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
         return Tcl.ERROR
 
       if count != 2:
-        Tcl.SetResult(interp, "wrong # args: 'size' should be 'width' 'height'", nil)
+        ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
         return Tcl.ERROR
 
       if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
@@ -48,7 +48,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -79,7 +79,7 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -103,5 +103,5 @@ proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR

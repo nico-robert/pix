@@ -1,6 +1,10 @@
 # Copyright (c) 2024 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
+proc ERROR_MSG(interp: Tcl.PInterp, errormsg: string): void =
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
+
 proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
 
   let c: cdouble = 0
@@ -63,7 +67,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
       return Tcl.ERROR
 
     if count != 9:
-      Tcl.SetResult(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'", nil)
+      ERROR_MSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
       return Tcl.ERROR
     
     for i in 0..count-1:
@@ -79,7 +83,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
   
 proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -108,7 +112,7 @@ proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_parsePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -132,7 +136,7 @@ proc pix_parsePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -159,5 +163,5 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR

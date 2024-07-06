@@ -27,7 +27,7 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
     
 proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -66,7 +66,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     if count mod 2 == 1:
-      Tcl.SetResult(interp, "wrong # args: 'dict options' should be key value ?key1 ?value1", nil)
+      ERROR_MSG(interp, "wrong # args: 'dict options' should be key value ?key1 ?value1")
       return Tcl.ERROR
       
     var i = 0
@@ -101,7 +101,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
               if Tcl.ListObjGetElements(interp, subelements[j], len.addr, position.addr) != Tcl.OK:
                 return Tcl.ERROR
               if len != 2:
-                Tcl.SetResult(interp, "wrong # args: 'positions' should be 'x' 'y'", nil)
+                ERROR_MSG(interp, "wrong # args: 'positions' should be 'x' 'y'")
                 return Tcl.ERROR
 
               if Tcl.GetDoubleFromObj(interp, position[0], x.addr) != Tcl.OK: return Tcl.ERROR
@@ -118,7 +118,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
               if Tcl.ListObjGetElements(interp, subelements[j], len.addr, stop.addr) != Tcl.OK:
                 return Tcl.ERROR
               if len != 2:
-                Tcl.SetResult(interp, "wrong # args: 'items' should be 'color' 'position'", nil)
+                ERROR_MSG(interp, "wrong # args: 'items' should be 'color' 'position'")
                 return Tcl.ERROR
               if isColorSimple(stop[0], cseqColorP) == false:
                 let arg2 = Tcl.GetStringFromObj(stop[0], nil)
@@ -130,13 +130,13 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
               colorstops.add(ColorStop(color: cseqColorP, position: p))
             paint.gradientStops = colorstops
         else:
-          Tcl.SetResult(interp, cstring("wrong # args: Key '" & $mkey & "' not supported"), nil)
+          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
           return Tcl.ERROR
       inc(i, 2)
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR 
 
 proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -167,7 +167,7 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -195,7 +195,7 @@ proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
 proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -219,6 +219,6 @@ proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    Tcl.SetResult(interp, cstring("pix(error): " & e.msg), nil)
+    ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
