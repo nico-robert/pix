@@ -625,7 +625,7 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     let metrics = ctx.measureText(text)
 
     let dictObj = Tcl.NewDictObj()
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", -1), Tcl.NewDoubleObj(metrics.width))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewDoubleObj(metrics.width))
 
     Tcl.SetObjResult(interp, dictObj)
 
@@ -2240,6 +2240,7 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   #
   # Returns Tcl dict value.
   try:
+
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
@@ -2257,9 +2258,9 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     let myEnumTextAlign    = ctx.textAlign
     let myEnumTextBaseline = ctx.textBaseline
 
-    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", -1), Tcl.NewStringObj(cstring(img), -1))
-    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", -1), Tcl.NewIntObj(ctx.image.width))
-    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", -1), Tcl.NewIntObj(ctx.image.height))
+    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4), Tcl.NewStringObj(cstring(img), -1))
+    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width))
+    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height))
 
     let mat = ctx.getTransform()
 
@@ -2267,17 +2268,17 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       for y in 0..2:
         discard Tcl.ListObjAppendElement(interp, newListMatobj, Tcl.NewDoubleObj(mat[x][y]))
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("image", -1), dictImgObj)
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("globalAlpha", -1),  Tcl.NewDoubleObj(ctx.globalAlpha))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineWidth", -1),    Tcl.NewDoubleObj(ctx.lineWidth))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("miterLimit", -1),   Tcl.NewDoubleObj(ctx.miterLimit))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineCap", -1),      Tcl.NewStringObj(cstring($myEnumLineCap), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineJoin", -1),     Tcl.NewStringObj(cstring($myEnumLineJoin), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("font", -1),         Tcl.NewStringObj(cstring(ctx.font), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("fontSize", -1),     Tcl.NewDoubleObj(ctx.fontSize))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("transform", -1),    newListMatobj)
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textAlign", -1),    Tcl.NewStringObj(cstring($myEnumTextAlign), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textBaseline", -1), Tcl.NewStringObj(cstring($myEnumTextBaseline), -1))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("image", 5), dictImgObj)
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("globalAlpha", 11),  Tcl.NewDoubleObj(ctx.globalAlpha))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineWidth", 9),     Tcl.NewDoubleObj(ctx.lineWidth))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("miterLimit", 10),   Tcl.NewDoubleObj(ctx.miterLimit))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineCap", 7),       Tcl.NewStringObj(cstring($myEnumLineCap), -1))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineJoin", 8),      Tcl.NewStringObj(cstring($myEnumLineJoin), -1))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("font", 4),          Tcl.NewStringObj(cstring(ctx.font), -1))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("fontSize", 8),      Tcl.NewDoubleObj(ctx.fontSize))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("transform", 9),     newListMatobj)
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textAlign", 9),     Tcl.NewStringObj(cstring($myEnumTextAlign), -1))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textBaseline", 12), Tcl.NewStringObj(cstring($myEnumTextBaseline), -1))
 
     Tcl.SetObjResult(interp, dictObj)
 

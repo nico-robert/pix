@@ -638,8 +638,8 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", -1), Tcl.NewIntObj(img.width))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", -1), Tcl.NewIntObj(img.height))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height))
 
     Tcl.SetObjResult(interp, dictObj)
 
@@ -680,10 +680,10 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     let data = img[x, y]
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", -1), Tcl.NewIntObj(data.r.int))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", -1), Tcl.NewIntObj(data.g.int))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", -1), Tcl.NewIntObj(data.b.int))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", -1), Tcl.NewIntObj(data.a.int))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.int))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.int))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(data.b.int))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(data.a.int))
 
     Tcl.SetObjResult(interp, dictObj)
 
@@ -813,8 +813,8 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     let dictObj = Tcl.NewDictObj()
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("score", -1), Tcl.NewDoubleObj(score))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", -1), Tcl.NewStringObj(p.cstring, -1))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("score", 5), Tcl.NewDoubleObj(score))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), Tcl.NewStringObj(p.cstring, -1))
 
     Tcl.SetObjResult(interp, dictObj)
 
@@ -902,10 +902,10 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     let c = img.getColor(x, y)
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", -1), Tcl.NewDoubleObj(c.r))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", -1), Tcl.NewDoubleObj(c.g))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", -1), Tcl.NewDoubleObj(c.b))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", -1), Tcl.NewDoubleObj(c.a))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewDoubleObj(c.r))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewDoubleObj(c.g))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewDoubleObj(c.b))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewDoubleObj(c.a))
 
     Tcl.SetObjResult(interp, dictObj)
 
@@ -1151,10 +1151,10 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     let rect = img.opaqueBounds()
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", -1), Tcl.NewDoubleObj(rect.x))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", -1), Tcl.NewDoubleObj(rect.y))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", -1), Tcl.NewDoubleObj(rect.w))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", -1), Tcl.NewDoubleObj(rect.h))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
 
     Tcl.SetObjResult(interp, dictObj)
 

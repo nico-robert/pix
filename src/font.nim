@@ -311,10 +311,10 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     else:
       rect = arr.computeBounds()
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", -1), Tcl.NewDoubleObj(rect.x))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", -1), Tcl.NewDoubleObj(rect.y))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", -1), Tcl.NewDoubleObj(rect.w))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", -1), Tcl.NewDoubleObj(rect.h))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
 
     Tcl.SetObjResult(interp, dictObj)
     
@@ -1089,10 +1089,10 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     for index, rect in arr.selectionRects:
       let dictObj = Tcl.NewDictObj()
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", -1), Tcl.NewDoubleObj(rect.x))
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", -1), Tcl.NewDoubleObj(rect.y))
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", -1), Tcl.NewDoubleObj(rect.w))
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", -1), Tcl.NewDoubleObj(rect.h))
+      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
+      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
+      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
+      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
       discard Tcl.DictObjPut(nil, dictGlobobj, Tcl.NewIntObj(index), dictObj)
 
     Tcl.SetObjResult(interp, dictGlobobj)
