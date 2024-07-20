@@ -72,7 +72,7 @@ namespace eval ::pix {
         pix::ctx::fillStyle $ctx "rgba(255, 0, 0, 0.5)" ; # red
         pix::ctx::fillRect $ctx {50 50} {100 100}
 
-        # Save context in a file (*.png|*.bmp|*.jpeg|*.qoi|*.ppm)
+        # Save context in a image file (*.png|*.bmp|*.qoi|*.ppm)
         pix::ctx::writeFile $ctx rectangle.png
 
         # Or display in label by example
