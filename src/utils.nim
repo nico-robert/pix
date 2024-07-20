@@ -9,7 +9,7 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
 
   let c: cdouble = 0
   let count: cint = 0
-  let elements : Tcl.PPObj = nil
+  let elements: Tcl.PPObj = nil
   var color : seq[float32]
 
   if Tcl.ListObjGetElements(nil, obj, count.addr, elements.addr) != Tcl.OK:
@@ -60,7 +60,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
   try:
     let v: cdouble = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
     var value : seq[float32]
     
     if Tcl.ListObjGetElements(interp, obj, count.addr, elements.addr) != Tcl.OK:
@@ -155,11 +155,11 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     if ctxTable.hasKey($arg1):
       let ctx = ctxTable[$arg1]
       let b64 = encode(encodeImage(ctx.image, FileFormat.PngFormat))
-      Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(b64), -1))
+      Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
     else:
       let image = imgTable[$arg1]
       let b64 = encode(encodeImage(image, FileFormat.PngFormat))
-      Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(b64), -1))
+      Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
 
     return Tcl.OK
   except Exception as e:

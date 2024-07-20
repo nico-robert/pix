@@ -10,7 +10,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   try:
     let width, height: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
@@ -591,7 +591,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   try:
     let width, height: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
@@ -658,7 +658,7 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   try:
     let x, y: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
@@ -703,7 +703,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   try:
     let x, y: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
@@ -877,7 +877,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   try:
     let x, y: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
@@ -923,7 +923,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   try:
     let x, y: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
     var val: int = 0
 
     if objc != 3:
@@ -1196,7 +1196,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   try:
     let x, y, width, height: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
@@ -1254,7 +1254,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   try:
     let x, y, width, height: cint = 0
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
@@ -1508,7 +1508,7 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # Save image file.
   # 
   # image    - object
-  # filePath - string (\*.png|\*.bmp|\*.jpeg|\*.qoi|\*.ppm)
+  # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # Returns nothing.
   try:
@@ -1543,7 +1543,7 @@ proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     
     # Image
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
-    if arg1 == "all":
+    if $arg1 == "all":
       imgTable.clear()
     else:
       imgTable.del($arg1)

@@ -605,7 +605,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # Returns Tcl dict value {x y}.
   try:
     let count: cint = 0
-    let elements : Tcl.PPObj = nil
+    let elements: Tcl.PPObj = nil
     var bounds: vmath.Vec2
 
     if objc notin (2..3):
@@ -1116,7 +1116,7 @@ proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     
     # Font
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
-    if arg1 == "all":
+    if $arg1 == "all":
       fontTable.clear()
     else:
       fontTable.del($arg1)

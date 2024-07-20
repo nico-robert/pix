@@ -212,7 +212,7 @@ proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     
     # Font
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
-    if arg1 == "all":
+    if $arg1 == "all":
       paintTable.clear()
     else:
       paintTable.del($arg1)

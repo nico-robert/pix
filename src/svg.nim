@@ -96,7 +96,7 @@ proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     
     # Image
     let arg1 = Tcl.GetStringFromObj(objv[1], nil)
-    if arg1 == "all":
+    if $arg1 == "all":
       svgTable.clear()
     else:
       svgTable.del($arg1)
