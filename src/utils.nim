@@ -50,15 +50,11 @@ proc isColorRgbx(color: string, colorRgbx: var ColorRGBX): bool =
   # colorRgbx - The color to fill if the color is in the rgbx format.
   # 
   # Returns true if the color is in the rgbx format, false otherwise.
-  var newC: string
 
-  # Check if the color is in the rgbx format.
-  if (color.len < 4) or color[0..3] != "rgbx":
+  if (color.len < 4) or (color[0..3] != "rgbx"):
     return false
 
-  newC = color.replace("rgbx(", "")
-  newC = newC.replace(")", "")
-  let st = split($newC, ",")
+  let st = split(color[5..^2], ",")
 
   if st.len != 4:
     return false
