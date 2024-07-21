@@ -2,11 +2,21 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc ERROR_MSG(interp: Tcl.PInterp, errormsg: string): void =
-
+  # Sets the interpreter result to the error message.
+  # 
+  # interp   - The Tcl interpreter.
+  # errormsg - The error message.
+  # 
+  # Returns None.
   Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
 
 proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
-
+  # Checks if the obj is a color.
+  # 
+  # obj        - The object to check.
+  # colorSimple - The color to fill if the object is a color.
+  # 
+  # Returns true if the object is a color, false otherwise.
   let c: cdouble = 0
   let count: cint = 0
   let elements: Tcl.PPObj = nil
@@ -25,6 +35,7 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
       return false
     color.add(c)
 
+  # Fill the colorSimple with the color.
   if count == 3:
     colorSimple = color(color[0], color[1], color[2])
   else:
@@ -33,9 +44,15 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   return true
 
 proc isColorRgbx(color: string, colorRgbx: var ColorRGBX): bool =
-
+  # Checks if the color is a color in the rgbx format.
+  # 
+  # color     - The color to check.
+  # colorRgbx - The color to fill if the color is in the rgbx format.
+  # 
+  # Returns true if the color is in the rgbx format, false otherwise.
   var newC: string
 
+  # Check if the color is in the rgbx format.
   if (color.len < 4) or color[0..3] != "rgbx":
     return false
 
@@ -46,6 +63,7 @@ proc isColorRgbx(color: string, colorRgbx: var ColorRGBX): bool =
   if st.len != 4:
     return false
 
+  # Fill the colorRgbx with the color.
   colorRgbx = rgbx(
     parseInt(strutils.strip(st[0])).uint8,
     parseInt(strutils.strip(st[1])).uint8,
@@ -56,7 +74,13 @@ proc isColorRgbx(color: string, colorRgbx: var ColorRGBX): bool =
   return true
 
 proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cint =
-
+# Converts a Tcl list to a matrix 3x3.
+# 
+# interp  - The Tcl interpreter.
+# obj     - The Tcl object.
+# matrix3 - The matrix to fill with the values of the Tcl object.
+# 
+# Returns Tcl.OK if successful, Tcl.ERROR otherwise.
   try:
     let v: cdouble = 0
     let count: cint = 0
@@ -75,6 +99,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
         return Tcl.ERROR
       value.add(v)
 
+    # Fill the matrix3 with the values of the Tcl object.
     matrix3 = vmath.mat3(
       value[0], value[1], value[2],
       value[3], value[4], value[5],
@@ -150,18 +175,15 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetString(objv[1])
+    let arg1  = Tcl.GetString(objv[1])
+    let img   = if ctxTable.hasKey($arg1): ctxTable[$arg1].image else: imgTable[$arg1]
+    let data  = encodeImage(img, FileFormat.PngFormat)
+    let b64   = encode(data)
 
-    if ctxTable.hasKey($arg1):
-      let ctx = ctxTable[$arg1]
-      let b64 = encode(encodeImage(ctx.image, FileFormat.PngFormat))
-      Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
-    else:
-      let image = imgTable[$arg1]
-      let b64 = encode(encodeImage(image, FileFormat.PngFormat))
-      Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
 
     return Tcl.OK
   except Exception as e:
     ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
+  
