@@ -12,6 +12,7 @@ var GetBooleanFromObj*: proc(interp: PInterp, objPtr: PObj, boolPtr: ptr cint):i
 var GetDoubleFromObj*: proc(interp: PInterp, objPtr: PObj, doublePtr: ptr cdouble):int {.cdecl.}
 var GetIntFromObj*: proc(interp: PInterp, objPtr: PObj, intPtr: ptr cint):int {.cdecl.}
 var GetStringFromObj*: proc(objPtr: PObj, lengthPtr: ptr cint):cstring {.cdecl.}
+var GetString*: proc(objPtr: PObj):cstring {.cdecl.}
 var ListObjAppendList*: proc(interp: PInterp, listPtr: PObj, elemListPtr: PObj):int {.cdecl.}
 var ListObjAppendElement*: proc(interp: PInterp, listPtr: PObj, objPtr: PObj):int {.cdecl.}
 var ListObjGetElements*: proc(interp: PInterp, listPtr: PObj, objcPtr: ptr cint, objvPtr: ptr PPObj):int {.cdecl.}
@@ -697,6 +698,7 @@ proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl
   GetDoubleFromObj = tclStubsPtr.GetDoubleFromObj
   GetIntFromObj = tclStubsPtr.GetIntFromObj
   GetStringFromObj = tclStubsPtr.GetStringFromObj
+  GetString = tclStubsPtr.GetString
   ListObjAppendList = tclStubsPtr.ListObjAppendList
   ListObjAppendElement = tclStubsPtr.ListObjAppendElement
   ListObjGetElements = tclStubsPtr.ListObjGetElements
