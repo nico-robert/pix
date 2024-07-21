@@ -63,9 +63,8 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc,dynlib.} =
 
   # Nim version supported.
   if NimVersion < "2.0.2":
-    raise newException(OSError, 
-      "pix(error): Nim version: '" & NimVersion & "' not supported."
-    )
+    ERROR_MSG(interp, "pix(error): Nim version: '" & NimVersion & "' not supported.")
+    return Tcl.ERROR
   
   # Commands context :
   if Tcl.CreateObjCommand(interp, "pix::ctx::new", pix_context, nil, nil) == nil:
