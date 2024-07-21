@@ -139,8 +139,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     if objc == 7:
       if Tcl.GetBooleanFromObj(interp, objv[6], clockcw.addr) != Tcl.OK:
         return Tcl.ERROR
-      if clockcw.uint8 == 1:
-        ccw = true
+      ccw = clockcw.bool
 
     path.arc(x, y, r, a0, a1, ccw)
 
@@ -458,8 +457,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     if objc == 5:
       if Tcl.GetBooleanFromObj(interp, objv[4], clockcw.addr) != Tcl.OK:
         return Tcl.ERROR
-      if clockcw.uint8 == 0:
-        ccw = false
+      ccw = clockcw.bool
 
     path.rect(x, y, width, height, ccw)
 
@@ -763,11 +761,8 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     if Tcl.GetDoubleFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
       
-    if largeA.uint8 == 1:
-      largeArcFlag = true
-
-    if sweepF.uint8 == 1:
-      sweepFlag = true
+    largeArcFlag = largeA.bool
+    sweepFlag    = sweepF.bool
 
     path.ellipticalArcTo(rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y)
 
@@ -887,8 +882,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     if objc == 6:
       if Tcl.GetBooleanFromObj(interp, objv[5], clockcw.addr) != Tcl.OK:
         return Tcl.ERROR
-      if clockcw.uint8 == 0:
-        ccw = false
+      ccw = clockcw.bool
 
     path.roundedRect(x, y, width, height, nw, ne, se, sw, ccw)
 

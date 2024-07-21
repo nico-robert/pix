@@ -923,8 +923,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
           of "wrap":
             if Tcl.GetBooleanFromObj(interp, elements[i+1], wrapB.addr) != Tcl.OK:
               return Tcl.ERROR
-            if wrapB.uint8 == 0:
-              mywrap = false
+            mywrap = wrapB.bool
           of "hAlign":
             let arg = Tcl.GetString(elements[i+1])
             myEnumhAlign = $arg
@@ -1014,24 +1013,15 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         of "noKerningAdjustments":
           if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
             return Tcl.ERROR
-          if myBool.uint8 == 0:
-            font.noKerningAdjustments = false
-          else:
-            font.noKerningAdjustments = true
+          font.noKerningAdjustments = myBool.bool
         of "underline":
           if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
             return Tcl.ERROR
-          if myBool.uint8 == 0:
-            font.underline = false
-          else:
-            font.underline = true
+          font.underline = myBool.bool
         of "strikethrough":
           if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
             return Tcl.ERROR
-          if myBool.uint8 == 0:
-            font.strikethrough = false
-          else:
-            font.strikethrough = true
+          font.strikethrough = myBool.bool
         of "size":
           if Tcl.GetDoubleFromObj(interp, elements[i+1], fsize.addr) != Tcl.OK:
             return Tcl.ERROR

@@ -300,7 +300,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # The starting point is the latest point in the current path,
   # which can be changed using moveTo() before creating the quadratic Bézier curve.
   # 
-  # context      - object
+  # context        - object
   # coordinates_1  - list cpx,cpy
   # coordinates_2  - list x,y 
   #
@@ -383,15 +383,14 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     if Tcl.GetDoubleFromObj(interp, elements[0], x.addr) != Tcl.OK : return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y.addr) != Tcl.OK : return Tcl.ERROR
 
-    if Tcl.GetDoubleFromObj(interp, objv[3], r.addr)     != Tcl.OK : return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, objv[4], a0.addr)    != Tcl.OK : return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, objv[5], a1.addr)    != Tcl.OK : return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, objv[3], r.addr)  != Tcl.OK : return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, objv[4], a0.addr) != Tcl.OK : return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, objv[5], a1.addr) != Tcl.OK : return Tcl.ERROR
       
     if objc == 7:
       if Tcl.GetBooleanFromObj(interp, objv[6], clockcw.addr) != Tcl.OK:
         return Tcl.ERROR
-      if clockcw.uint8 == 1:
-        ccw = true
+      ccw = clockcw.bool
 
     ctx.arc(x, y, r, a0, a1, ccw)
 
