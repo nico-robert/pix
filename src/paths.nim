@@ -33,10 +33,10 @@ proc pix_path_addPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<path> <path2>")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let path2 = pathTable[$arg2]
   
     path.addPath(path2)
@@ -118,7 +118,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       return Tcl.ERROR
 
     # path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -169,7 +169,7 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -226,7 +226,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -283,7 +283,7 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y}")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
     
     # Coordinates
@@ -321,7 +321,7 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y}")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
     
     # Coordinates
@@ -356,7 +356,7 @@ proc pix_path_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       Tcl.WrongNumArgs(interp, 1, objv, "<path>")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     path.closePath()
@@ -385,7 +385,7 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} size sides")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
     
     # Coordinates polygon
@@ -432,7 +432,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} ccw:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -486,7 +486,7 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -533,7 +533,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -559,7 +559,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
         return Tcl.ERROR
       
-      let arg2 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg2 = Tcl.GetString(objv[3])
       let myEnum = parseEnum[WindingRule]($arg2)
 
       if path.fillOverlaps(vec2(x, y), transform = matrix3, windingRule = myEnum): val = 1
@@ -586,7 +586,7 @@ proc pix_path_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Matrix 3x3 check
@@ -615,7 +615,7 @@ proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Matrix 3x3 check
@@ -650,7 +650,7 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
     
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
     
     let copypath = path.copy()
@@ -687,7 +687,7 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
     
     # Coordinates
@@ -735,7 +735,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -797,7 +797,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     # Coordinates
@@ -849,7 +849,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} {nw ne se sw} ccw:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -919,7 +919,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {key value key value ...}:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -943,7 +943,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
       var i = 0
       while i < count:
-        let mkey = Tcl.GetStringFromObj(elements[i], nil)
+        let mkey = Tcl.GetString(elements[i])
         case $mkey:
           of "strokeWidth":
             if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
@@ -952,13 +952,13 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
             if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
               return Tcl.ERROR
           of "lineCap":
-            let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+            let arg = Tcl.GetString(elements[i+1])
             myEnumlineCap = $arg
           of "miterLimit":
             if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
               return Tcl.ERROR
           of "lineJoin":
-            let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+            let arg = Tcl.GetString(elements[i+1])
             myEnumlineJoin = $arg
           of "dashes":
             if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
@@ -1005,7 +1005,7 @@ proc pix_path_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
     
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if $arg1 == "all":
       pathTable.clear()
     else:

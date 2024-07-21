@@ -13,7 +13,7 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
       Tcl.WrongNumArgs(interp, 1, objv, "enum:PaintKind")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let myEnum = parseEnum[PaintKind]($arg1)
 
     let paint = newPaint(myEnum)
@@ -58,7 +58,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
       
     # Paint
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let paint = paintTable[$arg1]
 
     # Dict
@@ -71,20 +71,20 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       
     var i = 0
     while i < count:
-      let mkey = Tcl.GetStringFromObj(elements[i], nil)
+      let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "color":
-          let value = Tcl.GetStringFromObj(elements[i+1], nil)
+          let value = Tcl.GetString(elements[i+1])
           paint.color = parseHtmlColor($value).color
         of "opacity":
           if Tcl.GetDoubleFromObj(interp, elements[i+1], opacity.addr) != Tcl.OK:
             return Tcl.ERROR
           paint.opacity = opacity
         of "blendMode":
-          let value = Tcl.GetStringFromObj(elements[i+1], nil)
+          let value = Tcl.GetString(elements[i+1])
           paint.blendMode = parseEnum[BlendMode]($value)
         of "image":
-          let value = Tcl.GetStringFromObj(elements[i+1], nil)
+          let value = Tcl.GetString(elements[i+1])
           paint.image = imgTable[$value]
         of "imageMat":
           # Matrix 3x3 check
@@ -121,7 +121,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
                 ERROR_MSG(interp, "wrong # args: 'items' should be 'color' 'position'")
                 return Tcl.ERROR
               if isColorSimple(stop[0], cseqColorP) == false:
-                let arg2 = Tcl.GetStringFromObj(stop[0], nil)
+                let arg2 = Tcl.GetString(stop[0])
                 cseqColorP = parseHtmlColor($arg2)
 
               if Tcl.GetDoubleFromObj(interp, stop[1], p.addr) != Tcl.OK:
@@ -152,7 +152,7 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
     
     # Paint
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let paint = paintTable[$arg1]
     
     let copy = paint.copy()
@@ -184,11 +184,11 @@ proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
     
     # Paint
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let paint = paintTable[$arg1]
 
     # Image
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let img = imgTable[$arg2]
     
     img.fillGradient(paint)
@@ -211,7 +211,7 @@ proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
     
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if $arg1 == "all":
       paintTable.clear()
     else:

@@ -20,7 +20,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 
     if objc == 2:
       # Image
-      let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+      let arg1 = Tcl.GetString(objv[1])
       if imgTable.hasKey($arg1):
         img = imgTable[$arg1]
       else:
@@ -49,7 +49,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
       
       # Color RGBA check
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let color = parseHtmlColor($arg2).rgba
 
       img = newImage(width, height)
@@ -85,10 +85,10 @@ proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> color")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     ctx.strokeStyle = parseHtmlColor($arg2).rgba
 
     return Tcl.OK
@@ -108,7 +108,7 @@ proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     ctx.save()
@@ -131,9 +131,9 @@ proc pix_ctx_textBaseline(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> enum=BaselineAlignment")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
 
     let baseline = parseEnum[BaselineAlignment]($arg2)
 
@@ -158,7 +158,7 @@ proc pix_ctx_restore(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     ctx.restore()
@@ -182,7 +182,7 @@ proc pix_ctx_saveLayer(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     ctx.saveLayer()
@@ -211,7 +211,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates segment
@@ -263,7 +263,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -315,7 +315,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -369,7 +369,7 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -419,7 +419,7 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -474,7 +474,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -533,7 +533,7 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -573,12 +573,12 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     if objc == 3:
       # Path
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       if pathTable.hasKey($arg2):
         let path = pathTable[$arg2]
         ctx.clip(path)
@@ -588,9 +588,9 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
         ctx.clip(myEnum)
     elif objc == 4:
       # Path
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let path = pathTable[$arg2]
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let myEnum = parseEnum[WindingRule]($arg3)
       ctx.clip(path, myEnum)
     else:
@@ -615,11 +615,11 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Text
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let text = $arg2
 
     let metrics = ctx.measureText(text)
@@ -646,7 +646,7 @@ proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     ctx.resetTransform()
@@ -685,11 +685,11 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Image
-    let im = Tcl.GetStringFromObj(objv[2], nil)
+    let im = Tcl.GetString(objv[2])
     let img = imgTable[$im]
     
     if objc == 5:
@@ -802,7 +802,7 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Coordinates
@@ -847,7 +847,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Coordinates
@@ -888,7 +888,7 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Matrix 3x3 check
@@ -918,7 +918,7 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Matrix 3x3 check
@@ -947,7 +947,7 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Angle
@@ -978,7 +978,7 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -1013,11 +1013,11 @@ proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Enum
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let myEnum = parseEnum[LineJoin]($arg2)
 
     ctx.lineJoin = myEnum
@@ -1042,12 +1042,12 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     if objc == 3:
       # Path
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       if pathTable.hasKey($arg2):
         let path = pathTable[$arg2]
         ctx.fill(path)
@@ -1057,9 +1057,9 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
         ctx.fill(myEnum)
     elif objc == 4:
       # Path
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let path = pathTable[$arg2]
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let myEnum = parseEnum[WindingRule]($arg3)
       ctx.fill(path, myEnum)
     else:
@@ -1087,7 +1087,7 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1134,7 +1134,7 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1182,7 +1182,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} {nw ne se sw}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1242,7 +1242,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1313,7 +1313,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1383,7 +1383,7 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1426,10 +1426,10 @@ proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> color|<paint>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
 
     if paintTable.hasKey($arg2):
       let paint = paintTable[$arg2]
@@ -1457,7 +1457,7 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> alpha")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.GetDoubleFromObj(interp, objv[2], alpha.addr) != Tcl.OK:
@@ -1490,7 +1490,7 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1529,7 +1529,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} <path>:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1543,7 +1543,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     if Tcl.GetDoubleFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
 
     if objc == 4:
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let path = pathTable[$arg3]
       if ctx.isPointInStroke(path, x, y): val = 1
     else:
@@ -1575,7 +1575,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} <path>:optional enum=WindingRule:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1589,7 +1589,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     if Tcl.GetDoubleFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
 
     if objc == 4:
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       if pathTable.hasKey($arg3):
         let path = pathTable[$arg3]
         if ctx.isPointInPath(path, x, y): val = 1
@@ -1597,9 +1597,9 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
         let myEnum = parseEnum[WindingRule]($arg3)
         if ctx.isPointInPath(x, y, windingRule = myEnum): val = 1
     elif objc == 5:
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let path = pathTable[$arg3]
-      let arg4 = Tcl.GetStringFromObj(objv[4], nil)
+      let arg4 = Tcl.GetString(objv[4])
       let myEnum = parseEnum[WindingRule]($arg4)
       if ctx.isPointInPath(path, x, y, windingRule = myEnum): val = 1
     else:
@@ -1629,7 +1629,7 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1662,11 +1662,11 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> <path>:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if objc == 3:
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let path = pathTable[$arg2]
       ctx.stroke(path)
     else:
@@ -1693,7 +1693,7 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1726,10 +1726,10 @@ proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> filePath")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
-    let file = Tcl.GetStringFromObj(objv[2], nil)
+    let file = Tcl.GetString(objv[2])
 
     ctx.image.writeFile($file)
 
@@ -1750,7 +1750,7 @@ proc pix_ctx_beginPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     ctx.beginPath()
@@ -1774,7 +1774,7 @@ proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     ctx.closePath()
@@ -1798,7 +1798,7 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> width")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     if Tcl.GetDoubleFromObj(interp, objv[2], width.addr) != Tcl.OK:
@@ -1824,8 +1824,8 @@ proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> filepath")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg1 = Tcl.GetString(objv[1])
+    let arg2 = Tcl.GetString(objv[2])
     let ctx = ctxTable[$arg1]
 
     ctx.font = $arg2
@@ -1849,7 +1849,7 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> size")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     if Tcl.GetDoubleFromObj(interp, objv[2], fsize.addr) != Tcl.OK:
@@ -1880,10 +1880,10 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let text = $arg2
     
     if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
@@ -1920,7 +1920,7 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Coordinates
@@ -1966,7 +1966,7 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -2008,7 +2008,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     # Coordinates
@@ -2050,7 +2050,7 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Coordinates polygon
@@ -2096,7 +2096,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Coordinates polygon
@@ -2141,7 +2141,7 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     # Coordinates
@@ -2186,10 +2186,10 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> 'text' {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     
     if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
       return Tcl.ERROR
@@ -2221,10 +2221,10 @@ proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> enum=HorizontalAlignment")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let myEnum = parseEnum[HorizontalAlignment]($arg2)
 
     ctx.textAlign = myEnum
@@ -2246,7 +2246,7 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let st  = split($arg1, '^')
     let img = st[0] & "^img"
 
@@ -2305,7 +2305,7 @@ proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> dashes")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -2335,7 +2335,7 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
 
     let mat = ctx.getTransform()
@@ -2365,7 +2365,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let ctx = ctxTable[$arg1]
     let newSeqListobj = Tcl.NewListObj(0, nil)
     
@@ -2410,7 +2410,7 @@ proc pix_ctx_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     # Context
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if $arg1 == "all":
       ctxTable.clear()
     else:

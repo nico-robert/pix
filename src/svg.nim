@@ -19,7 +19,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
       
     # Svg string
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
 
     if objc == 3:
       # Size
@@ -64,7 +64,7 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
       
     # Svg
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let svg = svgTable[$arg1]
     
     let image = newImage(svg)
@@ -95,7 +95,7 @@ proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
     
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if $arg1 == "all":
       svgTable.clear()
     else:

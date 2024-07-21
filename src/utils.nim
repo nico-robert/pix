@@ -99,7 +99,7 @@ proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     # Parse
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let color = parseHtmlColor($arg1).rgba
     let newobj = Tcl.NewListObj(0, nil)
     
@@ -128,7 +128,7 @@ proc pix_parsePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     # Path
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
 
     let parse = parsePath($arg1)
 
@@ -150,7 +150,7 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
 
     if ctxTable.hasKey($arg1):
       let ctx = ctxTable[$arg1]

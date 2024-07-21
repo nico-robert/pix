@@ -13,7 +13,7 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       Tcl.WrongNumArgs(interp, 1, objv, "filePath")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     
     # Font
     let font = readFont($arg1)
@@ -46,7 +46,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
     
     if Tcl.GetDoubleFromObj(interp, objv[2], fsize.addr) != Tcl.OK:
@@ -73,7 +73,7 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
     
     # Color simple check
@@ -81,7 +81,7 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     if isColorSimple(objv[1], cseqColorP):
       font.paint.color = cseqColorP
     else:
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let color = parseHtmlColor($arg2)
       font.paint.color = color
     
@@ -103,7 +103,7 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # TypeFace
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     let font = newFont(tface)
@@ -135,11 +135,11 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
 
     # Text
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let text = $arg2
 
     let span = newSpan(text, font)
@@ -171,12 +171,12 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
 
     if objc == 3:
       # Paint
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let paint = paintTable[$arg2]
       font.paint = paint
     else:
@@ -207,7 +207,7 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       Tcl.WrongNumArgs(interp, 1, objv, "filePath")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     
     # Typeface
     let typeface = readTypeface($arg1)
@@ -237,7 +237,7 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       Tcl.WrongNumArgs(interp, 1, objv, "filePath")
       return Tcl.ERROR
       
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let newListobj = Tcl.NewListObj(0, nil)
     
     # Typeface
@@ -271,7 +271,7 @@ proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     let value = tface.ascent()
@@ -299,7 +299,7 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Arrangement
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let arr = arrTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
@@ -337,7 +337,7 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
     
     let newfont = font.copy()
@@ -368,7 +368,7 @@ proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
     
     let value = font.defaultLineHeight()
@@ -393,7 +393,7 @@ proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     let value = tface.descent()
@@ -420,11 +420,11 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     # Rune
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     var char1: string = $arg2
 
     let c = char1.runeAt(0)
@@ -466,11 +466,11 @@ proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     # Rune
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     var char1: string = $arg2
 
     let c = char1.runeAt(0)
@@ -498,11 +498,11 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     # Rune
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     var char1: string = $arg2
 
     let c = char1.runeAt(0)
@@ -541,15 +541,15 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     # Rune
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     var char1: string = $arg2
     let c1 = char1.runeAt(0)
 
-    let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+    let arg3 = Tcl.GetString(objv[3])
     var char2: string = $arg3
     let c2 = char2.runeAt(0)
 
@@ -577,11 +577,11 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     # Rune
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     var char1: string = $arg2
     let c = char1.runeAt(0)
 
@@ -612,7 +612,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> or <font> + 'text' or <span>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let newListobj = Tcl.NewListObj(0, nil)
 
     if arrTable.hasKey($arg1):
@@ -626,7 +626,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
         ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
         return Tcl.ERROR
       
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       let text = $arg2
 
       bounds = font.layoutBounds(text)
@@ -640,7 +640,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       var spans = newSeq[Span]()
       var strSpan: cstring
       for i in 0..count-1:
-        strSpan = Tcl.GetStringFromObj(elements[i], nil)
+        strSpan = Tcl.GetString(elements[i])
         spans.add(spanTable[$strSpan])
 
       bounds = spans.layoutBounds()
@@ -668,7 +668,7 @@ proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     let value = tface.lineGap()
@@ -693,7 +693,7 @@ proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     let value = tface.lineHeight()
@@ -716,7 +716,7 @@ proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     # TypeFace
-    let arg1  = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1  = Tcl.GetString(objv[1])
     let tface = tFaceTable[$arg1]
 
     let name = tface.name() 
@@ -741,7 +741,7 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     # Buffer
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let buf = $arg1
     
     let typeface = parseOtf(buf)
@@ -772,7 +772,7 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     # Buffer
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let buf = $arg1
     
     let typeface = parseSvgFont(buf)
@@ -803,7 +803,7 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     # Buffer
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let buf = $arg1
     
     let typeface = parseTtf(buf)
@@ -834,7 +834,7 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       Tcl.WrongNumArgs(interp, 1, objv, "<font>|<TypeFace>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if fontTable.hasKey($arg1):
       # Font
       let font = fontTable[$arg1]
@@ -882,7 +882,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, msg.cstring)
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     
     if fontTable.hasKey($arg1):
       # Font
@@ -890,7 +890,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       if objc < 3:
         ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
         return Tcl.ERROR
-      let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+      let arg2 = Tcl.GetString(objv[2])
       text = $arg2
     else:
       # Spans
@@ -903,7 +903,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
       hasFont = false
       for j in 0..count-1:
-        let myspan = Tcl.GetStringFromObj(elements[j], nil)
+        let myspan = Tcl.GetString(elements[j])
         spans.add(spanTable[$myspan])
 
     if (objc == 4 and hasFont) or (objc == 3 and hasFont == false):
@@ -918,7 +918,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
       var i = 0
       while i < count:
-        let mkey = Tcl.GetStringFromObj(elements[i], nil)
+        let mkey = Tcl.GetString(elements[i])
         case $mkey:
           of "wrap":
             if Tcl.GetBooleanFromObj(interp, elements[i+1], wrapB.addr) != Tcl.OK:
@@ -926,10 +926,10 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
             if wrapB.uint8 == 0:
               mywrap = false
           of "hAlign":
-            let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+            let arg = Tcl.GetString(elements[i+1])
             myEnumhAlign = $arg
           of "vAlign":
-            let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+            let arg = Tcl.GetString(elements[i+1])
             myEnumvAlign = $arg
           of "bounds":
             if Tcl.ListObjGetElements(interp, elements[i+1], veccount.addr, vecelements.addr) != Tcl.OK:
@@ -997,7 +997,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -1009,7 +1009,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     var i = 0
     while i < count:
-      let mkey = Tcl.GetStringFromObj(elements[i], nil)
+      let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "noKerningAdjustments":
           if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
@@ -1041,7 +1041,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
             return Tcl.ERROR
           font.lineHeight = flineHeight
         of "paint":
-          let arg2 = Tcl.GetStringFromObj(elements[i+1], nil)
+          let arg2 = Tcl.GetString(elements[i+1])
           let color = parseHtmlColor($arg2)
           font.paint = color
         of "color":
@@ -1056,7 +1056,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
           if countP != 0:
             var paints = newSeq[Paint]()
             for ps in 0..countP-1:
-              let arg2 = Tcl.GetStringFromObj(elementsP[ps], nil)
+              let arg2 = Tcl.GetString(elementsP[ps])
               let paint = paintTable[$arg2]
               paints.add(paint)
 
@@ -1083,7 +1083,7 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let arr = arrTable[$arg1]
     let dictGlobobj = Tcl.NewDictObj()
 
@@ -1115,7 +1115,7 @@ proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
     
     # Font
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if $arg1 == "all":
       fontTable.clear()
     else:

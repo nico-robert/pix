@@ -55,7 +55,7 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
     
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
     
     let copyimg = img.copy()
@@ -92,17 +92,17 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
     
     # Image1
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img1 = imgTable[$arg1]
 
     # Image2
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let img2 = imgTable[$arg2]
 
     if objc == 3:
       img1.draw(img2)
     elif objc == 4:
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
         return Tcl.ERROR
       if count == 1:
@@ -116,7 +116,7 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       if matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
         return Tcl.ERROR
 
-      let arg5 = Tcl.GetStringFromObj(objv[5], nil)
+      let arg5 = Tcl.GetString(objv[5])
       let myEnum = parseEnum[BlendMode]($arg5)
 
       img1.draw(img2, transform = matrix3, blendMode = myEnum)
@@ -139,11 +139,11 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # Color or Paint
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     if paintTable.hasKey($arg2):
       let paint = paintTable[$arg2]
       img.fill(paint)
@@ -171,7 +171,7 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "filePath")
       return Tcl.ERROR
 
-    let file = Tcl.GetStringFromObj(objv[1], nil)
+    let file = Tcl.GetString(objv[1])
     let img = readimage($file)
     
     let myPtr = cast[pointer](img)
@@ -198,13 +198,13 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     var img: Image
     var matrix3: vmath.Mat3
 
-    let cmd = Tcl.GetStringFromObj(objv[0], nil)
+    let cmd = Tcl.GetString(objv[0])
 
     if objc notin (4..5):
       Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|string' 'color|<paint>' matrix:optional")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
 
     if cmd == "pix::ctx::fillPath":
       let ctx = ctxTable[$arg1]
@@ -212,8 +212,8 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     else:
       img = imgTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
-    let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+    let arg2 = Tcl.GetString(objv[2])
+    let arg3 = Tcl.GetString(objv[3])
     
     var myTable = false
     var hasMatrix = false
@@ -280,13 +280,13 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     var mydashes: seq[float32] = @[]
     var myEnumlineCap, myEnumlineJoin: string = "null"
 
-    let cmd = Tcl.GetStringFromObj(objv[0], nil)
+    let cmd = Tcl.GetString(objv[0])
 
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' color {key value key value ...}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
 
     if cmd == "pix::ctx::strokePath":
       let ctx = ctxTable[$arg1]
@@ -294,7 +294,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     else:
       img = imgTable[$arg1]
 
-    let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+    let arg3 = Tcl.GetString(objv[3])
     let color = parseHtmlColor($arg3).rgba
 
     # Dict
@@ -307,7 +307,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     var i = 0
     while i < count:
-      let mkey = Tcl.GetStringFromObj(elements[i], nil)
+      let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "strokeWidth":
           if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
@@ -316,13 +316,13 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
           if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
             return Tcl.ERROR
         of "lineCap":
-          let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+          let arg = Tcl.GetString(elements[i+1])
           myEnumlineCap = $arg
         of "miterLimit":
           if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
             return Tcl.ERROR
         of "lineJoin":
-          let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+          let arg = Tcl.GetString(elements[i+1])
           myEnumlineJoin = $arg
         of "dashes":
           if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
@@ -339,7 +339,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
     let myEnumLJ = parseEnum[LineJoin]($myEnumlineJoin, MiterJoin)
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
 
     if pathTable.hasKey($arg2):
       img.strokePath(
@@ -383,7 +383,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # Radius
@@ -391,7 +391,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     if objc == 4:
       # Color RGBA check
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let color = parseHtmlColor($arg3).rgba
       img.blur(radius, color)
     else:
@@ -420,7 +420,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
       
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # Dict
@@ -433,7 +433,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     var i = 0
     while i < count:
-      let mkey = Tcl.GetStringFromObj(elements[i], nil)
+      let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "offset":
           if Tcl.ListObjGetElements(interp, elements[i+1], dictcount.addr, dict.addr) != Tcl.OK:
@@ -453,7 +453,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
             return Tcl.ERROR
         of "color":
           # Color RGBA check
-          let el = Tcl.GetStringFromObj(elements[i+1], nil)
+          let el = Tcl.GetString(elements[i+1])
           colorShadow = parseHtmlColor($el).rgba
         else:
           ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
@@ -507,10 +507,10 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
 
     if arrTable.hasKey($arg2):
       # Arrangement
@@ -527,7 +527,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
         return Tcl.ERROR
 
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let text = $arg3
 
       if objc == 5:
@@ -541,16 +541,16 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
         var i = 0
         while i < count:
-          let mkey = Tcl.GetStringFromObj(elements[i], nil)
+          let mkey = Tcl.GetString(elements[i])
           case $mkey:
             of "transform":
               if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
                 return Tcl.ERROR
             of "hAlign":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumhAlign = $arg
             of "vAlign":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumvAlign = $arg
             of "bounds":
               if Tcl.ListObjGetElements(interp, elements[i+1], veccount.addr, vecelements.addr) != Tcl.OK:
@@ -597,7 +597,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -634,7 +634,7 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       Tcl.WrongNumArgs(interp, 1, objv, "<img>")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
@@ -664,7 +664,7 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
@@ -709,7 +709,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -722,7 +722,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
 
-    let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+    let arg3 = Tcl.GetString(objv[3])
     let color = parseHtmlColor($arg3).color
 
     img[x, y] = color
@@ -747,7 +747,7 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # opacity
@@ -773,7 +773,7 @@ proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     img.ceil()
@@ -796,11 +796,11 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     # Image master
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let masterimg = imgTable[$arg1]
 
     # Image
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let img = imgTable[$arg2]
 
     let (score, newimg) = masterimg.diff(img)
@@ -835,7 +835,7 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     img.flipHorizontal()
@@ -857,7 +857,7 @@ proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     img.flipVertical()
@@ -883,7 +883,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
@@ -930,7 +930,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
@@ -964,7 +964,7 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     img.invert()
@@ -988,7 +988,7 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if img.isOneColor(): val = 1
@@ -1014,7 +1014,7 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if img.isOpaque(): val = 1
@@ -1040,7 +1040,7 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if img.isTransparent(): val = 1
@@ -1068,7 +1068,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if objc == 3:
@@ -1107,7 +1107,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     if objc == 3:
@@ -1145,7 +1145,7 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
@@ -1175,7 +1175,7 @@ proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     img.rotate90()
@@ -1203,7 +1203,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # Coordinates
@@ -1261,7 +1261,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # Coordinates
@@ -1315,11 +1315,11 @@ proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
     # Paint
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
     let paint = paintTable[$arg2]
 
     img.fillGradient(paint)
@@ -1358,10 +1358,10 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    let arg2 = Tcl.GetStringFromObj(objv[2], nil)
+    let arg2 = Tcl.GetString(objv[2])
 
     if arrTable.hasKey($arg2):
       # Arrangement
@@ -1377,7 +1377,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
         var i = 0
         while i < count:
-          let mkey = Tcl.GetStringFromObj(elements[i], nil)
+          let mkey = Tcl.GetString(elements[i])
           case $mkey:
             of "strokeWidth":
               if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
@@ -1386,13 +1386,13 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
                 return Tcl.ERROR
             of "lineCap":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumlineCap = $arg
             of "miterLimit":
               if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
                 return Tcl.ERROR
             of "lineJoin":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumlineJoin = $arg
             of "dashes":
               if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
@@ -1424,7 +1424,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
         ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
         return Tcl.ERROR
 
-      let arg3 = Tcl.GetStringFromObj(objv[3], nil)
+      let arg3 = Tcl.GetString(objv[3])
       let text = $arg3
 
       if objc == 5:
@@ -1438,7 +1438,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
         var i = 0
         while i < count:
-          let mkey = Tcl.GetStringFromObj(elements[i], nil)
+          let mkey = Tcl.GetString(elements[i])
           case $mkey:
             of "strokeWidth":
               if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
@@ -1450,16 +1450,16 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
                 return Tcl.ERROR
             of "hAlign":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumhAlign = $arg
             of "vAlign":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumvAlign = $arg
             of "lineCap":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumlineCap = $arg
             of "lineJoin":
-              let arg = Tcl.GetStringFromObj(elements[i+1], nil)
+              let arg = Tcl.GetString(elements[i+1])
               myEnumlineJoin = $arg
             of "dashes":
               if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
@@ -1517,10 +1517,10 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> filePath")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    let file = Tcl.GetStringFromObj(objv[2], nil)
+    let file = Tcl.GetString(objv[2])
 
     img.writeFile($file)
 
@@ -1542,7 +1542,7 @@ proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
     
     # Image
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     if $arg1 == "all":
       imgTable.clear()
     else:

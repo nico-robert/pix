@@ -14,7 +14,7 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       Tcl.WrongNumArgs(interp, 1, objv, "<img>|<ctx> 'Tk photo'")
       return Tcl.ERROR
 
-    let arg1 = Tcl.GetStringFromObj(objv[1], nil)
+    let arg1 = Tcl.GetString(objv[1])
     let str = $arg1
 
     if str[^3..^1] == "ctx":
@@ -23,7 +23,7 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     else:
       img = imgTable[$str]
 
-    let photosource = Tcl.GetStringFromObj(objv[2], nil)
+    let photosource = Tcl.GetString(objv[2])
     let source = Tk.FindPhoto(interp, photosource)
 
     if source == nil:
