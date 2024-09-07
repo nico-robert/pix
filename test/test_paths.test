@@ -4,9 +4,9 @@ lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 if {[catch {package present pix}]} {package require pix}
 
 # Test 0
-set testPath "m 1 2 3 4 5 6"
-if {[pix::parsePath $testPath] ne "m1 2 l3 4 l5 6"} {
-    error "parse pix::parsePath"
+set testPath [pix::svgStyleToPathObj "m 1 2 3 4 5 6"]
+if {[pix::pathObjToString $testPath] ne "m1 2 l3 4 l5 6"} {
+    error "parse pix::pathObjToString"
 }
 
 # Test 1
@@ -42,7 +42,7 @@ set image [pix::img::new {100 100}]
 set pathStr "M 10 10 H 90 V 90 H 10 Z"
 set color "rgba(0, 0, 0, 1)"
 
-pix::img::fillPath $image [pix::parsePath $pathStr] $color
+pix::img::fillPath $image $pathStr $color
 
 # Test 6
 set image [pix::img::new {100 100}]
@@ -73,10 +73,10 @@ pix::img::fillPath $image $path "#FC427B"
 set image [pix::img::new {200 200}]
 pix::img::fill $image "rgba(255,255,255,1)"
 
-set path [pix::parsePath "M1 0.5C1 0.776142 0.776142 1 0.5 1C0.223858 1 0 0.776142 0 0.5C0 0.223858 0.223858 0 0.5 0C0.776142 0 1 0.223858 1 0.5Z"]
+set path [pix::svgStyleToPathObj "M1 0.5C1 0.776142 0.776142 1 0.5 1C0.223858 1 0 0.776142 0 0.5C0 0.223858 0.223858 0 0.5 0C0.776142 0 1 0.223858 1 0.5Z"]
 
-pix::img::fillPath   $image $path "rgba(255,0,0,1)" {200 0 0 0 200 0 0 0 1}
-pix::img::strokePath $image $path "rgba(0,255,0,1)" {transform {200 0 0 0 200 0 0 0 1} strokeWidth 0.01}
+pix::img::fillPath   $image [pix::pathObjToString $path] "rgba(255,0,0,1)" {200 0 0 0 200 0 0 0 1}
+pix::img::strokePath $image [pix::pathObjToString $path] "rgba(0,255,0,1)" {transform {200 0 0 0 200 0 0 0 1} strokeWidth 0.01}
 
 # Test 9
 set image [pix::img::new {60 60}]
