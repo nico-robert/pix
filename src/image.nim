@@ -8,9 +8,9 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   #
   # Returns a 'new' img object.
   try:
-    let width, height: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var width, height: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
@@ -30,7 +30,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     let img = newImage(width, height)
  
     let myPtr = cast[pointer](img)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = img
@@ -61,7 +61,7 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let copyimg = img.copy()
 
     let myPtr = cast[pointer](copyimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = copyimg
@@ -83,8 +83,8 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns nothing.
   try:
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var count: cint = 0
+    var elements: Tcl.PPObj
     var matrix3: vmath.Mat3
 
     if objc != 3 and objc != 4 and objc != 5:
@@ -168,14 +168,14 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # Returns a 'new' img object.
   try:
     if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "filePath")
+      Tcl.WrongNumArgs(interp, 1, objv, "path file")
       return Tcl.ERROR
 
     let file = Tcl.GetString(objv[1])
     let img = readimage($file)
     
     let myPtr = cast[pointer](img)
-    let p = ("0x" & cast[uint64](myPtr).toHex & "^img").toLowerAscii
+    let p = ("0x" & cast[uint64](myPtr).toHex() & "^img").toLowerAscii
     imgTable[p] = img
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -242,7 +242,7 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
           img.fillPath(mypath, paint)
     else:
       # Color
-      let color = parseHtmlColor($arg3).rgba
+      let color = parseHtmlColor($arg3)
       if myTable:
         let mypath = pathTable[$arg2]
         if hasMatrix:
@@ -266,15 +266,15 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # 
   # image   - object
   # value   - string path
-  # color   - string
+  # color   - string color or paint object
   # options - dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)
   #
   # Returns nothing.
   try:
     var sWidth, v: cdouble = 1.0
-    let mymiterLimit: cdouble = defaultMiterLimit
-    let count, dashescount: cint = 0
-    let elements, dasheselements: Tcl.PPObj = nil
+    var mymiterLimit: cdouble = defaultMiterLimit
+    var count, dashescount: cint = 0
+    var elements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var img: Image
     var mydashes: seq[float32] = @[]
@@ -283,7 +283,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let cmd = Tcl.GetString(objv[0])
 
     if objc != 5:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' color {key value key value ...}")
+      Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
       return Tcl.ERROR
 
     let arg1 = Tcl.GetString(objv[1])
@@ -293,9 +293,6 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       img = ctx.image
     else:
       img = imgTable[$arg1]
-
-    let arg3 = Tcl.GetString(objv[3])
-    let color = parseHtmlColor($arg3).rgba
 
     # Dict
     if Tcl.ListObjGetElements(interp, objv[4], count.addr, elements.addr) != Tcl.OK:
@@ -332,7 +329,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               return Tcl.ERROR
             mydashes.add(v)
         else:
-          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           return Tcl.ERROR
       inc(i, 2)
 
@@ -340,27 +337,21 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let myEnumLJ = parseEnum[LineJoin]($myEnumlineJoin, MiterJoin)
 
     let arg2 = Tcl.GetString(objv[2])
+    let arg3 = Tcl.GetString(objv[3])
 
-    if pathTable.hasKey($arg2):
-      img.strokePath(
-        pathTable[$arg2], color,
-        transform = matrix3,
-        strokeWidth = sWidth,
-        lineCap = myEnumLC,
-        lineJoin = myEnumLJ,
-        miterLimit = mymiterLimit,
-        dashes = mydashes
-      )
-    else:
-      img.strokePath(
-        $arg2, color,
-        transform = matrix3,
-        strokeWidth = sWidth,
-        lineCap = myEnumLC,
-        lineJoin = myEnumLJ,
-        miterLimit = mymiterLimit,
-        dashes = mydashes
-      )
+    var mypath  = if pathTable.hasKey($arg2) : pathTable[$arg2]  else: parsePath($arg2)
+    var mypaint = if paintTable.hasKey($arg3): paintTable[$arg3] else: parseHtmlColor($arg3)
+
+    img.strokePath(
+      mypath, 
+      mypaint,
+      transform = matrix3,
+      strokeWidth = sWidth,
+      lineCap = myEnumLC,
+      lineJoin = myEnumLJ,
+      miterLimit = mymiterLimit,
+      dashes = mydashes
+    )
 
     return Tcl.OK
   except Exception as e:
@@ -376,7 +367,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns nothing.
   try:
-    let radius: cdouble = 0
+    var radius: cdouble = 0
 
     if objc notin (3..4):
       Tcl.WrongNumArgs(interp, 1, objv, "<img> radius color:optional")
@@ -392,7 +383,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     if objc == 4:
       # Color RGBA check
       let arg3 = Tcl.GetString(objv[3])
-      let color = parseHtmlColor($arg3).rgba
+      let color = parseHtmlColor($arg3)
       img.blur(radius, color)
     else:
       img.blur(radius)
@@ -410,9 +401,9 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   # Returns nothing.
   try:
-    let x, y, spread, blur: cdouble = 0
-    let count, dictcount: cint = 0
-    let elements, dict : Tcl.PPObj = nil
+    var x, y, spread, blur: cdouble = 0
+    var count, dictcount: cint = 0
+    var elements, dict : Tcl.PPObj
     var colorShadow: ColorRGBA
 
     if objc != 3:
@@ -456,7 +447,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
           let el = Tcl.GetString(elements[i+1])
           colorShadow = parseHtmlColor($el).rgba
         else:
-          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           return Tcl.ERROR
       inc(i, 2)
       
@@ -468,7 +459,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     )
     
     let myPtr = cast[pointer](shadow)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let js = (hex & "^img").toLowerAscii
 
     imgTable[js] = shadow
@@ -494,8 +485,8 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var x, y: cdouble = 1.0
-    let count, veccount: cint = 0
-    let elements, vecelements: Tcl.PPObj = nil
+    var count, veccount: cint = 0
+    var elements, vecelements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var vecBounds = vec2(0, 0)
     var myEnumhAlign, myEnumvAlign: string = "null"
@@ -564,7 +555,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
               vecBounds = vec2(x, y)
             else:
-              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
               return Tcl.ERROR
           inc(i, 2)
         
@@ -589,9 +580,9 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   # Returns nothing.
   try:
-    let width, height: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var width, height: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
@@ -613,7 +604,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let newimg = img.resize(width, height)
 
     let myPtr = cast[pointer](newimg)
-    let p = ("0x" & cast[uint64](myPtr).toHex & "^img").toLowerAscii
+    let p = ("0x" & cast[uint64](myPtr).toHex() & "^img").toLowerAscii
     imgTable[p] = newimg
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -656,9 +647,9 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns Tcl dict (r, g, b, a).
   try:
-    let x, y: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
@@ -701,9 +692,9 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns nothing.
   try:
-    let x, y: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
@@ -740,7 +731,7 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   #
   # Returns nothing.
   try:
-    let opacity: cdouble = 0
+    var opacity: cdouble = 0
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> opacity")
@@ -806,7 +797,7 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let (score, newimg) = masterimg.diff(img)
 
     let myPtr = cast[pointer](newimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = newimg
@@ -875,9 +866,9 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns Tcl dict (r, g, b, a).
   try:
-    let x, y: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
@@ -921,9 +912,9 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # coordinates  - list x,y
   #
   try:
-    let x, y: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
     var val: int = 0
 
     if objc != 3:
@@ -981,8 +972,6 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns true, false otherwise.
   try:
-    var val: int = 0
-
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<img>")
       return Tcl.ERROR
@@ -991,7 +980,7 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    if img.isOneColor(): val = 1
+    let val = if img.isOneColor(): 1 else: 0
 
     Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
 
@@ -1007,8 +996,6 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns true, false otherwise.
   try:
-    var val: int = 0
-
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<img>")
       return Tcl.ERROR
@@ -1017,7 +1004,7 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    if img.isOpaque(): val = 1
+    let val = if img.isOpaque(): 1 else: 0
 
     Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
 
@@ -1033,8 +1020,6 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   #
   # Returns true, false otherwise.
   try:
-    var val: int = 0
-
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<img>")
       return Tcl.ERROR
@@ -1043,7 +1028,7 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    if img.isTransparent(): val = 1
+    let val = if img.isTransparent(): 1 else: 0
 
     Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
 
@@ -1060,7 +1045,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns a 'new' img object.
   try:
-    let power: cint = 1 
+    var power: cint = 1 
     var newimg: Image
 
     if objc notin (2..3):
@@ -1079,7 +1064,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       newimg = img.magnifyBy2()
 
     let myPtr = cast[pointer](newimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = newimg
@@ -1099,7 +1084,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   #
   # Returns a 'new' img object.
   try:
-    let power: cint = 1 
+    var power: cint = 1 
     var newimg: Image
 
     if objc notin (2..3):
@@ -1118,7 +1103,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       newimg = img.minifyBy2()
 
     let myPtr = cast[pointer](newimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = newimg
@@ -1194,9 +1179,9 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns a 'new' img object.
   try:
-    let x, y, width, height: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y, width, height: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
@@ -1231,7 +1216,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let subimage = img.subImage(x, y, width, height)
  
     let myPtr = cast[pointer](subimage)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = subimage
@@ -1252,9 +1237,9 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns a 'new' img object.
   try:
-    let x, y, width, height: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y, width, height: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
@@ -1289,7 +1274,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let subimage = img.superImage(x, y, width, height)
  
     let myPtr = cast[pointer](subimage)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = subimage
@@ -1341,9 +1326,9 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # Returns nothing.
   try:
     var x, y, sWidth, v: cdouble = 1.0
-    let mymiterLimit: cdouble = defaultMiterLimit
-    let count, veccount, dashescount: cint = 0
-    let elements, vecelements, dasheselements: Tcl.PPObj = nil
+    var mymiterLimit: cdouble = defaultMiterLimit
+    var count, veccount, dashescount: cint = 0
+    var elements, vecelements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var vecBounds = vec2(0, 0)
     var mydashes: seq[float32] = @[]
@@ -1402,7 +1387,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
                   return Tcl.ERROR
                 mydashes.add(v)
             else:
-              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
               return Tcl.ERROR
           inc(i, 2)
 
@@ -1480,7 +1465,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
               vecBounds = vec2(x, y)
             else:
-              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
               return Tcl.ERROR
           inc(i, 2)
 

@@ -13,6 +13,6 @@ package ifneeded pix 0.2 [list apply {dir {
     } elseif {$os eq "linux-x86_64"} {
         load [file join $dir $os libpix0.2.so] Pix
     } else {
-        error "'$os' not supported for 'pix'"
+        error "'$os' not supported for 'pix' package."
     }
 }} $dir]

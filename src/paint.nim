@@ -18,7 +18,7 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
 
     let paint = newPaint(myEnum)
     let myPtr = cast[pointer](paint)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^paint").toLowerAscii
 
     paintTable[p] = paint
@@ -45,9 +45,9 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # 
   # Returns nothing.
   try:
-    let count, subcount, len: cint = 0
-    let x, y, p, opacity: cdouble = 0
-    let elements, subelements, position, stop: Tcl.PPObj = nil
+    var count, subcount, len: cint = 0
+    var x, y, p, opacity: cdouble = 0
+    var elements, subelements, position, stop: Tcl.PPObj
     var matrix3: vmath.Mat3
     var cseqColorP: Color
 
@@ -130,7 +130,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
               colorstops.add(ColorStop(color: cseqColorP, position: p))
             paint.gradientStops = colorstops
         else:
-          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           return Tcl.ERROR
       inc(i, 2)
 
@@ -158,7 +158,7 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let copy = paint.copy()
 
     let myPtr = cast[pointer](copy)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^paint").toLowerAscii
 
     paintTable[p] = copy

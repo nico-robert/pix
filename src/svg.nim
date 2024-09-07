@@ -9,9 +9,9 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   #
   # Returns a 'new' svg object.
   try:
-    let width, height: cint = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var width, height: cint = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
     var svg: Svg
 
     if objc notin (2..3):
@@ -39,7 +39,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       svg = parseSvg($arg1)
 
     let myPtr = cast[pointer](svg)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^svg").toLowerAscii
 
     svgTable[p] = svg
@@ -70,7 +70,7 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let image = newImage(svg)
  
     let myPtr = cast[pointer](image)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^img").toLowerAscii
 
     imgTable[p] = image

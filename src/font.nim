@@ -19,7 +19,7 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     let font = readFont($arg1)
     
     let myPtr = cast[pointer](font)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^font").toLowerAscii
 
     fontTable[p] = font
@@ -39,7 +39,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   #
   # Returns nothing.
   try:
-    let fsize: cdouble = 0
+    var fsize: cdouble = 0
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<font> size")
@@ -109,7 +109,7 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let font = newFont(tface)
     
     let myPtr = cast[pointer](font)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^font").toLowerAscii
 
     fontTable[p] = font
@@ -145,7 +145,7 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let span = newSpan(text, font)
     
     let myPtr = cast[pointer](span)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^span").toLowerAscii
 
     spanTable[p] = span
@@ -183,7 +183,7 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       let paint = font.paint
 
       let myPtr = cast[pointer](paint)
-      let hex = "0x" & cast[uint64](myPtr).toHex
+      let hex = "0x" & cast[uint64](myPtr).toHex()
       let p = (hex & "^paint").toLowerAscii
 
       paintTable[p] = paint
@@ -213,7 +213,7 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     let typeface = readTypeface($arg1)
     
     let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^TFace").toLowerAscii
 
     tFaceTable[p] = typeface
@@ -245,7 +245,7 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     for _, typeface in typefaces:
       let myPtr = cast[pointer](typeface)
-      let hex = "0x" & cast[uint64](myPtr).toHex
+      let hex = "0x" & cast[uint64](myPtr).toHex()
       let p = (hex & "^TFace").toLowerAscii
 
       tFaceTable[p] = typeface
@@ -343,7 +343,7 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     let newfont = font.copy()
     
     let myPtr = cast[pointer](newfont)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^font").toLowerAscii
 
     fontTable[p] = newfont
@@ -440,7 +440,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
         return Tcl.ERROR
       
       let myPtr = cast[pointer](newtface)
-      let hex = "0x" & cast[uint64](myPtr).toHex
+      let hex = "0x" & cast[uint64](myPtr).toHex()
       let p = (hex & "^TFace").toLowerAscii
 
       tFaceTable[p] = newtface
@@ -514,7 +514,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     let myPtr = cast[pointer](path)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^path").toLowerAscii
 
     pathTable[p] = path
@@ -604,8 +604,8 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   #
   # Returns Tcl dict value {x y}.
   try:
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var count: cint = 0
+    var elements: Tcl.PPObj
     var bounds: vmath.Vec2
 
     if objc notin (2..3):
@@ -747,7 +747,7 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     let typeface = parseOtf(buf)
 
     let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^TFace").toLowerAscii
 
     tFaceTable[p] = typeface
@@ -778,7 +778,7 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     let typeface = parseSvgFont(buf)
 
     let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^TFace").toLowerAscii
 
     tFaceTable[p] = typeface
@@ -809,7 +809,7 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     let typeface = parseTtf(buf)
 
     let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^TFace").toLowerAscii
 
     tFaceTable[p] = typeface
@@ -865,8 +865,8 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns a 'new' arrangement object.
   try:
     var x, y: cdouble = 1.0
-    let count, veccount, wrapB: cint = 0
-    let elements, vecelements: Tcl.PPObj = nil
+    var count, veccount, wrapB: cint = 0
+    var elements, vecelements: Tcl.PPObj
     var mywrap, hasFont: bool = true
     var vecBounds = vec2(0, 0)
     var myEnumhAlign, myEnumvAlign: string = "null"
@@ -942,7 +942,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
             vecBounds = vec2(x, y)
           else:
-            ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+            ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
             return Tcl.ERROR
         inc(i, 2)
         
@@ -960,7 +960,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
         arr = typeset(spans)
 
     let myPtr = cast[pointer](arr)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^arr").toLowerAscii
 
     arrTable[p] = arr
@@ -988,8 +988,8 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var fsize, flineHeight: cdouble = 0
-    let count, myBool, countP: cint = 0
-    let elements, elementsP: Tcl.PPObj = nil
+    var count, myBool, countP: cint = 0
+    var elements, elementsP: Tcl.PPObj
   
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}")
@@ -1052,7 +1052,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
             font.paints = paints
         else:
-          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           return Tcl.ERROR
       inc(i, 2)
 
