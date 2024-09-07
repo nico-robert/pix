@@ -403,7 +403,9 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc,dynlib.} =
     return Tcl.ERROR
   if Tcl.CreateObjCommand(interp, "pix::colorHTMLtoRGBA", pix_colorHTMLtoRGBA, nil, nil) == nil:
     return Tcl.ERROR
-  if Tcl.CreateObjCommand(interp, "pix::parsePath", pix_parsePath, nil, nil) == nil:
+  if Tcl.CreateObjCommand(interp, "pix::pathObjToString", pix_pathObjToString, nil, nil) == nil:
+    return Tcl.ERROR
+  if Tcl.CreateObjCommand(interp, "pix::svgStyleToPathObj", pix_svgStyleToPathObj, nil, nil) == nil:
     return Tcl.ERROR
   if Tcl.CreateObjCommand(interp, "pix::toB64", pix_toB64, nil, nil) == nil:
     return Tcl.ERROR
