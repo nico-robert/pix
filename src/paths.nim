@@ -8,7 +8,7 @@ proc pix_path(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv
   try:
     let path = newPath()
     let myPtr = cast[pointer](path)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^path").toLowerAscii
 
     pathTable[p] = path
@@ -53,7 +53,7 @@ proc pix_path_angleToMiterLimit(clientData: Tcl.PClientData, interp: Tcl.PInterp
   #
   # Returns double value.
   try:
-    let angle: cdouble = 0
+    var angle: cdouble = 0
 
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "angle")
@@ -78,7 +78,7 @@ proc pix_path_miterLimitToAngle(clientData: Tcl.PClientData, interp: Tcl.PInterp
   #
   # Returns double value.
   try:
-    let angle: cdouble = 0
+    var angle: cdouble = 0
 
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "angle")
@@ -108,10 +108,10 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   #
   # Returns nothing.
   try:
-    let x, y, r, a0, a1: cdouble = 0
-    let count, clockcw: cint = 0
+    var x, y, r, a0, a1: cdouble = 0
+    var count, clockcw: cint = 0
     var ccw: bool = false
-    let elements: Tcl.PPObj = nil
+    var elements: Tcl.PPObj
 
     if objc notin (6..7):
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} r a0 a1 ccw:optional")
@@ -159,9 +159,9 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns nothing.
   try:
-    let x1, y1, x2, y2, radius: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x1, y1, x2, y2, radius: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x1 y1} {x2 y2} radius")
@@ -216,9 +216,9 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   #
   # Returns nothing.
   try:
-    let x1, y1, x2, y2, x3, y3: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x1, y1, x2, y2, x3, y3: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x1 y1} {x2 y2} {x3 y3}")
@@ -274,9 +274,9 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   #
   # Returns nothing.
   try:
-    let x, y: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
   
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y}")
@@ -312,9 +312,9 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   #
   # Returns nothing.
   try:
-    let x, y: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
   
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y}")
@@ -376,9 +376,9 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   # Returns nothing.
   try:
-    let x, y, size: cdouble = 0
-    let count, sides: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y, size: cdouble = 0
+    var count, sides: cint = 0
+    var elements: Tcl.PPObj
   
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} size sides")
@@ -422,10 +422,10 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   #
   # Returns nothing.
   try:
-    let x, y, width, height: cdouble = 0
-    let count, clockcw: cint = 0
+    var x, y, width, height: cdouble = 0
+    var count, clockcw: cint = 0
     var ccw: bool = true
-    let elements: Tcl.PPObj = nil
+    var elements: Tcl.PPObj
 
     if objc notin (4..5):
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} ccw:optional")
@@ -475,9 +475,9 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   #
   # Returns nothing.
   try:
-    let cx, cy, r: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var cx, cy, r: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {cx cy} r")
@@ -517,9 +517,9 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # windingRule   - Enum value (optional:NonZero)
   #
   try:
-    let x, y: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
     var val: int = 0
     var matrix3: vmath.Mat3
 
@@ -549,15 +549,15 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       if path.fillOverlaps(vec2(x, y)): val = 1
     elif objc == 4:
       # Matrix 3x3 check
-      if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+      if matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
         return Tcl.ERROR
       if path.fillOverlaps(vec2(x, y), transform = matrix3): val = 1
     else:
       # Matrix 3x3 check
-      if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+      if matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
         return Tcl.ERROR
       
-      let arg2 = Tcl.GetString(objv[3])
+      let arg2 = Tcl.GetString(objv[4])
       let myEnum = parseEnum[WindingRule]($arg2)
 
       if path.fillOverlaps(vec2(x, y), transform = matrix3, windingRule = myEnum): val = 1
@@ -654,7 +654,7 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     let copypath = path.copy()
 
     let myPtr = cast[pointer](copypath)
-    let hex = "0x" & cast[uint64](myPtr).toHex
+    let hex = "0x" & cast[uint64](myPtr).toHex()
     let p = (hex & "^path").toLowerAscii
 
     pathTable[p] = copypath
@@ -676,9 +676,9 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   # Returns nothing.
   try:
-    let x, y, rx, ry: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x, y, rx, ry: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} rx ry")
@@ -723,10 +723,10 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   #
   # Returns nothing.
   try:
-    let x, y, rx, ry, xAxisRotation: cdouble = 0
-    let count, largeA, sweepF: cint = 0
+    var x, y, rx, ry, xAxisRotation: cdouble = 0
+    var count, largeA, sweepF: cint = 0
     var largeArcFlag, sweepFlag: bool = false
-    let elements: Tcl.PPObj = nil
+    var elements: Tcl.PPObj
 
     if objc != 7:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}")
@@ -783,9 +783,9 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   #
   # Returns nothing.
   try:
-    let x1, y1, x2, y2: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
+    var x1, y1, x2, y2: cdouble = 0
+    var count: cint = 0
+    var elements: Tcl.PPObj
 
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x1 y1} {x2 y2}")
@@ -835,10 +835,10 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns nothing.
   try:
-    let x, y, width, height, nw, ne, se, sw: cdouble = 0
-    let count, clockcw: cint = 0
+    var x, y, width, height, nw, ne, se, sw: cdouble = 0
+    var count, clockcw: cint = 0
     var ccw: bool = true
-    let elements: Tcl.PPObj = nil
+    var elements: Tcl.PPObj
 
     if objc notin (5..6):
       Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} {nw ne se sw} ccw:optional")
@@ -901,9 +901,9 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   #
   try:
     var x, y, sWidth, v: cdouble = 1.0
-    let mymiterLimit: cdouble = defaultMiterLimit
-    let count, dashescount: cint = 0
-    let elements, dasheselements: Tcl.PPObj = nil
+    var mymiterLimit: cdouble = defaultMiterLimit
+    var count, dashescount: cint = 0
+    var elements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var mydashes: seq[float32] = @[]
     var myEnumlineCap, myEnumlineJoin: string = "null"
@@ -962,7 +962,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
                 return Tcl.ERROR
               mydashes.add(v)
           else:
-            ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported")
+            ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
             return Tcl.ERROR
         inc(i, 2)
 
