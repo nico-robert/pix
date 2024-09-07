@@ -17,9 +17,9 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   # colorSimple - The color to fill if the object is a color.
   # 
   # Returns true if the object is a color, false otherwise.
-  let c: cdouble = 0
-  let count: cint = 0
-  let elements: Tcl.PPObj = nil
+  var c: cdouble = 0
+  var count: cint = 0
+  var elements: Tcl.PPObj
   var color : seq[float32]
 
   if Tcl.ListObjGetElements(nil, obj, count.addr, elements.addr) != Tcl.OK:
@@ -78,10 +78,9 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
 # 
 # Returns Tcl.OK if successful, Tcl.ERROR otherwise.
   try:
-    let v: cdouble = 0
-    let count: cint = 0
-    let elements: Tcl.PPObj = nil
-    var value : seq[float32]
+    var count: cint = 0
+    var elements: Tcl.PPObj
+    var value : seq[cdouble]
     
     if Tcl.ListObjGetElements(interp, obj, count.addr, elements.addr) != Tcl.OK:
       return Tcl.ERROR
@@ -89,11 +88,12 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
     if count != 9:
       ERROR_MSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
       return Tcl.ERROR
+
+    value.setlen(count)
     
     for i in 0..count-1:
-      if Tcl.GetDoubleFromObj(interp, elements[i], v.addr) != Tcl.OK:
+      if Tcl.GetDoubleFromObj(interp, elements[i], value[i].addr) != Tcl.OK:
         return Tcl.ERROR
-      value.add(v)
 
     # Fill the matrix3 with the values of the Tcl object.
     matrix3 = vmath.mat3(
@@ -136,12 +136,35 @@ proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
 
-proc pix_parsePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_pathObjToString(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Parse path.
   # 
-  # path  - string
+  # path  - path object
   #
-  # Returns the parsed path.
+  # Returns the parsed path to SVG style path.
+  try:
+
+    if objc != 2:
+      Tcl.WrongNumArgs(interp, 1, objv, "<path>")
+      return Tcl.ERROR
+
+    # Path
+    let arg1 = Tcl.GetString(objv[1])
+    let parse = pathTable[$arg1]
+
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring($parse), -1))
+
+    return Tcl.OK
+  except Exception as e:
+    ERROR_MSG(interp, "pix(error): " & e.msg)
+    return Tcl.ERROR
+
+proc pix_svgStyleToPathObj(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Transforms a SVG style path to a path object.
+  # 
+  # path  - string SVG style
+  #
+  # Returns a 'new' path object.
   try:
 
     if objc != 2:
@@ -150,10 +173,15 @@ proc pix_parsePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     # Path
     let arg1 = Tcl.GetString(objv[1])
-
     let parse = parsePath($arg1)
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring($parse), -1))
+    let myPtr = cast[pointer](parse)
+    let hex = "0x" & cast[uint64](myPtr).toHex()
+    let p = (hex & "^path").toLowerAscii
+
+    pathTable[p] = parse
+
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
     return Tcl.OK
   except Exception as e:
