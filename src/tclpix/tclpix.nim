@@ -8,16 +8,16 @@ include "private/tclpixtypes.inc"
 var PkgProvideEx*: proc(interp: PInterp, name: cstring, version: cstring, clientData: pointer):int {.cdecl.}
 var DuplicateObj*: proc(objPtr: PObj):PObj {.cdecl.}
 var TclFreeObj*: proc(objPtr: PObj) {.cdecl.}
-var GetBooleanFromObj*: proc(interp: PInterp, objPtr: PObj, boolPtr: ptr cint):int {.cdecl.}
-var GetDoubleFromObj*: proc(interp: PInterp, objPtr: PObj, doublePtr: ptr cdouble):int {.cdecl.}
-var GetIntFromObj*: proc(interp: PInterp, objPtr: PObj, intPtr: ptr cint):int {.cdecl.}
-var GetStringFromObj*: proc(objPtr: PObj, lengthPtr: ptr cint):cstring {.cdecl.}
+var GetBooleanFromObj*: proc(interp: PInterp, objPtr: PObj, boolPtr: var int):int {.cdecl.}
+var GetDoubleFromObj*: proc(interp: PInterp, objPtr: PObj, doublePtr: var cdouble):int {.cdecl.}
+var GetIntFromObj*: proc(interp: PInterp, objPtr: PObj, intPtr: var int):int {.cdecl.}
+var GetStringFromObj*: proc(objPtr: PObj, lengthPtr: var int):cstring {.cdecl.}
 var GetString*: proc(objPtr: PObj):cstring {.cdecl.}
 var ListObjAppendList*: proc(interp: PInterp, listPtr: PObj, elemListPtr: PObj):int {.cdecl.}
 var ListObjAppendElement*: proc(interp: PInterp, listPtr: PObj, objPtr: PObj):int {.cdecl.}
-var ListObjGetElements*: proc(interp: PInterp, listPtr: PObj, objcPtr: ptr cint, objvPtr: ptr PPObj):int {.cdecl.}
+var ListObjGetElements*: proc(interp: PInterp, listPtr: PObj, objcPtr: var int, objvPtr: var PPObj):int {.cdecl.}
 var ListObjIndex*: proc(interp: PInterp, listPtr: PObj, index: int, objPtrPtr: PObj):int {.cdecl.}
-var ListObjLength*: proc(interp: PInterp, listPtr: PObj, lengthPtr: ptr cint):int {.cdecl.}
+var ListObjLength*: proc(interp: PInterp, listPtr: PObj, lengthPtr: var int):int {.cdecl.}
 var NewBooleanObj*: proc(boolValue: int):PObj {.cdecl.}
 var NewByteArrayObj*: proc(bytes: cstring, length: int):PObj {.cdecl.}
 var NewDoubleObj*: proc(doubleValue: cdouble):PObj {.cdecl.}
@@ -81,22 +81,22 @@ type TclStubs = object
   DuplicateObj: proc(objPtr: PObj):PObj {.cdecl.} # 29
   TclFreeObj: proc(objPtr: PObj) {.cdecl.} # 30
   GetBoolean: proc(interp: PInterp, src: cstring, boolPtr: ptr cint):int {.cdecl.} # 31
-  GetBooleanFromObj: proc(interp: PInterp, objPtr: PObj, boolPtr: ptr cint):int {.cdecl.} # 32
+  GetBooleanFromObj: proc(interp: PInterp, objPtr: PObj, boolPtr: var int):int {.cdecl.} # 32
   GetByteArrayFromObj: proc(objPtr: PObj, lengthPtr: ptr cint):cstring {.cdecl.} # 33
   GetDouble: proc(interp: PInterp, src: cstring, doublePtr: ptr cdouble):int {.cdecl.} # 34
-  GetDoubleFromObj: proc(interp: PInterp, objPtr: PObj, doublePtr: ptr cdouble):int {.cdecl.} # 35
+  GetDoubleFromObj: proc(interp: PInterp, objPtr: PObj, doublePtr: var cdouble):int {.cdecl.} # 35
   GetIndexFromObj: proc(interp: PInterp, objPtr: PObj, tablePtr: string, msg: cstring, flags: int, indexPtr: ptr cint):int {.cdecl.} # 36
   GetInt: proc(interp: PInterp, src: cstring, intPtr: ptr cint):int {.cdecl.} # 37
-  GetIntFromObj: proc(interp: PInterp, objPtr: PObj, intPtr: ptr cint):int {.cdecl.} # 38
+  GetIntFromObj: proc(interp: PInterp, objPtr: PObj, intPtr: var int):int {.cdecl.} # 38
   GetLongFromObj: proc(interp: PInterp, objPtr: PObj, longPtr: clong):int {.cdecl.} # 39
   GetObjType: proc(typeName: cstring):PObjType {.cdecl.} # 40
-  GetStringFromObj: proc(objPtr: PObj, lengthPtr: ptr cint):cstring {.cdecl.} # 41
+  GetStringFromObj: proc(objPtr: PObj, lengthPtr: var int):cstring {.cdecl.} # 41
   InvalidateStringRep: proc(objPtr: PObj) {.cdecl.} # 42
   ListObjAppendList: proc(interp: PInterp, listPtr: PObj, elemListPtr: PObj):int {.cdecl.} # 43
   ListObjAppendElement: proc(interp: PInterp, listPtr: PObj, objPtr: PObj):int {.cdecl.} # 44
-  ListObjGetElements: proc(interp: PInterp, listPtr: PObj, objcPtr: ptr cint, objvPtr: ptr PPObj):int {.cdecl.} # 45
+  ListObjGetElements: proc(interp: PInterp, listPtr: PObj, objcPtr: var int, objvPtr: var PPObj):int {.cdecl.} # 45
   ListObjIndex: proc(interp: PInterp, listPtr: PObj, index: int, objPtrPtr: PObj):int {.cdecl.} # 46
-  ListObjLength: proc(interp: PInterp, listPtr: PObj, lengthPtr: ptr cint):int {.cdecl.} # 47
+  ListObjLength: proc(interp: PInterp, listPtr: PObj, lengthPtr: var int):int {.cdecl.} # 47
   ListObjReplace: proc(interp: PInterp, listPtr: PObj, first: int, count: int, objc: int, objv: PPObj):int {.cdecl.} # 48
   NewBooleanObj: proc(boolValue: int):PObj {.cdecl.} # 49
   NewByteArrayObj: proc(bytes: cstring, length: int):PObj {.cdecl.} # 50
