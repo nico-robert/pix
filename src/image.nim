@@ -8,8 +8,8 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   #
   # Returns a 'new' img object.
   try:
-    var width, height: cint = 0
-    var count: cint = 0
+    var width, height: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 2:
@@ -17,15 +17,15 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
       return Tcl.ERROR
     
     # Size
-    if Tcl.ListObjGetElements(interp, objv[1], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       return Tcl.ERROR
       
-    if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
     
     let img = newImage(width, height)
  
@@ -83,7 +83,7 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns nothing.
   try:
-    var count: cint = 0
+    var count: int = 0
     var elements: Tcl.PPObj
     var matrix3: vmath.Mat3
 
@@ -103,7 +103,7 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       img1.draw(img2)
     elif objc == 4:
       let arg3 = Tcl.GetString(objv[3])
-      if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
+      if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
         return Tcl.ERROR
       if count == 1:
         let myEnum = parseEnum[BlendMode]($arg3)
@@ -273,7 +273,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   try:
     var sWidth, v: cdouble = 1.0
     var mymiterLimit: cdouble = defaultMiterLimit
-    var count, dashescount: cint = 0
+    var count, dashescount: int = 0
     var elements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var img: Image
@@ -295,7 +295,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       img = imgTable[$arg1]
 
     # Dict
-    if Tcl.ListObjGetElements(interp, objv[4], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count mod 2 == 1:
@@ -307,7 +307,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "strokeWidth":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth) != Tcl.OK:
             return Tcl.ERROR
         of "transform":
           if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
@@ -316,16 +316,16 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
           let arg = Tcl.GetString(elements[i+1])
           myEnumlineCap = $arg
         of "miterLimit":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit) != Tcl.OK:
             return Tcl.ERROR
         of "lineJoin":
           let arg = Tcl.GetString(elements[i+1])
           myEnumlineJoin = $arg
         of "dashes":
-          if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
+          if Tcl.ListObjGetElements(interp, elements[i+1], dashescount, dasheselements) != Tcl.OK:
             return Tcl.ERROR
           for j in 0..dashescount-1:
-            if Tcl.GetDoubleFromObj(interp, dasheselements[j], v.addr) != Tcl.OK:
+            if Tcl.GetDoubleFromObj(interp, dasheselements[j], v) != Tcl.OK:
               return Tcl.ERROR
             mydashes.add(v)
         else:
@@ -378,7 +378,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let img = imgTable[$arg1]
 
     # Radius
-    if Tcl.GetDoubleFromObj(interp, objv[2], radius.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK: return Tcl.ERROR
 
     if objc == 4:
       # Color RGBA check
@@ -402,7 +402,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns nothing.
   try:
     var x, y, spread, blur: cdouble = 0
-    var count, dictcount: cint = 0
+    var count, dictcount: int = 0
     var elements, dict : Tcl.PPObj
     var colorShadow: ColorRGBA
 
@@ -415,7 +415,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let img = imgTable[$arg1]
 
     # Dict
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count mod 2 == 1:
@@ -427,20 +427,20 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "offset":
-          if Tcl.ListObjGetElements(interp, elements[i+1], dictcount.addr, dict.addr) != Tcl.OK:
+          if Tcl.ListObjGetElements(interp, elements[i+1], dictcount, dict) != Tcl.OK:
             return Tcl.ERROR
           if dictcount != 2:
             ERROR_MSG(interp, "wrong # args: 'offset' should be 'x' 'y'")
             return Tcl.ERROR
             
-          if Tcl.GetDoubleFromObj(interp, dict[0], x.addr) != Tcl.OK: return Tcl.ERROR
-          if Tcl.GetDoubleFromObj(interp, dict[1], y.addr) != Tcl.OK: return Tcl.ERROR
+          if Tcl.GetDoubleFromObj(interp, dict[0], x) != Tcl.OK: return Tcl.ERROR
+          if Tcl.GetDoubleFromObj(interp, dict[1], y) != Tcl.OK: return Tcl.ERROR
 
         of "spread":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], spread.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], spread) != Tcl.OK:
             return Tcl.ERROR
         of "blur":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], blur.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], blur) != Tcl.OK:
             return Tcl.ERROR
         of "color":
           # Color RGBA check
@@ -485,7 +485,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var x, y: cdouble = 1.0
-    var count, veccount: cint = 0
+    var count, veccount: int = 0
     var elements, vecelements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var vecBounds = vec2(0, 0)
@@ -523,7 +523,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
       if objc == 5:
         # Dict
-        if Tcl.ListObjGetElements(interp, objv[4], count.addr, elements.addr) != Tcl.OK:
+        if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
           return Tcl.ERROR
 
         if count mod 2 == 1:
@@ -544,14 +544,14 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
               let arg = Tcl.GetString(elements[i+1])
               myEnumvAlign = $arg
             of "bounds":
-              if Tcl.ListObjGetElements(interp, elements[i+1], veccount.addr, vecelements.addr) != Tcl.OK:
+              if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
                 return Tcl.ERROR
               if veccount != 2:
                 ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
                 return Tcl.ERROR
 
-              if Tcl.GetDoubleFromObj(interp, vecelements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-              if Tcl.GetDoubleFromObj(interp, vecelements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
 
               vecBounds = vec2(x, y)
             else:
@@ -580,8 +580,8 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   # Returns nothing.
   try:
-    var width, height: cint = 0
-    var count: cint = 0
+    var width, height: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 3:
@@ -591,15 +591,15 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       return Tcl.ERROR
 
-    if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
     let newimg = img.resize(width, height)
 
@@ -647,8 +647,8 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns Tcl dict (r, g, b, a).
   try:
-    var x, y: cint = 0
-    var count: cint = 0
+    var x, y: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 3:
@@ -659,15 +659,15 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
       return Tcl.ERROR
 
-    if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
     let data = img[x, y]
 
@@ -692,8 +692,8 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns nothing.
   try:
-    var x, y: cint = 0
-    var count: cint = 0
+    var x, y: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -703,15 +703,15 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
       return Tcl.ERROR
 
-    if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
     let arg3 = Tcl.GetString(objv[3])
     let color = parseHtmlColor($arg3).color
@@ -742,7 +742,7 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     let img = imgTable[$arg1]
 
     # opacity
-    if Tcl.GetDoubleFromObj(interp, objv[2], opacity.addr) != Tcl.OK:
+    if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
       return Tcl.ERROR
 
     img.applyOpacity(opacity)
@@ -866,8 +866,8 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns Tcl dict (r, g, b, a).
   try:
-    var x, y: cint = 0
-    var count: cint = 0
+    var x, y: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 3:
@@ -878,17 +878,17 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let img = imgTable[$arg1]
     let dictObj = Tcl.NewDictObj()
 
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
       return Tcl.ERROR
 
-    if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK:
+    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK:
       return Tcl.ERROR
 
-    if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK:
+    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK:
       return Tcl.ERROR
 
     let c = img.getColor(x, y)
@@ -912,8 +912,8 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # coordinates  - list x,y
   #
   try:
-    var x, y: cint = 0
-    var count: cint = 0
+    var x, y: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
     var val: int = 0
 
@@ -924,15 +924,15 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let arg1 = Tcl.GetString(objv[1])
     let img = imgTable[$arg1]
 
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
       return Tcl.ERROR
 
-    if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
     if img.inside(x, y): val = 1
 
@@ -1045,7 +1045,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns a 'new' img object.
   try:
-    var power: cint = 1 
+    var power: int = 1 
     var newimg: Image
 
     if objc notin (2..3):
@@ -1057,7 +1057,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let img = imgTable[$arg1]
 
     if objc == 3:
-      if Tcl.GetIntFromObj(interp, objv[2], power.addr) != Tcl.OK:
+      if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
         return Tcl.ERROR
       newimg = img.magnifyBy2(power.int)
     else:
@@ -1084,7 +1084,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   #
   # Returns a 'new' img object.
   try:
-    var power: cint = 1 
+    var power: int = 1 
     var newimg: Image
 
     if objc notin (2..3):
@@ -1096,7 +1096,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     let img = imgTable[$arg1]
 
     if objc == 3:
-      if Tcl.GetIntFromObj(interp, objv[2], power.addr) != Tcl.OK:
+      if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
         return Tcl.ERROR
       newimg = img.minifyBy2(power.int)
     else:
@@ -1179,8 +1179,8 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns a 'new' img object.
   try:
-    var x, y, width, height: cint = 0
-    var count: cint = 0
+    var x, y, width, height: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -1192,26 +1192,26 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let img = imgTable[$arg1]
 
     # Coordinates
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'width' 'height'")
       return Tcl.ERROR
       
-    if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
     
     # Size
-    if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       return Tcl.ERROR
       
-    if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
     
     let subimage = img.subImage(x, y, width, height)
  
@@ -1237,8 +1237,8 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns a 'new' img object.
   try:
-    var x, y, width, height: cint = 0
-    var count: cint = 0
+    var x, y, width, height: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -1250,26 +1250,26 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     let img = imgTable[$arg1]
 
     # Coordinates
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
       return Tcl.ERROR
       
-    if Tcl.GetIntFromObj(interp, elements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
     
     # Size
-    if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 2:
       ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       return Tcl.ERROR
       
-    if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
     
     let subimage = img.superImage(x, y, width, height)
  
@@ -1327,7 +1327,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   try:
     var x, y, sWidth, v: cdouble = 1.0
     var mymiterLimit: cdouble = defaultMiterLimit
-    var count, veccount, dashescount: cint = 0
+    var count, veccount, dashescount: int = 0
     var elements, vecelements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var vecBounds = vec2(0, 0)
@@ -1353,7 +1353,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       let arr = arrTable[$arg2]
       if objc == 4:
         # Dict
-        if Tcl.ListObjGetElements(interp, objv[3], count.addr, elements.addr) != Tcl.OK:
+        if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
           return Tcl.ERROR
 
         if count mod 2 == 1:
@@ -1365,7 +1365,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
           let mkey = Tcl.GetString(elements[i])
           case $mkey:
             of "strokeWidth":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
+              if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth) != Tcl.OK:
                 return Tcl.ERROR
             of "transform":
               if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
@@ -1374,16 +1374,16 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               let arg = Tcl.GetString(elements[i+1])
               myEnumlineCap = $arg
             of "miterLimit":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
+              if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit) != Tcl.OK:
                 return Tcl.ERROR
             of "lineJoin":
               let arg = Tcl.GetString(elements[i+1])
               myEnumlineJoin = $arg
             of "dashes":
-              if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
+              if Tcl.ListObjGetElements(interp, elements[i+1], dashescount, dasheselements) != Tcl.OK:
                 return Tcl.ERROR
               for j in 0..dashescount-1:
-                if Tcl.GetDoubleFromObj(interp, dasheselements[j], v.addr) != Tcl.OK:
+                if Tcl.GetDoubleFromObj(interp, dasheselements[j], v) != Tcl.OK:
                   return Tcl.ERROR
                 mydashes.add(v)
             else:
@@ -1414,7 +1414,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
       if objc == 5:
         # Dict
-        if Tcl.ListObjGetElements(interp, objv[4], count.addr, elements.addr) != Tcl.OK:
+        if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
           return Tcl.ERROR
 
         if count mod 2 == 1:
@@ -1426,13 +1426,13 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
           let mkey = Tcl.GetString(elements[i])
           case $mkey:
             of "strokeWidth":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth.addr) != Tcl.OK:
+              if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth) != Tcl.OK:
                 return Tcl.ERROR
             of "transform":
               if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
                 return Tcl.ERROR
             of "miterLimit":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit.addr) != Tcl.OK:
+              if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit) != Tcl.OK:
                 return Tcl.ERROR
             of "hAlign":
               let arg = Tcl.GetString(elements[i+1])
@@ -1447,21 +1447,21 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               let arg = Tcl.GetString(elements[i+1])
               myEnumlineJoin = $arg
             of "dashes":
-              if Tcl.ListObjGetElements(interp, elements[i+1], dashescount.addr, dasheselements.addr) != Tcl.OK:
+              if Tcl.ListObjGetElements(interp, elements[i+1], dashescount, dasheselements) != Tcl.OK:
                 return Tcl.ERROR
               for j in 0..dashescount-1:
-                if Tcl.GetDoubleFromObj(interp, dasheselements[j], v.addr) != Tcl.OK:
+                if Tcl.GetDoubleFromObj(interp, dasheselements[j], v) != Tcl.OK:
                   return Tcl.ERROR
                 mydashes.add(v)
             of "bounds":
-              if Tcl.ListObjGetElements(interp, elements[i+1], veccount.addr, vecelements.addr) != Tcl.OK:
+              if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
                 return Tcl.ERROR
               if veccount != 2:
                 ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
                 return Tcl.ERROR
 
-              if Tcl.GetDoubleFromObj(interp, vecelements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-              if Tcl.GetDoubleFromObj(interp, vecelements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
 
               vecBounds = vec2(x, y)
             else:

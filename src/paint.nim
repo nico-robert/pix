@@ -45,7 +45,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # 
   # Returns nothing.
   try:
-    var count, subcount, len: cint = 0
+    var count, subcount, len: int = 0
     var x, y, p, opacity: cdouble = 0
     var elements, subelements, position, stop: Tcl.PPObj
     var matrix3: vmath.Mat3
@@ -62,7 +62,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     let paint = paintTable[$arg1]
 
     # Dict
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count mod 2 == 1:
@@ -77,7 +77,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
           let value = Tcl.GetString(elements[i+1])
           paint.color = parseHtmlColor($value).color
         of "opacity":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], opacity.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], opacity) != Tcl.OK:
             return Tcl.ERROR
           paint.opacity = opacity
         of "blendMode":
@@ -93,29 +93,29 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
           paint.imageMat = matrix3
         of "gradientHandlePositions":
           # Positions
-          if Tcl.ListObjGetElements(interp, elements[i+1], subcount.addr, subelements.addr) != Tcl.OK:
+          if Tcl.ListObjGetElements(interp, elements[i+1], subcount, subelements) != Tcl.OK:
             return Tcl.ERROR
           if subcount != 0:
             var positions = newSeq[vmath.Vec2]()
             for j in 0..subcount-1:
-              if Tcl.ListObjGetElements(interp, subelements[j], len.addr, position.addr) != Tcl.OK:
+              if Tcl.ListObjGetElements(interp, subelements[j], len, position) != Tcl.OK:
                 return Tcl.ERROR
               if len != 2:
                 ERROR_MSG(interp, "wrong # args: 'positions' should be 'x' 'y'")
                 return Tcl.ERROR
 
-              if Tcl.GetDoubleFromObj(interp, position[0], x.addr) != Tcl.OK: return Tcl.ERROR
-              if Tcl.GetDoubleFromObj(interp, position[1], y.addr) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, position[0], x) != Tcl.OK: return Tcl.ERROR
+              if Tcl.GetDoubleFromObj(interp, position[1], y) != Tcl.OK: return Tcl.ERROR
 
               positions.add(vec2(x, y))
             paint.gradientHandlePositions = positions
         of "gradientStops":
-          if Tcl.ListObjGetElements(interp, elements[i+1], subcount.addr, subelements.addr) != Tcl.OK:
+          if Tcl.ListObjGetElements(interp, elements[i+1], subcount, subelements) != Tcl.OK:
             return Tcl.ERROR
           if subcount != 0:
             var colorstops = newSeq[ColorStop]()
             for j in 0..subcount-1:
-              if Tcl.ListObjGetElements(interp, subelements[j], len.addr, stop.addr) != Tcl.OK:
+              if Tcl.ListObjGetElements(interp, subelements[j], len, stop) != Tcl.OK:
                 return Tcl.ERROR
               if len != 2:
                 ERROR_MSG(interp, "wrong # args: 'items' should be 'color' 'position'")
@@ -124,7 +124,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
                 let arg2 = Tcl.GetString(stop[0])
                 cseqColorP = parseHtmlColor($arg2)
 
-              if Tcl.GetDoubleFromObj(interp, stop[1], p.addr) != Tcl.OK:
+              if Tcl.GetDoubleFromObj(interp, stop[1], p) != Tcl.OK:
                 return Tcl.ERROR
               
               colorstops.add(ColorStop(color: cseqColorP, position: p))

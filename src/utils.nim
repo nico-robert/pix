@@ -18,18 +18,18 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   # 
   # Returns true if the object is a color, false otherwise.
   var c: cdouble = 0
-  var count: cint = 0
+  var count: int = 0
   var elements: Tcl.PPObj
   var color : seq[float32]
 
-  if Tcl.ListObjGetElements(nil, obj, count.addr, elements.addr) != Tcl.OK:
+  if Tcl.ListObjGetElements(nil, obj, count, elements) != Tcl.OK:
     return false
 
   if count notin (3..4):
     return false
 
   for i in 0..count-1:
-    if Tcl.GetDoubleFromObj(nil, elements[i], c.addr) != Tcl.OK:
+    if Tcl.GetDoubleFromObj(nil, elements[i], c) != Tcl.OK:
       return false
     if c < 0 or c > 1:
       return false
@@ -78,11 +78,11 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
 # 
 # Returns Tcl.OK if successful, Tcl.ERROR otherwise.
   try:
-    var count: cint = 0
+    var count: int = 0
     var elements: Tcl.PPObj
     var value : seq[cdouble]
     
-    if Tcl.ListObjGetElements(interp, obj, count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, obj, count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count != 9:
@@ -92,7 +92,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
     value.setlen(count)
     
     for i in 0..count-1:
-      if Tcl.GetDoubleFromObj(interp, elements[i], value[i].addr) != Tcl.OK:
+      if Tcl.GetDoubleFromObj(interp, elements[i], value[i]) != Tcl.OK:
         return Tcl.ERROR
 
     # Fill the matrix3 with the values of the Tcl object.

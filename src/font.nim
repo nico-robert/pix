@@ -49,7 +49,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
     
-    if Tcl.GetDoubleFromObj(interp, objv[2], fsize.addr) != Tcl.OK:
+    if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
       return Tcl.ERROR
 
     font.size = fsize
@@ -604,7 +604,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   #
   # Returns Tcl dict value {x y}.
   try:
-    var count: cint = 0
+    var count: int = 0
     var elements: Tcl.PPObj
     var bounds: vmath.Vec2
 
@@ -632,7 +632,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       bounds = font.layoutBounds(text)
     else:
       # Span
-      if Tcl.ListObjGetElements(interp, objv[1], count.addr, elements.addr) != Tcl.OK:
+      if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
         return Tcl.ERROR
       if count == 0:
         ERROR_MSG(interp, "pix(error): list <span> object is empty.")
@@ -865,7 +865,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns a 'new' arrangement object.
   try:
     var x, y: cdouble = 1.0
-    var count, veccount, wrapB: cint = 0
+    var count, veccount, wrapB: int = 0
     var elements, vecelements: Tcl.PPObj
     var mywrap, hasFont: bool = true
     var vecBounds = vec2(0, 0)
@@ -894,7 +894,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       text = $arg2
     else:
       # Spans
-      if Tcl.ListObjGetElements(interp, objv[1], count.addr, elements.addr) != Tcl.OK:
+      if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
         return Tcl.ERROR
 
       if count == 0:
@@ -909,7 +909,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     if (objc == 4 and hasFont) or (objc == 3 and hasFont == false):
       if hasFont == false: jj = 2
       # Dict
-      if Tcl.ListObjGetElements(interp, objv[jj], count.addr, elements.addr) != Tcl.OK:
+      if Tcl.ListObjGetElements(interp, objv[jj], count, elements) != Tcl.OK:
         return Tcl.ERROR
 
       if count mod 2 == 1:
@@ -921,7 +921,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
         let mkey = Tcl.GetString(elements[i])
         case $mkey:
           of "wrap":
-            if Tcl.GetBooleanFromObj(interp, elements[i+1], wrapB.addr) != Tcl.OK:
+            if Tcl.GetBooleanFromObj(interp, elements[i+1], wrapB) != Tcl.OK:
               return Tcl.ERROR
             mywrap = wrapB.bool
           of "hAlign":
@@ -931,14 +931,14 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
             let arg = Tcl.GetString(elements[i+1])
             myEnumvAlign = $arg
           of "bounds":
-            if Tcl.ListObjGetElements(interp, elements[i+1], veccount.addr, vecelements.addr) != Tcl.OK:
+            if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
               return Tcl.ERROR
             if veccount != 2:
               ERROR_MSG(interp, "wrong # args: argument should be 'x' 'y'")
               return Tcl.ERROR
 
-            if Tcl.GetDoubleFromObj(interp, vecelements[0], x.addr) != Tcl.OK: return Tcl.ERROR
-            if Tcl.GetDoubleFromObj(interp, vecelements[1], y.addr) != Tcl.OK: return Tcl.ERROR
+            if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
+            if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
 
             vecBounds = vec2(x, y)
           else:
@@ -988,7 +988,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var fsize, flineHeight: cdouble = 0
-    var count, myBool, countP: cint = 0
+    var count, myBool, countP: int = 0
     var elements, elementsP: Tcl.PPObj
   
     if objc != 3:
@@ -999,7 +999,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     let arg1 = Tcl.GetString(objv[1])
     let font = fontTable[$arg1]
 
-    if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count mod 2 == 1:
@@ -1011,23 +1011,23 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       let mkey = Tcl.GetString(elements[i])
       case $mkey:
         of "noKerningAdjustments":
-          if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
+          if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool) != Tcl.OK:
             return Tcl.ERROR
           font.noKerningAdjustments = myBool.bool
         of "underline":
-          if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
+          if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool) != Tcl.OK:
             return Tcl.ERROR
           font.underline = myBool.bool
         of "strikethrough":
-          if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool.addr) != Tcl.OK:
+          if Tcl.GetBooleanFromObj(interp, elements[i+1], myBool) != Tcl.OK:
             return Tcl.ERROR
           font.strikethrough = myBool.bool
         of "size":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], fsize.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], fsize) != Tcl.OK:
             return Tcl.ERROR
           font.size = fsize
         of "lineHeight":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], flineHeight.addr) != Tcl.OK:
+          if Tcl.GetDoubleFromObj(interp, elements[i+1], flineHeight) != Tcl.OK:
             return Tcl.ERROR
           font.lineHeight = flineHeight
         of "paint":
@@ -1041,7 +1041,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
             return Tcl.ERROR
           font.paint.color = cseqColorP
         of "paints":
-          if Tcl.ListObjGetElements(interp, elements[i+1], countP.addr, elementsP.addr) != Tcl.OK:
+          if Tcl.ListObjGetElements(interp, elements[i+1], countP, elementsP) != Tcl.OK:
             return Tcl.ERROR
           if countP != 0:
             var paints = newSeq[Paint]()

@@ -9,8 +9,8 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   #
   # Returns a 'new' svg object.
   try:
-    var width, height: cint = 0
-    var count: cint = 0
+    var width, height: int = 0
+    var count: int = 0
     var elements: Tcl.PPObj
     var svg: Svg
 
@@ -23,15 +23,15 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     if objc == 3:
       # Size
-      if Tcl.ListObjGetElements(interp, objv[2], count.addr, elements.addr) != Tcl.OK:
+      if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
         return Tcl.ERROR
 
       if count != 2:
         ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
         return Tcl.ERROR
 
-      if Tcl.GetIntFromObj(interp, elements[0], width.addr)  != Tcl.OK: return Tcl.ERROR
-      if Tcl.GetIntFromObj(interp, elements[1], height.addr) != Tcl.OK: return Tcl.ERROR
+      if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+      if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
       svg = parseSvg($arg1, width, height)
 
