@@ -1,26 +1,8 @@
 # Copyright (c) 2024 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
-# pix - Tcl wrapper around Pixie, a full-featured 2D graphics library written in Nim.
-# (https://github.com/treeform/pixie)
-
-# 03-Jun-2024 : v0.1 Initial release
-# 25-Jun-2024 : v0.2
-               # Add `font` namespace + test file.
-               # Add `image` namespace + test file.
-               # Add `paint` namespace + test file.
-               # Add `path` namespace + test file.
-               # Rename `pix::ctx::getSize` by `pix::ctx::get` 
-               # Rename `pix::img::read` by `pix::img::readImage`
-               # Rename `pix::font::read` by `pix::font::readFont`
-               # Add documentation based on Pixie API reference.
-               # Add binary for Linux.
-               # Code refactoring.
 
 import pixie, pixie/fileformats/svg
-import std/strutils
-import tables
-import unicode
-import std/base64
+import std/[strutils, parsecfg, streams, base64 ,tables, unicode]
 from tclpix as Tcl import nil
 from tkpix  as Tk import nil
 #
@@ -34,7 +16,8 @@ var arrTable   = initTable[string, Arrangement]()
 var svgTable   = initTable[string, Svg]()
 var spanTable  = initTable[string, Span]()
 
-const version: cstring = "0.2"
+# Source : https://stackoverflow.com/questions/57121829/get-version-from-nimble-package
+const pix_version: cstring = staticRead("../pix.nimble").newStringStream.loadConfig.getSectionValue("", "version").cstring
 
 include "utils.nim"
 include "image.nim"
@@ -59,13 +42,8 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc,dynlib.} =
       return Tcl.ERROR
 
   # Package
-  discard Tcl.PkgProvideEx(interp, "pix", version, nil)
+  discard Tcl.PkgProvideEx(interp, "pix", pix_version, nil)
 
-  # Nim version supported.
-  if NimVersion < "2.0.2":
-    ERROR_MSG(interp, "pix(error): Nim version: '" & NimVersion & "' not supported.")
-    return Tcl.ERROR
-  
   # Commands context :
   if Tcl.CreateObjCommand(interp, "pix::ctx::new", pix_context, nil, nil) == nil:
     return Tcl.ERROR
