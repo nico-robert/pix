@@ -316,10 +316,15 @@ foreach name {examples pix context paint image svg paths font utils} {
     source [file join [file dirname [info script]] $name.ruff]
 }
 
+# Read pix.nimble to find pix version.
+set fp [open [file join $dirpix pix.nimble]]
+set datanimble [split [read $fp] \n]
+close $fp
+
 # Find out pix version
 set version ""
-foreach line $datapix {
-    if {[string match "*const version*" $line]} {
+foreach line $datanimble {
+    if {[string match "*version*=*" $line]} {
         if {[regexp {[0-9.]+} $line match]} {
             set version $match ; break
         }
@@ -342,8 +347,8 @@ if {$version eq ""} {
                  -outdir [file dirname [info script]]  \
                  -outfile "pix.html"
 
-puts "dir     :[file dirname [info script]]"
-puts "file    :pix.html"
-puts "version :$version"
+puts "dir     : [file dirname [info script]]"
+puts "file    : pix.html"
+puts "version : $version"
 puts done!
 exit 0
