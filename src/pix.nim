@@ -2,7 +2,9 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie, pixie/fileformats/svg
-import std/[strutils, parsecfg, streams, base64 ,tables, unicode]
+import std/[strutils, parsecfg, streams, base64]
+import tables
+import unicode
 from tclpix as Tcl import nil
 from tkpix  as Tk import nil
 #
