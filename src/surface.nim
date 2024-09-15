@@ -15,13 +15,12 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     let arg1 = Tcl.GetString(objv[1])
-    let str = $arg1
 
-    if str[^3..^1] == "ctx":
-      let ctx = ctxTable[$str]
+    if ctxTable.hasKey($arg1):
+      let ctx = ctxTable[$arg1]
       img = ctx.image
     else:
-      img = imgTable[$str]
+      img = imgTable[$arg1]
 
     let photosource = Tcl.GetString(objv[2])
     let source = Tk.FindPhoto(interp, photosource)
@@ -31,16 +30,16 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     var pblock: Tk.PhotoImageBlock
-    var imgData  = cast[ptr UncheckedArray[uint8]](alloc(img.width * img.height * 4))
-    let imgpixie = cast[ptr UncheckedArray[uint8]](img.data[0].addr)
+    var imgData  = cast[ptr UncheckedArray[uint8]](img.data[0].addr)
 
     var i = 0
     while i < (img.width * img.height * 4):
-      let a = float(imgpixie[i+3]) / 255.0
-      imgData[i+0] = uint8(float(imgpixie[i+0]) / a + 0.5)
-      imgData[i+1] = uint8(float(imgpixie[i+1]) / a + 0.5)
-      imgData[i+2] = uint8(float(imgpixie[i+2]) / a + 0.5)
-      imgData[i+3] = imgpixie[i+3]
+      let alpha = imgData[i+3]
+      if alpha != 0 and alpha != 255:
+        let multiplier = round((255 / alpha.float32) * 255).uint32
+        imgData[i+0] = ((imgData[i+0].uint32 * multiplier + 127) div 255).uint8
+        imgData[i+1] = ((imgData[i+1].uint32 * multiplier + 127) div 255).uint8
+        imgData[i+2] = ((imgData[i+2].uint32 * multiplier + 127) div 255).uint8
       inc(i, 4)
 
     pblock.pixelPtr  = imgData
@@ -55,9 +54,6 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     if Tk.PhotoPutBlock(interp, source, pblock.addr, 0, 0, pblock.width, pblock.height, Tk.PHOTO_COMPOSITE_SET) != Tcl.OK:
         return Tcl.ERROR
-    
-    if imgData != nil:
-      dealloc(imgData)
 
     return Tcl.OK
   except Exception as e:
