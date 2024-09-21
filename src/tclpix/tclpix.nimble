@@ -1,11 +1,7 @@
 # Package
 version     = "0.0.3"
 author      = "Nicolas ROBERT"
-description = """
-Wrapper Tcl for 'pix' library
-Based on Mark Janssen's tclstubs package 
-(https://github.com/mpcjanssen/tclstubs-nimble) (MIT licence)
-"""
+description = "Wrapper Tcl for 'pix' library"
 license     = "MIT"
 
 # Deps
