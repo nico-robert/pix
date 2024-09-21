@@ -95,8 +95,9 @@ namespace eval ::pix {
         *paths*    - Vector Paths.
         *svg*      - Parse, render SVG (namespace pretty limited)
 
-        #### Inspiration Nim to Tcl C API:
-        [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble)
+        #### Acknowledgement:
+        * [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble) (MIT) <br>
+        * [Pixie](https://github.com/treeform/pixie) (MIT)
 
         #### License
     }
