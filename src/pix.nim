@@ -389,5 +389,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc,dynlib.} =
     return Tcl.ERROR
   if Tcl.CreateObjCommand(interp, "pix::toB64", pix_toB64, nil, nil) == nil:
     return Tcl.ERROR
+  if Tcl.CreateObjCommand(interp, "pix::rotMatrix", pix_rotMatrix, nil, nil) == nil:
+    return Tcl.ERROR
 
   return Tcl.OK

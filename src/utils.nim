@@ -210,4 +210,38 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   except Exception as e:
     ERROR_MSG(interp, "pix(error): " & e.msg)
     return Tcl.ERROR
-  
+
+proc pix_rotMatrix(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Adds a rotation to the matrix
+  # 
+  # angle   - double value (radian)
+  # matrix  - list
+  #
+  # Returns the matrix rotation as a list.
+  try:
+    var matrix3: vmath.Mat3
+    var angle: cdouble = 0
+    let listobj = Tcl.NewListObj(0, nil)
+
+    if objc != 3:
+      Tcl.WrongNumArgs(interp, 1, objv, "angle 'list'")
+      return Tcl.ERROR
+
+    if Tcl.GetDoubleFromObj(interp, objv[1], angle) != Tcl.OK:
+      return Tcl.ERROR
+
+    if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+
+    matrix3 = matrix3 * vmath.rotate(-angle.float32)
+
+    for i in 0..2:
+      for j in 0..2:
+        discard Tcl.ListObjAppendElement(interp, listobj, Tcl.NewDoubleObj(matrix3[i][j]))
+
+    Tcl.SetObjResult(interp, listobj)
+    
+    return Tcl.OK
+  except Exception as e:
+    ERROR_MSG(interp, "pix(error): " & e.msg)
+    return Tcl.ERROR
