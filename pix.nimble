@@ -15,8 +15,15 @@
                # Add documentation based on Pixie API reference.
                # Add binary for Linux.
                # Code refactoring.
+# 06-oct-2024 : v0.3
+               # Doc : Jpeg format is not supported for pix::ctx::writeFile.
+               # Rename pix::parsePath to pix::pathObjToString
+               # Add pix::svgStyleToPathObj proc (convert SVG path string to path object)
+               # Add pix::rotMatrix proc (matrix rotation)
+               # Fix bug `pix::path::fillOverlaps` bad arguments, used.
+               # Code refactoring.
 
-version     = "0.2"
+version     = "0.3"
 author      = "Nicolas ROBERT"
 description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), a full-featured 2D graphics library written in Nim."
 license     = "MIT"
@@ -28,22 +35,16 @@ requires "nim   == 2.0.6"
 requires "pixie == 5.0.7"
 
 # task
-task bindings, "Generate Tcl wrapper":
+task tclWrapper, "Generate pix Tcl library.":
 
-  proc tclLibCompile(libName: string, flags: string) =
+  proc compile(libName: string, flags= "") =
     exec "nim c " & flags & " --path:tclpix --path:tkpix -d:release --app:lib --out:" & libName & " src/pix.nim"
 
   when defined(windows):
-    tclLibCompile "./win32-x86_64/pix"&version&".dll" ,
-                  "--cc:'gcc' --passL:'-s -static-libgcc c:/dev/Tcl86/lib/tclstub86.lib c:/dev/Tcl86/lib/tkstub86.lib'"
+    compile "./win32-x86_64/pix"&version&".dll", "--cc:gcc --passL:-s --passL:-static-libgcc"
 
   elif defined(macosx):
-    tclLibCompile "./macosx-x86_64/libpix"&version&".dylib" ,
-                  "--passL:'/usr/local/Cellar/tcl-tk/8.6.14/lib/libtclstub8.6.a /usr/local/Cellar/tcl-tk/8.6.14/lib/libtkstub8.6.a'"
+    compile "./macosx-x86_64/libpix"&version&".dylib"
 
   elif defined(linux):
-    tclLibCompile "./linux-x86_64/libpix"&version&".so" ,
-                  "--passL:'/usr/lib/x86_64-linux-gnu/libtclstub8.6.a /usr/lib/x86_64-linux-gnu/libtkstub8.6.a'"
-
-  else:
-    echo "Os not supported."
+    compile "./linux-x86_64/libpix"&version&".so"

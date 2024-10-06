@@ -54,9 +54,14 @@ A large part of the `pix` [documentation](http://htmlpreview.github.io/?https://
 - [x] path
 - [x] svg
 
-Inspiration Nim to Tcl C API :
+Acknowledgments :
 -------------------------
-- [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble)
+- [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble) (MIT)
+- [Pixie](https://github.com/treeform/pixie) (MIT)
+
+Middleware :
+-------------------------
+- [graphy](https://github.com/nico-robert/graphy)
 
 License :
 -------------------------
@@ -76,4 +81,11 @@ Release :
     - Rename `pix::font::read` by `pix::font::readFont`
     - Add documentation based on Pixie API reference.
     - Add binary for Linux.
+    - Code refactoring.
+*  **06-oct-2024** : 0.3
+    - Doc : Jpeg format is not supported for pix::ctx::writeFile.
+    - Rename `pix::parsePath` to `pix::pathObjToString`
+    - Add `pix::svgStyleToPathObj` proc (convert SVG path string to path object)
+    - Add `pix::rotMatrix` proc (matrix rotation)
+    - Fix bug `pix::path::fillOverlaps` bad arguments, used.
     - Code refactoring.
