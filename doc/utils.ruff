@@ -9,12 +9,19 @@ proc pix::colorHTMLtoRGBA {HTMLcolor} {
   #
   # Returns a tcl list.
 }
-proc pix::parsePath {path} {
+proc pix::pathObjToString {path} {
   # Parse path.
   # 
-  # path  - string
+  # path  - path object
   #
-  # Returns the parsed path.
+  # Returns the parsed path to SVG style path.
+}
+proc pix::svgStyleToPathObj {path} {
+  # Transforms a SVG style path to a path object.
+  # 
+  # path  - string SVG style
+  #
+  # Returns a 'new' path object.
 }
 proc pix::toB64 {object} {
   # Convert an image to base64 format.
@@ -22,4 +29,12 @@ proc pix::toB64 {object} {
   # object - image or context object
   #
   # Returns string.
+}
+proc pix::rotMatrix {angle matrix} {
+  # Adds a rotation to the matrix
+  # 
+  # angle   - double value (radian)
+  # matrix  - list
+  #
+  # Returns the matrix rotation as a list.
 }

@@ -92,7 +92,7 @@ proc pix::ctx::quadraticCurveTo {context coordinates_1 coordinates_2} {
   # The starting point is the latest point in the current path,
   # which can be changed using moveTo() before creating the quadratic Bézier curve.
   # 
-  # context      - object
+  # context        - object
   # coordinates_1  - list cpx,cpy
   # coordinates_2  - list x,y 
   #
@@ -388,7 +388,7 @@ proc pix::ctx::writeFile {context filePath} {
   # Save context to image file.
   # 
   # context  - object
-  # filePath - string (\*.png|\*.bmp|\*.jpeg|\*.qoi|\*.ppm)
+  # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # Returns nothing.
 }

@@ -33,7 +33,7 @@ proc pix::img::fill {image value} {
   # Fills the image with the color.
   # 
   # image   - object
-  # value   - string color or <paint> object
+  # value   - string color or paint object
   #
   # Returns nothing.
 }
@@ -59,7 +59,7 @@ proc pix::img::strokePath {image value color options} {
   # 
   # image   - object
   # value   - string path
-  # color   - string
+  # color   - string color or paint object
   # options - dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)
   #
   # Returns nothing.
@@ -280,7 +280,7 @@ proc pix::img::writeFile {image filePath} {
   # Save image file.
   # 
   # image    - object
-  # filePath - string (\*.png|\*.bmp|\*.jpeg|\*.qoi|\*.ppm)
+  # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # Returns nothing.
 }

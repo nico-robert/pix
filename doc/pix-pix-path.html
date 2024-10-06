@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.2: Reference Manual</title>
+<title>pix 0.3: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.2: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.3: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -198,7 +198,7 @@
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::new'>new</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Sets a new context.</p>
+<p class='ruff'>Sets a new path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>new</span> </div>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' path object.</p>
 <h3 class='ruffproc'><a name='::pix::path::polygon'>polygon</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -291,7 +291,7 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::lineTo'>lineTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineTo</span> <span class='ruff_arg'>path coordinates</span></pre>Adds a straight line to the current sub-path by connecting the sub-path's last point to the specified (x, y) coordinates.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::miterLimitToAngle'>miterLimitToAngle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>miterLimitToAngle</span> <span class='ruff_arg'>angle</span></pre>Converts miter-limit-ratio to miter-limit-angle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::moveTo'>moveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>moveTo</span> <span class='ruff_arg'>path coordinates</span></pre>Begins a new sub-path at the point (x, y).
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::new'>new</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>new</span> </pre>Sets a new context.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::new'>new</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>new</span> </pre>Sets a new path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::polygon'>polygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>polygon</span> <span class='ruff_arg'>path coordinates size sides</span></pre>Adds an n-sided regular polygon at (x, y) with the parameter size. Polygons &quot;face&quot; north.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::quadraticCurveTo'>quadraticCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2</span></pre>Adds a quadratic Bézier curve to the current sub-path. It requires two points: the first one is a control point and the second one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the quadratic Bézier curve.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::rect'>rect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rect</span> <span class='ruff_arg'>path coordinates size ?ccw?</span></pre>Adds a rectangle. Clockwise parameter can be used to subtract a rect from a path when using even-odd winding rule.
