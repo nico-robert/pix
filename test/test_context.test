@@ -3,7 +3,7 @@ lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 # source all.tcl
 if {[catch {package present pix}]} {package require pix}
 
-set font [file join [file dirname [file dirname [info script]]] examples data Roboto-Regular_1.ttf]
+set font [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]
 
 # test 1
 set ctx [pix::ctx::new {300 150} white]

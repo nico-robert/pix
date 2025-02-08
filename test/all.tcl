@@ -19,3 +19,5 @@ foreach fc [split $files "\n"] {
     if {[string length $file] == 0 || [string first "#" $file] > -1} {continue}
     source [file join $dir $file]
 }
+
+exit 0
