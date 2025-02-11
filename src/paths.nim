@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_path(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -109,7 +109,8 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # Returns nothing.
   try:
     var x, y, r, a0, a1: cdouble = 0
-    var count, clockcw: int = 0
+    var count: Tcl.Size
+    var clockcw: int = 0
     var ccw: bool = false
     var elements: Tcl.PPObj
 
@@ -160,7 +161,7 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # Returns nothing.
   try:
     var x1, y1, x2, y2, radius: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 5:
@@ -217,7 +218,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   # Returns nothing.
   try:
     var x1, y1, x2, y2, x3, y3: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 5:
@@ -275,7 +276,7 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # Returns nothing.
   try:
     var x, y: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
   
     if objc != 3:
@@ -313,7 +314,7 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # Returns nothing.
   try:
     var x, y: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
   
     if objc != 3:
@@ -377,7 +378,8 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns nothing.
   try:
     var x, y, size: cdouble = 0
-    var count, sides: int = 0
+    var count: Tcl.Size
+    var sides: int = 0
     var elements: Tcl.PPObj
   
     if objc != 5:
@@ -423,7 +425,8 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # Returns nothing.
   try:
     var x, y, width, height: cdouble = 0
-    var count, clockcw: int = 0
+    var count: Tcl.Size
+    var clockcw: int = 0
     var ccw: bool = true
     var elements: Tcl.PPObj
 
@@ -476,7 +479,7 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # Returns nothing.
   try:
     var cx, cy, r: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -518,7 +521,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   #
   try:
     var x, y: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
     var val: int = 0
     var matrix3: vmath.Mat3
@@ -677,7 +680,7 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns nothing.
   try:
     var x, y, rx, ry: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 5:
@@ -724,7 +727,8 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # Returns nothing.
   try:
     var x, y, rx, ry, xAxisRotation: cdouble = 0
-    var count, largeA, sweepF: int = 0
+    var count: Tcl.Size
+    var largeA, sweepF: int = 0
     var largeArcFlag, sweepFlag: bool = false
     var elements: Tcl.PPObj
 
@@ -784,7 +788,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   # Returns nothing.
   try:
     var x1, y1, x2, y2: cdouble = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -836,7 +840,8 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # Returns nothing.
   try:
     var x, y, width, height, nw, ne, se, sw: cdouble = 0
-    var count, clockcw: int = 0
+    var count: Tcl.Size
+    var clockcw: int = 0
     var ccw: bool = true
     var elements: Tcl.PPObj
 
@@ -902,7 +907,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   try:
     var x, y, sWidth, v: cdouble = 1.0
     var mymiterLimit: cdouble = defaultMiterLimit
-    var count, dashescount: int = 0
+    var count, dashescount: Tcl.Size
     var elements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var mydashes: seq[float32] = @[]

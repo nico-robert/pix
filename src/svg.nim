@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -10,7 +10,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # Returns a 'new' svg object.
   try:
     var width, height: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
     var svg: Svg
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -9,7 +9,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   # Returns a 'new' img object.
   try:
     var width, height: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 2:
@@ -83,7 +83,7 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns nothing.
   try:
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
     var matrix3: vmath.Mat3
 
@@ -273,7 +273,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   try:
     var sWidth, v: cdouble = 1.0
     var mymiterLimit: cdouble = defaultMiterLimit
-    var count, dashescount: int = 0
+    var count, dashescount: Tcl.Size
     var elements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var img: Image
@@ -402,7 +402,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns nothing.
   try:
     var x, y, spread, blur: cdouble = 0
-    var count, dictcount: int = 0
+    var count, dictcount: Tcl.Size
     var elements, dict : Tcl.PPObj
     var colorShadow: ColorRGBA
 
@@ -485,7 +485,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var x, y: cdouble = 1.0
-    var count, veccount: int = 0
+    var count, veccount: Tcl.Size
     var elements, vecelements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var vecBounds = vec2(0, 0)
@@ -581,7 +581,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns nothing.
   try:
     var width, height: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 3:
@@ -648,7 +648,7 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns Tcl dict (r, g, b, a).
   try:
     var x, y: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 3:
@@ -693,7 +693,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var x, y: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -867,7 +867,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns Tcl dict (r, g, b, a).
   try:
     var x, y: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 3:
@@ -913,7 +913,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   try:
     var x, y: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
     var val: int = 0
 
@@ -1180,7 +1180,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns a 'new' img object.
   try:
     var x, y, width, height: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -1238,7 +1238,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # Returns a 'new' img object.
   try:
     var x, y, width, height: int = 0
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
 
     if objc != 4:
@@ -1327,7 +1327,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   try:
     var x, y, sWidth, v: cdouble = 1.0
     var mymiterLimit: cdouble = defaultMiterLimit
-    var count, veccount, dashescount: int = 0
+    var count, veccount, dashescount: Tcl.Size
     var elements, vecelements, dasheselements: Tcl.PPObj
     var matrix3: vmath.Mat3 = mat3()
     var vecBounds = vec2(0, 0)

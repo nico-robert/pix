@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -604,7 +604,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   #
   # Returns Tcl dict value {x y}.
   try:
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
     var bounds: vmath.Vec2
 
@@ -865,7 +865,8 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Returns a 'new' arrangement object.
   try:
     var x, y: cdouble = 1.0
-    var count, veccount, wrapB: int = 0
+    var count, veccount: Tcl.Size
+    var wrapB: int = 0
     var elements, vecelements: Tcl.PPObj
     var mywrap, hasFont: bool = true
     var vecBounds = vec2(0, 0)
@@ -988,7 +989,8 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Returns nothing.
   try:
     var fsize, flineHeight: cdouble = 0
-    var count, myBool, countP: int = 0
+    var count, countP: Tcl.Size
+    var myBool: int = 0
     var elements, elementsP: Tcl.PPObj
   
     if objc != 3:

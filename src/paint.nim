@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -45,7 +45,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # 
   # Returns nothing.
   try:
-    var count, subcount, len: int = 0
+    var count, subcount, len: Tcl.Size
     var x, y, p, opacity: cdouble = 0
     var elements, subelements, position, stop: Tcl.PPObj
     var matrix3: vmath.Mat3
