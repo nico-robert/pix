@@ -1,14 +1,16 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-proc ERROR_MSG(interp: Tcl.PInterp, errormsg: string): void =
+proc ERROR_MSG(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
   # 
   # interp   - The Tcl interpreter.
   # errormsg - The error message.
   # 
-  # Returns None.
+  # Returns Tcl.ERROR on failure.
   Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
+
+  return Tcl.ERROR
 
 proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   # Checks if the obj is a color.
@@ -18,7 +20,7 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   # 
   # Returns true if the object is a color, false otherwise.
   var c: cdouble = 0
-  var count: int = 0
+  var count: Tcl.Size
   var elements: Tcl.PPObj
   var color : seq[float32]
 
@@ -78,7 +80,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
 # 
 # Returns Tcl.OK if successful, Tcl.ERROR otherwise.
   try:
-    var count: int = 0
+    var count: Tcl.Size
     var elements: Tcl.PPObj
     var value : seq[cdouble]
     
@@ -86,8 +88,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
       return Tcl.ERROR
 
     if count != 9:
-      ERROR_MSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
 
     value.setlen(count)
     
@@ -104,8 +105,7 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
   
 proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Converts an HTML color to an RGBA.
@@ -133,8 +133,7 @@ proc pix_colorHTMLtoRGBA(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_pathObjToString(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Parse path.
@@ -156,8 +155,7 @@ proc pix_pathObjToString(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_svgStyleToPathObj(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Transforms a SVG style path to a path object.
@@ -185,8 +183,7 @@ proc pix_svgStyleToPathObj(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Convert an image to base64 format.
@@ -208,8 +205,7 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_rotMatrix(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rotation to the matrix
@@ -243,5 +239,4 @@ proc pix_rotMatrix(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)

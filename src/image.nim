@@ -21,8 +21,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       
     if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -39,8 +38,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # New image copy.
@@ -70,8 +68,7 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws one image onto another using a matrix transform and color blending.
@@ -123,8 +120,7 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the image with the color.
@@ -157,8 +153,7 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the image with the color.
@@ -182,8 +177,7 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills a path.
@@ -258,8 +252,7 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strokes a path.
@@ -299,8 +292,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     if count mod 2 == 1:
-      ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
 
     var i = 0
     while i < count:
@@ -329,8 +321,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               return Tcl.ERROR
             mydashes.add(v)
         else:
-          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-          return Tcl.ERROR
+          return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
       inc(i, 2)
 
     let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
@@ -355,8 +346,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Applies Gaussian blur to the image given a radius.
@@ -390,8 +380,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Create a shadow of the image with the offset, spread and blur.
@@ -419,8 +408,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count mod 2 == 1:
-      ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value key1 value1 ...")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value key1 value1 ...")
 
     var i = 0
     while i < count:
@@ -430,8 +418,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
           if Tcl.ListObjGetElements(interp, elements[i+1], dictcount, dict) != Tcl.OK:
             return Tcl.ERROR
           if dictcount != 2:
-            ERROR_MSG(interp, "wrong # args: 'offset' should be 'x' 'y'")
-            return Tcl.ERROR
+            return ERROR_MSG(interp, "wrong # args: 'offset' should be 'x' 'y'")
             
           if Tcl.GetDoubleFromObj(interp, dict[0], x) != Tcl.OK: return Tcl.ERROR
           if Tcl.GetDoubleFromObj(interp, dict[1], y) != Tcl.OK: return Tcl.ERROR
@@ -447,8 +434,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
           let el = Tcl.GetString(elements[i+1])
           colorShadow = parseHtmlColor($el).rgba
         else:
-          ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-          return Tcl.ERROR
+          return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
       inc(i, 2)
       
     let shadow = img.shadow(
@@ -468,8 +454,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills image text.
@@ -515,8 +500,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     else:
       let font = fontTable[$arg2]
       if objc < 4:
-        ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
 
       let arg3 = Tcl.GetString(objv[3])
       let text = $arg3
@@ -527,8 +511,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
           return Tcl.ERROR
 
         if count mod 2 == 1:
-          ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
-          return Tcl.ERROR
+          return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
 
         var i = 0
         while i < count:
@@ -547,16 +530,14 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
               if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
                 return Tcl.ERROR
               if veccount != 2:
-                ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
-                return Tcl.ERROR
+                return ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
 
               if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
               if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
 
               vecBounds = vec2(x, y)
             else:
-              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-              return Tcl.ERROR
+              return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           inc(i, 2)
         
         let myEnumLH = parseEnum[HorizontalAlignment]($myEnumhAlign, LeftAlign)
@@ -569,8 +550,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Resize an image to a given height and width
@@ -595,8 +575,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -611,8 +590,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets image size.
@@ -636,8 +614,7 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
@@ -663,8 +640,7 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -680,8 +656,7 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
@@ -707,8 +682,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -720,8 +694,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Multiplies alpha of the image by opacity.
@@ -749,8 +722,7 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # A value of 0 stays 0. Anything else turns into 255.
@@ -771,8 +743,7 @@ proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Compares the parameters and returns a score and image of the difference. 
@@ -811,8 +782,7 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Flips the image around the Y axis.
@@ -833,8 +803,7 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Flips the image around the X axis.
@@ -855,8 +824,7 @@ proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a color at (x, y) or returns transparent black if outside of bounds.
@@ -882,8 +850,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK:
       return Tcl.ERROR
@@ -902,8 +869,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Returns true if (x, y) is inside the image, false otherwise.
@@ -928,8 +894,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -940,8 +905,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Inverts all of the colors and alpha.
@@ -962,8 +926,7 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if the entire image is the same color.
@@ -986,8 +949,7 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if the entire image is opaque (alpha values are all 255). 
@@ -1010,8 +972,7 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if this image is fully transparent or not.
@@ -1034,8 +995,7 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Scales image up by 2 ^ power.
@@ -1073,8 +1033,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Scales the image down by an integer scale.
@@ -1112,8 +1071,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks the bounds of opaque pixels. Some images have transparency around them,
@@ -1145,8 +1103,7 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Rotates the image 90 degrees clockwise.
@@ -1167,8 +1124,7 @@ proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a sub image from this image.
@@ -1196,8 +1152,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'width' 'height'")
       
     if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1207,8 +1162,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       
     if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1225,8 +1179,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Either cuts a sub image or returns a super image with padded transparency.
@@ -1254,8 +1207,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
       
     if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1265,8 +1217,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
       
     if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1283,8 +1234,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills with the Paint gradient.
@@ -1311,8 +1261,7 @@ proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strocks image text.
@@ -1357,8 +1306,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
           return Tcl.ERROR
 
         if count mod 2 == 1:
-          ERROR_MSG(interp, "wrong # args: 'arr options' should be :key value ?key1 ?value1 ...")
-          return Tcl.ERROR
+          return ERROR_MSG(interp, "wrong # args: 'arr options' should be :key value ?key1 ?value1 ...")
 
         var i = 0
         while i < count:
@@ -1387,8 +1335,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
                   return Tcl.ERROR
                 mydashes.add(v)
             else:
-              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-              return Tcl.ERROR
+              return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           inc(i, 2)
 
         let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
@@ -1406,8 +1353,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     else:
       let font = fontTable[$arg2]
       if objc < 4:
-        ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
 
       let arg3 = Tcl.GetString(objv[3])
       let text = $arg3
@@ -1418,8 +1364,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
           return Tcl.ERROR
 
         if count mod 2 == 1:
-          ERROR_MSG(interp, "wrong # args: 'font options' should be :key value ?key1 ?value1 ...")
-          return Tcl.ERROR
+          return ERROR_MSG(interp, "wrong # args: 'font options' should be :key value ?key1 ?value1 ...")
 
         var i = 0
         while i < count:
@@ -1457,16 +1402,14 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
               if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
                 return Tcl.ERROR
               if veccount != 2:
-                ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
-                return Tcl.ERROR
+                return ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
 
               if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
               if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
 
               vecBounds = vec2(x, y)
             else:
-              ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-              return Tcl.ERROR
+              return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
           inc(i, 2)
 
         let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
@@ -1486,8 +1429,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Save image file.
@@ -1511,8 +1453,7 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Destroy current image or all images if special word `all` is specified.
@@ -1535,5 +1476,4 @@ proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)

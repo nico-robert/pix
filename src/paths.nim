@@ -17,8 +17,7 @@ proc pix_path(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_addPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a path to the current path.
@@ -43,8 +42,7 @@ proc pix_path_addPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_angleToMiterLimit(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Converts miter-limit-angle to miter-limit-ratio.
@@ -68,8 +66,7 @@ proc pix_path_angleToMiterLimit(clientData: Tcl.PClientData, interp: Tcl.PInterp
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_miterLimitToAngle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Converts miter-limit-ratio to miter-limit-angle.
@@ -93,8 +90,7 @@ proc pix_path_miterLimitToAngle(clientData: Tcl.PClientData, interp: Tcl.PInterp
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circular arc to the current sub-path.
@@ -127,8 +123,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -146,8 +141,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circular arc using the given control points and radius.
@@ -177,8 +171,7 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
@@ -187,8 +180,7 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x2) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y2) != Tcl.OK: return Tcl.ERROR
@@ -200,8 +192,7 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a cubic Bézier curve to the current sub-path.
@@ -234,8 +225,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
@@ -244,8 +234,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x2) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y2) != Tcl.OK: return Tcl.ERROR
@@ -254,8 +243,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_3' should be 'x3' 'y3'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_3' should be 'x3' 'y3'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x3) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y3) != Tcl.OK: return Tcl.ERROR
@@ -264,8 +252,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Begins a new sub-path at the point (x, y).
@@ -291,8 +278,7 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -301,8 +287,7 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a straight line to the current sub-path by connecting
@@ -329,8 +314,7 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -339,8 +323,7 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Attempts to add a straight line from the current point to the start
@@ -363,8 +346,7 @@ proc pix_path_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds an n-sided regular polygon at (x, y) with the parameter size.
@@ -394,8 +376,7 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -410,8 +391,7 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rectangle. Clockwise parameter can be used to subtract
@@ -441,8 +421,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -451,8 +430,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -466,8 +444,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circle.
@@ -495,8 +472,7 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
@@ -508,8 +484,7 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Returns whether or not the specified point is contained in the current path.
@@ -542,8 +517,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -569,8 +543,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Apply a matrix transform to a path.
@@ -598,8 +571,7 @@ proc pix_path_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
   
 proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Compute the bounds of the path.
@@ -635,8 +607,7 @@ proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Copy path.
@@ -666,8 +637,7 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a ellipse.
@@ -696,8 +666,7 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -710,8 +679,7 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds an elliptical arc to the current sub-path, 
@@ -745,8 +713,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_radius' should be 'rx' 'ry'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_radius' should be 'rx' 'ry'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], rx) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], ry) != Tcl.OK: return Tcl.ERROR
@@ -759,8 +726,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -772,8 +738,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a quadratic Bézier curve to the current sub-path. It requires two points:
@@ -804,8 +769,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
@@ -814,8 +778,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x2) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y2) != Tcl.OK: return Tcl.ERROR
@@ -824,8 +787,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rectangle. Clockwise parameter can be used to subtract a 
@@ -856,8 +818,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -866,8 +827,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -876,8 +836,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
 
     if count != 4:
-      ERROR_MSG(interp, "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK: return Tcl.ERROR
@@ -893,8 +852,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Returns whether or not the specified point is inside the area
@@ -925,8 +883,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -937,8 +894,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
         return Tcl.ERROR
 
       if count mod 2 == 1:
-        ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
 
       var i = 0
       while i < count:
@@ -967,8 +923,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
                 return Tcl.ERROR
               mydashes.add(v)
           else:
-            ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-            return Tcl.ERROR
+            return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
         inc(i, 2)
 
     let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
@@ -988,8 +943,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_path_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Destroy current path or all paths if special word `all` is specified.
@@ -1012,5 +966,4 @@ proc pix_path_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)

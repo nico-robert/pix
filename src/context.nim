@@ -29,8 +29,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
           return Tcl.ERROR
         
         if count != 2:
-          ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-          return Tcl.ERROR
+          return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
           
         if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
         if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -42,8 +41,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
         return Tcl.ERROR
       
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
         
       if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
       if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -69,8 +67,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets color style current context.
@@ -93,8 +90,7 @@ proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Saves the entire state of the context by pushing the current state onto a stack.
@@ -115,8 +111,7 @@ proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_textBaseline(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Set the base line alignment for the current context.
@@ -141,8 +136,7 @@ proc pix_ctx_textBaseline(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 
 proc pix_ctx_restore(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -165,8 +159,7 @@ proc pix_ctx_restore(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_saveLayer(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Saves the entire state of the context by pushing the current state onto a stack
@@ -189,8 +182,7 @@ proc pix_ctx_saveLayer(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strokes a segment (draws a line from ax, ay to bx, by) according to
@@ -219,8 +211,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -229,8 +220,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x1' 'y1'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x1' 'y1'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
@@ -241,8 +231,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rectangle that is stroked (outlined) according to the
@@ -271,8 +260,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -281,8 +269,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -291,8 +278,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a quadratic Bézier curve to the current sub-path.
@@ -323,8 +309,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'cpx' 'cpy'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'cpx' 'cpy'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], cpx) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cpy) != Tcl.OK: return Tcl.ERROR
@@ -333,8 +318,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -343,8 +327,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 
 proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -378,8 +361,7 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK : return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK : return Tcl.ERROR
@@ -397,8 +379,7 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circular arc using the given control points and radius.
@@ -427,8 +408,7 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'x1' 'y1'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
@@ -437,8 +417,7 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'x2' 'y2'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x2) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y2) != Tcl.OK: return Tcl.ERROR
@@ -449,8 +428,7 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a cubic Bézier curve to the current sub-path.
@@ -482,8 +460,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'cp1x' 'cp1y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_1' should be 'cp1x' 'cp1y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], cp1x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cp1y) != Tcl.OK: return Tcl.ERROR
@@ -492,8 +469,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'cp2x' 'cp2y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_2' should be 'cp2x' 'cp2y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], cp2x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cp2y) != Tcl.OK: return Tcl.ERROR
@@ -502,8 +478,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates_3' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates_3' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -512,8 +487,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circle to the current path.
@@ -541,8 +515,7 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
@@ -553,8 +526,7 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Turns the path into the current clipping region.
@@ -598,8 +570,7 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Returns a TextMetrics object that contains information
@@ -631,8 +602,7 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Resets the current transform to the identity matrix.
@@ -653,8 +623,7 @@ proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a source image onto the destination image.
@@ -698,8 +667,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], dx) != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], dy) != Tcl.OK: return Tcl.ERROR
@@ -709,8 +677,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], dWidth)  != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], dHeight) != Tcl.OK: return Tcl.ERROR
@@ -723,8 +690,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'source' should be 'sx' 'sy'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'source' should be 'sx' 'sy'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], sx) != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], sy) != Tcl.OK: return Tcl.ERROR
@@ -734,8 +700,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'sourceWH' should be 'sWidth' 'sHeight'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'sourceWH' should be 'sWidth' 'sHeight'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], sWidth)  != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], sHeight) != Tcl.OK: return Tcl.ERROR
@@ -745,8 +710,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], dx) != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], dy) != Tcl.OK: return Tcl.ERROR
@@ -756,8 +720,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], dWidth)  != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], dHeight) != Tcl.OK: return Tcl.ERROR
@@ -770,8 +733,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
         return Tcl.ERROR
 
       if count != 2:
-        ERROR_MSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], dx) != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], dy) != Tcl.OK: return Tcl.ERROR
@@ -780,8 +742,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds an ellipse to the current sub-path.
@@ -810,8 +771,7 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -824,8 +784,7 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws an ellipse that is stroked (outlined) according
@@ -855,8 +814,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -869,8 +827,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 
 proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -899,8 +856,7 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Multiplies the current transform with the matrix 
@@ -929,8 +885,7 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rotation to the transformation matrix.
@@ -958,8 +913,7 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a translation transformation to the current matrix.
@@ -986,8 +940,7 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -996,8 +949,7 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets enum value.
@@ -1024,8 +976,7 @@ proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the path with the current fillStyle.
@@ -1067,8 +1018,7 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rectangle to the current path.
@@ -1094,8 +1044,7 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1104,8 +1053,7 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1114,8 +1062,7 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rectangle that is filled according to the current fillStyle.
@@ -1141,8 +1088,7 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1151,8 +1097,7 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1161,8 +1106,7 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rectangle that is filled according to the current fillStyle.
@@ -1189,8 +1133,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1199,8 +1142,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1209,8 +1151,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     if count != 4:
-      ERROR_MSG(interp, "wrong # args: 'radius' should be {nw ne se sw}")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'radius' should be {nw ne se sw}")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK: return Tcl.ERROR
@@ -1221,8 +1162,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rounded rectangle that is filled according to the current fillStyle.
@@ -1249,8 +1189,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1259,8 +1198,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1279,8 +1217,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     else:
       if count != 4:
-        ERROR_MSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}")
-        return Tcl.ERROR
+        return ERROR_MSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}")
 
       if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK: return Tcl.ERROR
       if Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK: return Tcl.ERROR
@@ -1291,8 +1228,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rounded rectangle that is stroked (outlined) according
@@ -1320,8 +1256,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1330,8 +1265,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1343,8 +1277,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     let wh  = vec2(width, height)
 
     if count notin (1..4):
-      ERROR_MSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}")
 
     if count == 1:
       if Tcl.GetDoubleFromObj(interp, elements[0], radius) != Tcl.OK:
@@ -1362,8 +1295,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 
 proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -1390,8 +1322,7 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1400,8 +1331,7 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
@@ -1410,8 +1340,7 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills current style.
@@ -1440,8 +1369,7 @@ proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets color alpha.
@@ -1464,15 +1392,13 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     if alpha < 0.0 or alpha > 1.0:
-      ERROR_MSG(interp, "global alpha must be between 0 and 1" )
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "global alpha must be between 0 and 1" )
 
     ctx.globalAlpha = alpha
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Begins a new sub-path at the point (x, y).
@@ -1497,8 +1423,7 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1507,8 +1432,7 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks whether or not the specified point is inside the area 
@@ -1536,8 +1460,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1553,8 +1476,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks whether or not the specified point is contained in the current path.
@@ -1582,8 +1504,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1609,8 +1530,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a straight line to the current sub-path by connecting 
@@ -1636,8 +1556,7 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1646,8 +1565,7 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strokes (outlines) the current or given path with the current strokeStyle.
@@ -1674,8 +1592,7 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a scaling transformation to the context units horizontally and/or vertically.
@@ -1700,8 +1617,7 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1710,8 +1626,7 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Save context to image file.
@@ -1735,8 +1650,7 @@ proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_beginPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Starts a new path by emptying the list of sub-paths.
@@ -1757,8 +1671,7 @@ proc pix_ctx_beginPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Attempts to add a straight line from the current point to
@@ -1781,8 +1694,7 @@ proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets line width for current context.
@@ -1808,8 +1720,7 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font for current context.
@@ -1832,8 +1743,7 @@ proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font size for current context.
@@ -1859,8 +1769,7 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a text string at the specified coordinates, 
@@ -1890,8 +1799,7 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1900,8 +1808,7 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a circle that is filled according to the current fillStyle
@@ -1928,8 +1835,7 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
@@ -1937,16 +1843,14 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK: return Tcl.ERROR
 
     if radius <= 0:
-      ERROR_MSG(interp, "The radius must be greater than 0")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "The radius must be greater than 0")
 
     let circle = Circle(pos: vec2(cx, cy), radius: radius)
     ctx.fillCircle(circle)
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws an ellipse that is filled according to the current fillStyle.
@@ -1974,8 +1878,7 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -1987,8 +1890,7 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws an n-sided regular polygon at (x, y) of size that is filled according to the current fillStyle.
@@ -2017,8 +1919,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
     
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -2030,8 +1931,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds an n-sided regular polygon at (x, y) of size to the current path.
@@ -2060,8 +1960,7 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -2076,8 +1975,7 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws an n-sided regular polygon at (x, y) of size that is stroked 
@@ -2107,8 +2005,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -2123,8 +2020,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a circle that is stroked (outlined) according to the current
@@ -2152,8 +2048,7 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
       
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
     
     if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
@@ -2161,16 +2056,14 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK: return Tcl.ERROR
 
     if radius <= 0:
-      ERROR_MSG(interp, "The radius must be greater than 0")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "The radius must be greater than 0")
 
     let circle = Circle(pos: vec2(cx, cy), radius: radius)
     ctx.strokeCircle(circle)
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws the outlines of the characters of a text string at the specified coordinates.
@@ -2198,8 +2091,7 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       return Tcl.ERROR
 
     if count != 2:
-      ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
     if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
     if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
@@ -2208,8 +2100,7 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
     
 proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets text alignment.
@@ -2234,8 +2125,7 @@ proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets information context.
@@ -2288,8 +2178,7 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets line dash for current context.
@@ -2323,8 +2212,7 @@ proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets matrix for current context.
@@ -2352,8 +2240,7 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets line dash for current context.
@@ -2379,8 +2266,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # See image fillPath
@@ -2421,5 +2307,4 @@ proc pix_ctx_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
