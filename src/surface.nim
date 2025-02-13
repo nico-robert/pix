@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nicolas ROBERT.
+# Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -26,21 +26,21 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let source = Tk.FindPhoto(interp, photosource)
 
     if source == nil:
-      ERROR_MSG(interp, "pix(error): photo not found")
-      return Tcl.ERROR
+      return ERROR_MSG(interp, "pix(error): photo not found")
 
-    var pblock: Tk.PhotoImageBlock
-    var imgData  = cast[ptr UncheckedArray[uint8]](img.data[0].addr)
+    var pblock {.noinit.}: Tk.PhotoImageBlock
+    var imgData = cast[ptr UncheckedArray[uint8]](img.data[0].addr)
+    let size = img.width * img.height * 4
 
-    var i = 0
-    while i < (img.width * img.height * 4):
-      let alpha = imgData[i+3]
+    {.push checks: off.}
+    for offset in countup(0, size - 4, 4):
+      let alpha = imgData[offset+3]
       if alpha != 0 and alpha != 255:
         let multiplier = round((255 / alpha.float32) * 255).uint32
-        imgData[i+0] = ((imgData[i+0].uint32 * multiplier + 127) div 255).uint8
-        imgData[i+1] = ((imgData[i+1].uint32 * multiplier + 127) div 255).uint8
-        imgData[i+2] = ((imgData[i+2].uint32 * multiplier + 127) div 255).uint8
-      inc(i, 4)
+        imgData[offset+0] = ((imgData[offset+0].uint32 * multiplier + 127) div 255).uint8
+        imgData[offset+1] = ((imgData[offset+1].uint32 * multiplier + 127) div 255).uint8
+        imgData[offset+2] = ((imgData[offset+2].uint32 * multiplier + 127) div 255).uint8
+    {.pop.}
 
     pblock.pixelPtr  = imgData
     pblock.width     = int32(img.width)
@@ -57,5 +57,4 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     return Tcl.OK
   except Exception as e:
-    ERROR_MSG(interp, "pix(error): " & e.msg)
-    return Tcl.ERROR
+    return ERROR_MSG(interp, "pix(error): " & e.msg)
