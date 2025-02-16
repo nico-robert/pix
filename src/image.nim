@@ -279,7 +279,7 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
-    if count mod 2 == 1:
+    if count mod 2 != 0:
       return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
 
     var i = 0
@@ -395,7 +395,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
-    if count mod 2 == 1:
+    if count mod 2 != 0:
       return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value key1 value1 ...")
 
     var i = 0
@@ -495,7 +495,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
           return Tcl.ERROR
 
-        if count mod 2 == 1:
+        if count mod 2 != 0:
           return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
 
         var i = 0
@@ -1271,7 +1271,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
         if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
           return Tcl.ERROR
 
-        if count mod 2 == 1:
+        if count mod 2 != 0:
           return ERROR_MSG(interp, "wrong # args: 'arr options' should be :key value ?key1 ?value1 ...")
 
         var i = 0
@@ -1329,7 +1329,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
         if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
           return Tcl.ERROR
 
-        if count mod 2 == 1:
+        if count mod 2 != 0:
           return ERROR_MSG(interp, "wrong # args: 'font options' should be :key value ?key1 ?value1 ...")
 
         var i = 0

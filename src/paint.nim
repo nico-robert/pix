@@ -62,7 +62,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
-    if count mod 2 == 1:
+    if count mod 2 != 0:
       return ERROR_MSG(interp, "wrong # args: 'dict options' should be key value ?key1 ?value1")
       
     var i = 0

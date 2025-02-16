@@ -886,7 +886,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
         return Tcl.ERROR
 
-      if count mod 2 == 1:
+      if count mod 2 != 0:
         return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
 
       var i = 0
