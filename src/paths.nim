@@ -7,10 +7,7 @@ proc pix_path(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv
   # Returns a 'new' path object.
   try:
     let path = newPath()
-    let myPtr = cast[pointer](path)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^path").toLowerAscii
-
+    let p = toHexPtr(path)
     pathTable[p] = path
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -624,14 +621,10 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     # Path
     let arg1 = Tcl.GetString(objv[1])
     let path = pathTable[$arg1]
-    
-    let copypath = path.copy()
 
-    let myPtr = cast[pointer](copypath)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^path").toLowerAscii
-
-    pathTable[p] = copypath
+    let cp = path.copy()
+    let p = toHexPtr(cp)
+    pathTable[p] = cp
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 

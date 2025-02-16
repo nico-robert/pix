@@ -27,11 +27,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
     
     let img = newImage(width, height)
- 
-    let myPtr = cast[pointer](img)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p   = toHexPtr(img)
     imgTable[p] = img
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -57,11 +53,7 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let img = imgTable[$arg1]
     
     let copyimg = img.copy()
-
-    let myPtr = cast[pointer](copyimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p       = toHexPtr(copyimg)
     imgTable[p] = copyimg
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -84,7 +76,7 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     var elements: Tcl.PPObj
     var matrix3: vmath.Mat3
 
-    if objc != 3 and objc != 4 and objc != 5:
+    if objc notin (3..5):
       Tcl.WrongNumArgs(interp, 1, objv, "<img1> <img2> matrix3:optional blendMode:optional")
       return Tcl.ERROR
     
@@ -166,11 +158,11 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       Tcl.WrongNumArgs(interp, 1, objv, "path file")
       return Tcl.ERROR
 
-    let file = Tcl.GetString(objv[1])
-    let img = readimage($file)
-    
-    let myPtr = cast[pointer](img)
-    let p = ("0x" & cast[uint64](myPtr).toHex() & "^img").toLowerAscii
+    let 
+      file = Tcl.GetString(objv[1])
+      img = readimage($file)
+      p = toHexPtr(img)
+
     imgTable[p] = img
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -192,15 +184,13 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     var img: Image
     var matrix3: vmath.Mat3
 
-    let cmd = Tcl.GetString(objv[0])
-
     if objc notin (4..5):
       Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|string' 'color|<paint>' matrix:optional")
       return Tcl.ERROR
 
     let arg1 = Tcl.GetString(objv[1])
 
-    if cmd == "pix::ctx::fillPath":
+    if $Tcl.GetString(objv[0]) == "pix::ctx::fillPath":
       let ctx = ctxTable[$arg1]
       img = ctx.image
     else:
@@ -273,15 +263,13 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     var mydashes: seq[float32] = @[]
     var myEnumlineCap, myEnumlineJoin: string = "null"
 
-    let cmd = Tcl.GetString(objv[0])
-
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
       return Tcl.ERROR
 
     let arg1 = Tcl.GetString(objv[1])
 
-    if cmd == "pix::ctx::strokePath":
+    if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
       let ctx = ctxTable[$arg1]
       img = ctx.image
     else:
@@ -444,10 +432,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       color = colorShadow
     )
     
-    let myPtr = cast[pointer](shadow)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let js = (hex & "^img").toLowerAscii
-
+    let js = toHexPtr(shadow)
     imgTable[js] = shadow
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(js), -1))
@@ -581,9 +566,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
     let newimg = img.resize(width, height)
-
-    let myPtr = cast[pointer](newimg)
-    let p = ("0x" & cast[uint64](myPtr).toHex() & "^img").toLowerAscii
+    let p = toHexPtr(newimg)
     imgTable[p] = newimg
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -767,10 +750,7 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     let (score, newimg) = masterimg.diff(img)
 
-    let myPtr = cast[pointer](newimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p = toHexPtr(newimg)
     imgTable[p] = newimg
 
     let dictObj = Tcl.NewDictObj()
@@ -1023,10 +1003,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     else:
       newimg = img.magnifyBy2()
 
-    let myPtr = cast[pointer](newimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p = toHexPtr(newimg)
     imgTable[p] = newimg
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -1061,10 +1038,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     else:
       newimg = img.minifyBy2()
 
-    let myPtr = cast[pointer](newimg)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p = toHexPtr(newimg)
     imgTable[p] = newimg
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -1168,11 +1142,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
     
     let subimage = img.subImage(x, y, width, height)
- 
-    let myPtr = cast[pointer](subimage)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p = toHexPtr(subimage)
     imgTable[p] = subimage
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -1223,11 +1193,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
     
     let subimage = img.superImage(x, y, width, height)
- 
-    let myPtr = cast[pointer](subimage)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p = toHexPtr(subimage)
     imgTable[p] = subimage
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -1284,7 +1250,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     var myEnumlineCap, myEnumlineJoin: string = "null"
     var myEnumhAlign, myEnumvAlign: string = "null"
   
-    if objc != 3 and objc != 4 and objc != 5:
+    if objc notin (3..5):
       let msg = """
       <img> <arrangement> {?transform ?value ?strokeWidth ?value ?lineCap ?value ?lineJoin ?value ?miterLimit ?value ?dashes ?value} or
       <img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"""

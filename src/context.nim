@@ -53,11 +53,9 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       img = newImage(width, height)
       img.fill(color)
 
-    let ctx   = newContext(img)
-    let myPtr = cast[pointer](ctx)
-    let hex   = "0x" & cast[uint64](myPtr).toHex()
-    let pc    = (hex & "^ctx").toLowerAscii
-    let pi    = (hex & "^img").toLowerAscii
+    let ctx = newContext(img)
+    let pc  = toHexPtr(ctx)
+    let pi  = pc.replace("^ctx", "^img")
 
     # Adds img + ctx.
     ctxTable[pc] = ctx
@@ -1276,8 +1274,8 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     let pos = vec2(x, y)
     let wh  = vec2(width, height)
 
-    if count notin (1..4):
-      return ERROR_MSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}")
+    if count != 1 and count != 4:
+      return ERROR_MSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}, or a simple value.")
 
     if count == 1:
       if Tcl.GetDoubleFromObj(interp, elements[0], radius) != Tcl.OK:

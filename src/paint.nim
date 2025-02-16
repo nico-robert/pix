@@ -17,9 +17,7 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     let myEnum = parseEnum[PaintKind]($arg1)
 
     let paint = newPaint(myEnum)
-    let myPtr = cast[pointer](paint)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^paint").toLowerAscii
+    let p = toHexPtr(paint)
 
     paintTable[p] = paint
 
@@ -150,11 +148,7 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let paint = paintTable[$arg1]
     
     let copy = paint.copy()
-
-    let myPtr = cast[pointer](copy)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^paint").toLowerAscii
-
+    let p = toHexPtr(copy)
     paintTable[p] = copy
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))

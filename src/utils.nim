@@ -8,9 +8,31 @@ proc ERROR_MSG(interp: Tcl.PInterp, errormsg: string): cint =
   # errormsg - The error message.
   # 
   # Returns Tcl.ERROR on failure.
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
 
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
   return Tcl.ERROR
+
+template toHexPtr*[T](obj: T): string =
+  # Converts an object to a hexadecimal string.
+  # 
+  # obj - The object to convert.
+  # 
+  # Returns a hexadecimal string.
+
+  let myPtr = cast[pointer](obj)
+  let hex = "0x" & cast[uint64](myPtr).toHex()
+
+  let typeName = when T is Context     : "ctx"
+                elif T  is Image       : "img"
+                elif T  is Font        : "font"
+                elif T  is Span        : "span"
+                elif T  is Paint       : "paint"
+                elif T  is TypeFace    : "TFace"
+                elif T  is Path        : "path"
+                elif T  is Svg         : "svg"
+                elif T  is Arrangement : "arr"
+                else: {.error: "pix type not supported : " & $T .}
+  (hex & "^" & typeName).toLowerAscii
 
 proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   # Checks if the obj is a color.

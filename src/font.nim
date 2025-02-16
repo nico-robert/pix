@@ -17,10 +17,7 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     
     # Font
     let font = readFont($arg1)
-    
-    let myPtr = cast[pointer](font)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^font").toLowerAscii
+    let p = toHexPtr(font)
 
     fontTable[p] = font
 
@@ -104,10 +101,7 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let tface = tFaceTable[$arg1]
 
     let font = newFont(tface)
-    
-    let myPtr = cast[pointer](font)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^font").toLowerAscii
+    let p    = toHexPtr(font)
 
     fontTable[p] = font
 
@@ -139,10 +133,7 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let text = $arg2
 
     let span = newSpan(text, font)
-    
-    let myPtr = cast[pointer](span)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^span").toLowerAscii
+    let p    = toHexPtr(span)
 
     spanTable[p] = span
 
@@ -176,10 +167,7 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       font.paint = paint
     else:
       let paint = font.paint
-
-      let myPtr = cast[pointer](paint)
-      let hex = "0x" & cast[uint64](myPtr).toHex()
-      let p = (hex & "^paint").toLowerAscii
+      let p     = toHexPtr(paint)
 
       paintTable[p] = paint
 
@@ -204,12 +192,8 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     let arg1 = Tcl.GetString(objv[1])
     
     # Typeface
-    let typeface = readTypeface($arg1)
-    
-    let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^TFace").toLowerAscii
-
+    let typeface  = readTypeface($arg1)
+    let p         = toHexPtr(typeface)
     tFaceTable[p] = typeface
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -237,9 +221,7 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     let typefaces = readTypefaces($arg1)
 
     for _, typeface in typefaces:
-      let myPtr = cast[pointer](typeface)
-      let hex = "0x" & cast[uint64](myPtr).toHex()
-      let p = (hex & "^TFace").toLowerAscii
+      let p = toHexPtr(typeface)
 
       tFaceTable[p] = typeface
       discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewStringObj(p.cstring, -1))
@@ -331,11 +313,7 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     let font = fontTable[$arg1]
     
     let newfont = font.copy()
-    
-    let myPtr = cast[pointer](newfont)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^font").toLowerAscii
-
+    let p = toHexPtr(newfont)
     fontTable[p] = newfont
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -424,11 +402,8 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
       if newtface == nil:
         return ERROR_MSG(interp, "pix(error): '<TypeFace>' the return object is 'null'.")
-      
-      let myPtr = cast[pointer](newtface)
-      let hex = "0x" & cast[uint64](myPtr).toHex()
-      let p = (hex & "^TFace").toLowerAscii
 
+      let p = toHexPtr(newtface)
       tFaceTable[p] = newtface
 
       Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -496,10 +471,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     if path == nil:
       return ERROR_MSG(interp, "pix(error): '<path>' the return object is 'null'.")
 
-    let myPtr = cast[pointer](path)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^path").toLowerAscii
-
+    let p = toHexPtr(path)
     pathTable[p] = path
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -718,12 +690,8 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     let arg1 = Tcl.GetString(objv[1])
     let buf = $arg1
     
-    let typeface = parseOtf(buf)
-
-    let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^TFace").toLowerAscii
-
+    let typeface  = parseOtf(buf)
+    let p         = toHexPtr(typeface)
     tFaceTable[p] = typeface
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -748,12 +716,8 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     let arg1 = Tcl.GetString(objv[1])
     let buf = $arg1
     
-    let typeface = parseSvgFont(buf)
-
-    let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^TFace").toLowerAscii
-
+    let typeface  = parseSvgFont(buf)
+    let p         = toHexPtr(typeface)
     tFaceTable[p] = typeface
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -778,12 +742,8 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     let arg1 = Tcl.GetString(objv[1])
     let buf = $arg1
     
-    let typeface = parseTtf(buf)
-
-    let myPtr = cast[pointer](typeface)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^TFace").toLowerAscii
-
+    let typeface  = parseTtf(buf)
+    let p         = toHexPtr(typeface)
     tFaceTable[p] = typeface
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -925,9 +885,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       else:
         arr = typeset(spans)
 
-    let myPtr = cast[pointer](arr)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^arr").toLowerAscii
+    let p = toHexPtr(arr)
 
     arrTable[p] = arr
     

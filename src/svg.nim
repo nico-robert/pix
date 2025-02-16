@@ -37,10 +37,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     else:
       svg = parseSvg($arg1)
 
-    let myPtr = cast[pointer](svg)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^svg").toLowerAscii
-
+    let p = toHexPtr(svg)
     svgTable[p] = svg
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
@@ -66,11 +63,7 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     let svg = svgTable[$arg1]
     
     let image = newImage(svg)
- 
-    let myPtr = cast[pointer](image)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^img").toLowerAscii
-
+    let p = toHexPtr(image)
     imgTable[p] = image
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
