@@ -8,8 +8,8 @@ proc ERROR_MSG(interp: Tcl.PInterp, errormsg: string): cint =
   # errormsg - The error message.
   # 
   # Returns Tcl.ERROR on failure.
-
   Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
+
   return Tcl.ERROR
 
 template toHexPtr*[T](obj: T): string =
@@ -22,16 +22,17 @@ template toHexPtr*[T](obj: T): string =
   let myPtr = cast[pointer](obj)
   let hex = "0x" & cast[uint64](myPtr).toHex()
 
-  let typeName = when T is Context     : "ctx"
-                elif T  is Image       : "img"
-                elif T  is Font        : "font"
-                elif T  is Span        : "span"
-                elif T  is Paint       : "paint"
-                elif T  is TypeFace    : "TFace"
-                elif T  is Path        : "path"
-                elif T  is Svg         : "svg"
-                elif T  is Arrangement : "arr"
-                else: {.error: "pix type not supported : " & $T .}
+  let typeName = 
+    when T is pixie.Context     : "ctx"
+    elif T is pixie.Image       : "img"
+    elif T is pixie.Font        : "font"
+    elif T is pixie.Span        : "span"
+    elif T is pixie.Paint       : "paint"
+    elif T is pixie.TypeFace    : "TFace"
+    elif T is pixie.Path        : "path"
+    elif T is Svg               : "svg"
+    elif T is pixie.Arrangement : "arr"
+    else: {.error: "pix type not supported : " & $T .}
   (hex & "^" & typeName).toLowerAscii
 
 proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
@@ -55,7 +56,7 @@ proc isColorSimple(obj: Tcl.PObj, colorSimple: var Color): bool =
   for i in 0..count-1:
     if Tcl.GetDoubleFromObj(nil, elements[i], c) != Tcl.OK:
       return false
-    if c < 0 or c > 1:
+    if c < 0.0 or c > 1.0:
       return false
     color.add(c)
 
@@ -101,11 +102,11 @@ proc matrix3x3(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cin
 # matrix3 - The matrix to fill with the values of the Tcl object.
 # 
 # Returns Tcl.OK if successful, Tcl.ERROR otherwise.
-  try:
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    var value : seq[cdouble]
-    
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+  var value : seq[cdouble]
+
+  try:    
     if Tcl.ListObjGetElements(interp, obj, count, elements) != Tcl.OK:
       return Tcl.ERROR
 
@@ -214,6 +215,7 @@ proc pix_toB64(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   #
   # Returns string.
   try:
+
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
       return Tcl.ERROR
@@ -236,11 +238,11 @@ proc pix_rotMatrix(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # matrix  - list
   #
   # Returns the matrix rotation as a list.
-  try:
-    var matrix3: vmath.Mat3
-    var angle: cdouble = 0
-    let listobj = Tcl.NewListObj(0, nil)
+  var matrix3: vmath.Mat3
+  var angle: cdouble
+  let listobj = Tcl.NewListObj(0, nil)
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "angle 'list'")
       return Tcl.ERROR
