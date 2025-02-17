@@ -34,9 +34,9 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # size  - double value
   #
   # Returns nothing.
-  try:
-    var fsize: cdouble = 0
+  var fsize: cdouble
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<font> size")
       return Tcl.ERROR
@@ -263,10 +263,10 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   # transform   - matrix list (optional:mat3)
   #
   # Returns Tcl dict value {x y w h}.
-  try:
-    var matrix3: vmath.Mat3
-    var rect: Rect
+  var matrix3: vmath.Mat3
+  var rect: Rect
 
+  try:
     if objc notin (2..3):
       Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> transform:optional")
       return Tcl.ERROR
@@ -523,7 +523,6 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   #
   # Returns true, otherwise false.
   try:
-    var val: int = 0
 
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace> char")
@@ -538,9 +537,9 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     var char1: string = $arg2
     let c = char1.runeAt(0)
 
-    if tface.hasGlyph(c): val = 1
+    let hasGlyph = if tface.hasGlyph(c): 1 else: 0
     
-    Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
+    Tcl.SetObjResult(interp, Tcl.NewIntObj(hasGlyph))
     
     return Tcl.OK
   except Exception as e:
@@ -555,11 +554,11 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # text   - string (if font object)
   #
   # Returns Tcl dict value {x y}.
-  try:
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    var bounds: vmath.Vec2
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+  var bounds: vmath.Vec2
 
+  try:
     if objc notin (2..3):
       Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> or <font> + 'text' or <span>")
       return Tcl.ERROR
@@ -758,9 +757,9 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # object - font or typeFace object
   #
   # Returns Tcl double value.
-  try:
-    var value: float32 = 0
+  var scale: float32
 
+  try:
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<font>|<TypeFace>")
       return Tcl.ERROR
@@ -769,13 +768,13 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     if fontTable.hasKey($arg1):
       # Font
       let font = fontTable[$arg1]
-      value = font.scale()
+      scale = font.scale()
     else:
       # TypeFace
       let typeface = tFaceTable[$arg1]
-      value = typeface.scale()
+      scale = typeface.scale()
 
-    Tcl.SetObjResult(interp, Tcl.NewDoubleObj(value))
+    Tcl.SetObjResult(interp, Tcl.NewDoubleObj(scale))
     
     return Tcl.OK
   except Exception as e:
@@ -793,21 +792,21 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # 
   #
   # Returns a 'new' arrangement object.
+  var x, y: cdouble
+  var count, veccount: Tcl.Size
+  var wrapB: int
+  var elements, vecelements: Tcl.PPObj
+  var mywrap, hasFont: bool = true
+  var vecBounds = vec2(0, 0)
+  var myEnumhAlign, myEnumvAlign: string = "null"
+  var arr: pixie.Arrangement
+  var font: pixie.Font
+  var spans = newSeq[Span]()
+  var text: string
+  var jj = 3
+
   try:
-    var x, y: cdouble = 1.0
-    var count, veccount: Tcl.Size
-    var wrapB: int = 0
-    var elements, vecelements: Tcl.PPObj
-    var mywrap, hasFont: bool = true
-    var vecBounds = vec2(0, 0)
-    var myEnumhAlign, myEnumvAlign: string = "null"
-    var arr: Arrangement
-    var font: Font
-    var spans = newSeq[Span]()
-    var text: string
-    var jj = 3
-  
-    if objc != 2 and objc != 3 and objc != 4:
+    if objc notin (2..4):
       let msg = """<font> 'text' {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value} or
        <span> {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value}"""
       Tcl.WrongNumArgs(interp, 1, objv, msg.cstring)
@@ -909,12 +908,12 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #   color                 - Simple color <br>
   # 
   # Returns nothing.
+  var fsize, flineHeight: cdouble
+  var count, countP: Tcl.Size
+  var myBool: int = 0
+  var elements, elementsP: Tcl.PPObj
+
   try:
-    var fsize, flineHeight: cdouble = 0
-    var count, countP: Tcl.Size
-    var myBool: int = 0
-    var elements, elementsP: Tcl.PPObj
-  
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}")
       return Tcl.ERROR

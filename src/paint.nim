@@ -41,13 +41,13 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   #   gradientStops           - list color + positions
   # 
   # Returns nothing.
-  try:
-    var count, subcount, len: Tcl.Size
-    var x, y, p, opacity: cdouble = 0
-    var elements, subelements, position, stop: Tcl.PPObj
-    var matrix3: vmath.Mat3
-    var cseqColorP: Color
+  var x, y, p, opacity: cdouble
+  var count, subcount, len: Tcl.Size
+  var elements, subelements, position, stop: Tcl.PPObj
+  var matrix3: vmath.Mat3
+  var cseqColorP: Color
 
+  try:
     if objc != 3:
       let msg = """
        <paint> {image? ?value imageMat? ?value color? ?value blendMode? ?value gradientHandlePositions? ?value gradientStops? ?value opacity? ?value}"""

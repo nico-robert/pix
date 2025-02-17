@@ -8,12 +8,12 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # value - string color or image object (optional:none)
   #
   # Returns a 'new' context object.
-  try:
-    var width, height: int = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    var img: Image
+  var width, height: int
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+  var img: pixie.Image
 
+  try:
     if objc notin (2..3):
       Tcl.WrongNumArgs(interp, 1, objv, "'{width height} color:optional' or <image>")
       return Tcl.ERROR
@@ -191,11 +191,11 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # coordinates_2  - list x1,y1
   #
   # Returns nothing.
-  try:
-    var x, y, x1, y1: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, x1, y1: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {x1 y1}")
       return Tcl.ERROR
@@ -240,11 +240,11 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # size        - list width + height
   #
   # Returns nothing.
-  try:
-    var x, y, width, height: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
@@ -289,11 +289,11 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # coordinates_2  - list x,y 
   #
   # Returns nothing.
-  try:
-    var x, y, cpx, cpy: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, cpx, cpy: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cpx cpy} {x y}")
       return Tcl.ERROR
@@ -339,13 +339,13 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # ccw         - boolean value (optional:false)
   #
   # Returns nothing.
-  try:
-    var x, y, r, a0, a1: cdouble = 0
-    var count: Tcl.Size
-    var clockcw: int = 0
-    var ccw: bool = false
-    var elements: Tcl.PPObj
+  var x, y, r, a0, a1: cdouble
+  var count: Tcl.Size
+  var clockcw: int
+  var ccw: bool = false
+  var elements: Tcl.PPObj
 
+  try:
     if objc notin (6..7):
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} r angleStart angleEnd ccw:optional")
       return Tcl.ERROR
@@ -388,11 +388,11 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # radius        - double value
   #
   # Returns nothing.
+  var x1, y1, x2, y2, radius: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+
   try:
-    var x1, y1, x2, y2, radius: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x1 y1} {x2 y2} radius")
       return Tcl.ERROR
@@ -440,11 +440,11 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # coordinates_3 - list x,y
   #
   # Returns nothing.
+  var cp1x, cp1y, cp2x, cp2y, x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+
   try:
-    var cp1x, cp1y, cp2x, cp2y, x, y: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cp1x cp1y} {cp2x cp2y} {x y}")
       return Tcl.ERROR
@@ -495,11 +495,11 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # radius       - double value
   #
   # Returns nothing.
-  try:
-    var cx, cy, radius: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    
+  var cx, cy, radius: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+
+  try:    
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
       return Tcl.ERROR
@@ -579,6 +579,7 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   #
   # Returns Tcl dict value {width}.
   try:
+
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text")
       return Tcl.ERROR
@@ -609,6 +610,7 @@ proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   #
   # Returns nothing.
   try:
+
     if objc != 2:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
       return Tcl.ERROR
@@ -639,11 +641,13 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   #                                               list destination size dw,dh 
   #
   # Returns nothing.
-  try:
-    var sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var sx, sy, dx, dy: cdouble
+  var sWidth, sHeight: cdouble
+  var dWidth, dHeight: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4 and objc != 5 and objc != 7:
       let msg = """ <ctx> <img> {dx dy} or
       <ctx> <img> {dx dy} {dWidth dHeight} or
@@ -751,11 +755,11 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # radiusy     - double value
   #
   # Returns nothing.
-  try:
-    var x, y, rx, ry: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, rx, ry: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
       return Tcl.ERROR
@@ -794,11 +798,11 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # radiusy     - double value
   #
   # Returns nothing.
-  try:
-    var x, y, rx, ry: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, rx, ry: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
       return Tcl.ERROR
@@ -835,9 +839,9 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # matrix3x3 - list
   #
   # Returns nothing.
-  try:
-    var matrix3: vmath.Mat3
+  var matrix3: vmath.Mat3
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> matrix3x3")
       return Tcl.ERROR
@@ -864,9 +868,9 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # matrix3x3 - list
   #
   # Returns nothing.
-  try:
-    var matrix3: vmath.Mat3
+  var matrix3: vmath.Mat3
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> matrix3x3")
       return Tcl.ERROR
@@ -892,9 +896,9 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # angle  - double value (radian)
   #
   # Returns nothing.
-  try:
-    var angle: cdouble = 0
+  var angle: cdouble
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> angle")
       return Tcl.ERROR
@@ -920,11 +924,11 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # coordinates - list x,y
   #
   # Returns nothing.
-  try:
-    var x, y: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
@@ -1026,11 +1030,11 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # size        - list width + height
   #
   # Returns nothing.
-  try:
-    var x, y, width, height: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
@@ -1070,11 +1074,11 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # size        - list width + height
   #
   # Returns nothing.
-  try:
-    var x, y, width, height: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
@@ -1115,11 +1119,12 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # radius       - list (nw, ne, se, sw)
   #
   # Returns nothing.
-  try:
-    var x, y, width, height, nw, ne, se, sw: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var nw, ne, se, sw: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} {nw ne se sw}")
       return Tcl.ERROR
@@ -1171,11 +1176,12 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # radius      - double value or list radius (nw, ne, se, sw) 
   #
   # Returns nothing.
-  try:
-    var x, y, width, height, radius, nw, ne, se, sw: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var radius, nw, ne, se, sw: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
       return Tcl.ERROR
@@ -1238,11 +1244,12 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   # radius      - double value or list radius (nw, ne, se, sw)
   #
   # Returns nothing.
-  try:
-    var x, y, width, height, radius, nw, ne, se, sw: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var radius, nw, ne, se, sw: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
       return Tcl.ERROR
@@ -1304,11 +1311,11 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # size         - list width + height
   #
   # Returns nothing.
-  try:
-    var x, y, width, height: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, width, height: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
       return Tcl.ERROR
@@ -1376,9 +1383,9 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # alpha   - double value
   #
   # Returns nothing.
-  try:
-    var alpha: cdouble = 0
+  var alpha: cdouble
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> alpha")
       return Tcl.ERROR
@@ -1405,11 +1412,11 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # coordinates - list x,y
   #
   # Returns nothing.
-  try:
-    var x, y: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
@@ -1441,12 +1448,12 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # path        - object (optional)
   #
   # Returns true, false otherwise.
-  try:
-    var x, y: cdouble = 0
-    var count: Tcl.Size
-    var val: int = 0
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var val: int = 0
+  var elements: Tcl.PPObj
 
+  try:
     if objc notin (3..4):
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} <path>:optional")
       return Tcl.ERROR
@@ -1485,13 +1492,13 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # WindingRule - Enum value (optional:NonZero)
   #
   # Returns true, false otherwise.
-  try:
-    var x, y: cdouble = 0
-    var count: Tcl.Size
-    var val: int = 0
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var val: int = 0
+  var elements: Tcl.PPObj
 
-    if objc != 3 and objc != 4 and objc != 5:
+  try:
+    if objc notin (3..5):
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} <path>:optional enum=WindingRule:optional")
       return Tcl.ERROR
 
@@ -1538,11 +1545,11 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # coordinates - list x,y
   #
   # Returns nothing.
-  try:
-    var x, y: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
@@ -1599,11 +1606,11 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # coordinates - list x,y
   #
   # Returns nothing.
-  try:
-    var x, y: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
       return Tcl.ERROR
@@ -1701,9 +1708,9 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # width   - double value
   #
   # Returns nothing.
-  try:
-    var width: cdouble = 0
+  var width: cdouble
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> width")
       return Tcl.ERROR
@@ -1750,9 +1757,9 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # size    - double value
   #
   # Returns nothing.
-  try:
-    var fsize: cdouble = 1
+  var fsize: cdouble
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> size")
       return Tcl.ERROR
@@ -1778,11 +1785,11 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # coordinates - list x,y
   #
   # Returns nothing.
-  try:
-    var x, y: cdouble = 1
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text {x y}")
       return Tcl.ERROR
@@ -1816,11 +1823,11 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # radius      - double value
   #
   # Returns nothing.
-  try:
-    var cx, cy, radius: cdouble = 1
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var cx, cy, radius: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
       return Tcl.ERROR
@@ -1859,11 +1866,11 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # radiusy     - double value
   #
   # Returns nothing.
-  try:
-    var x, y, rx, ry: cdouble = 1
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y, rx, ry: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
       return Tcl.ERROR
@@ -1899,12 +1906,12 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # sides       - integer value
   #
   # Returns nothing.
-  try:
-    var x, y, size: cdouble = 1
-    var count: Tcl.Size
-    var sides: int = 0
-    var elements: Tcl.PPObj
+  var x, y, size: cdouble
+  var count: Tcl.Size
+  var sides: int
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
       return Tcl.ERROR
@@ -1940,12 +1947,12 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # sides       - integer value
   #
   # Returns nothing.
-  try:
-    var x, y, size: cdouble = 0
-    var count: Tcl.Size
-    var sides: int = 0
-    var elements: Tcl.PPObj
+  var x, y, size: cdouble
+  var count: Tcl.Size
+  var sides: int
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
       return Tcl.ERROR
@@ -1985,12 +1992,12 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # sides       - integer value
   #
   # Returns nothing.
-  try:
-    var x, y, size: cdouble = 0
-    var count: Tcl.Size
-    var sides: int = 0
-    var elements: Tcl.PPObj
+  var x, y, size: cdouble
+  var count: Tcl.Size
+  var sides: int
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 5:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
       return Tcl.ERROR
@@ -2029,11 +2036,11 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # radius      - double value
   #
   # Returns nothing.
-  try:
-    var cx, cy, radius: cdouble = 1
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var cx, cy, radius: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
       return Tcl.ERROR
@@ -2071,11 +2078,11 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # coordinates - list x,y
   #
   # Returns nothing.
-  try:
-    var x, y: cdouble = 1
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
+  var x, y: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
 
+  try:
     if objc != 4:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> 'text' {x y}")
       return Tcl.ERROR
@@ -2185,12 +2192,12 @@ proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # dashes  - list
   #
   # Returns nothing.
-  try:
-    var v: cdouble = 0
-    var count: Tcl.Size
-    var elements: Tcl.PPObj
-    var pattern : seq[float32]
+  var v: cdouble
+  var count: Tcl.Size
+  var elements: Tcl.PPObj
+  var pattern : seq[float32]
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<ctx> dashes")
       return Tcl.ERROR

@@ -7,9 +7,9 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # object - image or context
   #
   # Returns nothing.
-  try:
-    var img: Image
+  var img: pixie.Image
 
+  try:
     if objc != 3:
       Tcl.WrongNumArgs(interp, 1, objv, "<img>|<ctx> 'Tk photo'")
       return Tcl.ERROR
