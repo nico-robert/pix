@@ -195,10 +195,7 @@ proc pix_svgStyleToPathObj(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     # Path
     let arg1 = Tcl.GetString(objv[1])
     let parse = parsePath($arg1)
-
-    let myPtr = cast[pointer](parse)
-    let hex = "0x" & cast[uint64](myPtr).toHex()
-    let p = (hex & "^path").toLowerAscii
+    let p = toHexPtr(parse)
 
     pathTable[p] = parse
 
