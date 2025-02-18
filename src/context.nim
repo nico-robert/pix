@@ -2274,7 +2274,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return ERROR_MSG(interp, "pix(error): " & e.msg)
 
 proc pix_ctx_fillPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # See image fillPath
+  # See [img::fillPath] procedure.
   if objc notin (4..5):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> <path>|string 'color|<paint>' matrix:optional")
     return Tcl.ERROR
@@ -2283,7 +2283,7 @@ proc pix_ctx_fillPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
 proc pix_ctx_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # See image strokePath
+  # See [img::strokePath] procedure.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> <path>|string 'color|<paint>' {key value key value ...}")
     return Tcl.ERROR
