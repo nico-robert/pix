@@ -4,7 +4,7 @@
 # Find tcl procedures in pix.nim
 proc parsePIxFile {datapix what} {
     foreach line $datapix {
-        if {[string match "*, $what,*" $line]} {
+        if {[string match "*: $what,*" $line]} {
             if {[regexp {\"(.+)\"} $line -> match]} {
                 return $match
             }
@@ -34,7 +34,7 @@ proc parseExample {file} {
 }
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
-package require ruff 2.0
+package require ruff 2.5
 
 set dirpix [file dirname [file dirname [info script]]]
 
@@ -48,10 +48,10 @@ namespace eval ::pix {
         Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in Nim.
 
         #### Compatibility
-        **Tcl/Tk 8.6** (Only tested with Tcl/Tk 8.6.14)
+        Tcl/Tk 8.6 & 9.0
 
         #### Platforms
-        * MacOS 14 x64
+        * MacOS (x64 / arm64)
         * Windows 10 x64
         * Linux x64
 
@@ -78,12 +78,13 @@ namespace eval ::pix {
         # Or display in label by example
         set p [image create photo]
         pix::drawSurface $ctx $p
-        label .l -image $p ; pack .l
+        label .l -image $p
+        pack .l
         ```
         See [examples](./pix-examples.html) folder for more demos.
 
         #### Documentation
-        A large part of the `pix` documentation comes from the [Pixie API](https://treeform.github.io/pixie/)   
+        A large part of the `pix` [documentation](http://htmlpreview.github.io/?https://github.com/nico-robert/pix/blob/master/doc/pix.html) comes from the [Pixie API](https://treeform.github.io/pixie/)   
         and source files. 
 
         #### API
@@ -243,7 +244,7 @@ foreach name {context paint image svg paths font utils} {
         if {[string match "*  #*" $line] && $hasProc} {lappend coms $line}
 
         if {([string match "*try:*" $line] ||
-            [string match "*let mess =*" $line]) &&
+            [string match "*let mess =*" $line] || [string match "*# See *" $line]) &&
             $hasProc} {
 
             set myarg {}
