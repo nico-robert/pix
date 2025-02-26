@@ -6,67 +6,86 @@ import std/[strutils, tables, base64]
 import ../core/pixtables as pixTables
 
 from ../bindings/tcl/binding as Tcl import nil
-    
-proc ERROR_MSG*(interp: Tcl.PInterp, errormsg: string): cint =
+
+proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
-  # 
+  #
   # interp   - The Tcl interpreter.
   # errormsg - The error message.
-  # 
+  #
   # Returns Tcl.ERROR on failure.
   Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
 
   return Tcl.ERROR
 
-template toHexPtr*[T](obj: T): string =
-  # Converts an object to a hexadecimal string.
-  # 
-  # obj - The object to convert.
-  # 
-  # Returns a hexadecimal string.
+proc isHexDigit(c: char): bool =
+  # Checks whether a character is a hexadecimal digit (0-9, A-F)
+  return (c >= '0' and c <= '9') or
+         (c >= 'A' and c <= 'F')
+         
+proc isValidHex(s: string): bool =
+  # Checks whether a string is a valid hex format.
+  if s.len == 0:
+    return false
+    
+  for c in s:
+    if not isHexDigit(c):
+      return false
+      
+    # Only uppercase hex characters are accepted.
+    if c >= 'a' and c <= 'f':
+      return false
+      
+  return true
+  
+proc isHexFormat*(s: string): bool =
+  # Checks whether a string is in ‘hex’ format (e.g. FF0000)
+  # - Only uppercase hexadecimal characters
+  # - Length of 6 characters (typical for an RGB color)
+  
+  return (s.len == 6) and isValidHex(s)
 
-  let
-    myPtr  = cast[pointer](obj)
-    hexstr = cast[uint64](myPtr).toHex()
+proc isHexAlphaFormat*(s: string): bool =
+  # Checks whether a string is in ‘hexalpha’ format (e.g. FF0000FF)
+  # - Only uppercase hexadecimal characters
+  # - Length of 8 characters (typical for an RGBA color)
+  
+  return (s.len == 8) and isValidHex(s)
+  
+proc isRGBXFormat*(s: string): bool =
+  # Checks if the color is a color in the rgbx 
+  # format (e.g. rgbx(x,x,x,x)).
 
-  # Inline strip leading zeros
-  let hex = block:
-    var i = 0
-    while i < hexStr.len and hexStr[i] == '0': inc i
-    if i >= hexStr.len: "0"
-    else: hexStr[i..^1]
+  if (s.len < 4) or (s[0..3] != "rgbx"):
+    return false
 
-  let typeName = 
-    when T is pixie.Context     : "ctx"
-    elif T is pixie.Image       : "img"
-    elif T is pixie.Font        : "font"
-    elif T is pixie.Span        : "span"
-    elif T is pixie.Paint       : "paint"
-    elif T is pixie.TypeFace    : "TFace"
-    elif T is pixie.Path        : "path"
-    elif T is Svg               : "svg"
-    elif T is pixie.Arrangement : "arr"
-    else: {.error: "pix type not supported : " & $T .}
-  ("0x" & hex & "^" & typeName).toLowerAscii
-
-proc isColorSimple*(obj: Tcl.PObj, colorSimple: var Color): bool =
+  var count = 1
+  for c in s[5..^2]:
+    if c == ',':
+      inc count
+  
+  return count == 4
+  
+proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   # Checks if the obj is a color.
-  # 
-  # obj        - The object to check.
+  #
+  # obj         - The object to check.
   # colorSimple - The color to fill if the object is a color.
-  # 
+  #
   # Returns true if the object is a color, false otherwise.
   var
     c: cdouble = 0
     count: Tcl.Size
     elements: Tcl.PPObj
-    color : seq[float32]
+    color : seq[cdouble]
 
   if Tcl.ListObjGetElements(nil, obj, count, elements) != Tcl.OK:
     return false
 
   if count notin (3..4):
     return false
+    
+  color.setlen(count)
 
   for i in 0..count-1:
     if Tcl.GetDoubleFromObj(nil, elements[i], c) != Tcl.OK: return false
@@ -81,39 +100,95 @@ proc isColorSimple*(obj: Tcl.PObj, colorSimple: var Color): bool =
 
   return true
 
-proc isColorRgbx*(color: string, colorRgbx: var ColorRGBX): bool =
-  # Checks if the color is a color in the rgbx format.
-  # 
-  # color     - The color to check.
-  # colorRgbx - The color to fill if the color is in the rgbx format.
-  # 
-  # Returns true if the color is in the rgbx format, false otherwise.
+  
+proc parseColorRGBX*(s: string): ColorRGBX =
+  # This procedure attempts to parse a color from a string input.
+  #
+  # s - The color to check.
+  #
+  # Returns ColorRGBX .
+  var
+    color: array[4, uint8]
+    start = 5  # Position after "rgbx("
+    endPos = 0
+    
+  for i in 0..3:
+    while start < s.len and s[start] == ' ':
+      inc start
 
-  if (color.len < 4) or (color[0..3] != "rgbx"):
-    return false
+    endPos = start
+    while (endPos < s.len) and (s[endPos] != ',') and (s[endPos] != ')'):
+      inc endPos
+    
+    color[i] = parseInt(s[start..<endPos]).uint8
+    start = endPos + 1
 
-  let st = split(color[5..^2], ",")
+  return rgbx(color[0],color[1],color[2],color[3])
+  
+proc getColor*(obj: Tcl.PObj): Color =
+  # This procedure attempts to parse a color from a string input.
+  # The string can be in various formats such as hexalpha, colorRGBX
+  # hex, or HTML color names.
+  #
+  # s - The color to check.
+  #
+  # Returns Color object.
 
-  if st.len != 4:
-    return false
+  let scolor = $Tcl.GetString(obj)
+  var color: Color
 
-  # Fill the colorRgbx with the color.
-  colorRgbx = rgbx(
-    parseInt(strutils.strip(st[0])).uint8,
-    parseInt(strutils.strip(st[1])).uint8,
-    parseInt(strutils.strip(st[2])).uint8,
-    parseInt(strutils.strip(st[3])).uint8
-  )
+  if isHexAlphaFormat(scolor):
+    return parseHexAlpha(scolor)
+  
+  if isHexFormat(scolor):
+    return parseHex(scolor)
+  
+  if isRGBXFormat(scolor):
+    return parseColorRGBX(scolor).color
+  
+  if isColorSimpleFormat(obj, color):
+    return color
 
-  return true
+  return parseHtmlColor(scolor)
+
+template toHexPtr*[T](obj: T): string =
+  # Converts an object to a hexadecimal string.
+  #
+  # obj - The object to convert.
+  #
+  # Returns a hexadecimal string.
+
+  let
+    myPtr  = cast[pointer](obj)
+    hexstr = cast[uint64](myPtr).toHex()
+
+  # Inline strip leading zeros
+  let hex = block:
+    var i = 0
+    while i < hexStr.len and hexStr[i] == '0': inc i
+    if i >= hexStr.len: "0"
+    else: hexStr[i..^1]
+
+  let typeName =
+    when T is pixie.Context     : "ctx"
+    elif T is pixie.Image       : "img"
+    elif T is pixie.Font        : "font"
+    elif T is pixie.Span        : "span"
+    elif T is pixie.Paint       : "paint"
+    elif T is pixie.TypeFace    : "TFace"
+    elif T is pixie.Path        : "path"
+    elif T is Svg               : "svg"
+    elif T is pixie.Arrangement : "arr"
+    else: {.error: "pix type not supported : " & $T .}
+  ("0x" & hex & "^" & typeName).toLowerAscii
 
 proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cint =
 # Converts a Tcl list to a matrix 3x3.
-# 
+#
 # interp  - The Tcl interpreter.
 # obj     - The Tcl object.
 # matrix3 - The matrix to fill with the values of the Tcl object.
-# 
+#
 # Returns Tcl.OK if successful, Tcl.ERROR otherwise.
   var
     count: Tcl.Size
@@ -124,10 +199,10 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
     return Tcl.ERROR
 
   if count != 9:
-    return ERROR_MSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
+    return pixUtils.errorMSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
 
   value.setlen(count)
-    
+
   for i in 0..count-1:
     if Tcl.GetDoubleFromObj(interp, elements[i], value[i]) != Tcl.OK:
       return Tcl.ERROR
@@ -140,27 +215,24 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
   )
 
   return Tcl.OK
-  
+
 proc colorHTMLtoRGBA*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Converts an HTML color to an RGBA.
-  # 
+  #
   # HTMLcolor  - string
   #
   # Returns a tcl list.
-  let newobj = Tcl.NewListObj(0, nil)
-  var color: ColorRGBA
-
   if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "'#xxxxxx'")
+    Tcl.WrongNumArgs(interp, 1, objv, "color")
     return Tcl.ERROR
-    
-  # Parse
-  let arg1 = $Tcl.GetString(objv[1])
 
-  try:
-    color = parseHtmlColor(arg1).rgba
+  # Parse
+  let color = try:
+    getColor(objv[1]).rgba
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let newobj = Tcl.NewListObj(0, nil)
 
   discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.r.int))
   discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.g.int))
@@ -172,11 +244,11 @@ proc colorHTMLtoRGBA*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Parse path.
-  # 
+  # Parse path object.
+  #
   # path  - path object
   #
-  # Returns the parsed path to SVG style path.
+  # Returns the parsed path to SVG style path (string).
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<path>")
     return Tcl.ERROR
@@ -185,80 +257,78 @@ proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let arg1 = $Tcl.GetString(objv[1])
 
   if not pixTables.hasPath(arg1):
-    return ERROR_MSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
+    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
 
   let path = pixTables.getPath(arg1)
 
-  try:
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring($path), -1))
+  let pathStr = try:
+    $path
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(pathStr.cstring, -1))
 
   return Tcl.OK
 
 proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Transforms a SVG style path to a path object.
-  # 
+  # Transforms a SVG style path (string) to a `path` object.
+  #
   # path  - string SVG style
   #
   # Returns a 'new' path object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "string")
     return Tcl.ERROR
-    
+
   # Path
   let arg1 = $Tcl.GetString(objv[1])
-  var parse: pixie.Path
 
-  try:
-    parse = parsePath(arg1)
+  let parse = try:
+    parsePath(arg1)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(parse)
   pixTables.addPath(p, parse)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
-    
+
   return Tcl.OK
 
 proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Convert an image to base64 format.
-  # 
-  # object - image or context object
+  # Convert an `image` object to base 64.
+  #
+  # object - `image` or `context` object
   #
   # Returns string.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
     return Tcl.ERROR
-    
+
   let arg1= $Tcl.GetString(objv[1])
 
-  var 
-    img: pixie.Image
-    b64: string
-
-  if pixTables.hasContext(arg1):
-    img = pixTables.getContext(arg1).image
+  let img = if pixTables.hasContext(arg1):
+    pixTables.getContext(arg1).image
   elif pixTables.hasImage(arg1):
-    img = pixTables.getImage(arg1)
+    pixTables.getImage(arg1)
   else:
-    return ERROR_MSG(interp, "pix(error): no key <ctx>|<img> object found '" & arg1 & "'")
-  try:
+    return pixUtils.errorMSG(interp, "pix(error): no key <ctx>|<img> object found '" & arg1 & "'")
+
+  let b64 = try:
     let data = encodeImage(img, FileFormat.PngFormat)
-    b64  = encode(data)
+    encode(data)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
-    
+
   return Tcl.OK
 
 proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Adds a rotation to the matrix
-  # 
+  # Adds a rotation to the matrix.
+  #
   # angle   - double value (radian)
-  # matrix  - list
+  # matrix  - list (matrix3x3: 9 values)
   #
   # Returns the matrix rotation as a list.
   var
@@ -268,7 +338,7 @@ proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   let listobj = Tcl.NewListObj(0, nil)
 
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "angle 'list'")
+    Tcl.WrongNumArgs(interp, 1, objv, "angle 'list (matrix3x3: 9 values)'")
     return Tcl.ERROR
 
   if Tcl.GetDoubleFromObj(interp, objv[1], angle) != Tcl.OK:
@@ -284,5 +354,5 @@ proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
       discard Tcl.ListObjAppendElement(interp, listobj, Tcl.NewDoubleObj(matrix3[i][j]))
 
   Tcl.SetObjResult(interp, listobj)
-    
+
   return Tcl.OK

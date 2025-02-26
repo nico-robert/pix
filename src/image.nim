@@ -3,342 +3,322 @@
 
 proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets a new image.
-  # 
-  # size  - list width + height
+  #
+  # size  - list width,height
   #
   # Returns a 'new' img object.
-  var width, height: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    width, height: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
-      return Tcl.ERROR
-    
-    # Size
-    if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
+    return Tcl.ERROR
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      
-    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
-    
-    let img = newImage(width, height)
-    let p   = toHexPtr(img)
-    imgTable[p] = img
+  # Size
+  if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
-    return Tcl.OK
+  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
+
+  # Create a new image of the specified width and height.
+  let img = try:
+    newImage(width, height)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(img)
+  pixTables.addImage(p, img)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
+  return Tcl.OK
 
 proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # New image copy.
-  # 
+  #
   # image - object
   #
   # Returns a 'new' img object.
-  try:
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-    
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-    
-    let copyimg = img.copy()
-    let p       = toHexPtr(copyimg)
-    imgTable[p] = copyimg
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    return Tcl.OK
+  let img = pixTables.getImage(arg1)
+
+  # Attempt to create a copy of the image object
+  let copyimg = try:
+    img.copy()
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(copyimg)
+  pixTables.addImage(p, copyimg)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
+  return Tcl.OK
 
 proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws one image onto another using a matrix transform and color blending.
-  # 
+  #
   # image     - object
   # image2    - object
   # matrix3   - list (optional:mat3)
   # blendMode - Enum value (optional:NormalBlend)
   #
   # Returns nothing.
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
-  var matrix3: vmath.Mat3
+  var
+    count: Tcl.Size
+    matrix3: vmath.Mat3
+
+  if objc notin (3..5):
+    Tcl.WrongNumArgs(interp, 1, objv, "<img1> <img2> ?matrix3:optional ?blendMode:optional")
+    return Tcl.ERROR
+
+  # # Get destination image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img1 = pixTables.getImage(arg1)
+
+  # Get source image
+  let arg2 = $Tcl.GetString(objv[2])
+
+  if not pixTables.hasImage(arg2):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
+
+  let img2 = pixTables.getImage(arg2)
 
   try:
-    if objc notin (3..5):
-      Tcl.WrongNumArgs(interp, 1, objv, "<img1> <img2> matrix3:optional blendMode:optional")
-      return Tcl.ERROR
-    
-    # Image1
-    let arg1 = Tcl.GetString(objv[1])
-    let img1 = imgTable[$arg1]
-
-    # Image2
-    let arg2 = Tcl.GetString(objv[2])
-    let img2 = imgTable[$arg2]
-
     if objc == 3:
       img1.draw(img2)
     elif objc == 4:
-      let arg3 = Tcl.GetString(objv[3])
-      if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+      # If 4 arguments are provided, draw <img2> onto <img1> with the transformation
+      # specified by the 3rd argument. The 4th argument can be either a
+      # matrix or a blend mode.
+      if Tcl.ListObjLength(interp, objv[3], count) != Tcl.OK:
         return Tcl.ERROR
       if count == 1:
-        let myEnum = parseEnum[BlendMode]($arg3)
+        # Blend mode
+        let myEnum = parseEnum[BlendMode]($Tcl.GetString(objv[3]))
         img1.draw(img2, blendMode = myEnum)
       else:
-        if matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
+        # Matrix specified as a list
+        if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
           return Tcl.ERROR
         img1.draw(img2, transform = matrix3)
     else:
-      if matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
+      # If 5 arguments are provided, draw <img2> onto <img1> with the transformation
+      # specified by the 3rd argument and the blend mode specified by the 5th
+      # argument.
+      if pixUtils.matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
         return Tcl.ERROR
 
-      let arg5 = Tcl.GetString(objv[5])
-      let myEnum = parseEnum[BlendMode]($arg5)
+      # Blend mode
+      let myEnum = parseEnum[BlendMode]($Tcl.GetString(objv[5]))
 
       img1.draw(img2, transform = matrix3, blendMode = myEnum)
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the image with the color.
-  # 
+  #
   # image   - object
   # value   - string color or paint object
   #
   # Returns nothing.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> color|<paint>")
+    return Tcl.ERROR
+
+  # Get image object
+  let imgName = $Tcl.GetString(objv[1])
+  if not pixTables.hasImage(imgName):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & imgName & "'")
+
+  let img = pixTables.getImage(imgName)
+
+  # Get fill value argument
+  let fillArg = $Tcl.GetString(objv[2])
+
   try:
-
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> color|<paint>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    # Color or Paint
-    let arg2 = Tcl.GetString(objv[2])
-    if paintTable.hasKey($arg2):
-      let paint = paintTable[$arg2]
-      img.fill(paint)
+    # Handle paint object or color value
+    if pixTables.hasPaint(fillArg):
+      img.fill(pixTables.getPaint(fillArg))
     else:
-      let str = $arg2
-      var crgbx: ColorRGBX
-      if isColorRgbx(str, crgbx):
-        img.fill(crgbx)
-      else:
-        img.fill(parseHtmlColor(str))
-
-    return Tcl.OK
+      # Fall back to color parsing.
+      img.fill(pixUtils.getColor(objv[2]))
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the image with the color.
-  # 
+  #
   # filePath - path file
   #
   # Returns a 'new' img object.
-  try:
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "full pathfile")
+    return Tcl.ERROR
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "path file")
-      return Tcl.ERROR
+  let file = $Tcl.GetString(objv[1])
 
-    let 
-      file = Tcl.GetString(objv[1])
-      img = readimage($file)
-      p = toHexPtr(img)
-
-    imgTable[p] = img
-
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
-
-    return Tcl.OK
+  # Read the image from the file
+  # Note: This will throw an exception if the file does not exist,
+  # or if the file is not a valid image or supported.
+  let img = try:
+    readimage(file)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(img)
+  pixTables.addImage(p, img)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
+  return Tcl.OK
 
 proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills a path.
-  # 
+  #
   # image      - object
   # pathValue  - string path  or path object
   # paintValue - string color or paint object
   # matrix     - list (optional:mat3)
   #
   # Returns nothing.
-  var img: pixie.Image
-  var matrix3: vmath.Mat3
-  var myTable, hasMatrix: bool = false
+  var
+    img: pixie.Image
+    matrix3: vmath.Mat3
+    hasMatrix: bool = false
+
+  if objc notin (4..5):
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional")
+    return Tcl.ERROR
+
+  # Get image object
+  let
+    cmdName = $Tcl.GetString(objv[0])
+    imgName = $Tcl.GetString(objv[1])
+
+  if cmdName == "pix::ctx::fillPath":
+    if not pixTables.hasContext(imgName):
+      return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & imgName & "'")
+
+    img = pixTables.getContext(imgName).image
+  else:
+    if not pixTables.hasImage(imgName):
+      return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & imgName & "'")
+
+    img = pixTables.getImage(imgName)
+
+  # Get path and paint/color arguments
+  let
+    pathArg = $Tcl.GetString(objv[2])
+    paintArg = $Tcl.GetString(objv[3])
+
+  # Handle optional matrix
+  if objc == 5:
+    if pixUtils.matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+    hasMatrix = true
 
   try:
-    if objc notin (4..5):
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|string' 'color|<paint>' matrix:optional")
-      return Tcl.ERROR
+    # Get path object or use string path
+    let path = if pixTables.hasPath(pathArg): pixTables.getPath(pathArg)
+               else: parsePath(pathArg)
 
-    let arg1 = Tcl.GetString(objv[1])
+    # Get paint/color object
+    let paint = if pixTables.hasPaint(paintArg): pixTables.getPaint(paintArg)
+                else: pixUtils.getColor(objv[3]).SomePaint
 
-    if $Tcl.GetString(objv[0]) == "pix::ctx::fillPath":
-      let ctx = ctxTable[$arg1]
-      img = ctx.image
+    # Apply fill with or without matrix
+    if hasMatrix:
+      img.fillPath(path, paint, matrix3)
     else:
-      img = imgTable[$arg1]
+      img.fillPath(path, paint)
 
-    let arg2 = Tcl.GetString(objv[2])
-    let arg3 = Tcl.GetString(objv[3])
-
-    if pathTable.hasKey($arg2):
-      myTable = true
-
-    if objc == 5:
-      if matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
-        return Tcl.ERROR
-      hasMatrix = true
-    
-    if paintTable.hasKey($arg3):
-      let paint = paintTable[$arg3]
-      if myTable:
-        let mypath = pathTable[$arg2]
-        if hasMatrix:
-          img.fillPath(mypath, paint, matrix3)
-        else:
-          img.fillPath(mypath, paint)
-      else:
-        let mypath = $arg2
-        if hasMatrix:
-          img.fillPath(mypath, paint, matrix3)
-        else:
-          img.fillPath(mypath, paint)
-    else:
-      # Color
-      let color = parseHtmlColor($arg3)
-      if myTable:
-        let mypath = pathTable[$arg2]
-        if hasMatrix:
-          img.fillPath(mypath, color, matrix3)
-        else:
-          img.fillPath(mypath, color)
-      else:
-        let mypath = $arg2
-        if hasMatrix:
-          img.fillPath(mypath, color, matrix3)
-        else:
-          img.fillPath(mypath, color)
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strokes a path.
-  # 
+  #
   # image   - object
   # value   - string path
   # color   - string color or paint object
   # options - dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)
   #
   # Returns nothing.
-  var sWidth, dashes: cdouble = 1.0
-  var mymiterLimit: cdouble = pixie.defaultMiterLimit
-  var count, dashescount: Tcl.Size
-  var elements, dasheselements: Tcl.PPObj
-  var matrix3: vmath.Mat3 = mat3()
   var img: pixie.Image
-  var mydashes: seq[float32] = @[]
-  var myEnumlineCap, myEnumlineJoin: string = "null"
+
+  if objc != 5:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
+    return Tcl.ERROR
+
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
+    if not pixTables.hasContext(arg1):
+      return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
+    img = pixTables.getContext(arg1).image
+  else:
+    if not pixTables.hasImage(arg1):
+      return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+    img = pixTables.getImage(arg1)
+
+  let
+    arg2 = $Tcl.GetString(objv[2])
+    arg3 = $Tcl.GetString(objv[3])
 
   try:
-    if objc != 5:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
-      return Tcl.ERROR
+    # Parse the options from the Tcl dict and set the fields of 
+    # the 'RenderOptions' object.
+    var opts = pixParses.RenderOptions()
+    pixParses.dictOptions(interp, objv[4], opts)
 
-    let arg1 = Tcl.GetString(objv[1])
-
-    if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
-      let ctx = ctxTable[$arg1]
-      img = ctx.image
-    else:
-      img = imgTable[$arg1]
-
-    # Dict
-    if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
-      return Tcl.ERROR
-
-    if count mod 2 != 0:
-      return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
-
-    var i = 0
-    while i < count:
-      let mkey = Tcl.GetString(elements[i])
-      case $mkey:
-        of "strokeWidth":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth) != Tcl.OK:
-            return Tcl.ERROR
-        of "transform":
-          if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
-            return Tcl.ERROR
-        of "lineCap":
-          let arg = Tcl.GetString(elements[i+1])
-          myEnumlineCap = $arg
-        of "miterLimit":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit) != Tcl.OK:
-            return Tcl.ERROR
-        of "lineJoin":
-          let arg = Tcl.GetString(elements[i+1])
-          myEnumlineJoin = $arg
-        of "dashes":
-          if Tcl.ListObjGetElements(interp, elements[i+1], dashescount, dasheselements) != Tcl.OK:
-            return Tcl.ERROR
-          for j in 0..dashescount-1:
-            if Tcl.GetDoubleFromObj(interp, dasheselements[j], dashes) != Tcl.OK:
-              return Tcl.ERROR
-            mydashes.add(dashes)
-        else:
-          return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-      inc(i, 2)
-
-    let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
-    let myEnumLJ = parseEnum[LineJoin]($myEnumlineJoin, MiterJoin)
-
-    let arg2 = Tcl.GetString(objv[2])
-    let arg3 = Tcl.GetString(objv[3])
-
-    var mypath  = if pathTable.hasKey($arg2) : pathTable[$arg2]  else: parsePath($arg2)
-    var mypaint = if paintTable.hasKey($arg3): paintTable[$arg3] else: parseHtmlColor($arg3)
+    let path  = if pixTables.hasPath(arg2) : pixTables.getPath(arg2)  else: parsePath(arg2)
+    let paint = if pixTables.hasPaint(arg3): pixTables.getPaint(arg3) else: SomePaint(pixUtils.getColor(objv[3]))
 
     img.strokePath(
-      mypath, 
-      mypaint,
-      transform = matrix3,
-      strokeWidth = sWidth,
-      lineCap = myEnumLC,
-      lineJoin = myEnumLJ,
-      miterLimit = mymiterLimit,
-      dashes = mydashes
+      path,
+      paint,
+      transform = opts.transform,
+      strokeWidth = opts.strokeWidth,
+      lineCap = opts.lineCap,
+      lineJoin = opts.lineJoin,
+      miterLimit = opts.miterLimit,
+      dashes = opts.dashes
     )
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Applies Gaussian blur to the image given a radius.
-  # 
+  #
   # image   - object
   # radius  - double value
   # color   - string (optional:transparent)
@@ -346,104 +326,80 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # Returns nothing.
   var radius: cdouble
 
+  if objc notin (3..4):
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> radius color:optional")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
+  # Radius
+  if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK: return Tcl.ERROR
+
+  # 'blur' blurs the image using a Gaussian blur algorithm.  The blur radius
+  # is the distance from the point of the image to the point of the blur
+  # effect.  The color is the color of the blur effect.
   try:
-    if objc notin (3..4):
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> radius color:optional")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    # Radius
-    if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK: return Tcl.ERROR
-
     if objc == 4:
-      # Color RGBA check
-      let arg3 = Tcl.GetString(objv[3])
-      let color = parseHtmlColor($arg3)
+      # If the user has provided a color, blur the image with that color.
+      let color = pixUtils.getColor(objv[3])
       img.blur(radius, color)
     else:
       img.blur(radius)
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
-    
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
+
 proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Create a shadow of the image with the offset, spread and blur.
-  # 
+  #
   # image   - object
   # options - dict (offset, spread, blur, color)
   #
   # Returns nothing.
-  var x, y, spread, blur: cdouble
-  var count, dictcount: Tcl.Size
-  var elements, dict : Tcl.PPObj
-  var colorShadow: ColorRGBA
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {offset? ?value spread? ?value blur? ?value color? ?value}")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
 
   try:
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {offset? ?value spread? ?value blur? ?value color? ?value}")
-      return Tcl.ERROR
-      
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+    # Parse the options from the Tcl dict and set the fields of 
+    # the 'ShadowOptions' object.
+    var opts = pixParses.RenderShadow()
+    pixParses.shadowOptions(interp, objv[2], opts)
 
-    # Dict
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
-
-    if count mod 2 != 0:
-      return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value key1 value1 ...")
-
-    var i = 0
-    while i < count:
-      let mkey = Tcl.GetString(elements[i])
-      case $mkey:
-        of "offset":
-          if Tcl.ListObjGetElements(interp, elements[i+1], dictcount, dict) != Tcl.OK:
-            return Tcl.ERROR
-          if dictcount != 2:
-            return ERROR_MSG(interp, "wrong # args: 'offset' should be 'x' 'y'")
-            
-          if Tcl.GetDoubleFromObj(interp, dict[0], x) != Tcl.OK: return Tcl.ERROR
-          if Tcl.GetDoubleFromObj(interp, dict[1], y) != Tcl.OK: return Tcl.ERROR
-
-        of "spread":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], spread) != Tcl.OK:
-            return Tcl.ERROR
-        of "blur":
-          if Tcl.GetDoubleFromObj(interp, elements[i+1], blur) != Tcl.OK:
-            return Tcl.ERROR
-        of "color":
-          # Color RGBA check
-          let el = Tcl.GetString(elements[i+1])
-          colorShadow = parseHtmlColor($el).rgba
-        else:
-          return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-      inc(i, 2)
-      
     let shadow = img.shadow(
-      offset = vec2(x, y),
-      spread = spread,
-      blur = blur,
-      color = colorShadow
+      offset = opts.offset,
+      spread = opts.spread,
+      blur   = opts.blur,
+      color  = opts.color
     )
-    
-    let js = toHexPtr(shadow)
-    imgTable[js] = shadow
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(js), -1))
+    let p = toHexPtr(shadow)
+    pixTables.addImage(p, shadow)
 
-    return Tcl.OK
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills image text.
-  # 
+  #
   # image        - object
   # object       - arrangement or font object
   # args         - dict options described below:
@@ -453,795 +409,953 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # options      - dict (transform, bounds, hAlign, vAlign) (optional) if `object` is font `object`
   #
   # Returns nothing.
-  var x, y: cdouble
-  var count, veccount: Tcl.Size
-  var elements, vecelements: Tcl.PPObj
   var matrix3: vmath.Mat3 = mat3()
-  var vecBounds = vec2(0, 0)
-  var myEnumhAlign, myEnumvAlign: string = "null"
 
-  try:  
-    if objc notin (3..5):
-      let msg = """<img> <arrangement> matrix3:optional or
-      <img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"""
-      Tcl.WrongNumArgs(interp, 1, objv, msg.cstring)
-      return Tcl.ERROR
+  if objc notin (3..5):
+    let errMsg = "<img> <arrangement> ?matrix3:optional or " &
+    "<img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"
+    Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
+    return Tcl.ERROR
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    let arg2 = Tcl.GetString(objv[2])
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if arrTable.hasKey($arg2):
-      # Arrangement
-      let arrangement = arrTable[$arg2]
-      if objc == 4:
-        if matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
-          return Tcl.ERROR
+  let
+    img  = pixTables.getImage(arg1)
+    arg2 = $Tcl.GetString(objv[2])
+
+  if pixTables.hasArr(arg2):
+    # Arrangement
+    let arrangement = pixTables.getArr(arg2)
+    if objc == 4:
+      if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
+        return Tcl.ERROR
+      try:
+        # Use the fillText method of the image to render text based on the given arrangement.
+        # The arrangement object contains pre-calculated positions and styles for text glyphs.
+        # The matrix3 argument is a transformation matrix that will be applied to the text.
+        # This allows for transformations such as scaling, rotation, or translation of the text.
         img.fillText(arrangement, matrix3)
-      else:
-        img.fillText(arrangement)
+      except Exception as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
     else:
-      let font = fontTable[$arg2]
-      if objc < 4:
-        return ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+      try:
+        img.fillText(arrangement)
+      except Exception as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  else:
+    if not pixTables.hasFont(arg2):
+      return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg2 & "'")
 
-      let arg3 = Tcl.GetString(objv[3])
-      let text = $arg3
+    let font = pixTables.getFont(arg2)
+    if objc < 4:
+      return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
 
+    let text = $Tcl.GetString(objv[3])
+
+    try:
       if objc == 5:
-        # Dict
-        if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
-          return Tcl.ERROR
+        # Create a new RenderOptions object to store font rendering options.
+        var opts = pixParses.RenderOptions()
+        pixParses.fontOptions(interp, objv[4], opts)
 
-        if count mod 2 != 0:
-          return ERROR_MSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
-
-        var i = 0
-        while i < count:
-          let mkey = Tcl.GetString(elements[i])
-          case $mkey:
-            of "transform":
-              if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
-                return Tcl.ERROR
-            of "hAlign":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumhAlign = $arg
-            of "vAlign":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumvAlign = $arg
-            of "bounds":
-              if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
-                return Tcl.ERROR
-              if veccount != 2:
-                return ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
-
-              if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
-              if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
-
-              vecBounds = vec2(x, y)
-            else:
-              return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-          inc(i, 2)
-        
-        let myEnumLH = parseEnum[HorizontalAlignment]($myEnumhAlign, LeftAlign)
-        let myEnumLV = parseEnum[VerticalAlignment]($myEnumvAlign, TopAlign)
-
-        img.fillText(font, text, transform = matrix3, bounds = vecBounds, hAlign = myEnumLH, vAlign = myEnumLV)
-
+        img.fillText(
+          font,
+          text,
+          transform = opts.transform,
+          bounds = opts.bounds,
+          hAlign = opts.hAlign,
+          vAlign = opts.vAlign
+        )
       else:
         img.fillText(font, text)
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-    return Tcl.OK
-  except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+  return Tcl.OK
 
 proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Resize an image to a given height and width
-  # 
+  #
   # image  - object
-  # size   - list width + height
+  # size   - list width,height
   #
   # Returns nothing.
-  var width, height: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    width, height: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
-      return Tcl.ERROR
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
+    return Tcl.ERROR
 
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
+  let img = pixTables.getImage(arg1)
 
-    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    let newimg = img.resize(width, height)
-    let p = toHexPtr(newimg)
-    imgTable[p] = newimg
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
-    return Tcl.OK
+  # We create a new image with the new size
+  # This takes care of creating a new image with the correct size
+  # and scaling the image.  The `resize` proc is smart enough
+  # to scale the image to the new size.
+  let newimg = try:
+    img.resize(width, height)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(newimg)
+  pixTables.addImage(p, newimg)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
+  return Tcl.OK
 
 proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets image size.
-  # 
+  #
   # image - object
   #
   # Returns Tcl dict (width, height).
-  try:
+  let dictObj = Tcl.NewDictObj()
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
 
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-    let dictObj = Tcl.NewDictObj()
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height))
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    Tcl.SetObjResult(interp, dictObj)
+  let img = pixTables.getImage(arg1)
 
-    return Tcl.OK
-  except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height))
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
 
 proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
-  # 
+  #
   # image        - object
-  # coordinates  - list x,y
+  # coordinates  - list x,y (x column of the pixel, y row of the pixel)
   #
   # Returns Tcl dict (r, g, b, a).
-  var x, y: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    x, y: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
-      return Tcl.ERROR
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
+    return Tcl.ERROR
 
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-    let dictObj = Tcl.NewDictObj()
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
+  let img = pixTables.getImage(arg1)
 
-    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    let data = img[x, y]
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.int))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.int))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(data.b.int))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(data.a.int))
+  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
-    Tcl.SetObjResult(interp, dictObj)
-
-    return Tcl.OK
+  let data = try:
+    img[x, y]
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let dictObj = Tcl.NewDictObj()
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.int))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.int))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(data.b.int))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(data.a.int))
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
 
 proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
-  # 
+  # Sets a pixel at (x, y) or does nothing if outside of bounds.
+  #
   # image       - object
-  # coordinates - list x,y 
+  # coordinates - list x,y
   # color       - string color
   #
   # Returns nothing.
-  var x, y: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    x, y: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
+
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
+
+  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
-    if objc != 4:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
-      return Tcl.ERROR
-
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
-
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-    let arg3 = Tcl.GetString(objv[3])
-    let color = parseHtmlColor($arg3).color
-
-    img[x, y] = color
-
-    return Tcl.OK
+    img[x, y] = pixUtils.getColor(objv[3])
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Multiplies alpha of the image by opacity.
-  # 
+  #
   # image    - object
   # opacity  - double value
+  #
+  # img.applyOpacity multiplies the opacity of the image by the
+  # opacity parameter. The opacity parameter is a double between
+  # 0 and 1. 0 is fully transparent. 1 is fully opaque. Any value
+  # inbetween is a mix of the two.
   #
   # Returns nothing.
   var opacity: cdouble
 
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> opacity")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
+  # opacity
+  if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
+    return Tcl.ERROR
+
   try:
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> opacity")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    # opacity
-    if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
-      return Tcl.ERROR
-
     img.applyOpacity(opacity)
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # A value of 0 stays 0. Anything else turns into 255.
-  # 
+  #
   # image - object
   #
+  # The `ceil` proc takes an image and replaces all pixels that are
+  # not fully transparent (i.e. have an alpha of 0) with a pixel that
+  # is fully opaque (i.e. has an alpha of 255). This is useful for
+  # creating masks from images.
+  #
   # Returns nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
   try:
-
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
     img.ceil()
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Compares the parameters and returns a score and image of the difference. 
-  # 
+  # Call the `diff` method on the master image, passing the image to
+  # compare to the master image. The `diff` method returns a tuple
+  # with two elements:
+  #
   # masterimage - object
   # image       - object
   #
-  # Returns Tcl dict (score, imgdiff).
-  try:
+  # 1. A cdouble representing the difference score between the two
+  # images. This score is 0 if the images are identical, and 1 if the
+  # images are completely different. The score is a measure of how
+  # different the two images are.
+  #
+  # 2. A new pix image representing the difference between the two
+  # images. The difference image is an image that has the same size
+  # as the two input images, and the pixels in this image represent
+  # the difference between the corresponding pixels in the two
+  # images. The difference image will have the same format as the
+  # input images.
+  #
+  # Returns Tcl dict (score, imgdiff object).
+  let dictObj = Tcl.NewDictObj()
 
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<masterimg> <img>")
-      return Tcl.ERROR
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<masterimg> <img>")
+    return Tcl.ERROR
 
-    # Image master
-    let arg1 = Tcl.GetString(objv[1])
-    let masterimg = imgTable[$arg1]
+  # Image master
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Image
-    let arg2 = Tcl.GetString(objv[2])
-    let img = imgTable[$arg2]
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    let (score, newimg) = masterimg.diff(img)
+  let masterimg = pixTables.getImage(arg1)
 
-    let p = toHexPtr(newimg)
-    imgTable[p] = newimg
+  # Image
+  let arg2 = $Tcl.GetString(objv[2])
 
-    let dictObj = Tcl.NewDictObj()
+  if not pixTables.hasImage(arg2):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("score", 5), Tcl.NewDoubleObj(score))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), Tcl.NewStringObj(p.cstring, -1))
+  let img = pixTables.getImage(arg2)
 
-    Tcl.SetObjResult(interp, dictObj)
-
-    return Tcl.OK
+  let (score, newimg) = try:
+    masterimg.diff(img)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(newimg)
+  pixTables.addImage(p, newimg)
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("score", 5), Tcl.NewDoubleObj(score))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), Tcl.NewStringObj(p.cstring, -1))
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
 
 proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Flips the image around the Y axis.
-  # 
+  # This method modifies the image in place, flipping it around the Y-axis.
+  # As a result, the left and right sides of the image are swapped.
+  # This operation is useful for creating mirror images or for certain graphical effects.
+  #
   # image - object
   #
   # Returns nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
   try:
-
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
     img.flipHorizontal()
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Flips the image around the X axis.
-  # 
+  # This method modifies the image in place, flipping it around the X-axis.
+  #
   # image - object
   #
+  # As a result, the top and bottom sides of the image are swapped.
+  # This operation is useful for creating mirror images or for certain graphical effects.
+  #
   # Returns nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
   try:
-
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
     img.flipVertical()
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a color at (x, y) or returns transparent black if outside of bounds.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
   #
   # Returns Tcl dict (r, g, b, a).
-  var x, y: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    x, y: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
-      return Tcl.ERROR
+  let dictObj = Tcl.NewDictObj()
 
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-    let dictObj = Tcl.NewDictObj()
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
+    return Tcl.ERROR
 
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK:
-      return Tcl.ERROR
+  let img = pixTables.getImage(arg1)
 
-    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK:
-      return Tcl.ERROR
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    let c = img.getColor(x, y)
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewDoubleObj(c.r))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewDoubleObj(c.g))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewDoubleObj(c.b))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewDoubleObj(c.a))
+  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
-    Tcl.SetObjResult(interp, dictObj)
-
-    return Tcl.OK
+  let color = try:
+    # Retrieve the color of the pixel at coordinates (x, y) from the image.
+    img.getColor(x, y)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewDoubleObj(color.r))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewDoubleObj(color.g))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewDoubleObj(color.b))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewDoubleObj(color.a))
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
 
 proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Returns true if (x, y) is inside the image, false otherwise.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
   #
-  var x, y: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    x, y: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
-      return Tcl.ERROR
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
+    return Tcl.ERROR
 
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
+  let img = pixTables.getImage(arg1)
 
-    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    let val = if img.inside(x, y): 1 else: 0
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
-    Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
+  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
-    return Tcl.OK
+  let value = try:
+    if img.inside(x, y): 1 else: 0
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+
+  return Tcl.OK
 
 proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Inverts all of the colors and alpha.
-  # 
+  #
   # image - object
   #
+  # This will flip the image by changing the color and alpha of every pixel.
+  # The result will be a new image where every pixel is the exact opposite of
+  # the corresponding pixel in the original image.
+  #
+  # For example, if the original image is entirely white, the resulting image
+  # will be entirely black. If the original image is entirely black, the
+  # resulting image will be entirely white.
+  # This is useful for things like getting the negative of an image, or
+  # creating a "reverse" version of an image.
+  #
   # Returns nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
   try:
-
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
+    # Invert the image.
     img.invert()
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if the entire image is the same color.
-  # 
+  #
   # image - object
   #
   # Returns true, false otherwise.
-  try:
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    let val = if img.isOneColor(): 1 else: 0
+  let img = pixTables.getImage(arg1)
 
-    Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
-
-    return Tcl.OK
+  let value = try:
+    if img.isOneColor(): 1 else: 0
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+
+  return Tcl.OK
 
 proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Checks if the entire image is opaque (alpha values are all 255). 
-  # 
+  # Checks if the entire image is opaque (alpha values are all 255).
+  #
   # image - object
   #
   # Returns true, false otherwise.
-  try:
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    let val = if img.isOpaque(): 1 else: 0
+  let img = pixTables.getImage(arg1)
 
-    Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
-
-    return Tcl.OK
+  let value = try:
+    if img.isOpaque(): 1 else: 0
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+
+  return Tcl.OK
 
 proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if this image is fully transparent or not.
-  # 
+  #
   # image - object
   #
   # Returns true, false otherwise.
-  try:
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    let val = if img.isTransparent(): 1 else: 0
+  let img = pixTables.getImage(arg1)
 
-    Tcl.SetObjResult(interp, Tcl.NewIntObj(val))
-
-    return Tcl.OK
+  let value = try:
+    if img.isTransparent(): 1 else: 0
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+
+  return Tcl.OK
 
 proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Scales image up by 2 ^ power.
-  # 
+  #
   # image  - object
   # power  - integer value (optional:1)
   #
+  # If only one argument is given (i.e. the image object), just magnify by 2.
+  # This is a convenience for the user.
+  #
   # Returns a 'new' img object.
-  var power: int = 1 
-  var newimg: pixie.Image
+  var
+    power: int = 1
+    newimg: pixie.Image
 
-  try:
-    if objc notin (2..3):
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> power:optional")
+  if objc notin (2..3):
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> ?power:optional")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
+  if objc == 3:
+    if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
       return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    if objc == 3:
-      if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
-        return Tcl.ERROR
+    try:
       newimg = img.magnifyBy2(power.int)
-    else:
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  else:
+    try:
+      # The result is stored in newimg.
       newimg = img.magnifyBy2()
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-    let p = toHexPtr(newimg)
-    imgTable[p] = newimg
+  let p = toHexPtr(newimg)
+  pixTables.addImage(p, newimg)
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
-    return Tcl.OK
-  except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+  return Tcl.OK
 
 proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Scales the image down by an integer scale.
-  # 
+  #
   # image  - object
   # power  - integer value (optional:1)
   #
+  # We were given an integer power as an argument, so we call
+  # img.minifyBy2() with that power. This will scale the image
+  # down by 2^power.
+  #
   # Returns a 'new' img object.
-  var power: int = 1 
-  var newimg: pixie.Image
+  var
+    power: int = 1
+    newimg: pixie.Image
 
-  try:
-    if objc notin (2..3):
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> power:optional")
+  if objc notin (2..3):
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> ?power:optional")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
+  if objc == 3:
+    if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
       return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    if objc == 3:
-      if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
-        return Tcl.ERROR
+    try:
       newimg = img.minifyBy2(power.int)
-    else:
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  else:
+    try:
       newimg = img.minifyBy2()
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-    let p = toHexPtr(newimg)
-    imgTable[p] = newimg
+  let p = toHexPtr(newimg)
+  pixTables.addImage(p, newimg)
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
-    return Tcl.OK
-  except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+  return Tcl.OK
 
 proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Checks the bounds of opaque pixels. Some images have transparency around them,
+  # Checks the bounds of opaque pixels.
+  #
+  # image - object
+  #
+  # Some images have transparency around them,
   # use this to find just the visible part of the image and then use subImage to cut
   # it out. Returns zero rect if whole image is transparent,
   # or just the size of the image if no edge is transparent.
-  # 
-  # image - object
   #
   # Returns Tcl dict (x, y, w, h).
-  try:
+  let dictObj = Tcl.NewDictObj()
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-    let dictObj = Tcl.NewDictObj()
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    let rect = img.opaqueBounds()
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
+  let img = pixTables.getImage(arg1)
 
-    Tcl.SetObjResult(interp, dictObj)
-
-    return Tcl.OK
+  let rect = try:
+    img.opaqueBounds()
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
 
 proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Rotates the image 90 degrees clockwise.
-  # 
+  #
   # image - object
   #
   # Returns nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
   try:
-
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
     img.rotate90()
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a sub image from this image.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
-  # size         - list width + height
+  # size         - list width,height
+  #
+  # The subImage function extracts a portion of the original image starting at (x, y) 
+  # and spanning the width and height specified.
   #
   # Returns a 'new' img object.
-  var x, y, width, height: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    x, y, width, height: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 4:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
-      return Tcl.ERROR
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
+    return Tcl.ERROR
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Coordinates
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'width' 'height'")
-      
-    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-    
-    # Size
-    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  let img = pixTables.getImage(arg1)
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      
-    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
-    
-    let subimage = img.subImage(x, y, width, height)
-    let p = toHexPtr(subimage)
-    imgTable[p] = subimage
+  # Coordinates
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'width' 'height'")
 
-    return Tcl.OK
+  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
+
+  # Size
+  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
+
+  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
+
+  let subimage = try:
+    # Create a subimage from the given image (img) based on specified coordinates and size.
+    img.subImage(x, y, width, height)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(subimage)
+  pixTables.addImage(p, subimage)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
+  return Tcl.OK
 
 proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Either cuts a sub image or returns a super image with padded transparency.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
-  # size         - list width + height
+  # size         - list width,height
+  #
+  # If the coordinates and size of the superImage are within the bounds of the original image,
+  # a sub image is cut from the original image.
+  #
+  # If the coordinates and size of the superImage are outside the bounds of the original image,
+  # a super image is created with the original image centered and padded with transparency.
+  # The resulting super image is always the size specified in the arguments.
+  #
+  # If the resulting super image is different from the original image, a new image is created.
+  # If the resulting super image is the same as the original image, the original image is returned.
   #
   # Returns a 'new' img object.
-  var x, y, width, height: int
-  var count: Tcl.Size
-  var elements: Tcl.PPObj
+  var
+    x, y, width, height: int
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
-  try:
-    if objc != 4:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
-      return Tcl.ERROR
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
+    return Tcl.ERROR
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Coordinates
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-      
-    if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-    
-    # Size
-    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
-      return Tcl.ERROR
+  let img = pixTables.getImage(arg1)
 
-    if count != 2:
-      return ERROR_MSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-      
-    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
-    
-    let subimage = img.superImage(x, y, width, height)
-    let p = toHexPtr(subimage)
-    imgTable[p] = subimage
+  # Coordinates
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
 
-    return Tcl.OK
+  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
+
+  # Size
+  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
+
+  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
+
+  let subimage = try:
+    img.superImage(x, y, width, height)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(subimage)
+  pixTables.addImage(p, subimage)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
+  return Tcl.OK
 
 proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills with the Paint gradient.
-  # 
+  #
   # image  - object
   # paint  - object
   #
   # Returns nothing.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> <paint>")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img = pixTables.getImage(arg1)
+
+  # Paint
+  let arg2 = $Tcl.GetString(objv[2])
+
+  if not pixTables.hasPaint(arg2):
+    return pixUtils.errorMSG(interp, "pix(error): no key <paint> object found '" & arg2 & "'")
+
+  let paint = pixTables.getPaint(arg2)
+
   try:
-
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> <paint>")
-      return Tcl.ERROR
-
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    # Paint
-    let arg2 = Tcl.GetString(objv[2])
-    let paint = paintTable[$arg2]
-
     img.fillGradient(paint)
-
-    return Tcl.OK
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strocks image text.
-  # 
+  #
   # image       - object
   # object      - arrangement object or font object
   # text        - string if `object` is font object
@@ -1249,207 +1363,126 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # fontoptions - dict (transform:list, bounds:list, hAlign:enum, vAlign:enum) (optional)
   #
   # Returns nothing.
-  var x, y, sWidth, dashes: cdouble = 1.0
-  var mymiterLimit: cdouble = defaultMiterLimit
-  var count, veccount, dashescount: Tcl.Size
-  var elements, vecelements, dasheselements: Tcl.PPObj
-  var matrix3: vmath.Mat3 = mat3()
-  var vecBounds = vec2(0, 0)
-  var mydashes: seq[float32] = @[]
-  var myEnumlineCap, myEnumlineJoin: string = "null"
-  var myEnumhAlign, myEnumvAlign: string = "null"
+  if objc notin (3..5):
+    let errMsg = "<img> <arrangement> {?transform ?value ?strokeWidth ?value ?lineCap ?value " &
+    "?lineJoin ?value ?miterLimit ?value ?dashes ?value} or " &
+    "<img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"
+    Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
+    return Tcl.ERROR
 
-  try:  
-    if objc notin (3..5):
-      let msg = """
-      <img> <arrangement> {?transform ?value ?strokeWidth ?value ?lineCap ?value ?lineJoin ?value ?miterLimit ?value ?dashes ?value} or
-      <img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"""
-      Tcl.WrongNumArgs(interp, 1, objv, msg.cstring)
-      return Tcl.ERROR
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
 
-    # Image
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-    let arg2 = Tcl.GetString(objv[2])
+  let
+    img  = pixTables.getImage(arg1)
+    arg2 = $Tcl.GetString(objv[2])
 
-    if arrTable.hasKey($arg2):
-      # Arrangement
-      let arr = arrTable[$arg2]
+  if pixTables.hasArr(arg2):
+    # Arrangement
+    let arrangement = pixTables.getArr(arg2)
+    try:
       if objc == 4:
-        # Dict
-        if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
-          return Tcl.ERROR
-
-        if count mod 2 != 0:
-          return ERROR_MSG(interp, "wrong # args: 'arr options' should be :key value ?key1 ?value1 ...")
-
-        var i = 0
-        while i < count:
-          let mkey = Tcl.GetString(elements[i])
-          case $mkey:
-            of "strokeWidth":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth) != Tcl.OK:
-                return Tcl.ERROR
-            of "transform":
-              if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
-                return Tcl.ERROR
-            of "lineCap":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumlineCap = $arg
-            of "miterLimit":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit) != Tcl.OK:
-                return Tcl.ERROR
-            of "lineJoin":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumlineJoin = $arg
-            of "dashes":
-              if Tcl.ListObjGetElements(interp, elements[i+1], dashescount, dasheselements) != Tcl.OK:
-                return Tcl.ERROR
-              for j in 0..dashescount-1:
-                if Tcl.GetDoubleFromObj(interp, dasheselements[j], dashes) != Tcl.OK:
-                  return Tcl.ERROR
-                mydashes.add(dashes)
-            else:
-              return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-          inc(i, 2)
-
-        let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
-        let myEnumLJ = parseEnum[LineJoin]($myEnumlineJoin, MiterJoin)
+        var opts = pixParses.RenderOptions()
+        pixParses.dictOptions(interp, objv[3], opts)
 
         img.strokeText(
-          arr, transform = matrix3, strokeWidth = sWidth,
-          lineCap = myEnumLC, lineJoin = myEnumLJ,
-          dashes = mydashes, 
-          miterLimit = mymiterLimit
+          arrangement,
+          transform = opts.transform,
+          strokeWidth = opts.strokeWidth,
+          lineCap = opts.lineCap,
+          lineJoin = opts.lineJoin,
+          dashes = opts.dashes,
+          miterLimit = opts.miterLimit
         )
-
       else:
-        img.strokeText(arr)
-    else:
-      let font = fontTable[$arg2]
-      if objc < 4:
-        return ERROR_MSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+        img.strokeText(arrangement)
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-      let arg3 = Tcl.GetString(objv[3])
-      let text = $arg3
+  else:
+    if not pixTables.hasFont(arg2):
+      return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg2 & "'")
 
+    let font = pixTables.getFont(arg2)
+    if objc < 4:
+      return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+
+    let text = $Tcl.GetString(objv[3])
+    try:
       if objc == 5:
-        # Dict
-        if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
-          return Tcl.ERROR
-
-        if count mod 2 != 0:
-          return ERROR_MSG(interp, "wrong # args: 'font options' should be :key value ?key1 ?value1 ...")
-
-        var i = 0
-        while i < count:
-          let mkey = Tcl.GetString(elements[i])
-          case $mkey:
-            of "strokeWidth":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], sWidth) != Tcl.OK:
-                return Tcl.ERROR
-            of "transform":
-              if matrix3x3(interp, elements[i+1], matrix3) != Tcl.OK:
-                return Tcl.ERROR
-            of "miterLimit":
-              if Tcl.GetDoubleFromObj(interp, elements[i+1], mymiterLimit) != Tcl.OK:
-                return Tcl.ERROR
-            of "hAlign":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumhAlign = $arg
-            of "vAlign":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumvAlign = $arg
-            of "lineCap":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumlineCap = $arg
-            of "lineJoin":
-              let arg = Tcl.GetString(elements[i+1])
-              myEnumlineJoin = $arg
-            of "dashes":
-              if Tcl.ListObjGetElements(interp, elements[i+1], dashescount, dasheselements) != Tcl.OK:
-                return Tcl.ERROR
-              for j in 0..dashescount-1:
-                if Tcl.GetDoubleFromObj(interp, dasheselements[j], dashes) != Tcl.OK:
-                  return Tcl.ERROR
-                mydashes.add(dashes)
-            of "bounds":
-              if Tcl.ListObjGetElements(interp, elements[i+1], veccount, vecelements) != Tcl.OK:
-                return Tcl.ERROR
-              if veccount != 2:
-                return ERROR_MSG(interp, "wrong # args: 'bounds' should be 'x' 'y'")
-
-              if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK: return Tcl.ERROR
-              if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK: return Tcl.ERROR
-
-              vecBounds = vec2(x, y)
-            else:
-              return ERROR_MSG(interp, "wrong # args: Key '" & $mkey & "' not supported.")
-          inc(i, 2)
-
-        let myEnumLC = parseEnum[LineCap]($myEnumlineCap, ButtCap)
-        let myEnumLJ = parseEnum[LineJoin]($myEnumlineJoin, MiterJoin)
-        let myEnumLH = parseEnum[HorizontalAlignment]($myEnumhAlign, LeftAlign)
-        let myEnumLV = parseEnum[VerticalAlignment]($myEnumvAlign, TopAlign)
+        var opts = pixParses.RenderOptions()
+        pixParses.fontOptions(interp, objv[4], opts)
 
         img.strokeText(
-          font, text, transform = matrix3, strokeWidth = sWidth,
-          lineCap = myEnumLC, lineJoin = myEnumLJ, dashes = mydashes, 
-          bounds = vecBounds, hAlign = myEnumLH, vAlign = myEnumLV,
-          miterLimit = mymiterLimit
+          font,
+          text,
+          transform = opts.transform,
+          strokeWidth = opts.strokeWidth,
+          lineCap = opts.lineCap,
+          lineJoin = opts.lineJoin,
+          dashes = opts.dashes,
+          bounds = opts.bounds,
+          hAlign = opts.hAlign,
+          vAlign = opts.vAlign,
+          miterLimit = opts.miterLimit
         )
-
       else:
         img.strokeText(font, text)
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-    return Tcl.OK
-  except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+  return Tcl.OK
 
 proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Save image file.
-  # 
+  #
   # image    - object
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # Returns nothing.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> filePath")
+    return Tcl.ERROR
+
+  # Image
+  let arg1 = $Tcl.GetString(objv[1])
+
+  if not pixTables.hasImage(arg1):
+    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+
+  let img  = pixTables.getImage(arg1)
+
   try:
-
-    if objc != 3:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img> filePath")
-      return Tcl.ERROR
-
-    let arg1 = Tcl.GetString(objv[1])
-    let img = imgTable[$arg1]
-
-    let file = Tcl.GetString(objv[2])
-
-    img.writeFile($file)
-
-    return Tcl.OK
+    # Call the writeFile method of the image to save the image to the
+    # file specified by filePath.
+    img.writeFile($Tcl.GetString(objv[2]))
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
 
 proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Destroy current image or all images if special word `all` is specified.
-  # 
-  # value - image object or string 
+  #
+  # value - image object or string
   #
   # Returns nothing.
-  try:
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>|string('all')")
+    return Tcl.ERROR
 
-    if objc != 2:
-      Tcl.WrongNumArgs(interp, 1, objv, "<img>")
-      return Tcl.ERROR
-    
+  let arg1 = $Tcl.GetString(objv[1])
+
+  try:
     # Image
-    let arg1 = Tcl.GetString(objv[1])
-    if $arg1 == "all":
+    if arg1 == "all":
       imgTable.clear()
     else:
-      imgTable.del($arg1)
-
-    return Tcl.OK
+      imgTable.del(arg1)
   except Exception as e:
-    return ERROR_MSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK

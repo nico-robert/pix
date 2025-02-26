@@ -70,7 +70,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
         opts.offset = vec2(x, y)
       of "color":
-          opts.color = parseHtmlColor($Tcl.GetString(value))
+          opts.color = pixUtils.getColor(value)
       else:
         raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
 
