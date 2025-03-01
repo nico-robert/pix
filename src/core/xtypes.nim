@@ -37,7 +37,7 @@ else:
 
 # X11 types declarations first
 type
-  XColor*{.importc: "XColor", header: "X11/Xlib.h".} = object
+  Color*{.importc: "XColor", header: "X11/Xlib.h".} = object
     pixel*  : culong
     red*    : cushort
     green*  : cushort
@@ -72,19 +72,6 @@ type
 
   GC* = ptr XGCValues
   Display* = object
-
-# Image types - moved up before being referenced
-type
-  PixImageType*{.final.} = object
-    name*           : cstring
-    createProc*     : pointer
-    getProc*        : pointer
-    displayProc*    : pointer
-    freeProc*       : pointer
-    deleteProc*     : pointer
-    postscriptProc* : pointer
-    nextPtr*        : pointer
-    reserved*       : cstring
 
 # Remaining X11 types
 type
@@ -132,14 +119,14 @@ type
   XImageFuncs* = object
     create_image*   : proc(display: ptr Display, visual: ptr Visual, depth: cuint,
                           format: cint, offset: cint, data: cstring, width: cuint,
-                          height: cuint, bitmap_pad: cint, bytes_per_line: cint): XImagePtr {.cdecl.}
-    destroy_image*  : proc(ximage: XImagePtr): cint {.cdecl.}
-    get_pixel*      : proc(ximage: XImagePtr, x, y: cint): culong {.cdecl.}
-    put_pixel*      : proc(ximage: XImagePtr, x, y: cint, pixel: culong): cint {.cdecl.}
-    sub_image*      : proc(ximage: XImagePtr, x, y: cint, width, height: cuint): XImagePtr {.cdecl.}
-    add_pixel*      : proc(ximage: XImagePtr, value: clong): cint {.cdecl.}
+                          height: cuint, bitmap_pad: cint, bytes_per_line: cint): ImagePtr {.cdecl.}
+    destroy_image*  : proc(ximage: ImagePtr): cint {.cdecl.}
+    get_pixel*      : proc(ximage: ImagePtr, x, y: cint): culong {.cdecl.}
+    put_pixel*      : proc(ximage: ImagePtr, x, y: cint, pixel: culong): cint {.cdecl.}
+    sub_image*      : proc(ximage: ImagePtr, x, y: cint, width, height: cuint): ImagePtr {.cdecl.}
+    add_pixel*      : proc(ximage: ImagePtr, value: clong): cint {.cdecl.}
 
-  XImagePtr* = ptr XImage
+  ImagePtr* = ptr XImage
   XImage*{.final.} = object
     width*           : cint
     height*          : cint
@@ -160,9 +147,9 @@ type
     f*               : XImageFuncs
 
 type
-  TXCreateImage*         = proc(display: ptr Display, v: ptr Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): XImagePtr {.cdecl.}
+  TXCreateImage*         = proc(display: ptr Display, v: ptr Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): ImagePtr {.cdecl.}
   TXCreateGC*            = proc(display: ptr Display, d: Drawable, valueMask: culong, valuePtr: var XGCValues): GC {.cdecl.}
-  TXPutImage*            = proc(display: ptr Display, dr: Drawable, gc: GC, im: XImagePtr, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint {.cdecl.}
+  TXPutImage*            = proc(display: ptr Display, dr: Drawable, gc: GC, im: ImagePtr, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint {.cdecl.}
   TPutImage*             = proc(colors: ptr culong, ncolors: cint, display: ptr Display, d: Drawable, gc: GC, image: ptr XImage, src_x: cint, src_y: cint, dest_x: cint, dest_y: cint, width: cuint, height: cuint): cint {.cdecl.}
   TXFlush*               = proc(display: ptr Display): cint {.cdecl.}
   TXSetBackground*       = proc(display: ptr Display, gc: GC, bg: culong): cint {.cdecl.}
@@ -196,3 +183,6 @@ type TkIntXlibStubs* = object
   xFillRectangle*        : TXFillRectangle
   xSetClipMask*          : TXSetClipMask
   tkPutImage*            : TPutImage
+
+proc XDestroyImage*(ximage: ImagePtr): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
+  return ximage.f.destroy_image(ximage)
