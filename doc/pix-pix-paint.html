@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.3: Reference Manual</title>
+<title>pix 0.4: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.3: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -18,13 +18,13 @@
 <h4 class='ruff'><a name='::pix::paint-Enum PaintKind.'></a>Enum PaintKind.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
-<tr><td>PaintKind</td><td>enum</td></tr>
-<tr><td>SolidPaint</td><td>&nbsp;</td></tr>
-<tr><td>ImagePaint</td><td>&nbsp;</td></tr>
-<tr><td>TiledImagePaint</td><td>&nbsp;</td></tr>
-<tr><td>LinearGradientPaint</td><td>&nbsp;</td></tr>
-<tr><td>RadialGradientPaint</td><td>&nbsp;</td></tr>
-<tr><td>AngularGradientPaint</td><td>&nbsp;</td></tr>
+<tr><td><nobr>PaintKind</nobr></td><td>enum</td></tr>
+<tr><td><nobr>SolidPaint</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>ImagePaint</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>TiledImagePaint</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>LinearGradientPaint</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>RadialGradientPaint</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>AngularGradientPaint</nobr></td><td>&nbsp;</td></tr>
 </table>
 <h2 class='ruff'><a name='::pix::paint-Commands'></a>Commands<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h2>
 <div style='clear:both;'></div>
@@ -33,15 +33,15 @@
 <p class='ruff'>Configure paint object parameters.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>configure</span> <span class='ruff_arg'>paint ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>paint</code></td><td>object</td></tr>
-<tr><td><code>args</code></td><td>dict options described below:</td></tr>
-<tr><td><code>blendMode</code></td><td>Enum value</td></tr>
-<tr><td><code>color</code></td><td>string color</td></tr>
-<tr><td><code>gradientHandlePositions</code></td><td>list positions</td></tr>
-<tr><td><code>gradientStops</code></td><td>list color + positions</td></tr>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>imageMat</code></td><td>list matrix</td></tr>
-<tr><td><code>opacity</code></td><td>double value</td></tr>
+<tr><td><nobr><code>paint</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>args</code></nobr></td><td>dict options described below:</td></tr>
+<tr><td><nobr><code>blendMode</code></nobr></td><td>Enum value</td></tr>
+<tr><td><nobr><code>color</code></nobr></td><td>string color</td></tr>
+<tr><td><nobr><code>gradientHandlePositions</code></nobr></td><td>list positions</td></tr>
+<tr><td><nobr><code>gradientStops</code></nobr></td><td>list color + positions</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>imageMat</code></nobr></td><td>list matrix</td></tr>
+<tr><td><nobr><code>opacity</code></nobr></td><td>double value</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::paint::copy'>copy</a><span class='ns_scope'> [<a href="pix-pix-paint.html#::pix::paint" title="::pix::paint" class='ruff_cmd'>::pix::paint</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -49,7 +49,7 @@
 <p class='ruff'>Create a new Paint with the same properties.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>paint</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>paint</code></td><td>object</td></tr>
+<tr><td><nobr><code>paint</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' paint object.</p>
 <h3 class='ruffproc'><a name='::pix::paint::destroy'>destroy</a><span class='ns_scope'> [<a href="pix-pix-paint.html#::pix::paint" title="::pix::paint" class='ruff_cmd'>::pix::paint</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -57,7 +57,7 @@
 <p class='ruff'>Destroy current paint or all paints if special word <code>all</code> is specified.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>value</code></td><td>paint object or string</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td>paint object or string</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::paint::fillGradient'>fillGradient</a><span class='ns_scope'> [<a href="pix-pix-paint.html#::pix::paint" title="::pix::paint" class='ruff_cmd'>::pix::paint</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -65,8 +65,8 @@
 <p class='ruff'>Fills with the Paint gradient.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillGradient</span> <span class='ruff_arg'>paint image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>paint</code></td><td>object</td></tr>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>paint</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::paint::new'>new</a><span class='ns_scope'> [<a href="pix-pix-paint.html#::pix::paint" title="::pix::paint" class='ruff_cmd'>::pix::paint</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -74,7 +74,7 @@
 <p class='ruff'>Sets a new paint.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>new</span> <span class='ruff_arg'>PaintKind</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>PaintKind</code></td><td>Enum value</td></tr>
+<tr><td><nobr><code>PaintKind</code></nobr></td><td>Enum value</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' paint object.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>

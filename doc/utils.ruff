@@ -4,37 +4,37 @@ namespace eval ::pix {
         }
 proc pix::colorHTMLtoRGBA {HTMLcolor} {
   # Converts an HTML color to an RGBA.
-  # 
+  #
   # HTMLcolor  - string
   #
   # Returns a tcl list.
 }
 proc pix::pathObjToString {path} {
-  # Parse path.
-  # 
+  # Parse path object.
+  #
   # path  - path object
   #
-  # Returns the parsed path to SVG style path.
+  # Returns the parsed path to SVG style path (string).
 }
 proc pix::svgStyleToPathObj {path} {
-  # Transforms a SVG style path to a path object.
-  # 
+  # Transforms a SVG style path (string) to a `path` object.
+  #
   # path  - string SVG style
   #
   # Returns a 'new' path object.
 }
 proc pix::toB64 {object} {
-  # Convert an image to base64 format.
-  # 
-  # object - image or context object
+  # Convert an `image` object to base 64.
+  #
+  # object - `image` or `context` object
   #
   # Returns string.
 }
 proc pix::rotMatrix {angle matrix} {
-  # Adds a rotation to the matrix
-  # 
+  # Adds a rotation to the matrix.
+  #
   # angle   - double value (radian)
-  # matrix  - list
+  # matrix  - list (matrix3x3: 9 values)
   #
   # Returns the matrix rotation as a list.
 }

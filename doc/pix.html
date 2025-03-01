@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.3: Reference Manual</title>
+<title>pix 0.4: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.3: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -18,12 +18,12 @@
 <p class='ruff'>Tcl/Tk wrapper around <a href="https://github.com/treeform/pixie" >Pixie</a>, a full-featured 2D graphics library written in Nim.</p>
 <h4 class='ruff'><a name='Compatibility'></a>Compatibility<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'><strong>Tcl/Tk 8.6</strong> (Only tested with Tcl/Tk 8.6.14)</p>
+<p class='ruff'>Tcl/Tk 8.6 &amp; 9.0</p>
 <h4 class='ruff'><a name='Platforms'></a>Platforms<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <ul class='ruff'>
-<li>MacOS 14 x64</li>
-<li>Windows 10 x64</li>
+<li>MacOS (x64 / arm64)</li>
+<li>Windows x64</li>
 <li>Linux x64</li>
 </ul>
 <p class='ruff'>Source distributions and binary packages can be downloaded <a href="https://github.com/nico-robert/pix/releases" >here</a>.</p>
@@ -37,11 +37,11 @@ package require pix
 set ctx [pix::ctx::new {200 200} &quot;white&quot;]
 
 # Style first rectangle.
-pix::ctx::fillStyle $ctx &quot;rgba(0, 0, 255, 0.5)&quot; ; # blue
+pix::ctx::fillStyle $ctx &quot;rgb(0, 0, 255)&quot; ; # blue color
 pix::ctx::fillRect $ctx {10 10} {100 100}
 
 # Style second rectangle.
-pix::ctx::fillStyle $ctx &quot;rgba(255, 0, 0, 0.5)&quot; ; # red
+pix::ctx::fillStyle $ctx &quot;rgba(255, 0, 0, 0.5)&quot; ; # red color with alpha 50%
 pix::ctx::fillRect $ctx {50 50} {100 100}
 
 # Save context in a image file (*.png|*.bmp|*.qoi|*.ppm)
@@ -50,23 +50,24 @@ pix::ctx::writeFile $ctx rectangle.png
 # Or display in label by example
 set p [image create photo]
 pix::drawSurface $ctx $p
-label .l -image $p ; pack .l
+label .l -image $p
+pack .l
 </pre>
 
 </figure><p class='ruff'>See <a href="./pix-examples.html" >examples</a> folder for more demos.</p>
 <h4 class='ruff'><a name='Documentation'></a>Documentation<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>A large part of the <code>pix</code> documentation comes from the <a href="https://treeform.github.io/pixie/" >Pixie API</a> and source files.</p>
+<p class='ruff'>A large part of the <code>pix</code> <a href="http://htmlpreview.github.io/?https://github.com/nico-robert/pix/blob/master/doc/pix.html" >documentation</a> comes from the <a href="https://treeform.github.io/pixie/" >Pixie API</a> and source files.</p>
 <h4 class='ruff'><a name='API'></a>API<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'><strong> Currently API tested and supported are : </strong></p>
 <table class='ruff_deflist'>
-<tr><td><em>context</em></td><td>This namespace provides a 2D API commonly used on the web.</td></tr>
-<tr><td><em>font</em></td><td>This namespace allows you to write text, load fonts.</td></tr>
-<tr><td><em>image</em></td><td>Crop, resize, blur image and much more.</td></tr>
-<tr><td><em>paint</em></td><td>This namespace plays with colors.</td></tr>
-<tr><td><em>paths</em></td><td>Vector Paths.</td></tr>
-<tr><td><em>svg</em></td><td>Parse, render SVG (namespace pretty limited)</td></tr>
+<tr><td><nobr><em>context</em></nobr></td><td>This namespace provides a 2D API commonly used on the web.</td></tr>
+<tr><td><nobr><em>font</em></nobr></td><td>This namespace allows you to write text, load fonts.</td></tr>
+<tr><td><nobr><em>image</em></nobr></td><td>Crop, resize, blur image and much more.</td></tr>
+<tr><td><nobr><em>paint</em></nobr></td><td>This namespace plays with colors.</td></tr>
+<tr><td><nobr><em>paths</em></nobr></td><td>Vector Paths.</td></tr>
+<tr><td><nobr><em>svg</em></nobr></td><td>Parse, render SVG (namespace pretty limited)</td></tr>
 </table>
 <h4 class='ruff'><a name='Acknowledgement:'></a>Acknowledgement:<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
@@ -74,13 +75,21 @@ label .l -image $p ; pack .l
 <li><a href="https://github.com/mpcjanssen/tclstubs-nimble" >tclstubs-nimble</a> (MIT) <br></li>
 <li><a href="https://github.com/treeform/pixie" >Pixie</a> (MIT)</li>
 </ul>
+<h4 class='ruff'><a name='Release'></a>Release<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<ul class='ruff'>
+<li><strong>03-Jun-2024</strong> : 0.1<br> - Initial release.<br></li>
+<li><strong>25-Jun-2024</strong> : 0.2<br> - Add <code>font</code> namespace + test file.<br> - Add <code>image</code> namespace + test file.<br> - Add <code>paint</code> namespace + test file.<br> - Add <code>path</code> namespace + test file.<br> - Rename <code>pix::ctx::getSize</code> by <code>pix::ctx::get</code> <br> - Rename <code>pix::img::read</code> by <code>pix::img::readImage</code><br> - Rename <code>pix::font::read</code> by <code>pix::font::readFont</code><br> - Add documentation based on Pixie API reference.<br> - Add binary for Linux.<br> - Code refactoring.<br></li>
+<li><strong>06-Oct-2024</strong> : 0.3<br> - Doc : Jpeg format is not supported for pix::ctx::writeFile.<br> - Rename <code>pix::parsePath</code> to <code>pix::pathObjToString</code><br> - Add <code>pix::svgStyleToPathObj</code> proc (convert SVG path string to path object)<br> - Add <code>pix::rotMatrix</code> proc (matrix rotation)<br> - Fix bug <code>pix::path::fillOverlaps</code> bad arguments, used.<br> - Code refactoring.<br></li>
+<li><strong>03-Mar-2025</strong> : 0.4<br> - Support for <code>Tcl/Tk9</code>.<br> - Adds binary for MacOS <code>arm64</code>.<br> - Adds <code>X11</code> for purpose testing.<br> - Code refactoring ++.<br> <br></li>
+</ul>
 <h4 class='ruff'><a name='License'></a>License<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>
 MIT License
 
-Copyright (c) 2024 Nicolas ROBERT
+Copyright (c) 2024-2025 Nicolas ROBERT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal
@@ -166,5 +175,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<hr><li class='ruff-toc4'><a href='#Compatibility'>Compatibility</a></li><li class='ruff-toc4'><a href='#Platforms'>Platforms</a></li><li class='ruff-toc4'><a href='#Example'>Example</a></li><li class='ruff-toc4'><a href='#Documentation'>Documentation</a></li><li class='ruff-toc4'><a href='#API'>API</a></li><li class='ruff-toc4'><a href='#Acknowledgement:'>Acknowledgement:</a></li><li class='ruff-toc4'><a href='#License'>License</a></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
+<hr><li class='ruff-toc4'><a href='#Compatibility'>Compatibility</a></li><li class='ruff-toc4'><a href='#Platforms'>Platforms</a></li><li class='ruff-toc4'><a href='#Example'>Example</a></li><li class='ruff-toc4'><a href='#Documentation'>Documentation</a></li><li class='ruff-toc4'><a href='#API'>API</a></li><li class='ruff-toc4'><a href='#Acknowledgement:'>Acknowledgement:</a></li><li class='ruff-toc4'><a href='#Release'>Release</a></li><li class='ruff-toc4'><a href='#License'>License</a></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>

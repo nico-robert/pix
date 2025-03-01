@@ -16,14 +16,14 @@ namespace eval ::pix {
         }
 proc pix::paint::new {PaintKind} {
   # Sets a new paint.
-  # 
+  #
   # PaintKind - Enum value
   #
   # Returns a 'new' paint object.
 }
 proc pix::paint::configure {paint args} {
   # Configure paint object parameters.
-  # 
+  #
   # paint - object
   # args  - dict options described below:
   #   image                   - object
@@ -33,19 +33,19 @@ proc pix::paint::configure {paint args} {
   #   opacity                 - double value
   #   gradientHandlePositions - list positions
   #   gradientStops           - list color + positions
-  # 
+  #
   # Returns nothing.
 }
 proc pix::paint::copy {paint} {
   # Create a new Paint with the same properties.
-  # 
+  #
   # paint - object
   #
   # Returns a 'new' paint object.
 }
 proc pix::paint::fillGradient {paint image} {
   # Fills with the Paint gradient.
-  # 
+  #
   # paint - object
   # image - object
   #
@@ -53,8 +53,8 @@ proc pix::paint::fillGradient {paint image} {
 }
 proc pix::paint::destroy {value} {
   # Destroy current paint or all paints if special word `all` is specified.
-  # 
-  # value - paint object or string 
+  #
+  # value - paint object or string
   #
   # Returns nothing.
 }

@@ -7,21 +7,21 @@ namespace eval ::pix {
         }
 proc pix::img::new {size} {
   # Sets a new image.
-  # 
-  # size  - list width + height
+  #
+  # size  - list width,height
   #
   # Returns a 'new' img object.
 }
 proc pix::img::copy {image} {
   # New image copy.
-  # 
+  #
   # image - object
   #
   # Returns a 'new' img object.
 }
 proc pix::img::draw {image image2 {matrix3 {mat3}} {blendMode {NormalBlend}}} {
   # Draws one image onto another using a matrix transform and color blending.
-  # 
+  #
   # image     - object
   # image2    - object
   # matrix3   - list 
@@ -31,7 +31,7 @@ proc pix::img::draw {image image2 {matrix3 {mat3}} {blendMode {NormalBlend}}} {
 }
 proc pix::img::fill {image value} {
   # Fills the image with the color.
-  # 
+  #
   # image   - object
   # value   - string color or paint object
   #
@@ -39,14 +39,14 @@ proc pix::img::fill {image value} {
 }
 proc pix::img::readImage {filePath} {
   # Fills the image with the color.
-  # 
+  #
   # filePath - path file
   #
   # Returns a 'new' img object.
 }
 proc pix::img::fillPath {image pathValue paintValue {matrix {mat3}}} {
   # Fills a path.
-  # 
+  #
   # image      - object
   # pathValue  - string path  or path object
   # paintValue - string color or paint object
@@ -56,7 +56,7 @@ proc pix::img::fillPath {image pathValue paintValue {matrix {mat3}}} {
 }
 proc pix::img::strokePath {image value color options} {
   # Strokes a path.
-  # 
+  #
   # image   - object
   # value   - string path
   # color   - string color or paint object
@@ -66,7 +66,7 @@ proc pix::img::strokePath {image value color options} {
 }
 proc pix::img::blur {image radius {color {transparent}}} {
   # Applies Gaussian blur to the image given a radius.
-  # 
+  #
   # image   - object
   # radius  - double value
   # color   - string 
@@ -75,7 +75,7 @@ proc pix::img::blur {image radius {color {transparent}}} {
 }
 proc pix::img::shadow {image options} {
   # Create a shadow of the image with the offset, spread and blur.
-  # 
+  #
   # image   - object
   # options - dict (offset, spread, blur, color)
   #
@@ -83,7 +83,7 @@ proc pix::img::shadow {image options} {
 }
 proc pix::img::fillText {image object args} {
   # Fills image text.
-  # 
+  #
   # image        - object
   # object       - arrangement or font object
   # args         - dict options described below:
@@ -96,76 +96,105 @@ proc pix::img::fillText {image object args} {
 }
 proc pix::img::resize {image size} {
   # Resize an image to a given height and width
-  # 
+  #
   # image  - object
-  # size   - list width + height
+  # size   - list width,height
   #
   # Returns nothing.
 }
 proc pix::img::get {image} {
   # Gets image size.
-  # 
+  #
   # image - object
   #
   # Returns Tcl dict (width, height).
 }
 proc pix::img::getPixel {image coordinates} {
   # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
-  # 
+  #
   # image        - object
-  # coordinates  - list x,y
+  # coordinates  - list x,y (x column of the pixel, y row of the pixel)
   #
   # Returns Tcl dict (r, g, b, a).
 }
 proc pix::img::setPixel {image coordinates color} {
-  # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
-  # 
+  # Sets a pixel at (x, y) or does nothing if outside of bounds.
+  #
   # image       - object
-  # coordinates - list x,y 
+  # coordinates - list x,y
   # color       - string color
   #
   # Returns nothing.
 }
 proc pix::img::applyOpacity {image opacity} {
   # Multiplies alpha of the image by opacity.
-  # 
+  #
   # image    - object
   # opacity  - double value
+  #
+  # img.applyOpacity multiplies the opacity of the image by the
+  # opacity parameter. The opacity parameter is a double between
+  # 0 and 1. 0 is fully transparent. 1 is fully opaque. Any value
+  # inbetween is a mix of the two.
   #
   # Returns nothing.
 }
 proc pix::img::ceil {image} {
   # A value of 0 stays 0. Anything else turns into 255.
-  # 
+  #
   # image - object
+  #
+  # The `ceil` proc takes an image and replaces all pixels that are
+  # not fully transparent (i.e. have an alpha of 0) with a pixel that
+  # is fully opaque (i.e. has an alpha of 255). This is useful for
+  # creating masks from images.
   #
   # Returns nothing.
 }
 proc pix::img::diff {masterimage image} {
-  # Compares the parameters and returns a score and image of the difference. 
-  # 
+  # Call the `diff` method on the master image, passing the image to
+  # compare to the master image. The `diff` method returns a tuple
+  # with two elements:
+  #
   # masterimage - object
   # image       - object
   #
-  # Returns Tcl dict (score, imgdiff).
+  # 1. A cdouble representing the difference score between the two
+  # images. This score is 0 if the images are identical, and 1 if the
+  # images are completely different. The score is a measure of how
+  # different the two images are.
+  #
+  # 2. A new pix image representing the difference between the two
+  # images. The difference image is an image that has the same size
+  # as the two input images, and the pixels in this image represent
+  # the difference between the corresponding pixels in the two
+  # images. The difference image will have the same format as the
+  # input images.
+  #
+  # Returns Tcl dict (score, imgdiff object).
 }
 proc pix::img::flipHorizontal {image} {
-  # Flips the image around the Y axis.
-  # 
+  # This method modifies the image in place, flipping it around the Y-axis.
+  # As a result, the left and right sides of the image are swapped.
+  # This operation is useful for creating mirror images or for certain graphical effects.
+  #
   # image - object
   #
   # Returns nothing.
 }
 proc pix::img::flipVertical {image} {
-  # Flips the image around the X axis.
-  # 
+  # This method modifies the image in place, flipping it around the X-axis.
+  #
   # image - object
+  #
+  # As a result, the top and bottom sides of the image are swapped.
+  # This operation is useful for creating mirror images or for certain graphical effects.
   #
   # Returns nothing.
 }
 proc pix::img::getColor {image coordinates} {
   # Gets a color at (x, y) or returns transparent black if outside of bounds.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
   #
@@ -173,93 +202,125 @@ proc pix::img::getColor {image coordinates} {
 }
 proc pix::img::inside {image coordinates} {
   # Returns true if (x, y) is inside the image, false otherwise.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
   #
 }
 proc pix::img::invert {image} {
   # Inverts all of the colors and alpha.
-  # 
+  #
   # image - object
+  #
+  # This will flip the image by changing the color and alpha of every pixel.
+  # The result will be a new image where every pixel is the exact opposite of
+  # the corresponding pixel in the original image.
+  #
+  # For example, if the original image is entirely white, the resulting image
+  # will be entirely black. If the original image is entirely black, the
+  # resulting image will be entirely white.
+  # This is useful for things like getting the negative of an image, or
+  # creating a "reverse" version of an image.
   #
   # Returns nothing.
 }
 proc pix::img::isOneColor {image} {
   # Checks if the entire image is the same color.
-  # 
+  #
   # image - object
   #
   # Returns true, false otherwise.
 }
 proc pix::img::isOpaque {image} {
-  # Checks if the entire image is opaque (alpha values are all 255). 
-  # 
+  # Checks if the entire image is opaque (alpha values are all 255).
+  #
   # image - object
   #
   # Returns true, false otherwise.
 }
 proc pix::img::isTransparent {image} {
   # Checks if this image is fully transparent or not.
-  # 
+  #
   # image - object
   #
   # Returns true, false otherwise.
 }
 proc pix::img::magnifyBy2 {image {power {1}}} {
   # Scales image up by 2 ^ power.
-  # 
+  #
   # image  - object
   # power  - integer value 
+  #
+  # If only one argument is given (i.e. the image object), just magnify by 2.
+  # This is a convenience for the user.
   #
   # Returns a 'new' img object.
 }
 proc pix::img::minifyBy2 {image {power {1}}} {
   # Scales the image down by an integer scale.
-  # 
+  #
   # image  - object
   # power  - integer value 
+  #
+  # We were given an integer power as an argument, so we call
+  # img.minifyBy2() with that power. This will scale the image
+  # down by 2^power.
   #
   # Returns a 'new' img object.
 }
 proc pix::img::opaqueBounds {image} {
-  # Checks the bounds of opaque pixels. Some images have transparency around them,
+  # Checks the bounds of opaque pixels.
+  #
+  # image - object
+  #
+  # Some images have transparency around them,
   # use this to find just the visible part of the image and then use subImage to cut
   # it out. Returns zero rect if whole image is transparent,
   # or just the size of the image if no edge is transparent.
-  # 
-  # image - object
   #
   # Returns Tcl dict (x, y, w, h).
 }
 proc pix::img::rotate90 {image} {
   # Rotates the image 90 degrees clockwise.
-  # 
+  #
   # image - object
   #
   # Returns nothing.
 }
 proc pix::img::subImage {image coordinates size} {
   # Gets a sub image from this image.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
-  # size         - list width + height
+  # size         - list width,height
+  #
+  # The subImage function extracts a portion of the original image starting at (x, y) 
+  # and spanning the width and height specified.
   #
   # Returns a 'new' img object.
 }
 proc pix::img::superImage {image coordinates size} {
   # Either cuts a sub image or returns a super image with padded transparency.
-  # 
+  #
   # image        - object
   # coordinates  - list x,y
-  # size         - list width + height
+  # size         - list width,height
+  #
+  # If the coordinates and size of the superImage are within the bounds of the original image,
+  # a sub image is cut from the original image.
+  #
+  # If the coordinates and size of the superImage are outside the bounds of the original image,
+  # a super image is created with the original image centered and padded with transparency.
+  # The resulting super image is always the size specified in the arguments.
+  #
+  # If the resulting super image is different from the original image, a new image is created.
+  # If the resulting super image is the same as the original image, the original image is returned.
   #
   # Returns a 'new' img object.
 }
 proc pix::img::fillGradient {image paint} {
   # Fills with the Paint gradient.
-  # 
+  #
   # image  - object
   # paint  - object
   #
@@ -267,7 +328,7 @@ proc pix::img::fillGradient {image paint} {
 }
 proc pix::img::strokeText {image object text {arroptions {}} {fontoptions {}}} {
   # Strocks image text.
-  # 
+  #
   # image       - object
   # object      - arrangement object or font object
   # text        - string if `object` is font object
@@ -278,7 +339,7 @@ proc pix::img::strokeText {image object text {arroptions {}} {fontoptions {}}} {
 }
 proc pix::img::writeFile {image filePath} {
   # Save image file.
-  # 
+  #
   # image    - object
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
@@ -286,8 +347,8 @@ proc pix::img::writeFile {image filePath} {
 }
 proc pix::img::destroy {value} {
   # Destroy current image or all images if special word `all` is specified.
-  # 
-  # value - image object or string 
+  #
+  # value - image object or string
   #
   # Returns nothing.
 }

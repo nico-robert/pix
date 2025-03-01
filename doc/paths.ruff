@@ -25,11 +25,11 @@ proc pix::path::new {} {
   #
   # Returns a 'new' path object.
 }
-proc pix::path::addPath {path path2} {
+proc pix::path::addPath {path1 path2} {
   # Adds a path to the current path.
   # 
-  # path  - object
-  # path2 - object
+  # path1 - path object
+  # path2 - path object
   #
   # Returns nothing.
 }
@@ -59,28 +59,29 @@ proc pix::path::arc {path coordinates radius angle0 angle1 {ccw {false}}} {
   #
   # Returns nothing.
 }
-proc pix::path::arcTo {path coordinates_1 coordinates_2 radius} {
+proc pix::path::arcTo {path coordinates1 coordinates2 radius} {
   # Adds a circular arc using the given control points and radius.
   # Commonly used for making rounded corners.
   # 
-  # path           - object
-  # coordinates_1  - list x1,y1
-  # coordinates_2  - list x2,y2
-  # radius         - double value
+  # path          - object
+  # coordinates1  - list x1,y1
+  # coordinates2  - list x2,y2
+  # radius        - double value
   #
   # Returns nothing.
 }
-proc pix::path::bezierCurveTo {path coordinates_1 coordinates_2 coordinates_3} {
+proc pix::path::bezierCurveTo {path coordinates1 coordinates2 coordinates3} {
   # Adds a cubic Bézier curve to the current sub-path.
+  # 
+  # path          - object
+  # coordinates1  - list x1,y1
+  # coordinates2  - list x2,y2
+  # coordinates3  - list x3,y3
+  #
   # It requires three points:
   # the first two are control points and the third one is the end point.
   # The starting point is the latest point in the current path, 
   # which can be changed using moveTo() before creating the Bézier curve.
-  # 
-  # path           - object
-  # coordinates_1  - list x1,y1
-  # coordinates_2  - list x2,y2
-  # coordinates_3  - list x3,y3
   #
   # Returns nothing.
 }
@@ -127,7 +128,7 @@ proc pix::path::rect {path coordinates size {ccw {true}}} {
   # 
   # path          - object
   # coordinates   - list x,y
-  # size          - list width + height
+  # size          - list width,height
   # ccw           - boolean value 
   #
   # Returns nothing.
@@ -196,15 +197,15 @@ proc pix::path::ellipticalArcTo {path coordinates_radius xAxisRotation largeArcF
   #
   # Returns nothing.
 }
-proc pix::path::quadraticCurveTo {path coordinates_1 coordinates_2} {
+proc pix::path::quadraticCurveTo {path coordinates1 coordinates2} {
   # Adds a quadratic Bézier curve to the current sub-path. It requires two points:
   # the first one is a control point and the second one is the end point.
   # The starting point is the latest point in the current path, which can be changed
   # using moveTo() before creating the quadratic Bézier curve.
   # 
   # path           - object
-  # coordinates_1  - list x1,y1
-  # coordinates_2  - list x2,y2
+  # coordinates1  - list x1,y1
+  # coordinates2  - list x2,y2
   #
   # Returns nothing.
 }
@@ -214,7 +215,7 @@ proc pix::path::roundedRect {path coordinates size radius {ccw {true}}} {
   # 
   # path         - object
   # coordinates  - list x,y
-  # size         - list width + height
+  # size         - list width,height
   # radius       - list (nw, ne, se, sw)
   # ccw          - boolean value 
   #

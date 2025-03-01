@@ -19,75 +19,92 @@ namespace eval ::pix {
             }
         }
 proc pix::font::readFont {filePath} {
-  # Loads a font from a file.
-  # 
+  # Try to read the font from the file located at the given path.
+  #
   # filePath - file font
+  #
+  # Pixie will take care of the rest (loading the font, verifying it, etc.).
+  #
+  # If there is an error (like the file not existing), an exception will be
+  # raised which we will catch and return the error message.
   #
   # Returns a 'new' font object.
 }
 proc pix::font::size {font size} {
   # Sets font Size (Same as pix::font::configure procedure).
-  # 
-  # font - object
+  #
+  # font  - object
   # size  - double value
   #
   # Returns nothing.
 }
 proc pix::font::color {font color} {
   # Sets font color (Same as pix::font::configure procedure).
-  # 
-  # font - object
-  # color - string or list color simple
+  #
+  # font  - object
+  # color - string color
   #
   # Returns nothing.
 }
 proc pix::font::newFont {typeface} {
-  # Sets new Font.
-  # 
+  # Create a new pixie.Font from the given TypeFace object.
+  # The `pixie.Font` object is initialized with the given TypeFace object.
+  #
   # typeface - object
+  #
+  # The size of the font is set to 0 (which is the default value).
+  # The paint object is initialized with a default Color (black).
+  # The text buffer is initialized with a default string ("").
+  # The flags are initialized with a default value of 0.
   #
   # Returns a 'new' font object.
 }
 proc pix::font::newSpan {font text} {
   # Sets new Span.
-  # 
+  #
   # font - object
   # text - string
   #
   # Returns a 'new' span object.
 }
 proc pix::font::paint {font {paint {}}} {
-  # Sets font Paint.
-  # 
-  # font  - object
-  # paint - object  
+  # Sets font Paint if paint optional argument is set, otherwise gets the font paint.
   #
-  # Returns a 'new' paint object.
+  # font  - object
+  # paint - object 
+  #
+  # Returns a 'new' paint object if no paint optional argument is set, otherwise set the font paint.
 }
 proc pix::font::readTypeface {filePath} {
   # Loads a typeface from a file.
-  # 
+  #
   # filePath - file font
   #
   # Returns a 'new' typeface object.
 }
 proc pix::font::readTypefaces {filePath} {
   # Loads a OpenType Collection (.ttc).
-  # 
+  #
   # filePath - file font
   #
   # Returns Tcl list <typeface> object.
 }
 proc pix::font::ascent {typeface} {
   # The font ascender value in font units.
-  # 
+  #
   # typeface - object
+  #
+  # The ascender is the distance from the baseline to the highest point of any glyph in the font.
+  # This value is used to position text in the y-direction.
+  # The value is in the font's coordinate system.
+  # The value is in pixels but can be a floating point value.
+  # The value is positive.
   #
   # Returns Tcl double value.
 }
 proc pix::font::computeBounds {arrangement {transform {mat3}}} {
   # Bounds Arrangement object.
-  # 
+  #
   # arrangement - object
   # transform   - matrix list 
   #
@@ -95,64 +112,81 @@ proc pix::font::computeBounds {arrangement {transform {mat3}}} {
 }
 proc pix::font::copy {font} {
   # Copy font.
-  # 
+  #
   # font - object
   #
   # Returns a 'new' font object.
 }
 proc pix::font::defaultLineHeight {font} {
-  # The default line height in pixels for the current font size. 
-  # 
+  # The default line height in pixels for the current font size.
+  #
   # font - object
+  #
+  # This proc calculates and returns the default line height
+  # of the font in pixels, based on its current size and other
+  # internal properties.
   #
   # Returns Tcl double value.
 }
 proc pix::font::descent {typeface} {
   # The font descender value in font units.
-  # 
+  #
   # typeface - object
+  #
+  # The descent is the distance from the baseline to the lowest point of any glyph in the font.
+  # This value is used to position text in the y-direction.
+  # The value is in the font's coordinate system.
+  # The value is in pixels but can be a floating point value.
+  # The value is negative.
   #
   # Returns Tcl double value.
 }
 proc pix::font::fallbackTypeface {typeface char} {
   # Looks through fallback typefaces to find one that has the glyph.
-  # 
+  #
   # typeface - object
   # char     - string 'char'
   #
-  # Returns a 'new' Tcl typeFace or the 
+  # Returns a 'new' Tcl typeFace or the
   # arg typeFace if typeface has glyph.
 }
 proc pix::font::getAdvance {typeface char} {
-  # The advance for the rune in pixels.
-  # 
+  # Try to get the advance width for the given rune in pixels.
+  # If the rune is not supported by the typeface, this will raise an
+  # exception.
+  #
   # typeface - object
-  # char     - string 'char'
+  # char     - 'char'
   #
   # Returns Tcl double value.
 }
 proc pix::font::getGlyphPath {typeface char} {
   # The glyph path for the rune.
-  # 
+  #
   # typeface - object
-  # char     - string 'char'
+  # char     - 'char'
   #
   # Returns a 'new' path object.
 }
 proc pix::font::getKerningAdjustment {typeface char1 char2} {
-  # The kerning adjustment for the rune pair, in pixels.
-  # 
+  # Retrieve the kerning adjustment for the pair of characters (c1, c2) from the typeface.
+  #
   # typeface - object
-  # char1    - string 'char'
-  # char2    - string 'char'
+  # char1    - 'char'
+  # char2    - 'char'
+  #
+  # Kerning is the process of adjusting the space between characters in a proportional font.
+  # The kerning adjustment is measured in pixels and is specific to the pair of characters.
+  # This allows for more visually pleasing and readable text by reducing or increasing space
+  # between specific pairs of characters, depending on the typeface design.
   #
   # Returns Tcl double value.
 }
 proc pix::font::hasGlyph {typeface char1} {
   # Returns if there is a glyph for this rune.
-  # 
+  #
   # typeface - object
-  # char1    - string 'char'
+  # char1    - 'char'
   #
   # Returns true, otherwise false.
 }
@@ -160,75 +194,97 @@ proc pix::font::layoutBounds {object text} {
   # Computes the width and height of the arrangement in pixels.
   # Computes the width and height of the text in pixels.
   # Computes the width and height of the spans in pixels.
-  # 
-  # object - arrangement, font or span object 
+  #
+  # object - arrangement, font or span object
   # text   - string (if font object)
   #
   # Returns Tcl dict value {x y}.
 }
 proc pix::font::lineGap {typeface} {
-  # The font line gap value in font units.
-  # 
-  # typeface - object 
+  # Gets the font line gap value in font units.
   #
-  # Returns Tcl double value.
+  # typeface - object
+  #
+  # The line gap is the distance in font units between the
+  # baseline of one line of text and the baseline of the next.
+  # The line gap is used to determine the spacing between
+  # lines of text.
+  #
+  # Returns the line gap value in font units.
 }
 proc pix::font::lineHeight {typeface} {
   # The default line height in font units.
-  # 
-  # typeface - object 
+  #
+  # typeface - object
+  #
+  # The line height is the height of a line of text in the font,
+  # which is typically slightly larger than the ascent of the
+  # font (the height above the baseline) plus the descent of the
+  # font (the height below the baseline).
+  #
+  # The line height is typically used to determine the vertical
+  # distance between the baselines of two lines of text.
   #
   # Returns Tcl double value.
 }
 proc pix::font::name {typeface} {
   # Returns the name of the font.
-  # 
-  # typeface - object 
+  #
+  # typeface - object
 }
 proc pix::font::parseOtf {buffer} {
   # Parse Otf string.
-  # 
+  #
   # buffer - string
+  #
+  # The goal is to take a string buffer containing an Otf (Open
+  # Type Font) and parse it into a TypeFace object.
   #
   # Returns a 'new' typeFace object.
 }
 proc pix::font::parseSvgFont {buffer} {
   # Parse Svg Font string.
-  # 
+  #
   # buffer - string
+  #
+  # The `parseSvgFont` function is used to interpret the string as an SVG font
+  # and convert it into a `TypeFace` object.
   #
   # Returns a 'new' typeFace object.
 }
 proc pix::font::parseTtf {buffer} {
   # Parse Ttf string.
-  # 
+  #
   # buffer - string
+  #
+  # The `parseTtf` function is used to interpret the string as a Ttf
+  # (TrueType Font) and convert it into a `TypeFace` object.
   #
   # Returns a 'new' typeFace object.
 }
 proc pix::font::scale {object} {
   # The scale factor to transform font units into pixels.
-  # 
+  #
   # object - font or typeFace object
   #
   # Returns Tcl double value.
 }
 proc pix::font::typeset {object {args {}} bounds hAlign vAlign wrap} {
   # Lays out the character glyphs and returns the arrangement.
-  # 
+  #
   # object - font or span object
   # args   - dict options described below: <br>
   #   bounds  - list coordinates<br>
   #   hAlign  - Enum value<br>
   #   vAlign  - Enum value<br>
   #   wrap    - boolean value<br>
-  # 
+  #
   #
   # Returns a 'new' arrangement object.
 }
 proc pix::font::configure {font args} {
   # Configure <font> parameters.
-  # 
+  #
   # font - object
   # args - dict options described below: <br>
   #   noKerningAdjustments  - boolean value <br>
@@ -238,20 +294,20 @@ proc pix::font::configure {font args} {
   #   lineHeight            - double value <br>
   #   paint                 - Html color <br>
   #   color                 - Simple color <br>
-  # 
+  #
   # Returns nothing.
 }
 proc pix::font::selectionRects {arrangement} {
   # Gets coordinates rectangle for 'arrangement' object.
-  # 
+  #
   # arrangement - object
   #
   # Returns Tcl dict value (x, y, w, h).
 }
 proc pix::font::destroy {value} {
   # Destroy current font or all fonts if special word `all` is specified.
-  # 
-  # value - font object or string 
+  #
+  # value - font object or string
   #
   # Returns nothing.
 }

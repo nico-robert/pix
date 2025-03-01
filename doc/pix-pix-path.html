@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.3: Reference Manual</title>
+<title>pix 0.4: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.3: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -18,35 +18,35 @@
 <h4 class='ruff'><a name='::pix::path-Enum Winding rules.'></a>Enum Winding rules.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
-<tr><td>WindingRule</td><td>enum</td></tr>
-<tr><td>NonZero</td><td>&nbsp;</td></tr>
-<tr><td>EvenOdd</td><td>&nbsp;</td></tr>
+<tr><td><nobr>WindingRule</nobr></td><td>enum</td></tr>
+<tr><td><nobr>NonZero</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>EvenOdd</nobr></td><td>&nbsp;</td></tr>
 </table>
 <h4 class='ruff'><a name='::pix::path-Enum Line cap type for strokes.'></a>Enum Line cap type for strokes.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
-<tr><td>LineCap</td><td>enum</td></tr>
-<tr><td>ButtCap</td><td>&nbsp;</td></tr>
-<tr><td>RoundCap</td><td>&nbsp;</td></tr>
-<tr><td>SquareCap</td><td>&nbsp;</td></tr>
+<tr><td><nobr>LineCap</nobr></td><td>enum</td></tr>
+<tr><td><nobr>ButtCap</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>RoundCap</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>SquareCap</nobr></td><td>&nbsp;</td></tr>
 </table>
 <h4 class='ruff'><a name='::pix::path-Enum Line join type for strokes.'></a>Enum Line join type for strokes.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
-<tr><td>LineJoin</td><td>enum</td></tr>
-<tr><td>MiterJoin</td><td>&nbsp;</td></tr>
-<tr><td>RoundJoin</td><td>&nbsp;</td></tr>
-<tr><td>BevelJoin</td><td>&nbsp;</td></tr>
+<tr><td><nobr>LineJoin</nobr></td><td>enum</td></tr>
+<tr><td><nobr>MiterJoin</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>RoundJoin</nobr></td><td>&nbsp;</td></tr>
+<tr><td><nobr>BevelJoin</nobr></td><td>&nbsp;</td></tr>
 </table>
 <h2 class='ruff'><a name='::pix::path-Commands'></a>Commands<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h2>
 <div style='clear:both;'></div>
 <h3 class='ruffproc'><a name='::pix::path::addPath'>addPath</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a path to the current path.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>addPath</span> <span class='ruff_arg'>path path2</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>addPath</span> <span class='ruff_arg'>path1 path2</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>path2</code></td><td>object</td></tr>
+<tr><td><nobr><code>path1</code></nobr></td><td>path object</td></tr>
+<tr><td><nobr><code>path2</code></nobr></td><td>path object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::angleToMiterLimit'>angleToMiterLimit</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -54,7 +54,7 @@
 <p class='ruff'>Converts miter-limit-angle to miter-limit-ratio.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>angleToMiterLimit</span> <span class='ruff_arg'>angle</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>angle</code></td><td>double value (radian)</td></tr>
+<tr><td><nobr><code>angle</code></nobr></td><td>double value (radian)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns double value.</p>
 <h3 class='ruffproc'><a name='::pix::path::arc'>arc</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -62,44 +62,45 @@
 <p class='ruff'>Adds a circular arc to the current sub-path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>arc</span> <span class='ruff_arg'>path coordinates radius angle0 angle1 ?ccw?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>radius</code></td><td>double value</td></tr>
-<tr><td><code>angle0</code></td><td>double value (radian)</td></tr>
-<tr><td><code>angle1</code></td><td>double value (radian)</td></tr>
-<tr><td><code>ccw</code></td><td>boolean value Optional, default <code>false</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
+<tr><td><nobr><code>angle0</code></nobr></td><td>double value (radian)</td></tr>
+<tr><td><nobr><code>angle1</code></nobr></td><td>double value (radian)</td></tr>
+<tr><td><nobr><code>ccw</code></nobr></td><td>boolean value Optional, default <code>false</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::arcTo'>arcTo</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a circular arc using the given control points and radius. Commonly used for making rounded corners.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>arcTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2 radius</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>arcTo</span> <span class='ruff_arg'>path coordinates1 coordinates2 radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates_1</code></td><td>list x1,y1</td></tr>
-<tr><td><code>coordinates_2</code></td><td>list x2,y2</td></tr>
-<tr><td><code>radius</code></td><td>double value</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates1</code></nobr></td><td>list x1,y1</td></tr>
+<tr><td><nobr><code>coordinates2</code></nobr></td><td>list x2,y2</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::bezierCurveTo'>bezierCurveTo</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Adds a cubic Bézier curve to the current sub-path. It requires three points: the first two are control points and the third one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the Bézier curve.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2 coordinates_3</span></div>
+<p class='ruff'>Adds a cubic Bézier curve to the current sub-path.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>path coordinates1 coordinates2 coordinates3</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates_1</code></td><td>list x1,y1</td></tr>
-<tr><td><code>coordinates_2</code></td><td>list x2,y2</td></tr>
-<tr><td><code>coordinates_3</code></td><td>list x3,y3</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates1</code></nobr></td><td>list x1,y1</td></tr>
+<tr><td><nobr><code>coordinates2</code></nobr></td><td>list x2,y2</td></tr>
+<tr><td><nobr><code>coordinates3</code></nobr></td><td>list x3,y3</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>It requires three points: the first two are control points and the third one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the Bézier curve.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::circle'>circle</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a circle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>circle</span> <span class='ruff_arg'>path coordinates radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list cx,cy</td></tr>
-<tr><td><code>radius</code></td><td>double value</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list cx,cy</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::closePath'>closePath</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -107,7 +108,7 @@
 <p class='ruff'>Attempts to add a straight line from the current point to the start of the current sub-path. If the shape has already been closed or has only one point, this function does nothing.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>closePath</span> <span class='ruff_arg'>path</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::computeBounds'>computeBounds</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -115,8 +116,8 @@
 <p class='ruff'>Compute the bounds of the path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>path matrix</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>matrix</code></td><td>list</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict value (x, y, w, h).</p>
 <h3 class='ruffproc'><a name='::pix::path::copy'>copy</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -124,7 +125,7 @@
 <p class='ruff'>Copy path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>path</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' path object.</p>
 <h3 class='ruffproc'><a name='::pix::path::destroy'>destroy</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -132,7 +133,7 @@
 <p class='ruff'>Destroy current path or all paths if special word <code>all</code> is specified.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>value</code></td><td>path object or string</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td>path object or string</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::ellipse'>ellipse</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -140,10 +141,10 @@
 <p class='ruff'>Adds a ellipse.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ellipse</span> <span class='ruff_arg'>path coordinates rx ry</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>rx</code></td><td>double value</td></tr>
-<tr><td><code>ry</code></td><td>double value</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>rx</code></nobr></td><td>double value</td></tr>
+<tr><td><nobr><code>ry</code></nobr></td><td>double value</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::ellipticalArcTo'>ellipticalArcTo</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -151,12 +152,12 @@
 <p class='ruff'>Adds an elliptical arc to the current sub-path, using the given radius ratios, sweep flags, and end position.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ellipticalArcTo</span> <span class='ruff_arg'>path coordinates_radius xAxisRotation largeArcFlag sweepFlag coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates_radius</code></td><td>list rx,ry</td></tr>
-<tr><td><code>xAxisRotation</code></td><td>double value</td></tr>
-<tr><td><code>largeArcFlag</code></td><td>boolean value</td></tr>
-<tr><td><code>sweepFlag</code></td><td>boolean value</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates_radius</code></nobr></td><td>list rx,ry</td></tr>
+<tr><td><nobr><code>xAxisRotation</code></nobr></td><td>double value</td></tr>
+<tr><td><nobr><code>largeArcFlag</code></nobr></td><td>boolean value</td></tr>
+<tr><td><nobr><code>sweepFlag</code></nobr></td><td>boolean value</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::fillOverlaps'>fillOverlaps</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -164,10 +165,10 @@
 <p class='ruff'>Returns whether or not the specified point is contained in the current path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillOverlaps</span> <span class='ruff_arg'>path coordinates ?matrix? ?windingRule?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>matrix</code></td><td>list Optional, default <code>mat3</code>.</td></tr>
-<tr><td><code>windingRule</code></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list Optional, default <code>mat3</code>.</td></tr>
+<tr><td><nobr><code>windingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns whether or not the specified point is contained in the current path.</p>
 <h3 class='ruffproc'><a name='::pix::path::lineTo'>lineTo</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -175,8 +176,8 @@
 <p class='ruff'>Adds a straight line to the current sub-path by connecting the sub-path's last point to the specified (x, y) coordinates.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>lineTo</span> <span class='ruff_arg'>path coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::miterLimitToAngle'>miterLimitToAngle</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -184,7 +185,7 @@
 <p class='ruff'>Converts miter-limit-ratio to miter-limit-angle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>miterLimitToAngle</span> <span class='ruff_arg'>angle</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>angle</code></td><td>double value (radian)</td></tr>
+<tr><td><nobr><code>angle</code></nobr></td><td>double value (radian)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns double value.</p>
 <h3 class='ruffproc'><a name='::pix::path::moveTo'>moveTo</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -192,8 +193,8 @@
 <p class='ruff'>Begins a new sub-path at the point (x, y).</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>moveTo</span> <span class='ruff_arg'>path coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::new'>new</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -206,20 +207,20 @@
 <p class='ruff'>Adds an n-sided regular polygon at (x, y) with the parameter size. Polygons &quot;face&quot; north.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>polygon</span> <span class='ruff_arg'>path coordinates size sides</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>size</code></td><td>double value</td></tr>
-<tr><td><code>sides</code></td><td>integer value</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>double value</td></tr>
+<tr><td><nobr><code>sides</code></nobr></td><td>integer value</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::quadraticCurveTo'>quadraticCurveTo</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a quadratic Bézier curve to the current sub-path. It requires two points: the first one is a control point and the second one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the quadratic Bézier curve.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>path coordinates1 coordinates2</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates_1</code></td><td>list x1,y1</td></tr>
-<tr><td><code>coordinates_2</code></td><td>list x2,y2</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates1</code></nobr></td><td>list x1,y1</td></tr>
+<tr><td><nobr><code>coordinates2</code></nobr></td><td>list x2,y2</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::rect'>rect</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -227,10 +228,10 @@
 <p class='ruff'>Adds a rectangle. Clockwise parameter can be used to subtract a rect from a path when using even-odd winding rule.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>rect</span> <span class='ruff_arg'>path coordinates size ?ccw?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>size</code></td><td>list width + height</td></tr>
-<tr><td><code>ccw</code></td><td>boolean value Optional, default <code>true</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
+<tr><td><nobr><code>ccw</code></nobr></td><td>boolean value Optional, default <code>true</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::roundedRect'>roundedRect</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -238,11 +239,11 @@
 <p class='ruff'>Adds a rectangle. Clockwise parameter can be used to subtract a rect from a path when using even-odd winding rule.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>roundedRect</span> <span class='ruff_arg'>path coordinates size radius ?ccw?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>size</code></td><td>list width + height</td></tr>
-<tr><td><code>radius</code></td><td>list (nw, ne, se, sw)</td></tr>
-<tr><td><code>ccw</code></td><td>boolean value Optional, default <code>true</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>list (nw, ne, se, sw)</td></tr>
+<tr><td><nobr><code>ccw</code></nobr></td><td>boolean value Optional, default <code>true</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::path::strokeOverlaps'>strokeOverlaps</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -250,9 +251,9 @@
 <p class='ruff'>Returns whether or not the specified point is inside the area contained by the stroking of a path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeOverlaps</span> <span class='ruff_arg'>path coordinates ?options?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>options</code></td><td>dict (transform:list, strokeWidth:double, lineCap:enum, lineJoin:enum, miterLimit:double, dashes:list) Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>dict (transform:list, strokeWidth:double, lineCap:enum, lineJoin:enum, miterLimit:double, dashes:list) Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns whether or not the specified point is inside the area contained by the stroking of a path.</p>
 <h3 class='ruffproc'><a name='::pix::path::transform'>transform</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -260,8 +261,8 @@
 <p class='ruff'>Apply a matrix transform to a path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>transform</span> <span class='ruff_arg'>path matrix</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>path</code></td><td>object</td></tr>
-<tr><td><code>matrix</code></td><td>list</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
@@ -275,11 +276,11 @@
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<hr><li class='ruff-toc4'><a href='#::pix::path-Enum Winding rules.'>Enum Winding rules.</a></li><li class='ruff-toc4'><a href='#::pix::path-Enum Line cap type for strokes.'>Enum Line cap type for strokes.</a></li><li class='ruff-toc4'><a href='#::pix::path-Enum Line join type for strokes.'>Enum Line join type for strokes.</a></li><li class='ruff-toc2'><a href='#::pix::path-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::addPath'>addPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>addPath</span> <span class='ruff_arg'>path path2</span></pre>Adds a path to the current path.
+<hr><li class='ruff-toc4'><a href='#::pix::path-Enum Winding rules.'>Enum Winding rules.</a></li><li class='ruff-toc4'><a href='#::pix::path-Enum Line cap type for strokes.'>Enum Line cap type for strokes.</a></li><li class='ruff-toc4'><a href='#::pix::path-Enum Line join type for strokes.'>Enum Line join type for strokes.</a></li><li class='ruff-toc2'><a href='#::pix::path-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::addPath'>addPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>addPath</span> <span class='ruff_arg'>path1 path2</span></pre>Adds a path to the current path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::angleToMiterLimit'>angleToMiterLimit</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>angleToMiterLimit</span> <span class='ruff_arg'>angle</span></pre>Converts miter-limit-angle to miter-limit-ratio.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::arc'>arc</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>arc</span> <span class='ruff_arg'>path coordinates radius angle0 angle1 ?ccw?</span></pre>Adds a circular arc to the current sub-path.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::arcTo'>arcTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>arcTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2 radius</span></pre>Adds a circular arc using the given control points and radius. Commonly used for making rounded corners.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::bezierCurveTo'>bezierCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2 coordinates_3</span></pre>Adds a cubic Bézier curve to the current sub-path. It requires three points: the first two are control points and the third one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the Bézier curve.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::arcTo'>arcTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>arcTo</span> <span class='ruff_arg'>path coordinates1 coordinates2 radius</span></pre>Adds a circular arc using the given control points and radius. Commonly used for making rounded corners.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::bezierCurveTo'>bezierCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>path coordinates1 coordinates2 coordinates3</span></pre>Adds a cubic Bézier curve to the current sub-path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::circle'>circle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>circle</span> <span class='ruff_arg'>path coordinates radius</span></pre>Adds a circle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::closePath'>closePath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>closePath</span> <span class='ruff_arg'>path</span></pre>Attempts to add a straight line from the current point to the start of the current sub-path. If the shape has already been closed or has only one point, this function does nothing.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::computeBounds'>computeBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>path matrix</span></pre>Compute the bounds of the path.
@@ -293,7 +294,7 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::moveTo'>moveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>moveTo</span> <span class='ruff_arg'>path coordinates</span></pre>Begins a new sub-path at the point (x, y).
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::new'>new</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>new</span> </pre>Sets a new path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::polygon'>polygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>polygon</span> <span class='ruff_arg'>path coordinates size sides</span></pre>Adds an n-sided regular polygon at (x, y) with the parameter size. Polygons &quot;face&quot; north.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::quadraticCurveTo'>quadraticCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>path coordinates_1 coordinates_2</span></pre>Adds a quadratic Bézier curve to the current sub-path. It requires two points: the first one is a control point and the second one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the quadratic Bézier curve.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::quadraticCurveTo'>quadraticCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>path coordinates1 coordinates2</span></pre>Adds a quadratic Bézier curve to the current sub-path. It requires two points: the first one is a control point and the second one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the quadratic Bézier curve.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::rect'>rect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rect</span> <span class='ruff_arg'>path coordinates size ?ccw?</span></pre>Adds a rectangle. Clockwise parameter can be used to subtract a rect from a path when using even-odd winding rule.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::roundedRect'>roundedRect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>roundedRect</span> <span class='ruff_arg'>path coordinates size radius ?ccw?</span></pre>Adds a rectangle. Clockwise parameter can be used to subtract a rect from a path when using even-odd winding rule.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::strokeOverlaps'>strokeOverlaps</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeOverlaps</span> <span class='ruff_arg'>path coordinates ?options?</span></pre>Returns whether or not the specified point is inside the area contained by the stroking of a path.

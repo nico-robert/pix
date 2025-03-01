@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.3: Reference Manual</title>
+<title>pix 0.4: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.3: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -22,18 +22,19 @@
 <p class='ruff'>Multiplies alpha of the image by opacity.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>applyOpacity</span> <span class='ruff_arg'>image opacity</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>opacity</code></td><td>double value</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>opacity</code></nobr></td><td>double value</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>img.applyOpacity multiplies the opacity of the image by the opacity parameter. The opacity parameter is a double between 0 and 1. 0 is fully transparent. 1 is fully opaque. Any value inbetween is a mix of the two.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::blur'>blur</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Applies Gaussian blur to the image given a radius.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>blur</span> <span class='ruff_arg'>image radius ?color?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>radius</code></td><td>double value</td></tr>
-<tr><td><code>color</code></td><td>string Optional, default <code>transparent</code>.</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
+<tr><td><nobr><code>color</code></nobr></td><td>string Optional, default <code>transparent</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::ceil'>ceil</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -41,15 +42,16 @@
 <p class='ruff'>A value of 0 stays 0. Anything else turns into 255.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ceil</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>The <code>ceil</code> proc takes an image and replaces all pixels that are not fully transparent (i.e. have an alpha of 0) with a pixel that is fully opaque (i.e. has an alpha of 255). This is useful for creating masks from images.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::copy'>copy</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>New image copy.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::destroy'>destroy</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -57,27 +59,29 @@
 <p class='ruff'>Destroy current image or all images if special word <code>all</code> is specified.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>value</code></td><td>image object or string</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td>image object or string</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::diff'>diff</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Compares the parameters and returns a score and image of the difference.</p>
+<p class='ruff'>Call the <code>diff</code> method on the master image, passing the image to compare to the master image. The <code>diff</code> method returns a tuple with two elements:</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>diff</span> <span class='ruff_arg'>masterimage image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>masterimage</code></td><td>object</td></tr>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>masterimage</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict (score, imgdiff).</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>1. A cdouble representing the difference score between the two images. This score is 0 if the images are identical, and 1 if the images are completely different. The score is a measure of how different the two images are.</p>
+<p class='ruff'>2. A new pix image representing the difference between the two images. The difference image is an image that has the same size as the two input images, and the pixels in this image represent the difference between the corresponding pixels in the two images. The difference image will have the same format as the input images.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict (score, imgdiff object).</p>
 <h3 class='ruffproc'><a name='::pix::img::draw'>draw</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws one image onto another using a matrix transform and color blending.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>draw</span> <span class='ruff_arg'>image image2 ?matrix3? ?blendMode?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>image2</code></td><td>object</td></tr>
-<tr><td><code>matrix3</code></td><td>list Optional, default <code>mat3</code>.</td></tr>
-<tr><td><code>blendMode</code></td><td>Enum value Optional, default <code>NormalBlend</code>.</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>image2</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>matrix3</code></nobr></td><td>list Optional, default <code>mat3</code>.</td></tr>
+<tr><td><nobr><code>blendMode</code></nobr></td><td>Enum value Optional, default <code>NormalBlend</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::fill'>fill</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -85,8 +89,8 @@
 <p class='ruff'>Fills the image with the color.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fill</span> <span class='ruff_arg'>image value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>value</code></td><td>string color or paint object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td>string color or paint object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::fillGradient'>fillGradient</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -94,8 +98,8 @@
 <p class='ruff'>Fills with the Paint gradient.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillGradient</span> <span class='ruff_arg'>image paint</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>paint</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>paint</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::fillPath'>fillPath</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -103,10 +107,10 @@
 <p class='ruff'>Fills a path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillPath</span> <span class='ruff_arg'>image pathValue paintValue ?matrix?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>pathValue</code></td><td>string path  or path object</td></tr>
-<tr><td><code>paintValue</code></td><td>string color or paint object</td></tr>
-<tr><td><code>matrix</code></td><td>list Optional, default <code>mat3</code>.</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>pathValue</code></nobr></td><td>string path  or path object</td></tr>
+<tr><td><nobr><code>paintValue</code></nobr></td><td>string color or paint object</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list Optional, default <code>mat3</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::fillText'>fillText</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -114,36 +118,37 @@
 <p class='ruff'>Fills image text.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillText</span> <span class='ruff_arg'>image object ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>object</code></td><td>arrangement or font object</td></tr>
-<tr><td><code>args</code></td><td>dict options described below:</td></tr>
-<tr><td><code>matrix</code></td><td>optional list if <code>object</code> is arrangement <code>object</code></td></tr>
-<tr><td><code>options</code></td><td>dict (transform, bounds, hAlign, vAlign)  if <code>object</code> is font <code>object</code></td></tr>
-<tr><td><code>text</code></td><td>string if <code>object</code> is font <code>object</code></td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>object</code></nobr></td><td>arrangement or font object</td></tr>
+<tr><td><nobr><code>args</code></nobr></td><td>dict options described below:</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>optional list if <code>object</code> is arrangement <code>object</code></td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>dict (transform, bounds, hAlign, vAlign)  if <code>object</code> is font <code>object</code></td></tr>
+<tr><td><nobr><code>text</code></nobr></td><td>string if <code>object</code> is font <code>object</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::flipHorizontal'>flipHorizontal</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Flips the image around the Y axis.</p>
+<p class='ruff'>This method modifies the image in place, flipping it around the Y-axis. As a result, the left and right sides of the image are swapped. This operation is useful for creating mirror images or for certain graphical effects.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>flipHorizontal</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::flipVertical'>flipVertical</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Flips the image around the X axis.</p>
+<p class='ruff'>This method modifies the image in place, flipping it around the X-axis.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>flipVertical</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>As a result, the top and bottom sides of the image are swapped. This operation is useful for creating mirror images or for certain graphical effects.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::get'>get</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets image size.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>get</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict (width, height).</p>
 <h3 class='ruffproc'><a name='::pix::img::getColor'>getColor</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -151,8 +156,8 @@
 <p class='ruff'>Gets a color at (x, y) or returns transparent black if outside of bounds.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>getColor</span> <span class='ruff_arg'>image coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict (r, g, b, a).</p>
 <h3 class='ruffproc'><a name='::pix::img::getPixel'>getPixel</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -160,8 +165,8 @@
 <p class='ruff'>Gets a pixel at (x, y) or returns transparent black if outside of bounds.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>getPixel</span> <span class='ruff_arg'>image coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y (x column of the pixel, y row of the pixel)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict (r, g, b, a).</p>
 <h3 class='ruffproc'><a name='::pix::img::inside'>inside</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -169,8 +174,8 @@
 <p class='ruff'>Returns true if (x, y) is inside the image, false otherwise.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>inside</span> <span class='ruff_arg'>image coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns true if (x, y) is inside the image, false otherwise.</p>
 <h3 class='ruffproc'><a name='::pix::img::invert'>invert</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -178,15 +183,17 @@
 <p class='ruff'>Inverts all of the colors and alpha.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>invert</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>This will flip the image by changing the color and alpha of every pixel. The result will be a new image where every pixel is the exact opposite of the corresponding pixel in the original image.</p>
+<p class='ruff'>For example, if the original image is entirely white, the resulting image will be entirely black. If the original image is entirely black, the resulting image will be entirely white. This is useful for things like getting the negative of an image, or creating a &quot;reverse&quot; version of an image.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::isOneColor'>isOneColor</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks if the entire image is the same color.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>isOneColor</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns true, false otherwise.</p>
 <h3 class='ruffproc'><a name='::pix::img::isOpaque'>isOpaque</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -194,7 +201,7 @@
 <p class='ruff'>Checks if the entire image is opaque (alpha values are all 255).</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>isOpaque</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns true, false otherwise.</p>
 <h3 class='ruffproc'><a name='::pix::img::isTransparent'>isTransparent</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -202,7 +209,7 @@
 <p class='ruff'>Checks if this image is fully transparent or not.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>isTransparent</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns true, false otherwise.</p>
 <h3 class='ruffproc'><a name='::pix::img::magnifyBy2'>magnifyBy2</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -210,41 +217,44 @@
 <p class='ruff'>Scales image up by 2 ^ power.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>magnifyBy2</span> <span class='ruff_arg'>image ?power?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>power</code></td><td>integer value Optional, default <code>1</code>.</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>power</code></nobr></td><td>integer value Optional, default <code>1</code>.</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>If only one argument is given (i.e. the image object), just magnify by 2. This is a convenience for the user.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::minifyBy2'>minifyBy2</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Scales the image down by an integer scale.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>minifyBy2</span> <span class='ruff_arg'>image ?power?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>power</code></td><td>integer value Optional, default <code>1</code>.</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>power</code></nobr></td><td>integer value Optional, default <code>1</code>.</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>We were given an integer power as an argument, so we call img.minifyBy2() with that power. This will scale the image down by 2^power.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::new'>new</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets a new image.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>new</span> <span class='ruff_arg'>size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>size</code></td><td>list width + height</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::opaqueBounds'>opaqueBounds</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Checks the bounds of opaque pixels. Some images have transparency around them, use this to find just the visible part of the image and then use subImage to cut it out. Returns zero rect if whole image is transparent, or just the size of the image if no edge is transparent.</p>
+<p class='ruff'>Checks the bounds of opaque pixels.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>opaqueBounds</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>Some images have transparency around them, use this to find just the visible part of the image and then use subImage to cut it out. Returns zero rect if whole image is transparent, or just the size of the image if no edge is transparent.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict (x, y, w, h).</p>
 <h3 class='ruffproc'><a name='::pix::img::readImage'>readImage</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Fills the image with the color.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>readImage</span> <span class='ruff_arg'>filePath</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>filePath</code></td><td>path file</td></tr>
+<tr><td><nobr><code>filePath</code></nobr></td><td>path file</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::resize'>resize</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -252,8 +262,8 @@
 <p class='ruff'>Resize an image to a given height and width</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>resize</span> <span class='ruff_arg'>image size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>size</code></td><td>list width + height</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::rotate90'>rotate90</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -261,17 +271,17 @@
 <p class='ruff'>Rotates the image 90 degrees clockwise.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>rotate90</span> <span class='ruff_arg'>image</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::setPixel'>setPixel</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Gets a pixel at (x, y) or returns transparent black if outside of bounds.</p>
+<p class='ruff'>Sets a pixel at (x, y) or does nothing if outside of bounds.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>setPixel</span> <span class='ruff_arg'>image coordinates color</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>color</code></td><td>string color</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>color</code></nobr></td><td>string color</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::shadow'>shadow</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -279,8 +289,8 @@
 <p class='ruff'>Create a shadow of the image with the offset, spread and blur.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>shadow</span> <span class='ruff_arg'>image options</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>options</code></td><td>dict (offset, spread, blur, color)</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>dict (offset, spread, blur, color)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::strokePath'>strokePath</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -288,10 +298,10 @@
 <p class='ruff'>Strokes a path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokePath</span> <span class='ruff_arg'>image value color options</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>value</code></td><td>string path</td></tr>
-<tr><td><code>color</code></td><td>string color or paint object</td></tr>
-<tr><td><code>options</code></td><td>dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td>string path</td></tr>
+<tr><td><nobr><code>color</code></nobr></td><td>string color or paint object</td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::strokeText'>strokeText</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -299,11 +309,11 @@
 <p class='ruff'>Strocks image text.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeText</span> <span class='ruff_arg'>image object text ?arroptions? ?fontoptions?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>object</code></td><td>arrangement object or font object</td></tr>
-<tr><td><code>text</code></td><td>string if <code>object</code> is font object</td></tr>
-<tr><td><code>arroptions</code></td><td>dict (transform:list, strokeWidth:double, lineCap:enum, lineJoin:enum, miterLimit:double, dashes:list) Optional, default <code>&quot;&quot;</code>.</td></tr>
-<tr><td><code>fontoptions</code></td><td>dict (transform:list, bounds:list, hAlign:enum, vAlign:enum) Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>object</code></nobr></td><td>arrangement object or font object</td></tr>
+<tr><td><nobr><code>text</code></nobr></td><td>string if <code>object</code> is font object</td></tr>
+<tr><td><nobr><code>arroptions</code></nobr></td><td>dict (transform:list, strokeWidth:double, lineCap:enum, lineJoin:enum, miterLimit:double, dashes:list) Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>fontoptions</code></nobr></td><td>dict (transform:list, bounds:list, hAlign:enum, vAlign:enum) Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::subImage'>subImage</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -311,28 +321,32 @@
 <p class='ruff'>Gets a sub image from this image.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>subImage</span> <span class='ruff_arg'>image coordinates size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>size</code></td><td>list width + height</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>The subImage function extracts a portion of the original image starting at (x, y) and spanning the width and height specified.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::superImage'>superImage</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Either cuts a sub image or returns a super image with padded transparency.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>superImage</span> <span class='ruff_arg'>image coordinates size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>coordinates</code></td><td>list x,y</td></tr>
-<tr><td><code>size</code></td><td>list width + height</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>If the coordinates and size of the superImage are within the bounds of the original image, a sub image is cut from the original image.</p>
+<p class='ruff'>If the coordinates and size of the superImage are outside the bounds of the original image, a super image is created with the original image centered and padded with transparency. The resulting super image is always the size specified in the arguments.</p>
+<p class='ruff'>If the resulting super image is different from the original image, a new image is created. If the resulting super image is the same as the original image, the original image is returned.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
 <h3 class='ruffproc'><a name='::pix::img::writeFile'>writeFile</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Save image file.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>writeFile</span> <span class='ruff_arg'>image filePath</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>image</code></td><td>object</td></tr>
-<tr><td><code>filePath</code></td><td>string (*.png|*.bmp|*.qoi|*.ppm)</td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>filePath</code></nobr></td><td>string (*.png|*.bmp|*.qoi|*.ppm)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
@@ -351,14 +365,14 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::ceil'>ceil</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>ceil</span> <span class='ruff_arg'>image</span></pre>A value of 0 stays 0. Anything else turns into 255.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::copy'>copy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>image</span></pre>New image copy.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::destroy'>destroy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></pre>Destroy current image or all images if special word <code>all</code> is specified.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::diff'>diff</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>diff</span> <span class='ruff_arg'>masterimage image</span></pre>Compares the parameters and returns a score and image of the difference.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::diff'>diff</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>diff</span> <span class='ruff_arg'>masterimage image</span></pre>Call the <code>diff</code> method on the master image, passing the image to compare to the master image. The <code>diff</code> method returns a tuple with two elements:
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::draw'>draw</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>draw</span> <span class='ruff_arg'>image image2 ?matrix3? ?blendMode?</span></pre>Draws one image onto another using a matrix transform and color blending.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::fill'>fill</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fill</span> <span class='ruff_arg'>image value</span></pre>Fills the image with the color.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::fillGradient'>fillGradient</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillGradient</span> <span class='ruff_arg'>image paint</span></pre>Fills with the Paint gradient.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::fillPath'>fillPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillPath</span> <span class='ruff_arg'>image pathValue paintValue ?matrix?</span></pre>Fills a path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::fillText'>fillText</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillText</span> <span class='ruff_arg'>image object ?args?</span></pre>Fills image text.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::flipHorizontal'>flipHorizontal</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>flipHorizontal</span> <span class='ruff_arg'>image</span></pre>Flips the image around the Y axis.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::flipVertical'>flipVertical</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>flipVertical</span> <span class='ruff_arg'>image</span></pre>Flips the image around the X axis.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::flipHorizontal'>flipHorizontal</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>flipHorizontal</span> <span class='ruff_arg'>image</span></pre>This method modifies the image in place, flipping it around the Y-axis. As a result, the left and right sides of the image are swapped. This operation is useful for creating mirror images or for certain graphical effects.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::flipVertical'>flipVertical</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>flipVertical</span> <span class='ruff_arg'>image</span></pre>This method modifies the image in place, flipping it around the X-axis.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::get'>get</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>get</span> <span class='ruff_arg'>image</span></pre>Gets image size.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::getColor'>getColor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getColor</span> <span class='ruff_arg'>image coordinates</span></pre>Gets a color at (x, y) or returns transparent black if outside of bounds.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::getPixel'>getPixel</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getPixel</span> <span class='ruff_arg'>image coordinates</span></pre>Gets a pixel at (x, y) or returns transparent black if outside of bounds.
@@ -370,11 +384,11 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::magnifyBy2'>magnifyBy2</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>magnifyBy2</span> <span class='ruff_arg'>image ?power?</span></pre>Scales image up by 2 ^ power.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::minifyBy2'>minifyBy2</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>minifyBy2</span> <span class='ruff_arg'>image ?power?</span></pre>Scales the image down by an integer scale.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::new'>new</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>new</span> <span class='ruff_arg'>size</span></pre>Sets a new image.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::opaqueBounds'>opaqueBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>opaqueBounds</span> <span class='ruff_arg'>image</span></pre>Checks the bounds of opaque pixels. Some images have transparency around them, use this to find just the visible part of the image and then use subImage to cut it out. Returns zero rect if whole image is transparent, or just the size of the image if no edge is transparent.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::opaqueBounds'>opaqueBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>opaqueBounds</span> <span class='ruff_arg'>image</span></pre>Checks the bounds of opaque pixels.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::readImage'>readImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>readImage</span> <span class='ruff_arg'>filePath</span></pre>Fills the image with the color.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::resize'>resize</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>resize</span> <span class='ruff_arg'>image size</span></pre>Resize an image to a given height and width
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::rotate90'>rotate90</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rotate90</span> <span class='ruff_arg'>image</span></pre>Rotates the image 90 degrees clockwise.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::setPixel'>setPixel</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>setPixel</span> <span class='ruff_arg'>image coordinates color</span></pre>Gets a pixel at (x, y) or returns transparent black if outside of bounds.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::setPixel'>setPixel</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>setPixel</span> <span class='ruff_arg'>image coordinates color</span></pre>Sets a pixel at (x, y) or does nothing if outside of bounds.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::shadow'>shadow</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>shadow</span> <span class='ruff_arg'>image options</span></pre>Create a shadow of the image with the offset, spread and blur.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::strokePath'>strokePath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokePath</span> <span class='ruff_arg'>image value color options</span></pre>Strokes a path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::strokeText'>strokeText</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeText</span> <span class='ruff_arg'>image object text ?arroptions? ?fontoptions?</span></pre>Strocks image text.

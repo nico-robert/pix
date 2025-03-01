@@ -7,23 +7,23 @@ namespace eval ::pix {
         }
 proc pix::svg::parse {svg {size {SVGviewbox}}} {
   # Parse SVG XML. Defaults to the SVG's view box size.
-  # 
+  #
   # svg  - string data
-  # size - list width + height 
+  # size - list width,height 
   #
   # Returns a 'new' svg object.
 }
 proc pix::svg::newImage {svg} {
-  # Render SVG and return the image. 
-  # 
+  # Render SVG and return the image.
+  #
   # svg - object
   #
   # Returns a 'new' img object.
 }
 proc pix::svg::destroy {value} {
   # Destroy current svg or all svgs if special word `all` is specified.
-  # 
-  # value - svg object or string 
+  #
+  # value - svg object or string
   #
   # Returns nothing.
 }

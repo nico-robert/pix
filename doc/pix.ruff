@@ -6,11 +6,11 @@ namespace eval ::pix {
         Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in Nim.
 
         #### Compatibility
-        **Tcl/Tk 8.6** (Only tested with Tcl/Tk 8.6.14)
+        Tcl/Tk 8.6 & 9.0
 
         #### Platforms
-        * MacOS 14 x64
-        * Windows 10 x64
+        * MacOS (x64 / arm64)
+        * Windows x64
         * Linux x64
 
         Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases).
@@ -23,11 +23,11 @@ namespace eval ::pix {
         set ctx [pix::ctx::new {200 200} "white"]
 
         # Style first rectangle.
-        pix::ctx::fillStyle $ctx "rgba(0, 0, 255, 0.5)" ; # blue
+        pix::ctx::fillStyle $ctx "rgb(0, 0, 255)" ; # blue color
         pix::ctx::fillRect $ctx {10 10} {100 100}
 
         # Style second rectangle.
-        pix::ctx::fillStyle $ctx "rgba(255, 0, 0, 0.5)" ; # red
+        pix::ctx::fillStyle $ctx "rgba(255, 0, 0, 0.5)" ; # red color with alpha 50%
         pix::ctx::fillRect $ctx {50 50} {100 100}
 
         # Save context in a image file (*.png|*.bmp|*.qoi|*.ppm)
@@ -36,12 +36,13 @@ namespace eval ::pix {
         # Or display in label by example
         set p [image create photo]
         pix::drawSurface $ctx $p
-        label .l -image $p ; pack .l
+        label .l -image $p
+        pack .l
         ```
         See [examples](./pix-examples.html) folder for more demos.
 
         #### Documentation
-        A large part of the `pix` documentation comes from the [Pixie API](https://treeform.github.io/pixie/)   
+        A large part of the `pix` [documentation](http://htmlpreview.github.io/?https://github.com/nico-robert/pix/blob/master/doc/pix.html) comes from the [Pixie API](https://treeform.github.io/pixie/)   
         and source files. 
 
         #### API
@@ -56,16 +57,44 @@ namespace eval ::pix {
         #### Acknowledgement:
         * [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble) (MIT) <br>
         * [Pixie](https://github.com/treeform/pixie) (MIT)
-
-        #### License
     }
 }
 
 append pix::_intro {
+#### Release
+*  **03-Jun-2024** : 0.1<br>
+    - Initial release.<br>
+*  **25-Jun-2024** : 0.2<br>
+    - Add `font` namespace + test file.<br>
+    - Add `image` namespace + test file.<br>
+    - Add `paint` namespace + test file.<br>
+    - Add `path` namespace + test file.<br>
+    - Rename `pix::ctx::getSize` by `pix::ctx::get` <br>
+    - Rename `pix::img::read` by `pix::img::readImage`<br>
+    - Rename `pix::font::read` by `pix::font::readFont`<br>
+    - Add documentation based on Pixie API reference.<br>
+    - Add binary for Linux.<br>
+    - Code refactoring.<br>
+*  **06-Oct-2024** : 0.3<br>
+    - Doc : Jpeg format is not supported for pix::ctx::writeFile.<br>
+    - Rename `pix::parsePath` to `pix::pathObjToString`<br>
+    - Add `pix::svgStyleToPathObj` proc (convert SVG path string to path object)<br>
+    - Add `pix::rotMatrix` proc (matrix rotation)<br>
+    - Fix bug `pix::path::fillOverlaps` bad arguments, used.<br>
+    - Code refactoring.<br>
+*  **03-Mar-2025** : 0.4<br>
+    - Support for `Tcl/Tk9`.<br>
+    - Adds binary for MacOS `arm64`.<br>
+    - Adds `X11` for purpose testing.<br>
+    - Code refactoring ++.<br>
+<br>
+}
+append pix::_intro {
+#### License
 ```
 MIT License
 
-Copyright (c) 2024 Nicolas ROBERT
+Copyright (c) 2024-2025 Nicolas ROBERT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal

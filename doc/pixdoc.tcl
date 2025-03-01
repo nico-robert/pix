@@ -99,19 +99,42 @@ namespace eval ::pix {
         #### Acknowledgement:
         * [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble) (MIT) <br>
         * [Pixie](https://github.com/treeform/pixie) (MIT)
-
-        #### License
     }
 }
 }
+# Read README file
+set fpreadme [open [file join $dirpix README.MD]]
+set readme [split [read $fpreadme] \n]
+close $fpreadme
+
+set match false
+set release {}
+foreach line $readme {
+    if {[string match "Release*:*" $line]} {
+        set match true
+        continue
+    }
+    if {$match && ![string match "--------*" $line]} {
+        lappend release "$line<br>"
+    }
+}
+
+if {$release ne ""} {
+    puts $fp "append pix::_intro \{\n#### Release\n[join $release \n]\n\}"
+}
+
 # Read LICENSE file
 set fplic [open [file join $dirpix LICENSE]]
 set lic [read $fplic]
 close $fplic
 set lic [string map {\" '} $lic]
-puts $fp "append pix::_intro \{\n```\n$lic\n```\n\}"
+puts $fp "append pix::_intro \{\n#### License\n```\n$lic\n```\n\}"
 
 close $fp
+
+# set fp [open [file join [file dirname [info script]] pix.ruff] r]
+# puts [read $fp]
+# close $fp
 
 # Read pix.nim to find all tcl procedures 
 set fp [open [file join $dirpix src pix.nim]]
