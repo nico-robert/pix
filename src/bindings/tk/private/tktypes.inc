@@ -17,3 +17,15 @@ type
     pitch*    : cint
     pixelSize*: cint
     offset*   : array[4, cint]
+
+  # Image types.
+  ImageType*{.final.} = object
+    name*           : cstring
+    createProc*     : pointer
+    getProc*        : pointer
+    displayProc*    : pointer
+    freeProc*       : pointer
+    deleteProc*     : pointer
+    postscriptProc* : pointer
+    nextPtr*        : pointer
+    reserved*       : cstring
