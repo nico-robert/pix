@@ -84,8 +84,6 @@ proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
 
   if count notin (3..4):
     return false
-    
-  color.setlen(count)
 
   for i in 0..count-1:
     if Tcl.GetDoubleFromObj(nil, elements[i], c) != Tcl.OK: return false
