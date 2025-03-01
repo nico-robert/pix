@@ -8,7 +8,7 @@ when not defined(tcl9):
   type TNewBooleanObj    = proc(intValue: int): PObj {.cdecl.}
 
 type
-  TPkgProvideEx         = proc(interp: PInterp, name: cstring, version: cstring, clientData: pointer): cint {.cdecl.}
+  TPkgProvideEx         = proc(interp: PInterp, name: cstring, version: cstring, clientData: TClientData): cint {.cdecl.}
   TGetBooleanFromObj    = proc(interp: PInterp, objPtr: PObj, boolPtr: var int): cint {.cdecl.}
   TGetDoubleFromObj     = proc(interp: PInterp, objPtr: PObj, doublePtr: var cdouble): cint {.cdecl.}
   TGetIntFromObj        = proc(interp: PInterp, objPtr: PObj, intPtr: var int): cint {.cdecl.}
