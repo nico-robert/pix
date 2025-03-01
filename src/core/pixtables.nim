@@ -4,20 +4,32 @@
 import pixie, pixie/fileformats/svg
 import std/tables
 
+from ../bindings/tk/binding as Tk import ImageMaster
+
 var 
-  ctxTable*   = initTable[string, pixie.Context]()
-  imgTable*   = initTable[string, pixie.Image]()
-  pathTable*  = initTable[string, pixie.Path]()
-  paintTable* = initTable[string, pixie.Paint]()
-  fontTable*  = initTable[string, pixie.Font]()
-  tFaceTable* = initTable[string, pixie.Typeface]()
-  arrTable*   = initTable[string, pixie.Arrangement]()
-  svgTable*   = initTable[string, Svg]()
-  spanTable*  = initTable[string, pixie.Span]()
+  ctxTable*    = initTable[string, pixie.Context]()
+  imgTable*    = initTable[string, pixie.Image]()
+  pathTable*   = initTable[string, pixie.Path]()
+  paintTable*  = initTable[string, pixie.Paint]()
+  fontTable*   = initTable[string, pixie.Font]()
+  tFaceTable*  = initTable[string, pixie.Typeface]()
+  arrTable*    = initTable[string, pixie.Arrangement]()
+  svgTable*    = initTable[string, Svg]()
+  spanTable*   = initTable[string, pixie.Span]()
+  masterTable* = initTable[string, Tk.ImageMaster]()
 
 # getXXX = Returns the object associated with the given key.
 # hasXXX = Returns true if the table has the given key false otherwise.
 # addXXX = Adds the given object to the table with the given key.
+
+proc getMasterTable*(key: string): Tk.ImageMaster = 
+  result = masterTable[key]
+
+proc hasMasterTable*(key: string): bool = 
+  result = masterTable.hasKey(key)
+  
+proc addMasterTable*(key: string, value: Tk.ImageMaster): void = 
+  masterTable[key] = value
 
 proc getContext*(key: string): pixie.Context = 
   result = ctxTable[key]
