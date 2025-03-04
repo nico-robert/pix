@@ -26,6 +26,60 @@ type
     offset*: Vec2 = vec2(0, 0)
     color*: Color = color(0, 0, 0, 0)
 
+proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var int, errorMsg: string): cint =
+  # Parse a list of two integers from a Tcl object.
+  #
+  # interp    - The Tcl interpreter.
+  # objv      - The Tcl object to parse.
+  # v1, v2    - The two integers to populate from the object.
+  # errorMsg  - The error message to return if the object is not equal to 2.
+  # 
+  # Returns if the object is a list of two integers, returns Tcl.OK (0).
+  # Otherwise, returns Tcl.ERROR (1).
+  var
+    count: Tcl.Size
+    elements: Tcl.PPObj
+  
+  if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp, errorMsg)
+  
+  if Tcl.GetIntFromObj(interp, elements[0], v1) != Tcl.OK or
+    Tcl.GetIntFromObj(interp, elements[1], v2)  != Tcl.OK: 
+    return Tcl.ERROR
+
+  # Return success.
+  return Tcl.OK
+
+proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, errorMsg: string): cint =
+  # Parse a list of two doubles from a Tcl object.
+  #
+  # interp    - The Tcl interpreter.
+  # objv      - The Tcl object to parse.
+  # v1, v2    - The two doubles to populate from the object.
+  # errorMsg  - The error message to return if the object is not equal to 2.
+  # 
+  # Returns if the object is a list of two doubles, returns Tcl.OK (0).
+  # Otherwise, returns Tcl.ERROR (1).
+  var
+    count: Tcl.Size
+    elements: Tcl.PPObj
+  
+  if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
+    return Tcl.ERROR
+  
+  if count != 2:
+    return pixUtils.errorMSG(interp, errorMsg)
+  
+  if Tcl.GetDoubleFromObj(interp, elements[0], v1) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, elements[1], v2)  != Tcl.OK: 
+    return Tcl.ERROR
+
+  # Return success.
+  return Tcl.OK
+
 proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow) =
   # Parse the options from the Tcl dict and set the fields of the 'RenderShadow' object.
   #
