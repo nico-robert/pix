@@ -8,29 +8,21 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # size - list width,height (optional:SVGviewbox)
   #
   # Returns a 'new' svg object.
-  var
-    width, height: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-    svg: Svg
-
   if objc notin (2..3):
     Tcl.WrongNumArgs(interp, 1, objv, "'svg string' ?{width height}:optional")
     return Tcl.ERROR
 
   # Svg string
   let arg1 = $Tcl.GetString(objv[1])
+  var svg: Svg
 
   if objc == 3:
+    var width, height: int
+
     # Size
-    if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    if pixParses.getListInt(interp, objv[2], width, height, 
+      "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
     try:
        svg = parseSvg(arg1, width, height)

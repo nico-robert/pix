@@ -10,8 +10,6 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # Returns a 'new' context object.
   var 
     width, height: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
     img: pixie.Image
 
   if objc notin (2..3):
@@ -25,14 +23,9 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       img = pixTables.getImage(arg1)
     else:
       # Size
-      if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+      if pixParses.getListInt(interp, objv[1], width, height, 
+        "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
         return Tcl.ERROR
-
-      if count != 2:
-        return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-      if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-      if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
       try:
         img = newImage(width, height)
@@ -40,14 +33,9 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Size
-    if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+    if pixParses.getListInt(interp, objv[1], width, height, 
+      "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-    if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
     try:
       img = newImage(width, height)
@@ -239,11 +227,6 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # The segment represents a line that will be drawn from start to stop
   #
   # Returns nothing.
-  var 
-    x, y, x1, y1: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {x1 y1}")
     return Tcl.ERROR
@@ -255,25 +238,16 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, x1, y1: cdouble
 
   # Coordinates segment
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates1' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates1' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[3], x1, y1, 
+    "wrong # args: 'coordinates2' should be 'x1' 'y2'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates2' should be 'x1' 'y1'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
 
   let 
     start = vec2(x, y)
@@ -295,11 +269,6 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # size        - list width,height
   #
   # Returns nothing.
-  var
-    x, y, width, height: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -311,25 +280,17 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, width, height: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.strokeRect(x, y, width, height)
@@ -349,11 +310,6 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # coordinates2  - list x,y
   #
   # Returns nothing.
-  var 
-    x, y, cpx, cpy: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cpx cpy} {x y}")
     return Tcl.ERROR
@@ -365,25 +321,16 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, cpx, cpy: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], cpx, cpy, 
+    "wrong # args: 'coordinates1' should be 'cpx' 'cpy'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates1' should be 'cpx' 'cpy'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], cpx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], cpy) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[3], x, y, 
+    "wrong # args: 'coordinates2' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates2' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.quadraticCurveTo(cpx, cpy, x, y)
@@ -405,10 +352,8 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # Returns nothing.
   var
     x, y, r, a0, a1: cdouble
-    count: Tcl.Size
     clockcw: int
     ccw: bool = false
-    elements: Tcl.PPObj
 
   if objc notin (6..7):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} r angleStart angleEnd ?ccw:optional")
@@ -423,18 +368,14 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   let ctx = pixTables.getContext(arg1)
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK : return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK : return Tcl.ERROR
-
-  if Tcl.GetDoubleFromObj(interp, objv[3], r)  != Tcl.OK : return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK : return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK : return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], r) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK :
+    return Tcl.ERROR
 
   if objc == 7:
     if Tcl.GetBooleanFromObj(interp, objv[6], clockcw) != Tcl.OK:
@@ -457,11 +398,6 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # radius        - double value
   #
   # Returns nothing.
-  var
-    x1, y1, x2, y2, radius: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x1 y1} {x2 y2} radius")
     return Tcl.ERROR
@@ -473,27 +409,20 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x1, y1, x2, y2, radius: cdouble
 
-  # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates1
+  if pixParses.getListDouble(interp, objv[2], x1, y1, 
+    "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates1' should be 'x1' 'y1'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x1) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y1) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Coordinates2
+  if pixParses.getListDouble(interp, objv[3], x2, y2, 
+    "wrong # args: 'coordinates2' should be 'x2' 'y2'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates2' should be 'x2' 'y2'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x2) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y2) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.GetDoubleFromObj(interp, objv[4], radius) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[4], radius) != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.arcTo(x1, y1, x2, y2, radius)
@@ -509,16 +438,11 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # which can be changed using moveTo() before creating the Bézier curve.
   #
   # context      - object
-  # coordinates1 - list cx1,cy1
-  # coordinates2 - list cx2,cy2
+  # coordinates1 - list cp1x,cp1y
+  # coordinates2 - list cp2x,cp2y
   # coordinates3 - list x,y
   #
   # Returns nothing.
-  var
-    cp1x, cp1y, cp2x, cp2y, x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cp1x cp1y} {cp2x cp2y} {x y}")
     return Tcl.ERROR
@@ -530,34 +454,20 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var cp1x, cp1y, cp2x, cp2y, x, y: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], cp1x, cp1y, 
+    "wrong # args: 'coordinates1' should be 'cp1x' 'cp1y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates1' should be 'cp1x' 'cp1y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], cp1x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], cp1y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[3], cp2x, cp2y, 
+    "wrong # args: 'coordinates2' should be 'cp2x' 'cp2y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates2' should be 'cp2x' 'cp2y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], cp2x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], cp2y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[4], x, y, 
+    "wrong # args: 'coordinates3' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates3' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.bezierCurveTo(vec2(cp1x, cp1y), vec2(cp2x, cp2y), vec2(x, y))
@@ -574,11 +484,6 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # radius       - double value
   #
   # Returns nothing.
-  var
-    cx, cy, radius: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
     return Tcl.ERROR
@@ -590,18 +495,15 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var cx, cy, radius: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], cx, cy, 
+    "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.circle(cx, cy, radius)
@@ -665,8 +567,6 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   #
   # Returns a TextMetrics object that contains information
   # about the measured text (such as its width, for example).
-  let dictObj = Tcl.NewDictObj()
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text")
     return Tcl.ERROR
@@ -683,6 +583,8 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     ctx.measureText($Tcl.GetString(objv[2]))
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewDoubleObj(metrics.width))
 
@@ -731,13 +633,6 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   #                                               list destination size dw,dh
   #
   # Returns nothing.
-  var
-    sx, sy, dx, dy: cdouble
-    sWidth, sHeight: cdouble
-    dWidth, dHeight: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4 and objc != 5 and objc != 7:
     let errMsg = "<ctx> <img> {dx dy} or " &
     "<ctx> <img> {dx dy} {dWidth dHeight} or " &
@@ -760,27 +655,18 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
 
   let img = pixTables.getImage(arg2)
+  var dx, dy, dWidth, dHeight: cdouble
 
   if objc == 5:
     # Destination
-    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[3], dx, dy, 
+      "wrong # args: 'destinationXY' should be 'dx' 'dy'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], dx) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], dy) != Tcl.OK: return Tcl.ERROR
 
     # Size
-    if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[4], dWidth, dHeight, 
+      "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], dWidth)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], dHeight) != Tcl.OK: return Tcl.ERROR
 
     try:
       ctx.drawImage(img, dx, dy, dWidth, dHeight)
@@ -788,45 +674,26 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   elif objc == 7:
+    var sx, sy, sWidth, sHeight: cdouble
     # Source
-    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[3], sx, sy, 
+      "wrong # args: 'source' should be 'sx' 'sy'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'source' should be 'sx' 'sy'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], sx) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], sy) != Tcl.OK: return Tcl.ERROR
 
     # Source Size
-    if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[4], sWidth, sHeight, 
+      "wrong # args: 'sourceWH' should be 'sWidth' 'sHeight'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'sourceWH' should be 'sWidth' 'sHeight'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], sWidth)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], sHeight) != Tcl.OK: return Tcl.ERROR
 
     # Destination
-    if Tcl.ListObjGetElements(interp, objv[5], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[5], dx, dy, 
+      "wrong # args: 'destinationXY' should be 'dx' 'dy'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], dx) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], dy) != Tcl.OK: return Tcl.ERROR
 
     # Destination Size
-    if Tcl.ListObjGetElements(interp, objv[6], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[6], dWidth, dHeight, 
+      "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'destinationWH' should be 'dWidth' 'dHeight'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], dWidth)  != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], dHeight) != Tcl.OK: return Tcl.ERROR
 
     try:
       ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
@@ -835,14 +702,9 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   else:
     # Destination
-    if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+    if pixParses.getListDouble(interp, objv[3], dx, dy, 
+      "wrong # args: 'destinationXY' should be 'dx' 'dy'") != Tcl.OK:
       return Tcl.ERROR
-
-    if count != 2:
-      return pixUtils.errorMSG(interp, "wrong # args: 'destinationXY' should be 'dx' 'dy'")
-
-    if Tcl.GetDoubleFromObj(interp, elements[0], dx) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], dy) != Tcl.OK: return Tcl.ERROR
 
     try:
       ctx.drawImage(img, dx, dy)
@@ -860,11 +722,6 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # radiusy     - double value
   #
   # Returns nothing.
-  var
-    x, y, rx, ry: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
     return Tcl.ERROR
@@ -876,20 +733,17 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, rx, ry: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
   # Radius
-  if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.ellipse(x, y, rx, ry)
@@ -908,11 +762,6 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # radiusy     - double value
   #
   # Returns nothing.
-  var
-    x, y, rx, ry: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
     return Tcl.ERROR
@@ -924,20 +773,17 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, rx, ry: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
   # Radius
-  if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.strokeEllipse(vec2(x, y), rx, ry)
@@ -964,8 +810,6 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # g h i<br>
   #
   # Returns nothing.
-  var matrix3: vmath.Mat3
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> matrix3x3")
     return Tcl.ERROR
@@ -977,6 +821,7 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var matrix3: vmath.Mat3
 
   # Matrix 3x3 check
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
@@ -1012,8 +857,6 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # transform matrix.
   #
   # Returns nothing.
-  var matrix3: vmath.Mat3
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> matrix3x3")
     return Tcl.ERROR
@@ -1025,6 +868,7 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var matrix3: vmath.Mat3
 
   # Matrix 3x3 check
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
@@ -1048,8 +892,6 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # The angle is in radians.
   #
   # Returns nothing.
-  var angle: cdouble
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> angle")
     return Tcl.ERROR
@@ -1061,6 +903,7 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var angle: cdouble
 
   # Angle
   if Tcl.GetDoubleFromObj(interp, objv[2], angle) != Tcl.OK:
@@ -1088,11 +931,6 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # This is the same as ctx.translate(x, y) in the C++ API.
   #
   # Returns nothing.
-  var
-    x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1104,16 +942,12 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.translate(x, y)
@@ -1225,11 +1059,6 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # size        - list width,height
   #
   # Returns nothing.
-  var
-    x, y, width, height: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -1241,24 +1070,17 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, width, height: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.rect(x, y, width, height)
@@ -1275,11 +1097,6 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # size        - list width,height
   #
   # Returns nothing.
-  var
-    x, y, width, height: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -1291,24 +1108,17 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, width, height: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.fillRect(x, y, width, height)
@@ -1344,23 +1154,15 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   let ctx = pixTables.getContext(arg1)
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
     return Tcl.ERROR
@@ -1368,10 +1170,11 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   if count != 4:
     return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be {nw ne se sw}")
 
-  if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.roundedRect(x, y, width, height, nw, ne, se, sw)
@@ -1407,23 +1210,15 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   let ctx = pixTables.getContext(arg1)
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
     return Tcl.ERROR
@@ -1433,7 +1228,8 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     wh  = vec2(width, height)
 
   if count == 1:
-    if Tcl.GetDoubleFromObj(interp, elements[0], radius) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, elements[0], radius) != Tcl.OK:
+      return Tcl.ERROR
 
     try:
       ctx.fillRoundedRect(rect(pos, wh), radius)
@@ -1441,10 +1237,11 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   elif count == 4:
-    if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
+      Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
+      Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
+      Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+      return Tcl.ERROR
 
     try:
       ctx.fillRoundedRect(rect(pos, wh), nw, ne, se, sw)
@@ -1484,23 +1281,15 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
   let ctx = pixTables.getContext(arg1)
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   if Tcl.ListObjGetElements(interp, objv[4], count, elements) != Tcl.OK:
     return Tcl.ERROR
@@ -1510,7 +1299,8 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     wh  = vec2(width, height)
 
   if count == 1:
-    if Tcl.GetDoubleFromObj(interp, elements[0], radius) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, elements[0], radius) != Tcl.OK:
+      return Tcl.ERROR
 
     try:
       ctx.strokeRoundedRect(rect(pos, wh), radius)
@@ -1518,10 +1308,11 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   elif count == 4:
-    if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK: return Tcl.ERROR
-    if Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK: return Tcl.ERROR
+    if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
+      Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
+      Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
+      Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+      return Tcl.ERROR
 
     try:
       ctx.strokeRoundedRect(rect(pos, wh), nw, ne, se, sw)
@@ -1541,11 +1332,6 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # size         - list width,height
   #
   # Returns nothing.
-  var
-    x, y, width, height: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -1557,24 +1343,17 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, width, height: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Size
+  if pixParses.getListDouble(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.clearRect(x, y, width, height)
@@ -1630,8 +1409,6 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # and 1.0 (completely opaque).
   #
   # Returns nothing.
-  var alpha: cdouble
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> alpha")
     return Tcl.ERROR
@@ -1643,6 +1420,7 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var alpha: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], alpha) != Tcl.OK:
     return Tcl.ERROR
@@ -1675,11 +1453,6 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # The point should be the first point that is used in the path.
   #
   # Returns nothing.
-  var
-    x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1691,15 +1464,12 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     # Start a new sub-path at the point (x, y).
@@ -1720,9 +1490,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # Returns true, false otherwise.
   var
     x, y: cdouble
-    count: Tcl.Size
     value: int = 0
-    elements: Tcl.PPObj
 
   if objc notin (3..4):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} ?<path>:optional")
@@ -1736,14 +1504,10 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   let ctx = pixTables.getContext(arg1)
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   if objc == 4:
     # Path
@@ -1778,9 +1542,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # Returns true, false otherwise.
   var
     x, y: cdouble
-    count: Tcl.Size
     value: int = 0
-    elements: Tcl.PPObj
 
   if objc notin (3..5):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} ?<path>:optional ?enum=WindingRule:optional")
@@ -1794,14 +1556,10 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   let ctx = pixTables.getContext(arg1)
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   let arg3 = $Tcl.GetString(objv[3])
 
@@ -1868,11 +1626,6 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # and the bottom-right corner at (20, 20).
   #
   # Returns nothing.
-  var
-    x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1884,15 +1637,12 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.lineTo(x, y)
@@ -1945,11 +1695,6 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # coordinates - list x,y
   #
   # Returns nothing.
-  var
-    x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1961,15 +1706,12 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.scale(x, y)
@@ -2079,8 +1821,6 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # width   - double value
   #
   # Returns nothing.
-  var width: cdouble
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> width")
     return Tcl.ERROR
@@ -2092,6 +1832,7 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var width: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], width) != Tcl.OK:
     return Tcl.ERROR
@@ -2136,8 +1877,6 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # size    - double value
   #
   # Returns nothing.
-  var fsize: cdouble
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> size")
     return Tcl.ERROR
@@ -2149,6 +1888,7 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var fsize: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
     return Tcl.ERROR
@@ -2169,11 +1909,6 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # coordinates - list x,y
   #
   # Returns nothing.
-  var
-    x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text {x y}")
     return Tcl.ERROR
@@ -2187,15 +1922,12 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let 
     ctx  = pixTables.getContext(arg1)
     text = $Tcl.GetString(objv[2])
+  var x, y: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[3], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.fillText(text, x, y)
@@ -2212,11 +1944,6 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # radius      - double value
   #
   # Returns nothing.
-  var
-    cx, cy, radius: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
     return Tcl.ERROR
@@ -2228,18 +1955,15 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var cx, cy, radius: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], cx, cy, 
+    "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
+    return Tcl.ERROR
 
   if radius <= 0:
     return pixUtils.errorMSG(interp, "The radius must be greater than 0")
@@ -2261,11 +1985,6 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # radiusy     - double value
   #
   # Returns nothing.
-  var
-    x, y, rx, ry: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
     return Tcl.ERROR
@@ -2277,19 +1996,16 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var x, y, rx, ry: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
+    Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.fillEllipse(vec2(x, y), rx, ry)
@@ -2309,9 +2025,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # Returns nothing.
   var
     x, y, size: cdouble
-    count: Tcl.Size
     sides: int
-    elements: Tcl.PPObj
 
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
@@ -2326,14 +2040,9 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   let ctx = pixTables.getContext(arg1)
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK: return Tcl.ERROR
   if Tcl.GetIntFromObj(interp, objv[4], sides)   != Tcl.OK: return Tcl.ERROR
@@ -2356,9 +2065,7 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # Returns nothing.
   var
     x, y, size: cdouble
-    count: Tcl.Size
     sides: int
-    elements: Tcl.PPObj
 
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
@@ -2373,20 +2080,16 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   let ctx = pixTables.getContext(arg1)
 
   # Coordinates polygon
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
   # Size
-  if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK: return Tcl.ERROR
-
+  if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK:
+    return Tcl.ERROR
   # Sides
-  if Tcl.GetIntFromObj(interp, objv[4], sides) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, objv[4], sides) != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.polygon(x, y, size, sides)
@@ -2407,9 +2110,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # Returns nothing.
   var
     x, y, size: cdouble
-    count: Tcl.Size
     sides: int
-    elements: Tcl.PPObj
 
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
@@ -2424,20 +2125,16 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   let ctx = pixTables.getContext(arg1)
 
   # Coordinates polygon
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
-
   # Size
-  if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK: return Tcl.ERROR
-
+  if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK: 
+    return Tcl.ERROR
   # Sides
-  if Tcl.GetIntFromObj(interp, objv[4], sides) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetIntFromObj(interp, objv[4], sides) != Tcl.OK: 
+    return Tcl.ERROR
 
   try:
     ctx.strokePolygon(vec2(x, y), size, sides)
@@ -2455,11 +2152,6 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # radius      - double value
   #
   # Returns nothing.
-  var
-    cx, cy, radius: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
     return Tcl.ERROR
@@ -2471,18 +2163,15 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
   let ctx = pixTables.getContext(arg1)
+  var cx, cy, radius: cdouble
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListDouble(interp, objv[2], cx, cy, 
+    "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'cx' 'cy'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], cx) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], cy) != Tcl.OK: return Tcl.ERROR
-
-  if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
+    return Tcl.ERROR
 
   if radius <= 0:
     return pixUtils.errorMSG(interp, "The radius must be greater than 0")
@@ -2503,11 +2192,6 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # coordinates - list x,y
   #
   # Returns nothing.
-  var
-    x, y: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> 'text' {x y}")
     return Tcl.ERROR
@@ -2521,15 +2205,12 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   let
     ctx = pixTables.getContext(arg1)
     text = $Tcl.GetString(objv[2])
+  var x, y: cdouble
 
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  # Coordinates
+  if pixParses.getListDouble(interp, objv[3], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     ctx.strokeText(text, x, y)
@@ -2683,8 +2364,6 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # transformation.
   #
   # Returns list values.
-  let newListobj = Tcl.NewListObj(0, nil)
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -2695,7 +2374,9 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   if not pixTables.hasContext(arg1):
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
 
-  let ctx = pixTables.getContext(arg1)
+  let
+    ctx = pixTables.getContext(arg1)
+    newListobj = Tcl.NewListObj(0, nil)
 
   try:
     # Get the transformation matrix for the context.
@@ -2717,14 +2398,14 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # values  - list
   #
   # Returns list values.
-  let newSeqListobj = Tcl.NewListObj(0, nil)
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let 
+    arg1 = $Tcl.GetString(objv[1])
+    newSeqListobj = Tcl.NewListObj(0, nil)
 
   if not pixTables.hasContext(arg1):
     return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")

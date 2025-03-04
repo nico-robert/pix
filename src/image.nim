@@ -7,25 +7,17 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   # size  - list width,height
   #
   # Returns a 'new' img object.
-  var
-    width, height: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
     return Tcl.ERROR
 
+  var width, height: int
+
   # Size
-  if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[1], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
-
+    
   # Create a new image of the specified width and height.
   let img = try:
     newImage(width, height)
@@ -271,13 +263,12 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # options - dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)
   #
   # Returns nothing.
-  var img: pixie.Image
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
     return Tcl.ERROR
 
   let arg1 = $Tcl.GetString(objv[1])
+  var img: pixie.Image
 
   if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
     if not pixTables.hasContext(arg1):
@@ -324,10 +315,8 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # color   - string (optional:transparent)
   #
   # Returns nothing.
-  var radius: cdouble
-
   if objc notin (3..4):
-    Tcl.WrongNumArgs(interp, 1, objv, "<img> radius color:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> radius ?color:optional")
     return Tcl.ERROR
 
   # Image
@@ -337,9 +326,11 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var radius: cdouble
 
   # Radius
-  if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK: return Tcl.ERROR
+  if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK:
+    return Tcl.ERROR
 
   # 'blur' blurs the image using a Gaussian blur algorithm.  The blur radius
   # is the distance from the point of the image to the point of the blur
@@ -409,8 +400,6 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # options      - dict (transform, bounds, hAlign, vAlign) (optional) if `object` is font `object`
   #
   # Returns nothing.
-  var matrix3: vmath.Mat3 = mat3()
-
   if objc notin (3..5):
     let errMsg = "<img> <arrangement> ?matrix3:optional or " &
     "<img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"
@@ -426,6 +415,8 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   let
     img  = pixTables.getImage(arg1)
     arg2 = $Tcl.GetString(objv[2])
+
+  var matrix3: vmath.Mat3
 
   if pixTables.hasArr(arg2):
     # Arrangement
@@ -485,11 +476,6 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # size   - list width,height
   #
   # Returns nothing.
-  var
-    width, height: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
     return Tcl.ERROR
@@ -501,15 +487,11 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var width, height: int
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   # We create a new image with the new size
   # This takes care of creating a new image with the correct size
@@ -533,8 +515,6 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # image - object
   #
   # Returns Tcl dict (width, height).
-  let dictObj = Tcl.NewDictObj()
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -545,7 +525,9 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   if not pixTables.hasImage(arg1):
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
-  let img = pixTables.getImage(arg1)
+  let
+    img = pixTables.getImage(arg1)
+    dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height))
@@ -561,11 +543,6 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # coordinates  - list x,y (x column of the pixel, y row of the pixel)
   #
   # Returns Tcl dict (r, g, b, a).
-  var
-    x, y: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
     return Tcl.ERROR
@@ -577,15 +554,11 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var x, y: int
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   let data = try:
     img[x, y]
@@ -611,11 +584,6 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # color       - string color
   #
   # Returns nothing.
-  var
-    x, y: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
     return Tcl.ERROR
@@ -627,15 +595,11 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var x, y: int
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   try:
     img[x, y] = pixUtils.getColor(objv[3])
@@ -656,8 +620,6 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   # inbetween is a mix of the two.
   #
   # Returns nothing.
-  var opacity: cdouble
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> opacity")
     return Tcl.ERROR
@@ -669,6 +631,7 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var opacity: cdouble
 
   # opacity
   if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
@@ -732,8 +695,6 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # input images.
   #
   # Returns Tcl dict (score, imgdiff object).
-  let dictObj = Tcl.NewDictObj()
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<masterimg> <img>")
     return Tcl.ERROR
@@ -761,6 +722,8 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   let p = toHexPtr(newimg)
   pixTables.addImage(p, newimg)
+
+  let dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("score", 5), Tcl.NewDoubleObj(score))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), Tcl.NewStringObj(p.cstring, -1))
@@ -831,13 +794,6 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # coordinates  - list x,y
   #
   # Returns Tcl dict (r, g, b, a).
-  var
-    x, y: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
-  let dictObj = Tcl.NewDictObj()
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
     return Tcl.ERROR
@@ -849,21 +805,19 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var x, y: int
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   let color = try:
     # Retrieve the color of the pixel at coordinates (x, y) from the image.
     img.getColor(x, y)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewDoubleObj(color.r))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewDoubleObj(color.g))
@@ -880,11 +834,6 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # image        - object
   # coordinates  - list x,y
   #
-  var
-    x, y: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
     return Tcl.ERROR
@@ -896,15 +845,11 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var x, y: int
 
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   let value = try:
     if img.inside(x, y): 1 else: 0
@@ -1138,8 +1083,6 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   # or just the size of the image if no edge is transparent.
   #
   # Returns Tcl dict (x, y, w, h).
-  let dictObj = Tcl.NewDictObj()
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -1156,6 +1099,8 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     img.opaqueBounds()
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
@@ -1202,11 +1147,6 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # and spanning the width and height specified.
   #
   # Returns a 'new' img object.
-  var
-    x, y, width, height: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
     return Tcl.ERROR
@@ -1218,26 +1158,17 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var x, y, width, height: int
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'width' 'height'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   # Size
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   let subimage = try:
     # Create a subimage from the given image (img) based on specified coordinates and size.
@@ -1270,11 +1201,6 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # If the resulting super image is the same as the original image, the original image is returned.
   #
   # Returns a 'new' img object.
-  var
-    x, y, width, height: int
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
     return Tcl.ERROR
@@ -1286,26 +1212,17 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var x, y, width, height: int
 
   # Coordinates
-  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[2], x, y, 
+    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'coordinates' should be 'x' 'y'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], x) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], y) != Tcl.OK: return Tcl.ERROR
 
   # Size
-  if Tcl.ListObjGetElements(interp, objv[3], count, elements) != Tcl.OK:
+  if pixParses.getListInt(interp, objv[3], width, height, 
+    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-
-  if count != 2:
-    return pixUtils.errorMSG(interp, "wrong # args: 'size' should be 'width' 'height'")
-
-  if Tcl.GetIntFromObj(interp, elements[0], width)  != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, elements[1], height) != Tcl.OK: return Tcl.ERROR
 
   let subimage = try:
     img.superImage(x, y, width, height)

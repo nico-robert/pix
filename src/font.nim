@@ -38,8 +38,6 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # size  - double value
   #
   # Returns nothing.
-  var fsize: cdouble
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<font> size")
     return Tcl.ERROR
@@ -51,6 +49,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
 
   let font = pixTables.getFont(arg1)
+  var fsize: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
     return Tcl.ERROR
@@ -233,11 +232,11 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   # filePath - file font
   #
   # Returns Tcl list <typeface> object.
-  let newListobj = Tcl.NewListObj(0, nil)
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "filePath")
     return Tcl.ERROR
+
+  let newListobj = Tcl.NewListObj(0, nil)
 
   try:
     # Typeface
@@ -1075,8 +1074,6 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # arrangement - object
   #
   # Returns Tcl dict value (x, y, w, h).
-  let dictGlobobj = Tcl.NewDictObj()
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement>")
     return Tcl.ERROR
@@ -1087,7 +1084,9 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   if not pixTables.hasArr(arg1):
     return pixUtils.errorMSG(interp, "pix(error): no key <Arrangement> object found '" & arg1 & "'")
 
-  let arr = pixTables.getArr(arg1)
+  let 
+    arr = pixTables.getArr(arg1)
+    dictGlobobj = Tcl.NewDictObj()
 
   try:
     for index, rect in arr.selectionRects:

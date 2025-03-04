@@ -43,7 +43,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   var
     x, y, p, opacity: cdouble
     count, subcount, len: Tcl.Size
-    elements, subelements, position, stop: Tcl.PPObj
+    elements, subelements, stop: Tcl.PPObj
     matrix3: vmath.Mat3
 
   if objc != 3:
@@ -93,13 +93,9 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
           if subcount != 0:
             var positions = newSeq[vmath.Vec2]()
             for j in 0..subcount-1:
-              if Tcl.ListObjGetElements(interp, subelements[j], len, position) != Tcl.OK:
+              if pixParses.getListDouble(interp, subelements[j], x, y, 
+                "wrong # args: 'gradient positions' should be 'x' 'y'") != Tcl.OK:
                 return Tcl.ERROR
-              if len != 2:
-                return pixUtils.errorMSG(interp, "wrong # args: 'positions' should be 'x' 'y'")
-
-              if Tcl.GetDoubleFromObj(interp, position[0], x) != Tcl.OK: return Tcl.ERROR
-              if Tcl.GetDoubleFromObj(interp, position[1], y) != Tcl.OK: return Tcl.ERROR
 
               positions.add(vec2(x, y))
             paint.gradientHandlePositions = positions

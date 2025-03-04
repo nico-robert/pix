@@ -89,8 +89,8 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
   #
   # Returns nothing or an exception if an error is found.
   var
-    count, veccount: Tcl.Size
-    elements, vecelements: Tcl.PPObj
+    count: Tcl.Size
+    elements: Tcl.PPObj
     x, y: cdouble
   
   # Dict
@@ -112,14 +112,8 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
         if Tcl.GetDoubleFromObj(interp, value, opts.spread) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "offset":
-        if Tcl.ListObjGetElements(interp, value, veccount, vecelements) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
-        if veccount != 2:
-          raise newException(ValueError, "wrong # args: 'offset' should be 'x' 'y'")
-
-        if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
-        if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK:
+        if getListDouble(interp, value, x, y, 
+          "wrong # args: 'offset' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
 
         opts.offset = vec2(x, y)
@@ -188,8 +182,8 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
   #
   # Returns nothing or an exception if an error is found.
   var
-    count, veccount, dashescount: Tcl.Size
-    elements, vecelements, dasheselements: Tcl.PPObj
+    count, dashescount: Tcl.Size
+    elements, dasheselements: Tcl.PPObj
     x, y, dashes: cdouble
   
   # Dict
@@ -231,14 +225,8 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           opts.dashes.add(dashes)
 
       of "bounds":
-        if Tcl.ListObjGetElements(interp, value, veccount, vecelements) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
-        if veccount != 2:
-          raise newException(ValueError, "wrong # args: 'bounds' should be 'x' 'y'")
-
-        if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
-        if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK:
+        if getListDouble(interp, value, x, y, 
+          "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
 
         opts.bounds = vec2(x, y)
@@ -254,8 +242,8 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
   #
   # Returns nothing or an exception if an error is found.
   var
-    count, veccount: Tcl.Size
-    elements, vecelements: Tcl.PPObj
+    count: Tcl.Size
+    elements: Tcl.PPObj
     x, y: cdouble
     wrapB: int
 
@@ -280,14 +268,8 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
       of "vAlign":
         opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
       of "bounds":
-        if Tcl.ListObjGetElements(interp, value, veccount, vecelements) != Tcl.OK: 
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
-        if veccount != 2:
-          raise newException(ValueError, "wrong # args: 'bounds' should be 'x' 'y'")
-
-        if Tcl.GetDoubleFromObj(interp, vecelements[0], x) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
-        if Tcl.GetDoubleFromObj(interp, vecelements[1], y) != Tcl.OK:
+        if getListDouble(interp, value, x, y, 
+          "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
 
         opts.bounds = vec2(x, y)
