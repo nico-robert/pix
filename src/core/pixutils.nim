@@ -65,6 +65,34 @@ proc isRGBXFormat*(s: string): bool =
       inc count
   
   return count == 4
+
+proc isRGBAFormat*(s: string): bool =
+  # Checks if the color is a color in the rgba 
+  # format (e.g. rgba(x,x,x,x)).
+
+  if (s.len < 4) or (s[0..3] != "rgba"):
+    return false
+
+  var count = 1
+  for c in s[5..^2]:
+    if c == ',':
+      inc count
+  
+  return count == 4
+
+proc isRGBFormat*(s: string): bool =
+  # Checks if the color is a color in the rgb 
+  # format (e.g. rgb(x,x,x)).
+
+  if (s.len < 3) or (s[0..2] != "rgb"):
+    return false
+
+  var count = 1
+  for c in s[4..^2]:
+    if c == ',':
+      inc count
+  
+  return count == 3
   
 proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   # Checks if the obj is a color.
@@ -132,8 +160,14 @@ proc getColor*(obj: Tcl.PObj): Color =
   #
   # Returns Color object.
 
-  let scolor = $Tcl.GetString(obj)
+  let scolor = strip($Tcl.GetString(obj))
   var color: Color
+
+  if isRGBAFormat(scolor):
+    return parseHtmlRgba(scolor)
+
+  if isRGBFormat(scolor):
+    return parseHtmlRgb(scolor)
 
   if isHexAlphaFormat(scolor):
     return parseHexAlpha(scolor)
