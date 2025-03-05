@@ -1516,8 +1516,10 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     if not pixTables.hasPath(arg3):
       return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg3 & "'")
 
+    let path = pixTables.getPath(arg3)
+
     try:
-      if ctx.isPointInStroke(pixTables.getPath(arg3), x, y): value = 1
+      if ctx.isPointInStroke(path, x, y): value = 1
     except Exception as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
@@ -1965,11 +1967,12 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
     return Tcl.ERROR
 
-  if radius <= 0:
+  if radius <= 0.0:
     return pixUtils.errorMSG(interp, "The radius must be greater than 0")
 
+  let circle = Circle(pos: vec2(cx, cy), radius: radius)
+
   try:
-    let circle = Circle(pos: vec2(cx, cy), radius: radius)
     ctx.fillCircle(circle)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)

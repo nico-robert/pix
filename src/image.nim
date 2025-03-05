@@ -365,6 +365,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
 
   let img = pixTables.getImage(arg1)
+  var shadow: pixie.Image
 
   try:
     # Parse the options from the Tcl dict and set the fields of 
@@ -372,19 +373,20 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     var opts = pixParses.RenderShadow()
     pixParses.shadowOptions(interp, objv[2], opts)
 
-    let shadow = img.shadow(
+    shadow = img.shadow(
       offset = opts.offset,
       spread = opts.spread,
       blur   = opts.blur,
       color  = opts.color
     )
 
-    let p = toHexPtr(shadow)
-    pixTables.addImage(p, shadow)
-
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let p = toHexPtr(shadow)
+  pixTables.addImage(p, shadow)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
   return Tcl.OK
 
@@ -1170,8 +1172,9 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
 
+  # Create a subimage from the given image (img) based on specified 
+  # coordinates and size.
   let subimage = try:
-    # Create a subimage from the given image (img) based on specified coordinates and size.
     img.subImage(x, y, width, height)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
