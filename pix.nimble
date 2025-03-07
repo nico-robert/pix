@@ -30,32 +30,49 @@
 
 version     = "0.4"
 author      = "Nicolas ROBERT"
-description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), a full-featured 2D graphics library written in Nim."
+description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), " &
+              "a full-featured 2D graphics library written in Nim."
 license     = "MIT"
-
-srcDir = "src"
+srcDir      = "src"
 
 # Dependencies
 requires "nim == 2.0.6"
 requires "pixie == 5.0.7"
 
-# task
+# Task definition for generating the pix Tcl/Tk library
+# Compile bindings for 2 versions of Tcl/Tk.
 task pixTclTkBindings, "Generate pix Tcl library.":
 
   proc compile(libName: string, flags= "") =
     exec "nim c " & flags & " -d:release --app:lib --out:" & libName & " src/pix.nim"
 
-  when defined(windows):
-    compile "./win32-x86_64/pix9-"&version&".dll", "-d:tcl9"
-    compile "./win32-x86_64/pix8-"&version&".dll"
+  proc getArchFolder(): tuple[folder: string, prefix: string, ext: string] =
+    when defined(arm64):
+      result.prefix = "arm"
+    else:
+      result.prefix = "x86_64"
 
-  elif defined(macosx):
-    var folder = "macosx-x86_64"
-    when defined(arm64): 
-      folder = "macosx-arm"
-    compile "./"&folder&"/lib9pix"&version&".dylib", "-d:tcl9"
-    compile "./"&folder&"/lib8pix"&version&".dylib"
+    when defined(windows):
+      result.folder = "win32-" & result.prefix
+      result.ext    = ".dll"
+    elif defined(macosx):
+      result.folder = "macosx-" & result.prefix
+      result.ext    = ".dylib"
+    elif defined(linux):
+      result.folder = "linux-" & result.prefix
+      result.ext    = ".so"
 
-  elif defined(linux):
-    compile "./linux-x86_64/lib9pix"&version&".so", "-d:tcl9"
-    compile "./linux-x86_64/lib8pix"&version&".so"
+  let arch = getArchFolder()
+
+  for vtcl in ["8", "9"]:
+    let tclFlags = "-d:tcl" & vtcl
+
+    when defined(windows):
+      compile "./" & arch.folder & "/pix" & vtcl & "-" & version & arch.ext, tclFlags
+
+    elif defined(macosx) or defined(linux):
+      compile "./" & arch.folder & "/lib" & vtcl & "pix" & version & arch.ext, tclFlags
+      
+    else:
+      echo "pix(error): Unsupported operating system!"
+      quit(1)
