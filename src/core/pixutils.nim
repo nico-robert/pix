@@ -51,7 +51,12 @@ proc isHexAlphaFormat*(s: string): bool =
   # - Length of 8 characters (typical for an RGBA color)
   
   return (s.len == 8) and isValidHex(s)
+
+proc isHexHtmlFormat*(s: string): bool =
+  # Checks whether a string is in ‘hexHtml’ format (e.g. #F8D1DD)
   
+  return (s.len == 7) and (s[0] == '#')
+
 proc isRGBXFormat*(s: string): bool =
   # Checks if the color is a color in the rgbx 
   # format (e.g. rgbx(x,x,x,x)).
@@ -156,32 +161,38 @@ proc getColor*(obj: Tcl.PObj): Color =
   # The string can be in various formats such as hexalpha, colorRGBX
   # hex, or HTML color names.
   #
-  # s - The color to check.
+  # obj - The color to check.
   #
   # Returns Color object.
 
   let scolor = strip($Tcl.GetString(obj))
   var color: Color
 
-  if isRGBAFormat(scolor):
+  # Check if the string or object is :
+  #
+  # in 'rgba' format (e.g. rgba(x,x,x,x))
+  if scolor.isRGBAFormat():
     return parseHtmlRgba(scolor)
-
-  if isRGBFormat(scolor):
+  # in 'hexHtml' format (e.g. #F8D1DD)
+  elif scolor.isHexHtmlFormat():
+    return parseHtmlHex(scolor)
+  # in 'rgb' format (e.g. rgb(x,x,x))
+  elif scolor.isRGBFormat():
     return parseHtmlRgb(scolor)
-
-  if isHexAlphaFormat(scolor):
+  # in 'hexalpha' format (e.g. FF0000FF)
+  elif scolor.isHexAlphaFormat():
     return parseHexAlpha(scolor)
-  
-  if isHexFormat(scolor):
+  # in 'hex' format (e.g. FF0000)
+  elif scolor.isHexFormat():
     return parseHex(scolor)
-  
-  if isRGBXFormat(scolor):
+  # in 'rgbx' format (e.g. rgbx(x,x,x,x))
+  elif scolor.isRGBXFormat():
     return parseColorRGBX(scolor).color
-  
-  if isColorSimpleFormat(obj, color):
+  # a simple color format (e.g. {0.0 0.0 0.0 0.0})
+  elif isColorSimpleFormat(obj, color): 
     return color
-
-  return parseHtmlColor(scolor)
+  else:
+    return parseHtmlColor(scolor)
 
 template toHexPtr*[T](obj: T): string =
   # Converts an object to a hexadecimal string.
