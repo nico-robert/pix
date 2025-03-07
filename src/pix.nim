@@ -25,7 +25,7 @@ include "svg.nim"
 proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   # Package initialization entry point.
   #
-  # Returns 0 on success, -1 on failure.
+  # Returns 0 on success, 1 on failure.
   if Tcl.InitStubs(interp, Tcl.VERSION,  0) == nil:
     return Tcl.ERROR
 
