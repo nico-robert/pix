@@ -132,9 +132,9 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if Tcl.GetDoubleFromObj(interp, objv[3], r) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK:
+  if Tcl.GetDoubleFromObj(interp, objv[3], r)  != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK:
     return Tcl.ERROR
       
   if objc == 7:
@@ -695,8 +695,8 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 
   # Radius
   if Tcl.GetDoubleFromObj(interp,  objv[3], xAxisRotation) != Tcl.OK or
-    Tcl.GetBooleanFromObj(interp, objv[4], largeA)         != Tcl.OK or
-    Tcl.GetBooleanFromObj(interp, objv[5], sweepF)         != Tcl.OK:
+     Tcl.GetBooleanFromObj(interp, objv[4], largeA) != Tcl.OK or
+     Tcl.GetBooleanFromObj(interp, objv[5], sweepF) != Tcl.OK:
     return Tcl.ERROR
 
   # Coordinates
@@ -800,9 +800,9 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'")
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+     Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK:
     return Tcl.ERROR
 
   if objc == 6:

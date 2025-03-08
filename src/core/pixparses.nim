@@ -47,7 +47,7 @@ proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var int, errorMsg:
     return pixUtils.errorMSG(interp, errorMsg)
   
   if Tcl.GetIntFromObj(interp, elements[0], v1) != Tcl.OK or
-    Tcl.GetIntFromObj(interp, elements[1], v2)  != Tcl.OK: 
+     Tcl.GetIntFromObj(interp, elements[1], v2) != Tcl.OK: 
     return Tcl.ERROR
 
   # Return success.
@@ -74,7 +74,7 @@ proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, er
     return pixUtils.errorMSG(interp, errorMsg)
   
   if Tcl.GetDoubleFromObj(interp, elements[0], v1) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[1], v2)  != Tcl.OK: 
+     Tcl.GetDoubleFromObj(interp, elements[1], v2) != Tcl.OK: 
     return Tcl.ERROR
 
   # Return success.

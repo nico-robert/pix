@@ -372,9 +372,9 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if Tcl.GetDoubleFromObj(interp, objv[3], r) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK :
+  if Tcl.GetDoubleFromObj(interp, objv[3], r)  != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK:
     return Tcl.ERROR
 
   if objc == 7:
@@ -742,7 +742,7 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
   # Radius
   if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
+     Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK:
     return Tcl.ERROR
 
   try:
@@ -782,7 +782,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   # Radius
   if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
+     Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK:
     return Tcl.ERROR
 
   try:
@@ -1171,9 +1171,9 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be {nw ne se sw}")
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+     Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK:
     return Tcl.ERROR
 
   try:
@@ -1238,9 +1238,9 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   elif count == 4:
     if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
-      Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
-      Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
-      Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+       Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK or
+       Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK or
+       Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK:
       return Tcl.ERROR
 
     try:
@@ -1309,9 +1309,9 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
   elif count == 4:
     if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
-      Tcl.GetDoubleFromObj(interp, elements[1], ne)  != Tcl.OK or
-      Tcl.GetDoubleFromObj(interp, elements[2], se)  != Tcl.OK or
-      Tcl.GetDoubleFromObj(interp, elements[3], sw)  != Tcl.OK:
+       Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK or
+       Tcl.GetDoubleFromObj(interp, elements[2], se) != Tcl.OK or
+       Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK:
       return Tcl.ERROR
 
     try:
@@ -2007,7 +2007,7 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
-    Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
+     Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK:
     return Tcl.ERROR
 
   try:
