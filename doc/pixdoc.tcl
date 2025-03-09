@@ -386,6 +386,60 @@ if {$version eq ""} {
                  -outdir [file dirname [info script]]  \
                  -outfile "pix.html"
 
+# Syntax highlight.
+foreach nameFile {pix-examples.html pix.html} {
+    set fp [open [file join [file dirname [info script]] $nameFile] r]
+    set html [split [read $fp] \n]
+    close $fp
+
+    set fp [open [file join [file dirname [info script]] $nameFile] w+]
+
+    set figure 0
+    foreach line $html {
+        if {[string match "*<figure*>" $line]}  {set figure 1}
+        if {[string match "*</figure>*" $line]} {set figure 0}
+
+        if {$figure} {
+            if {[string match "set *" $line]} {
+                set l {}
+                foreach word [split $line " "] {
+                    if {$word eq "set"} {
+                        set word "<span style=\"color: hsl(206, 98.02%, 29.04%);font-weight: bold;\">set</span>"
+                    }
+                    append l "$word "
+                }
+                set line [string trimright $l]
+            }
+            if {[string match "package *" $line]} {
+                set line [string map {package {<span style="color: hsl(206, 98.02%, 29.04%);font-weight: bold;">package</span>}} $line]
+            }
+            if {[string match "*&quot;*" $line]} {
+                regexp {&quot;(.+)&quot;} $line -> match
+                set line [string map [list "&quot;$match&quot;" "<span style=\"color: hsl(120, 71%, 16%);\">&quot;$match&quot;</span>"] $line]
+            }
+
+            if {[string match "# *" $line]} {
+                set line "<span style=\"color: hsl(120, 71%, 16%);font-weight: semi-bold;\">$line</span>"
+            }
+
+            if {[string match {*$*} $line]} {
+                set l {}
+                foreach word [split $line " "] {
+                    if {[string index $word 0] eq "$"} {
+                        regexp {(\$[a-z0-9A-Z]+)} $word -> match
+                        set word [string map [list $match "<span style=\"color: rgb(233, 98, 98);\">$match</span>"] $word]
+                    }
+                    append l "$word "
+                }
+                set line [string trimright $l]
+            }
+        }
+
+        puts $fp $line
+    }
+    close $fp
+}
+
 puts "dir     : [file dirname [info script]]"
 puts "file    : pix.html"
 puts "version : $version"
