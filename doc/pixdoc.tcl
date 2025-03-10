@@ -45,7 +45,7 @@ puts $fp {
 namespace eval ::pix {
     variable _intro {
         # pix - 2D graphics library
-        Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in Nim.
+        Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in [Nim](https://nim-lang.org).
 
         #### Compatibility
         Tcl/Tk 8.6 & 9.0
@@ -102,27 +102,6 @@ namespace eval ::pix {
     }
 }
 }
-# Read README file
-set fpreadme [open [file join $dirpix README.MD]]
-set readme [split [read $fpreadme] \n]
-close $fpreadme
-
-set match false
-set release {}
-foreach line $readme {
-    if {[string match "Release*:*" $line]} {
-        set match true
-        continue
-    }
-    if {$match && ![string match "--------*" $line]} {
-        lappend release "$line<br>"
-    }
-}
-
-if {$release ne ""} {
-    puts $fp "append pix::_intro \{\n#### Release\n[join $release \n]\n\}"
-}
-
 # Read LICENSE file
 set fplic [open [file join $dirpix LICENSE]]
 set lic [read $fplic]
@@ -176,7 +155,21 @@ foreach dirName {
             For more info, see: [https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D]\
             (https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D)
 
-            #### Enum BaselineAlignment.
+            #### Struct Context:
+            image         - [img]
+            fillStyle     - [paint]
+            strokeStyle   - [paint]
+            globalAlpha   - double
+            lineWidth     - double
+            miterLimit    - double
+            lineCap       - Enum LineCap
+            lineJoin      - Enum LineJoin
+            font          - string ## File path to a .ttf or .otf file.
+            fontSize      - double
+            textAlign     - Enum HorizontalAlignment
+            textBaseline  - Enum BaselineAlignment
+
+            #### Enum BaselineAlignment:
             BaselineAlignment - enum
             TopBaseline - &nbsp;
             HangingBaseline - &nbsp;
@@ -189,13 +182,13 @@ foreach dirName {
     } elseif {$name eq "font"} {
         set ns "font"
         set preamble {{
-            #### Enum HorizontalAlignment.
+            #### Enum HorizontalAlignment:
             HorizontalAlignment  - enum
             LeftAlign            - &nbsp;
             CenterAlign          - &nbsp;
             RightAlign           - &nbsp;
 
-            #### Enum VerticalAlignment.
+            #### Enum VerticalAlignment:
             VerticalAlignment    - enum
             TopAlign             - &nbsp;
             MiddleAlign          - &nbsp;
@@ -205,7 +198,7 @@ foreach dirName {
     } elseif {$name eq "paint"} {
         set ns "paint"
         set preamble {{
-            #### Enum PaintKind.
+            #### Enum PaintKind:
             PaintKind             - enum
             SolidPaint            - &nbsp;
             ImagePaint            - &nbsp;
@@ -220,16 +213,16 @@ foreach dirName {
     } elseif {$name eq "paths"} {
         set ns "path"
         set preamble {{
-            #### Enum Winding rules.
+            #### Enum Winding rules:
             WindingRule  - enum
             NonZero      - &nbsp;
             EvenOdd      - &nbsp;
-            #### Enum Line cap type for strokes.
+            #### Enum Line cap type for strokes:
             LineCap      - enum
             ButtCap      - &nbsp;
             RoundCap     - &nbsp;
             SquareCap    - &nbsp;
-            #### Enum Line join type for strokes.
+            #### Enum Line join type for strokes:
             LineJoin      - enum
             MiterJoin    - &nbsp;
             RoundJoin    - &nbsp;
@@ -238,7 +231,7 @@ foreach dirName {
 
     } elseif {$name eq "svg"} {
         set ns "svg"
-        set preamble {"Load SVG files."}
+        set preamble {"Load, parse, render SVG."}
     } elseif {$name eq "pixutils"} {
         set preamble {"Help procedures."}
     } else {
@@ -339,19 +332,95 @@ foreach {file_name var} {
     set ex [parseExample [file join $dirpix examples $file_name]]
     source [file join $dirpix examples $file_name]
     set b64 [pix::toB64 [set $var]]
+    puts $fp "#### $file_name"
+    puts $fp "```"
+    puts -nonewline $fp "[join $ex \n]"
+    puts $fp "```"
     puts $fp  "!\[alt img](data:image/png;base64,$b64)"
-    puts $fp "```"
-    puts $fp "[join $ex \n]"
-    puts $fp "```"
     destroy .l1
 }
 puts $fp "}"
 puts $fp "}"
 
+close $fp
+
+# Write color.ruff
+set fp [open [file join [file dirname [info script]] color.ruff] w+]
+
+puts $fp "namespace eval pix::color {
+    # Ruff documentation
+    variable _ruff_preamble {"
+
+puts $fp "* The following color formats can be used:"
+
+# Color
+puts $fp "rgba         - e.g : *rgba(x,x,x,x)*<br>"
+puts $fp "This format takes four arguments, for the *red*, *green*, *blue*, and"
+puts $fp "*alpha* components of the color. The arguments are all floating point"
+puts $fp "numbers between **0.0** and **255.0**."
+puts $fp "hexHtml      - e.g : *#F8D1DD*<br>"
+puts $fp "This format takes a single argument, which is a string in the"
+puts $fp "format of a hex code. The hex code should **7**"
+puts $fp "characters long, and each character should be a valid hex digit."
+puts $fp "rgb          - e.g : *rgb(x,x,x)*<br>"
+puts $fp "This format takes three arguments, for the red, green, and blue"
+puts $fp "components of the color. The arguments are all floating point"
+puts $fp "numbers between **0.0** and **255.0**."
+puts $fp "hexalpha     - e.g : *FF0000FF*<br>"
+puts $fp "Only uppercase hexadecimal characters."
+puts $fp "Length of **8** characters (typical for an **RGBA** color)"
+puts $fp "hex          - e.g : *FF0000*<br>"
+puts $fp "Only uppercase hexadecimal characters."
+puts $fp "Length of **6** characters (typical for an **RGB** color)"
+puts $fp "rgbx         - e.g : *rgbx(x,x,x,x)*<br>"
+puts $fp "This format takes four arguments, for the *red*, *green*, *blue*, and"
+puts $fp "*alpha* components of the color. The arguments are all floating point"
+puts $fp "numbers between **0.0** and **1.0**."
+puts $fp "simple color - e.g : *{0.0 0.0 0.0 0.0}*<br>"
+puts $fp "This format takes a single argument, which is a list of four"
+puts $fp "floating point numbers between **0.0** and **1.0**. The numbers are the"
+puts $fp "*red*, *green*, *blue*, and *alpha* components of the color."
+puts $fp "string color  - e.g : *white*<br>"
+puts $fp "HTML color as a name."
+puts $fp "}"
+puts $fp "}"
 
 close $fp
 
-foreach name {examples pix context paint image svg paths font utils} {
+# Write release.ruff
+set fp [open [file join [file dirname [info script]] release.ruff] w+]
+
+puts $fp "namespace eval ::Release {
+    # Ruff documentation
+    variable _ruff_preamble {"
+
+# Read README file
+set fpreadme [open [file join $dirpix README.MD]]
+set readme [split [read $fpreadme] \n]
+close $fpreadme
+
+set match false
+set release {}
+foreach line $readme {
+    if {[string match "Release*:*" $line]} {
+        set match true
+        continue
+    }
+    if {$match && ![string match "--------*" $line]} {
+        lappend release "$line<br>"
+    }
+}
+
+if {$release ne ""} {
+    puts $fp "#### Release\n[join $release \n]"
+}
+
+puts $fp "}"
+puts $fp "}"
+
+close $fp
+
+foreach name {examples color release pix context paint image svg paths font utils} {
     source [file join [file dirname [info script]] $name.ruff]
 }
 
@@ -375,7 +444,7 @@ if {$version eq ""} {
 }
 
 # Generate docs
-::ruff::document "::examples ::pix [namespace children ::pix]" \
+::ruff::document "::examples ::Release ::pix [namespace children ::pix]" \
                  -title "pix ${version}: Reference Manual" \
                  -sortnamespaces true \
                  -preamble $::pix::_intro \
@@ -387,7 +456,7 @@ if {$version eq ""} {
                  -outfile "pix.html"
 
 # Syntax highlight.
-foreach nameFile {pix-examples.html pix.html} {
+foreach nameFile {pix-examples.html pix.html pix-pix-ctx.html} {
     set fp [open [file join [file dirname [info script]] $nameFile] r]
     set html [split [read $fp] \n]
     close $fp
@@ -404,14 +473,14 @@ foreach nameFile {pix-examples.html pix.html} {
                 set l {}
                 foreach word [split $line " "] {
                     if {$word eq "set"} {
-                        set word "<span style=\"color: hsl(206, 98.02%, 29.04%);font-weight: bold;\">set</span>"
+                        set word "<span style=\"color: hsl(206, 98.02%, 29.04%);font-weight: 550;\">set</span>"
                     }
                     append l "$word "
                 }
                 set line [string trimright $l]
             }
             if {[string match "package *" $line]} {
-                set line [string map {package {<span style="color: hsl(206, 98.02%, 29.04%);font-weight: bold;">package</span>}} $line]
+                set line [string map {package {<span style="color: hsl(206, 98.02%, 29.04%);font-weight: 550;">package</span>}} $line]
             }
             if {[string match "*&quot;*" $line]} {
                 regexp {&quot;(.+)&quot;} $line -> match
@@ -419,7 +488,7 @@ foreach nameFile {pix-examples.html pix.html} {
             }
 
             if {[string match "# *" $line]} {
-                set line "<span style=\"color: hsl(120, 71%, 16%);font-weight: semi-bold;\">$line</span>"
+                set line "<span style=\"color: hsl(218, 8%, 43.5%);font-weight: 500;\">$line</span>"
             }
 
             if {[string match {*$*} $line]} {
@@ -439,6 +508,31 @@ foreach nameFile {pix-examples.html pix.html} {
     }
     close $fp
 }
+
+# Color : 
+set fp [open [file join [file dirname [info script]] pix-pix-color.html] r]
+set html [split [read $fp] \n]
+close $fp
+
+set fp [open [file join [file dirname [info script]] pix-pix-color.html] w+]
+set table 0
+foreach line $html {
+    if {[string match "<table*>" $line]}  {
+        set table 1
+        set line [string map {"<table" "<table style='width:95%'"} $line]
+        puts $fp $line
+        continue
+    }
+    if {$table} {
+        puts $fp "<tr>"
+        puts $fp "<th style='background-color: var(--ruff-nav-background-color); color: var(--ruff-bd-h1-color)'>Formats</th>"
+        puts $fp "<th style='background-color: var(--ruff-nav-background-color); color: var(--ruff-bd-h1-color)'>Color</th>"
+        puts $fp "</tr>"
+        set table 0
+    }
+    puts $fp $line
+}
+close $fp
 
 puts "dir     : [file dirname [info script]]"
 puts "file    : pix.html"
