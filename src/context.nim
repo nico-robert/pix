@@ -640,10 +640,10 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # #EndTable
   #
   # Returns: Nothing.
-  if objc != 4 and objc != 5 and objc != 7:
-    let errMsg = "<ctx> <img> {dx dy} or " &
-    "<ctx> <img> {dx dy} {dWidth dHeight} or " &
-    "<ctx> <img> {sx sy} {sWidth sHeight} {dx dy} {dWidth dHeight}"
+  if objc notin [4, 5, 7]:
+    let errMsg = "'<ctx> <img> {dx dy}' or " &
+    "'<ctx> <img> {dx dy} {dWidth dHeight}' or " &
+    "'<ctx> <img> {sx sy} {sWidth sHeight} {dx dy} {dWidth dHeight}'"
     Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
     return Tcl.ERROR
 
