@@ -456,7 +456,10 @@ if {$version eq ""} {
                  -outfile "pix.html"
 
 # Syntax highlight.
-foreach nameFile {pix-examples.html pix.html pix-pix-ctx.html} {
+foreach nameFile {
+    pix-examples.html pix.html pix-pix-ctx.html pix-pix-img.html pix-pix-font.html
+    pix-pix-path.html pix-pix-paint.html
+} {
     set fp [open [file join [file dirname [info script]] $nameFile] r]
     set html [split [read $fp] \n]
     close $fp
@@ -467,6 +470,38 @@ foreach nameFile {pix-examples.html pix.html pix-pix-ctx.html} {
     foreach line $html {
         if {[string match "*<figure*>" $line]}  {set figure 1}
         if {[string match "*</figure>*" $line]} {set figure 0}
+
+        if {[string match "*#Begintable*" $line]}  {
+            if {![regexp {#Begintable(.+)#EndTable} $line -> match]} {
+                error "#Begintable"
+            }
+            set listTable {}
+            regexp {^(.+)#Begintable} $line -> match2
+            lappend listTable $match2
+            lappend listTable "<table class='ruff_deflist'>"
+            set match [string map {.html @html} $match]
+            set match [string map {:: @@} $match]
+            foreach element [split $match "."] {
+                set element [string trim $element]
+                if {$element eq ""} {continue}
+
+                if {[llength [split $element ":"]] != 2} {
+                    error "#Begintable 1"
+                }
+
+                lassign [split $element ":"] info des
+                lappend listTable "<tr>"
+                lappend listTable "<td>$info</td>"
+                lappend listTable "<td>$des.</td>"
+                lappend listTable "</tr>"
+            } 
+            lappend listTable "</table>"
+            set listTable [string map {@html .html} $listTable]
+            set listTable [string map {@@ ::} $listTable]
+            puts $fp [join $listTable "\n"]
+            set listTable {}
+            continue
+        }
 
         if {$figure} {
             if {[string match "set *" $line]} {

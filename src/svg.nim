@@ -7,7 +7,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # svg  - string data
   # size - list width,height (optional:SVGviewbox)
   #
-  # Returns a 'new' svg object.
+  # Returns: A *new* [svg] object.
   if objc notin (2..3):
     Tcl.WrongNumArgs(interp, 1, objv, "'svg string' ?{width height}:optional")
     return Tcl.ERROR
@@ -44,9 +44,9 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Render SVG and return the image.
   #
-  # svg - object
+  # svg - [svg::parse]
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<svg>")
     return Tcl.ERROR
@@ -74,22 +74,18 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Destroy current svg or all svgs if special word `all` is specified.
   #
-  # value - svg object or string
+  # value - [svg::parse] or string.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<svg>|string('all')")
     return Tcl.ERROR
 
   let arg1 = $Tcl.GetString(objv[1])
-
-  try:
-    # Svg
-    if arg1 == "all":
-      svgTable.clear()
-    else:
-      svgTable.del(arg1)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Svg
+  if arg1 == "all":
+    svgTable.clear()
+  else:
+    svgTable.del(arg1)
 
   return Tcl.OK

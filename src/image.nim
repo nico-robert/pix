@@ -6,7 +6,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   #
   # size  - list width,height
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
     return Tcl.ERROR
@@ -32,11 +32,12 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   return Tcl.OK
 
 proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # New image copy.
+  # This procedure creates a new image by copying the contents 
+  # of the given image object.
   #
-  # image - object
+  # image - [img::new]
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -65,12 +66,12 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws one image onto another using a matrix transform and color blending.
   #
-  # image     - object
-  # image2    - object
+  # image     - [img::new]
+  # image2    - [img::new]
   # matrix3   - list (optional:mat3)
   # blendMode - Enum value (optional:NormalBlend)
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     count: Tcl.Size
     matrix3: vmath.Mat3
@@ -132,10 +133,17 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the image with the color.
   #
-  # image   - object
-  # value   - string color or paint object
+  # image   - [img::new]
+  # value   - string [color] or [paint] object
   #
-  # Returns nothing.
+  # This proc takes an image object and a color or paint object as arguments.
+  # It will fill the image with the specified color or paint object.
+  # The color or paint object can be specified as a string or as an object.
+  # If a string is specified, it should be a valid color string.
+  # If a paint object is specified, it should be a valid paint object.
+  # The paint object can be created using the *pix::paint::new* proc.
+  #
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> color|<paint>")
     return Tcl.ERROR
@@ -163,11 +171,14 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Fills the image with the color.
+  # Read image file.
   #
   # filePath - path file
   #
-  # Returns a 'new' img object.
+  # This proc will attempt to read the image file and create a new image
+  # object from it.
+  #
+  # Returns: A *new* [img] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "full pathfile")
     return Tcl.ERROR
@@ -190,14 +201,22 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   return Tcl.OK
 
 proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Fills a path.
+  # Fills a path with a color or paint object.
   #
-  # image      - object
-  # pathValue  - string path  or path object
-  # paintValue - string color or paint object
-  # matrix     - list (optional:mat3)
+  # image      - The [img::new] object to draw on.
+  # pathValue  - A string containing a path or a path object.
+  #             The path can be specified as a string like this:
+  #             **M 0 0 L 100 0 L 100 100 Z**
+  #             or as a path object created with the *pix::path::new* proc.
+  # paintValue - A string containing a [color] or a [paint] object.
+  #             The color can be specified as a string like this:
+  #             **#FF0000** or as a paint object created with the
+  #             *pix::paint::new* proc.
+  # matrix     - A (optional:mat3idendity) matrix to transform the path with.
+  #             The matrix should be a **3x3** matrix specified as a list of 9
+  #             numbers.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     img: pixie.Image
     matrix3: vmath.Mat3
@@ -255,14 +274,27 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
 
 proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Strokes a path.
+  # Strokes a path with a color or a paint object and optional
+  # stroke and line join options.
   #
-  # image   - object
-  # value   - string path
-  # color   - string color or paint object
-  # options - dict (strokeWidth, transform, lineCap, miterLimit, lineJoin, dashes)
+  # image   - The [img::new] object to draw on.
+  # value   - A string path or a [path] object created with the
+  #          *pix::path::new* Tcl proc.
+  # color   - A string [color] or a [paint] object created with the
+  #          *pix::paint::new* Tcl proc.
+  # options - A Tcl dict, see attributes below.
   #
-  # Returns nothing.
+  #  * A dictionary of options to customize the stroke. The options are:<br>
+  #  #Begintable
+  #  **strokeWidth** : The width of the stroke.
+  #  **transform**   : The transformation matrix to apply to the path.
+  #  **lineCap**     : The line cap style (Enum).
+  #  **miterLimit**  : The miter limit for the line join.
+  #  **lineJoin**    : The line join style (Enum).
+  #  **dashes**      : The dashes to apply to the stroke.
+  #  #EndTable
+  #
+  # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
     return Tcl.ERROR
@@ -310,11 +342,11 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Applies Gaussian blur to the image given a radius.
   #
-  # image   - object
+  # image   - [img::new]
   # radius  - double value
-  # color   - string (optional:transparent)
+  # color   - string [color] (optional:transparent)
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc notin (3..4):
     Tcl.WrongNumArgs(interp, 1, objv, "<img> radius ?color:optional")
     return Tcl.ERROR
@@ -350,10 +382,10 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Create a shadow of the image with the offset, spread and blur.
   #
-  # image   - object
-  # options - dict (offset, spread, blur, color)
+  # image   - [img::new]
+  # options - dict (offset, spread, blur, [color])
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {offset? ?value spread? ?value blur? ?value color? ?value}")
     return Tcl.ERROR
@@ -391,17 +423,35 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Fills image text.
+  # Fills the image with the rendered text.
   #
-  # image        - object
-  # object       - arrangement or font object
-  # args         - dict options described below:
+  # image  - [img::new]
+  # object - [font::typeset] or [font::readFont] object
+  # args   - A Tcl dict (options described below)
   #
-  # matrix       - optional list if `object` is arrangement `object`
-  # text         - string if `object` is font `object`
-  # options      - dict (transform, bounds, hAlign, vAlign) (optional) if `object` is font `object`
+  # There are two ways to use this proc:
   #
-  # Returns nothing.
+  # 1. With an [font::typeset] object:<br>
+  #    * `$img arrangement {?matrix3 ?value}`<br>
+  #    This will render the arrangement onto the image. If the matrix3 optional
+  #    argument is provided, it will be used to transform the arrangement before
+  #    rendering.
+  #
+  # 2. With a [font] object and a `text` string:<br>
+  #    * `$img font text options`<br>
+  #    This will render the text string onto the image using the font object.
+  #    The options dict can be used to specify the following:
+  #      #Begintable
+  #      **transform** : A list transform to apply to the text.
+  #      **bounds**    : A list bounds to use for the text.
+  #      **hAlign**    : A Enum horizontal alignment of the text.
+  #      **vAlign**    : A Enum vertical alignment of the text.
+  #     #EndTable
+  #
+  # In either case, the [img] object is the first argument, and the [font::typeset]
+  # or [font::readFont] object is the second argument.
+  #
+  # Returns: Nothing.
   if objc notin (3..5):
     let errMsg = "<img> <arrangement> ?matrix3:optional or " &
     "<img> <font> 'text' {?transform ?value ?bounds ?value ?hAlign ?value ?vAlign ?value}"
@@ -474,10 +524,10 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Resize an image to a given height and width
   #
-  # image  - object
+  # image  - [img::new]
   # size   - list width,height
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {width height}")
     return Tcl.ERROR
@@ -497,7 +547,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   # We create a new image with the new size
   # This takes care of creating a new image with the correct size
-  # and scaling the image.  The `resize` proc is smart enough
+  # and scaling the image.  The *pix::img::resize* proc is smart enough
   # to scale the image to the new size.
   let newimg = try:
     img.resize(width, height)
@@ -514,9 +564,10 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets image size.
   #
-  # image - object
+  # image - [img::new]
   #
-  # Returns Tcl dict (width, height).
+  # Returns: A Tcl dictionary with keys containing the width and the 
+  # height of the [img].
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -541,10 +592,11 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
   #
-  # image        - object
+  # image        - [img::new]
   # coordinates  - list x,y (x column of the pixel, y row of the pixel)
   #
-  # Returns Tcl dict (r, g, b, a).
+  # Returns: A Tcl dictionary with keys (r, g, b, a) representing 
+  # the red, green, blue, and alpha (opacity) values of the pixel color.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
     return Tcl.ERROR
@@ -581,11 +633,11 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets a pixel at (x, y) or does nothing if outside of bounds.
   #
-  # image       - object
+  # image       - [img::new]
   # coordinates - list x,y
-  # color       - string color
+  # color       - string [color]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} color")
     return Tcl.ERROR
@@ -613,15 +665,15 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Multiplies alpha of the image by opacity.
   #
-  # image    - object
+  # image    - [img::new]
   # opacity  - double value
   #
-  # img.applyOpacity multiplies the opacity of the image by the
+  # Image *pix::img::applyOpacity* multiplies the opacity of the image by the
   # opacity parameter. The opacity parameter is a double between
-  # 0 and 1. 0 is fully transparent. 1 is fully opaque. Any value
+  # 0 and 1. 0 is fully transparent. 1 is fully opaque.<br> Any value
   # inbetween is a mix of the two.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> opacity")
     return Tcl.ERROR
@@ -649,14 +701,14 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # A value of 0 stays 0. Anything else turns into 255.
   #
-  # image - object
+  # image - [img::new]
   #
-  # The `ceil` proc takes an image and replaces all pixels that are
+  # The *pix::img::ceil* proc takes an image and replaces all pixels that are
   # not fully transparent (i.e. have an alpha of 0) with a pixel that
   # is fully opaque (i.e. has an alpha of 255). This is useful for
   # creating masks from images.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -677,12 +729,12 @@ proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Call the `diff` method on the master image, passing the image to
-  # compare to the master image. The `diff` method returns a tuple
-  # with two elements:
+  # Call this proc on the master image, passing the image to
+  # compare to the master image. The *pix::img::diff* method returns a dict
+  # with two elements.
   #
-  # masterimage - object
-  # image       - object
+  # masterimage - [img::new]
+  # image       - [img::new]
   #
   # 1. A cdouble representing the difference score between the two
   # images. This score is 0 if the images are identical, and 1 if the
@@ -696,7 +748,7 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # images. The difference image will have the same format as the
   # input images.
   #
-  # Returns Tcl dict (score, imgdiff object).
+  # Returns: A Tcl dictionary with keys (score, imgdiff).
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<masterimg> <img>")
     return Tcl.ERROR
@@ -739,9 +791,9 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # As a result, the left and right sides of the image are swapped.
   # This operation is useful for creating mirror images or for certain graphical effects.
   #
-  # image - object
+  # image - [img::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -764,12 +816,12 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # This method modifies the image in place, flipping it around the X-axis.
   #
-  # image - object
+  # image - [img::new]
   #
   # As a result, the top and bottom sides of the image are swapped.
   # This operation is useful for creating mirror images or for certain graphical effects.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -792,10 +844,11 @@ proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a color at (x, y) or returns transparent black if outside of bounds.
   #
-  # image        - object
+  # image        - [img::new]
   # coordinates  - list x,y
   #
-  # Returns Tcl dict (r, g, b, a).
+  # Returns: A Tcl dictionary with keys (r, g, b, a) representing
+  # the red, green, blue, and alpha (opacity) values of the pixel color.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
     return Tcl.ERROR
@@ -833,7 +886,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Returns true if (x, y) is inside the image, false otherwise.
   #
-  # image        - object
+  # image        - [img::new]
   # coordinates  - list x,y
   #
   if objc != 3:
@@ -865,7 +918,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Inverts all of the colors and alpha.
   #
-  # image - object
+  # image - [img::new]
   #
   # This will flip the image by changing the color and alpha of every pixel.
   # The result will be a new image where every pixel is the exact opposite of
@@ -875,9 +928,9 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # will be entirely black. If the original image is entirely black, the
   # resulting image will be entirely white.
   # This is useful for things like getting the negative of an image, or
-  # creating a "reverse" version of an image.
+  # creating a **reverse** version of an image.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -901,9 +954,9 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if the entire image is the same color.
   #
-  # image - object
+  # image - [img::new]
   #
-  # Returns true, false otherwise.
+  # Returns: A Tcl boolean value.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -928,9 +981,9 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if the entire image is opaque (alpha values are all 255).
   #
-  # image - object
+  # image - [img::new]
   #
-  # Returns true, false otherwise.
+  # Returns: A Tcl boolean value.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -955,7 +1008,7 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks if this image is fully transparent or not.
   #
-  # image - object
+  # image - [img::new]
   #
   # Returns true, false otherwise.
   if objc != 2:
@@ -982,13 +1035,13 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Scales image up by 2 ^ power.
   #
-  # image  - object
+  # image  - [img::new]
   # power  - integer value (optional:1)
   #
   # If only one argument is given (i.e. the image object), just magnify by 2.
   # This is a convenience for the user.
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   var
     power: int = 1
     newimg: pixie.Image
@@ -1030,14 +1083,14 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Scales the image down by an integer scale.
   #
-  # image  - object
+  # image  - [img::new]
   # power  - integer value (optional:1)
   #
   # We were given an integer power as an argument, so we call
   # img.minifyBy2() with that power. This will scale the image
   # down by 2^power.
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   var
     power: int = 1
     newimg: pixie.Image
@@ -1077,14 +1130,14 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks the bounds of opaque pixels.
   #
-  # image - object
+  # image - [img::new]
   #
   # Some images have transparency around them,
   # use this to find just the visible part of the image and then use subImage to cut
   # it out. Returns zero rect if whole image is transparent,
   # or just the size of the image if no edge is transparent.
   #
-  # Returns Tcl dict (x, y, w, h).
+  # Returns A Tcl dictionary with keys *(x, y, w, h)*.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -1116,9 +1169,9 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Rotates the image 90 degrees clockwise.
   #
-  # image - object
+  # image - [img::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>")
     return Tcl.ERROR
@@ -1141,14 +1194,14 @@ proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets a sub image from this image.
   #
-  # image        - object
+  # image        - [img::new]
   # coordinates  - list x,y
   # size         - list width,height
   #
   # The subImage function extracts a portion of the original image starting at (x, y) 
   # and spanning the width and height specified.
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
     return Tcl.ERROR
@@ -1189,7 +1242,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Either cuts a sub image or returns a super image with padded transparency.
   #
-  # image        - object
+  # image        - [img::new]
   # coordinates  - list x,y
   # size         - list width,height
   #
@@ -1203,7 +1256,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # If the resulting super image is different from the original image, a new image is created.
   # If the resulting super image is the same as the original image, the original image is returned.
   #
-  # Returns a 'new' img object.
+  # Returns: A *new* [img] object.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y} {width height}")
     return Tcl.ERROR
@@ -1242,10 +1295,10 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills with the Paint gradient.
   #
-  # image  - object
-  # paint  - object
+  # image  - [img::new]
+  # paint  - [paint::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> <paint>")
     return Tcl.ERROR
@@ -1274,15 +1327,32 @@ proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Strocks image text.
+  # This procedure is responsible for rendering text onto an image with various styling options.
   #
-  # image       - object
-  # object      - arrangement object or font object
-  # text        - string if `object` is font object
-  # arroptions  - dict (transform:list, strokeWidth:double, lineCap:enum, lineJoin:enum, miterLimit:double, dashes:list) (optional)
-  # fontoptions - dict (transform:list, bounds:list, hAlign:enum, vAlign:enum) (optional)
+  # image       - [img].
+  # object      - This can either be a 'arrangement' or a [font] object.
+  # text        - If the object is a [font] object, this parameter is the text string that needs to be rendered on the image.
+  # options     - Check out the description below.
   #
-  # Returns nothing.
+  # * *arroptions*  : (Optional) A Tcl dictionary that contains various attributes for styling the text stroke. 
+  #                 These attributes include:<br>
+  #                 #Begintable
+  #                 **transform**   : A list representing a transformation matrix to apply.
+  #                 **strokeWidth** : A double value specifying the width of the stroke.
+  #                 **lineCap**     : An enumeration value describing the shape of the stroke's end caps.
+  #                 **lineJoin**    : An enumeration value for the shape of the corners in joined lines.
+  #                 **miterLimit**  : A double value that limits the length of the miter when lineJoin is set to 'MiterJoin'.
+  #                 **dashes**      : A list indicating the pattern for dashed lines.
+  #                 #EndTable
+  # * *fontoptions* : (Optional) A Tcl dictionary that provides additional styling options specific to the font rendering process:<br>
+  #                 #Begintable
+  #                 **transform** : A list for a transformation matrix to apply to the text.
+  #                 **bounds**    : A list defining the bounding box for the text rendering region.
+  #                 **hAlign**    : An enumeration for horizontal alignment of the text.
+  #                 **vAlign**    : An enumeration for vertical alignment of the text.
+  #                 #EndTable
+  #
+  # Returns: Nothing.
   if objc notin (3..5):
     let errMsg = "<img> <arrangement> {?transform ?value ?strokeWidth ?value ?lineCap ?value " &
     "?lineJoin ?value ?miterLimit ?value ?dashes ?value} or " &
@@ -1359,10 +1429,10 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Save image file.
   #
-  # image    - object
+  # image    - [img::new]
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> filePath")
     return Tcl.ERROR
@@ -1387,22 +1457,18 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Destroy current image or all images if special word `all` is specified.
   #
-  # value - image object or string
+  # value - [img::new] object or string
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>|string('all')")
     return Tcl.ERROR
 
   let arg1 = $Tcl.GetString(objv[1])
-
-  try:
-    # Image
-    if arg1 == "all":
-      imgTable.clear()
-    else:
-      imgTable.del(arg1)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Image
+  if arg1 == "all":
+    imgTable.clear()
+  else:
+    imgTable.del(arg1)
 
   return Tcl.OK

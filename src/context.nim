@@ -5,9 +5,9 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # Sets a new context.
   #
   # size  - list width,height
-  # value - string color or image object (optional:none)
+  # value - string [color] or [img::new] (optional:none)
   #
-  # Returns a 'new' context object.
+  # Returns: A *new* [ctx] object.
   var 
     width, height: int
     img: pixie.Image
@@ -64,19 +64,13 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets color style current context.
   #
-  # context - object
-  # color   - string
-  #
-  # The color is set from the string argument provided.
-  # The string should be in the format of a HTML color
-  # (i.e. "#rrggbb" or "rgb(r,g,b)" or "rgba(r,g,b,a)")
-  # where 'r', 'g', 'b' are the red, green and blue color
-  # values and 'a' is the alpha value (for transparency).
+  # context - [ctx::new]
+  # color   - string [color]
   #
   # If the string is not in the correct format, an error
   # will be generated.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> color")
     return Tcl.ERROR
@@ -101,14 +95,14 @@ proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # Saves the entire state of the context  
   # by pushing the current state onto a stack.
   #
-  # context - object
+  # context - [ctx::new]
   #
-  # The save() procedure adds the current context state
+  # The *pix::ctx::save* procedure adds the current context state
   # to the stack, and the restore() procedure pops the
   # top context state from the stack and restores
   # the context state to the top state.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -131,13 +125,13 @@ proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_textBaseline(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Set the base line alignment for the current context.
   #
-  # context           - object
-  # BaselineAlignment - Enum value
+  # context           - [ctx::new]
+  # baselineAlignment - Enum value
   #
-  # Parse the second argument as an enum value of type BaselineAlignment.
+  # Parse the second argument as an enum value of type `BaselineAlignment`.
   # This value tells us how to align the text baseline.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> enum=BaselineAlignment")
     return Tcl.ERROR
@@ -164,9 +158,9 @@ proc pix_ctx_restore(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # Restores the most recently saved context state by popping the top entry
   # in the drawing state stack. If there is no saved state, this method does nothing.
   #
-  # context - object
+  # context - [ctx::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -191,9 +185,9 @@ proc pix_ctx_saveLayer(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # and allocates a new image layer for subsequent drawing. Calling restore blends
   # the current layer image onto the prior layer or root image.
   #
-  # context - object
+  # context - [ctx::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -217,16 +211,16 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # Strokes a segment (draws a line from ax, ay to bx, by) according to
   # the current strokeStyle and other context settings.
   #
-  # context       - object
+  # context       - [ctx::new]
   # coordinates1  - list x,y
   # coordinates2  - list x1,y1
   #
   # Create a segment using the start and stop vectors
-  # 'start' is the beginning point of the segment (x, y)
+  # 'start' is the beginning point of the segment *(x, y)*
   # 'stop' is the end point of the segment (x1, y1)
   # The segment represents a line that will be drawn from start to stop
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {x1 y1}")
     return Tcl.ERROR
@@ -264,11 +258,11 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # Draws a rectangle that is stroked (outlined) according to the
   # current strokeStyle and other context settings.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - list width,height
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -305,11 +299,11 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # The starting point is the latest point in the current path,
   # which can be changed using moveTo() before creating the quadratic Bézier curve.
   #
-  # context       - object
+  # context       - [ctx::new]
   # coordinates1  - list cpx,cpy
   # coordinates2  - list x,y
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cpx cpy} {x y}")
     return Tcl.ERROR
@@ -342,14 +336,14 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circular arc to the current sub-path.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # radius      - double value
   # angleStart  - double value (radian)
   # angleEnd    - double value (radian)
   # ccw         - boolean value (optional:false)
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, r, a0, a1: cdouble
     clockcw: int
@@ -392,12 +386,12 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circular arc using the given control points and radius.
   #
-  # context       - object
+  # context       - [ctx::new]
   # coordinates1  - list x1,y1
   # coordinates2  - list x2,y2
   # radius        - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x1 y1} {x2 y2} radius")
     return Tcl.ERROR
@@ -437,12 +431,12 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # The starting point is the latest point in the current path,
   # which can be changed using moveTo() before creating the Bézier curve.
   #
-  # context      - object
+  # context      - [ctx::new]
   # coordinates1 - list cp1x,cp1y
   # coordinates2 - list cp2x,cp2y
   # coordinates3 - list x,y
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cp1x cp1y} {cp2x cp2y} {x y}")
     return Tcl.ERROR
@@ -479,11 +473,11 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a circle to the current path.
   #
-  # context      - object
+  # context      - [ctx::new]
   # coordinates  - list cx,cy
   # radius       - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
     return Tcl.ERROR
@@ -517,11 +511,11 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # The previous clipping region, if any, is intersected
   # with the current or given path to create the new clipping region.
   #
-  # context     - object
-  # path        - object (optional)
-  # WindingRule - Enum value (optional:NonZero)
+  # context     - [ctx::new]
+  # path        - [path::new] (optional)
+  # windingRule - Enum value (optional:NonZero)
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc notin (2..4):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> ?<path>:optional ?enum=WindingRule:optional")
     return Tcl.ERROR
@@ -562,10 +556,10 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Information about the measured text.
   #
-  # context  - object
+  # context  - [ctx::new]
   # text     - string
   #
-  # Returns a TextMetrics object that contains information
+  # Returns: A Tcl dict that contains information
   # about the measured text (such as its width, for example).
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text")
@@ -595,9 +589,9 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Resets the current transform to the identity matrix.
   #
-  # context - object
+  # context - [ctx::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -620,19 +614,32 @@ proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a source image onto the destination image.
   #
-  # context  - object
-  # image    - object
-  # args     - options described below:
+  # context  - [ctx::new]
+  # image    - [img::new]
+  # options  - See description below:
   #
-  # destination                                 - list destination coordinates dx,dy <br>
-  # destinationXY+destinationWH                 - list destination coordinates dx,dy <br>
-  #                                               list destination size dw,dh <br>
-  # source+sourceWH+destinationXY+destinationWH - list source coordinates sx,sy <br>
-  #                                               list source size sW,SH <br>
-  #                                               list destination coordinates dx,dy <br>
-  #                                               list destination size dw,dh
+  # There are 3 ways to use this proc:
   #
-  # Returns nothing.
+  # 1. With simple destination:<br>
+  # #Begintable
+  # **destinationXY** :A list destination coordinates dx,dy.
+  # #EndTable
+  #
+  # 2. With destination + size destination:<br>
+  # #Begintable
+  # **destinationXY** :A list destination coordinates dx,dy.
+  # **destinationWH** :A list destination size dw,dh.
+  # #EndTable
+  #
+  # 3. With source + size source + destination + size destination:<br>
+  # #Begintable
+  # **source**         :A list source coordinates sx,sy.
+  # **sourceWH**       :A list source size sW,SH .
+  # **destinationXY**  :A list destination coordinates dx,dy.
+  # **destinationWH**  :A list destination size dw,dh.
+  # #EndTable
+  #
+  # Returns: Nothing.
   if objc != 4 and objc != 5 and objc != 7:
     let errMsg = "<ctx> <img> {dx dy} or " &
     "<ctx> <img> {dx dy} {dWidth dHeight} or " &
@@ -716,12 +723,12 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds an ellipse to the current sub-path.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # radiusx     - double value
   # radiusy     - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
     return Tcl.ERROR
@@ -756,12 +763,12 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # Draws an ellipse that is stroked (outlined) according
   # to the current strokeStyle and other context settings.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # radiusx     - double value
   # radiusy     - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
     return Tcl.ERROR
@@ -795,21 +802,25 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Overrides the transform matrix being applied to the context.
   #
-  # context   - object
+  # context   - [ctx::new]
   # matrix3x3 - list
   #
   # If you want to save the current transform matrix, you can get it by calling
-  # `pix::ctx::getTransform` and later restore it using `pix::ct::setTransform`.
+  # *pix::ctx::getTransform* and later restore it using *pix::ct::setTransform*.
   # If you want to add a new transform to the current transform matrix, use
-  # `pix::ctx::transform` instead.
+  # *pix::ctx::transform* instead.
   #
   # The matrix is a list of 9 values representing a 3x3 matrix.
   # The values are in row-major order:<br>
-  # a b c<br>
-  # d e f<br>
-  # g h i<br>
+  #```
+  # set matrix {
+  #   a b c
+  #   d e f
+  #   g h i
+  # }
+  #```
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> matrix3x3")
     return Tcl.ERROR
@@ -838,7 +849,7 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # Multiplies the current transform with the matrix
   # described by the arguments of this method.
   #
-  # context   - object
+  # context   - [ctx::new]
   # matrix3x3 - list
   #
   # This is useful if you want to add a new transform
@@ -846,17 +857,17 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # the current transform matrix.
   #
   # For example, if you have set a transform matrix
-  # using `pix::ctx::setTransform` and later want to
+  # using *pix::ctx::setTransform* and later want to
   # add a rotation to the current transform matrix,
-  # you can use `pix::ctx::transform` to add the rotation
+  # you can use *pix::ctx::transform* to add the rotation
   # to the current transform matrix.
   #
   # Another example is if you want to add a scale
   # to the current transform matrix, you can use
-  # `pix::ctx::transform` to add the scale to the current
+  # *pix::ctx::transform* to add the scale to the current
   # transform matrix.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> matrix3x3")
     return Tcl.ERROR
@@ -884,14 +895,14 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rotation to the transformation matrix.
   #
-  # context - object
-  # angle  - double value (radian)
+  # context - [ctx::new]
+  # angle   - double value (radian)
   #
   # The rotation is around the origin (0,0).
   # The rotation is counterclockwise.
   # The angle is in radians.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> angle")
     return Tcl.ERROR
@@ -919,18 +930,20 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a translation transformation to the current matrix.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   #
-  # The translation is by the given (x, y) vector in the current
+  # The translation is by the given *(x, y)* vector in the current
   # coordinate system.
   #
-  # This is the same as ctx.transform = ctx.transform.translate(vec2(x, y))
-  # or ctx.transform = ctx.transform * Mat3.translation(vec2(x, y))
+  # This is the same:
+  #```
+  # ctx.transform = ctx.transform.translate(vec2(x, y))
+  # Or:
+  # ctx.transform = ctx.transform * Mat3.translation(vec2(x, y))
+  #```
   #
-  # This is the same as ctx.translate(x, y) in the C++ API.
-  #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -960,15 +973,13 @@ proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Parse the string as an enum value of type LineJoin
   # and assign it to the lineJoin property of the context.
   #
-  # context  - object
-  # LineJoin - Enum value
-  #
-  # This is the same as ctx.lineJoin = LineJoin.arg2 in the C++ API.
+  # context  - [ctx::new]
+  # lineJoin - Enum value
   #
   # The parseEnum function will raise an exception if the string is not a valid
   # enum value.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> enum=LineJoin")
     return Tcl.ERROR
@@ -994,17 +1005,17 @@ proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills the path with the current fillStyle.
   #
-  # context     - object
-  # path        - object (optional)
-  # WindingRule - Enum value (optional:NonZero)
+  # context     - [ctx::new]
+  # path        - [path::new] or string path (optional)
+  # windingRule - Enum value (optional:NonZero)
   #
-  # If no path is specified, then call 'pix::ctx::fill $ctx' with no arguments.
-  # This will fill the current path with the current fillStyle.
-  # If no fillStyle has been set, it will default to Color(0.0, 0.0, 0.0, 1.0).
+  # If no path is specified, then call *pix::ctx::fill $ctx* with no arguments.
+  # This will fill the current path with the current fillStyle.<br>
+  # If no fillStyle has been set, it will default to *Color(0.0, 0.0, 0.0, 1.0)*.
   # If no path has been set, it will default to an empty path.
   # If no winding rule has been set, it will default to NonZero.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc notin (2..4):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> ?<path>:optional ?enum=WindingRule:optional")
     return Tcl.ERROR
@@ -1054,11 +1065,11 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a rectangle to the current path.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - list width,height
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -1092,11 +1103,11 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rectangle that is filled according to the current fillStyle.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - list width,height
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -1130,12 +1141,12 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rectangle with rounded corners that is filled according to the current fillStyle.
   #
-  # context      - object
+  # context      - [ctx::new]
   # coordinates  - list x,y
-  # size         - list
-  # radius       - list (nw, ne, se, sw)
+  # size         - list width,height
+  # radius       - list {nw ne se sw}
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, width, height: cdouble
     nw, ne, se, sw: cdouble
@@ -1186,12 +1197,12 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a rounded rectangle that is filled according to the current fillStyle.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - list width,height
-  # radius      - double value or list radius (nw, ne, se, sw)
+  # radius      - double value or list radius {nw ne se sw}
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, width, height: cdouble
     radius, nw, ne, se, sw: cdouble
@@ -1257,12 +1268,12 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   # Draws a rounded rectangle that is stroked (outlined) according
   # to the current strokeStyle and other context settings.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - list width,height
-  # radius      - double value or list radius (nw, ne, se, sw)
+  # radius      - double value or list radius {nw ne se sw}
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, width, height: cdouble
     radius, nw, ne, se, sw: cdouble
@@ -1327,11 +1338,11 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Erases the pixels in a rectangular area.
   #
-  # context      - object
+  # context      - [ctx::new]
   # coordinates  - list x,y
   # size         - list width,height
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height}")
     return Tcl.ERROR
@@ -1365,10 +1376,10 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills current style.
   #
-  # context - object
-  # value   - paint object or string color
+  # context - [ctx::new]
+  # value   - [paint::new] or string [color]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> color|<paint>")
     return Tcl.ERROR
@@ -1401,14 +1412,14 @@ proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets color alpha.
   #
-  # context - object
+  # context - [ctx::new]
   # alpha   - double value
   #
   # This determines the transparency level of the drawing operations.
   # The alpha value must be a floating-point number between 0.0 (completely transparent)
   # and 1.0 (completely opaque).
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> alpha")
     return Tcl.ERROR
@@ -1437,22 +1448,22 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   return Tcl.OK
 
 proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Begins a new sub-path at the point (x, y).
+  # Begins a new sub-path at the point *(x, y)*.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   #
   # This is a fundamental operation,
-  # it clears the current path and starts a new path at the point given.
+  # it clears the current path and starts a new path at the point given.<br>
   # The subsequent path operations are all relative to this point.
-  # The point is the starting point of the new path that is being built.
-  # The point is used as the first point of the path that is being built.
-  # The point is used as the reference point for all of the relative path
+  # * The point is the starting point of the new path that is being built.
+  # * The point is used as the first point of the path that is being built.
+  # * The point is used as the reference point for all of the relative path
   # operations, such as lineTo, curveTo, and arc.
-  # The point is used as the starting point for the built path.
-  # The point should be the first point that is used in the path.
+  # * The point is used as the starting point for the built path.
+  # * The point should be the first point that is used in the path.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1483,11 +1494,11 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # Checks whether or not the specified point is inside the area
   # contained by the stroking of a path.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
-  # path        - object (optional)
+  # path        - [path::new] (optional)
   #
-  # Returns true, false otherwise.
+  # Returns: A Tcl boolean value.
   var
     x, y: cdouble
     value: int = 0
@@ -1536,12 +1547,12 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Checks whether or not the specified point is contained in the current path.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
-  # path        - object (optional)
-  # WindingRule - Enum value (optional:NonZero)
+  # path        - [path::new] (optional)
+  # windingRule - Enum value (optional:NonZero)
   #
-  # Returns true, false otherwise.
+  # Returns: A Tcl boolean value.
   var
     x, y: cdouble
     value: int = 0
@@ -1605,9 +1616,9 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
 proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a straight line to the current sub-path by connecting
-  # the sub-path's last point to the specified (x, y) coordinates.
+  # the sub-path's last point to the specified *(x, y)* coordinates.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   #
   # The lineTo method can be called multiple times to draw multiple lines.
@@ -1617,17 +1628,18 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # For example, to draw a square with the top-left corner at (10, 10)
   # and the bottom-right corner at (20, 20), you can use the following
   # code:
-  #
-  #   pix::ctx::moveTo $ctx {10 10}
-  #   pix::ctx::lineTo $ctx {20 10}
-  #   pix::ctx::lineTo $ctx {20 20}
-  #   pix::ctx::lineTo $ctx {10 20}
-  #   pix::ctx::stroke $ctx
+  #```
+  # pix::ctx::moveTo $ctx {10 10}
+  # pix::ctx::lineTo $ctx {20 10}
+  # pix::ctx::lineTo $ctx {20 20}
+  # pix::ctx::lineTo $ctx {10 20}
+  # pix::ctx::stroke $ctx
+  #```
   #
   # This code will draw a square with the top-left corner at (10, 10)
   # and the bottom-right corner at (20, 20).
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1656,10 +1668,10 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Strokes (outlines) the current or given path with the current strokeStyle.
   #
-  # context - object
-  # path    - object (optional)
+  # context - [ctx::new]
+  # path    - [path::new] (optional)
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc notin (2..3):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> ?<path>:optional")
     return Tcl.ERROR
@@ -1693,10 +1705,10 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Adds a scaling transformation to the context units horizontally and/or vertically.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y}")
     return Tcl.ERROR
@@ -1725,21 +1737,21 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Save context to image file.
   #
-  # context  - object
+  # context  - [ctx::new]
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # The context is rendered into an image which is then saved to the
-  # file specified by `filePath`.
-  #
+  # file specified by $filePath.<br>
   # Therefore, it's generally safer to specify the format separately
   # from the file name, like so:
-  #
-  #   pix::ctx::writeFile $ctx "image.png"
+  #```
+  # pix::ctx::writeFile $ctx 'image.png'
+  #```
   #
   # This ensures that the image is saved in the correct format regardless
   # of the current format of the context.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> filePath")
     return Tcl.ERROR
@@ -1764,12 +1776,12 @@ proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_beginPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Starts a new path by emptying the list of sub-paths.
   #
-  # context - object
+  # context - [ctx::new]
   #
   # Begin a new path by clearing any existing sub-paths in the context.
   # This is typically used to start drawing a new shape or path.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -1794,9 +1806,9 @@ proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # the start of the current sub-path. If the shape has already been
   # closed or has only one point, this function does nothing.
   #
-  # context - object
+  # context - [ctx::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -1819,10 +1831,10 @@ proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets line width for current context.
   #
-  # context - object
+  # context - [ctx::new]
   # width   - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> width")
     return Tcl.ERROR
@@ -1849,10 +1861,10 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font for current context.
   #
-  # context  - object
+  # context  - [ctx::new]
   # filepath - string
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> filepath")
     return Tcl.ERROR
@@ -1875,10 +1887,10 @@ proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font size for current context.
   #
-  # context - object
+  # context - [ctx::new]
   # size    - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> size")
     return Tcl.ERROR
@@ -1906,11 +1918,11 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Draws a text string at the specified coordinates,
   # filling the string's characters with the current fillStyle.
   #
-  # context     - object
+  # context     - [ctx::new]
   # text        - string
   # coordinates - list x,y
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> text {x y}")
     return Tcl.ERROR
@@ -1941,11 +1953,11 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws a circle that is filled according to the current fillStyle
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list cx,cy
   # radius      - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
     return Tcl.ERROR
@@ -1982,12 +1994,12 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws an ellipse that is filled according to the current fillStyle.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # radiusx     - double value
   # radiusy     - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} rx ry")
     return Tcl.ERROR
@@ -2018,14 +2030,15 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   return Tcl.OK
 
 proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Draws an n-sided regular polygon at (x, y) of size that is filled according to the current fillStyle.
+  # Draws an n-sided regular polygon at *(x, y)* of size that is 
+  # filled according to the current fillStyle.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - double value
   # sides       - integer value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, size: cdouble
     sides: int
@@ -2058,14 +2071,14 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   return Tcl.OK
 
 proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Adds an n-sided regular polygon at (x, y) of size to the current path.
+  # Adds an n-sided regular polygon at *(x, y)* of size to the current path.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - double value
   # sides       - integer value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, size: cdouble
     sides: int
@@ -2102,15 +2115,15 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   return Tcl.OK
 
 proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Draws an n-sided regular polygon at (x, y) of size that is stroked
+  # Draws an n-sided regular polygon at *(x, y)* of size that is stroked
   # (outlined) according to the current strokeStyle and other context settings.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list x,y
   # size        - double value
   # sides       - integer value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     x, y, size: cdouble
     sides: int
@@ -2150,11 +2163,11 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # Draws a circle that is stroked (outlined) according to the current
   # strokeStyle and other context settings.
   #
-  # context     - object
+  # context     - [ctx::new]
   # coordinates - list cx,cy
   # radius      - double value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {cx cy} radius")
     return Tcl.ERROR
@@ -2190,11 +2203,11 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws the outlines of the characters of a text string at the specified coordinates.
   #
-  # context     - object
+  # context     - [ctx::new]
   # text        - string
   # coordinates - list x,y
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> 'text' {x y}")
     return Tcl.ERROR
@@ -2225,10 +2238,10 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets text alignment.
   #
-  # context             - object
-  # HorizontalAlignment - Enum value
+  # context             - [ctx::new]
+  # horizontalAlignment - Enum value
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> enum=HorizontalAlignment")
     return Tcl.ERROR
@@ -2252,11 +2265,34 @@ proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   return Tcl.OK
 
 proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Gets information about context.
+  # Retrieves detailed information about the current context and returns it as a Tcl dictionary.
   #
-  # context - object
+  # context - [ctx::new]
   #
-  # Returns Tcl dict value.
+  # The dictionary includes:
+  #
+  # * **image**       : A nested Tcl dictionary with the following keys:
+  # #Begintable
+  #  **addr**         : A pointer to the raw image data.
+  #  **width**        : An integer representing the width of the image in pixels.
+  #  **height**       : An integer representing the height of the image in pixels.
+  # #EndTable
+  # * **globalAlpha** : A double value indicating the global alpha (transparency) level of the context.
+  #                    This affects the transparency of all drawing operations performed on the context.
+  # * **lineWidth**   : A double value specifying the current line width used for stroking operations.
+  #                    This determines the thickness of lines drawn in the context.
+  # * **lineCap**     : An enum value describing the style of the end caps for lines. Possible values include
+  #                    'ButtCap', 'RoundCap', and 'SquareCap', which define how the end points of lines are rendered.
+  # * **lineJoin**    : An enum value that indicates the style of the join between two lines. Options include
+  #                    'MiterJoin', 'RoundJoin', and 'BevelJoin', each affecting the appearance of corners where lines meet.
+  # * **miterLimit**  : A double value that sets the miter limit. This is relevant when 'lineJoin' is set to 'MiterJoin' and
+  #                    controls the maximum length of the miter. If the miter limit is exceeded, a bevel join is used instead.
+  # * **font**        : A string representing the font settings for text rendering in the context. This includes font family,
+  #                    size, weight, and style, and dictates how text appears when drawn onto the context.
+  #
+  # Returns: 
+  # A Tcl dictionary object that contains various properties (see above) of the context,
+  # which can be useful for introspection or debugging.
   let 
     dictObj       = Tcl.NewDictObj()
     dictImgObj    = Tcl.NewDictObj()
@@ -2314,10 +2350,10 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets line dash for current context.
   #
-  # context - object
+  # context - [ctx::new]
   # dashes  - list
   #
-  # Returns nothing.
+  # Returns: Nothing.
   var
     v: cdouble
     count: Tcl.Size
@@ -2354,7 +2390,7 @@ proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets matrix for current context.
   #
-  # context - object
+  # context - [ctx::new]
   #
   # The matrix is represented as a sequence of 3 sequences
   # of floats, where each inner sequence represents a row
@@ -2366,7 +2402,7 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # the third element represents the z component of the
   # transformation.
   #
-  # Returns list values.
+  # Returns: A matrix as Tcl list.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -2397,10 +2433,9 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets line dash for current context.
   #
-  # context - object
-  # values  - list
+  # context - [ctx::new]
   #
-  # Returns list values.
+  # Returns: A list with current values.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
@@ -2444,23 +2479,20 @@ proc pix_ctx_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
 proc pix_ctx_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Destroy current context or all contexts if special word `all` is specified.
+  # Destroy current [ctx] or all contexts if special word `all` is specified.
   #
-  # value - context object or string
+  # value - [ctx] or string value.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|string('all')")
     return Tcl.ERROR
 
   let arg1 = $Tcl.GetString(objv[1])
-
-  try:
-    if arg1 == "all":
-      ctxTable.clear()
-    else:
-      ctxTable.del(arg1)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Context
+  if arg1 == "all":
+    ctxTable.clear()
+  else:
+    ctxTable.del(arg1)
 
   return Tcl.OK

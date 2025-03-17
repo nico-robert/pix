@@ -13,7 +13,7 @@ proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # interp   - The Tcl interpreter.
   # errormsg - The error message.
   #
-  # Returns Tcl.ERROR on failure.
+  # Returns: Tcl.ERROR on failure.
   Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
 
   return Tcl.ERROR
@@ -105,7 +105,7 @@ proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   # obj         - The object to check.
   # colorSimple - The color to fill if the object is a color.
   #
-  # Returns true if the object is a color, false otherwise.
+  # Returns: True if the object is a color, false otherwise.
   var
     c: cdouble = 0
     count: Tcl.Size
@@ -137,7 +137,7 @@ proc parseColorRGBX*(s: string): ColorRGBX =
   #
   # s - The color to check.
   #
-  # Returns ColorRGBX .
+  # Returns: A color in ColorRGBX format.
   var
     color: array[4, uint8]
     start = 5  # Position after "rgbx("
@@ -163,7 +163,7 @@ proc getColor*(obj: Tcl.PObj): Color =
   #
   # obj - The color to check.
   #
-  # Returns Color object.
+  # Returns: A `Color` object.
 
   let scolor = strip($Tcl.GetString(obj))
   var color: Color
@@ -199,7 +199,7 @@ template toHexPtr*[T](obj: T): string =
   #
   # obj - The object to convert.
   #
-  # Returns a hexadecimal string.
+  # Returns: A hexadecimal string.
 
   let
     myPtr  = cast[pointer](obj)
@@ -232,7 +232,7 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
 # obj     - The Tcl object.
 # matrix3 - The matrix to fill with the values of the Tcl object.
 #
-# Returns Tcl.OK if successful, Tcl.ERROR otherwise.
+# Returns: Tcl.OK if successful, Tcl.ERROR otherwise.
   var
     count: Tcl.Size
     elements: Tcl.PPObj
@@ -260,11 +260,11 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
   return Tcl.OK
 
 proc colorHTMLtoRGBA*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Converts an HTML color to an RGBA.
+  # Converts an HTML color into an RGBA value and returns it as a Tcl list.
   #
-  # HTMLcolor  - string
+  # HTMLcolor - string
   #
-  # Returns a tcl list.
+  # Returns: A Tcl list.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "color")
     return Tcl.ERROR
@@ -287,11 +287,11 @@ proc colorHTMLtoRGBA*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Parse path object.
+  # Parse [path] object.
   #
-  # path  - path object
+  # path - [path::new]
   #
-  # Returns the parsed path to SVG style path (string).
+  # Returns: The parsed [path] to SVG style path (string).
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<path>")
     return Tcl.ERROR
@@ -314,11 +314,11 @@ proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Transforms a SVG style path (string) to a `path` object.
+  # Transforms a SVG style path (string) to a [path::new] object.
   #
-  # path  - string SVG style
+  # path - a string in SVG style.
   #
-  # Returns a 'new' path object.
+  # Returns: A *new* [path] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "string")
     return Tcl.ERROR
@@ -339,11 +339,11 @@ proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
 
 proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Convert an `image` object to base 64.
+  # Convert an [img] object to base 64.
   #
-  # object - `image` or `context` object
+  # object - [img] or [ctx] object.
   #
-  # Returns string.
+  # Returns: A string in `base64` format.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
     return Tcl.ERROR
@@ -371,9 +371,9 @@ proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   # Adds a rotation to the matrix.
   #
   # angle   - double value (radian)
-  # matrix  - list (matrix3x3: 9 values)
+  # matrix  - list (9 values matrix3x3)
   #
-  # Returns the matrix rotation as a list.
+  # Returns: The matrix rotation as a list.
   var
     matrix3: vmath.Mat3
     angle: cdouble
@@ -381,7 +381,7 @@ proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   let listobj = Tcl.NewListObj(0, nil)
 
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "angle 'list (matrix3x3: 9 values)'")
+    Tcl.WrongNumArgs(interp, 1, objv, "angle 'list (9 values matrix3x3)'")
     return Tcl.ERROR
 
   if Tcl.GetDoubleFromObj(interp, objv[1], angle) != Tcl.OK:

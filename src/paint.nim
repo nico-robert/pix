@@ -4,9 +4,9 @@
 proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets a new paint.
   #
-  # PaintKind - Enum value
+  # paintKind - Enum value
   #
-  # Returns a 'new' paint object.
+  # Returns: A *new* [paint] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "enum:PaintKind")
     return Tcl.ERROR
@@ -29,17 +29,20 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
 proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Configure paint object parameters.
   #
-  # paint - object
-  # args  - dict options described below:
-  #   image                   - object
-  #   imageMat                - list matrix
-  #   color                   - string color
-  #   blendMode               - Enum value
-  #   opacity                 - double value
-  #   gradientHandlePositions - list positions
-  #   gradientStops           - list color + positions
+  # paint   - [paint]
+  # options - A Tcl dict (options described below)
   #
-  # Returns nothing.
+  # #Begintable
+  #  **image**                   : A object [img].
+  #  **imageMat**                : A list matrix.
+  #  **color**                   : A string [color].
+  #  **blendMode**               : A Enum value.
+  #  **opacity**                 : A double value.
+  #  **gradientHandlePositions** : A list positions {{x y} {x y}}.
+  #  **gradientStops**           : A list [color] + color position (double value).
+  # #EndTable
+  #
+  # Returns: Nothing.
   var
     x, y, p, opacity: cdouble
     count, subcount, len: Tcl.Size
@@ -125,9 +128,9 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Create a new Paint with the same properties.
   #
-  # paint - object
+  # paint - [paint::new]
   #
-  # Returns a 'new' paint object.
+  # Returns: A *new* [paint] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<paint>")
     return Tcl.ERROR
@@ -155,10 +158,10 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Fills with the Paint gradient.
   #
-  # paint - object
-  # image - object
+  # paint - [paint::new]
+  # image - [img::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<paint> <img>")
     return Tcl.ERROR
@@ -186,24 +189,20 @@ proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Destroy current paint or all paints if special word `all` is specified.
+  # Destroy current [paint] or all paints if special word `all` is specified.
   #
-  # value - paint object or string
+  # value - [paint::new] object or string.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<paint>|string('all')")
     return Tcl.ERROR
 
   let arg1 = $Tcl.GetString(objv[1])
-
-  try:
-    # Paint
-    if arg1 == "all":
-      paintTable.clear()
-    else:
-      paintTable.del(arg1)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Paint
+  if arg1 == "all":
+    paintTable.clear()
+  else:
+    paintTable.del(arg1)
 
   return Tcl.OK

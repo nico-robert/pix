@@ -4,9 +4,10 @@
 proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Draws object to Tk photo.
   # 
-  # object - image or context
+  # object - [img] or [ctx] object.
+  # photo  - Tk photo variable.
   #
-  # Returns nothing.
+  # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>|<ctx> 'Tk photo'")
     return Tcl.ERROR

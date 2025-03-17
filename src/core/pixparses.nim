@@ -34,7 +34,7 @@ proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var int, errorMsg:
   # v1, v2    - The two integers to populate from the object.
   # errorMsg  - The error message to return if the object is not equal to 2.
   # 
-  # Returns if the object is a list of two integers, returns Tcl.OK (0).
+  # Returns: if the object is a list of two integers, returns Tcl.OK (0).
   # Otherwise, returns Tcl.ERROR (1).
   var
     count: Tcl.Size
@@ -61,7 +61,7 @@ proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, er
   # v1, v2    - The two doubles to populate from the object.
   # errorMsg  - The error message to return if the object is not equal to 2.
   # 
-  # Returns if the object is a list of two doubles, returns Tcl.OK (0).
+  # Returns: if the object is a list of two doubles, returns Tcl.OK (0).
   # Otherwise, returns Tcl.ERROR (1).
   var
     count: Tcl.Size
@@ -87,7 +87,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
   #  objv   - object options .
   #  opts   - RenderShadow object to populate.
   #
-  # Returns nothing or an exception if an error is found.
+  # Returns: Nothing or an exception if an error is found.
   var
     count: Tcl.Size
     elements: Tcl.PPObj
@@ -130,7 +130,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
   #  objv   - object options .
   #  opts   - RenderOptions object to populate.
   #
-  # Returns nothing or an exception if an error is found.
+  # Returns: Nothing or an exception if an error is found.
   var
     count, dashescount: Tcl.Size
     elements, dasheselements: Tcl.PPObj
@@ -180,7 +180,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
   #  objv   - object options .
   #  opts   - RenderOptions object to populate.
   #
-  # Returns nothing or an exception if an error is found.
+  # Returns: Nothing or an exception if an error is found.
   var
     count, dashescount: Tcl.Size
     elements, dasheselements: Tcl.PPObj
@@ -240,7 +240,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
   #  objv   - object options .
   #  opts   - RenderOptions object to populate.
   #
-  # Returns nothing or an exception if an error is found.
+  # Returns: Nothing or an exception if an error is found.
   var
     count: Tcl.Size
     elements: Tcl.PPObj
