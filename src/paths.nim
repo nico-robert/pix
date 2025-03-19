@@ -29,20 +29,12 @@ proc pix_path_addPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Path2
-  let arg2 = $Tcl.GetString(objv[2])
-
-  if not pixTables.hasPath(arg2):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg2 & "'")
-
-  let path2 = pixTables.getPath(arg2)
+  let path2 = pixTables.loadPath(interp, objv[2])
+  if path2.isNil: return Tcl.ERROR
 
   try:
     path.addPath(path2)
@@ -120,12 +112,8 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -164,15 +152,12 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var x1, y1, x2, y2, radius: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates1
+  var x1, y1, x2, y2, radius: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x1, y1, 
     "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
     return Tcl.ERROR
@@ -212,15 +197,12 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var x1, y1, x2, y2, x3, y3: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates1
+  var x1, y1, x2, y2, x3, y3: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x1, y1, 
     "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
     return Tcl.ERROR
@@ -254,15 +236,12 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var x, y: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -287,15 +266,12 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var x, y: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -320,12 +296,8 @@ proc pix_path_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   try:
     path.closePath()
@@ -344,21 +316,17 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # sides        - integer value
   #
   # Returns: Nothing.
-  var
-    x, y, size: cdouble
-    sides: int
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} size sides")
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  var
+    x, y, size: cdouble
+    sides: int
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -389,22 +357,18 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # ccw           - boolean value (optional:true)
   #
   # Returns: Nothing.
-  var
-    x, y, width, height: cdouble
-    clockcw: int
-    ccw: bool = true
-
   if objc notin (4..5):
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} ?ccw:optional")
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  var
+    x, y, width, height: cdouble
+    clockcw: int
+    ccw: bool = true
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -441,15 +405,12 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var cx, cy, radius: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates
+  var cx, cy, radius: cdouble
+
   if pixParses.getListDouble(interp, objv[2], cx, cy, 
     "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
@@ -480,46 +441,42 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # The overlap check is done with the given 'windingRule' argument,
   # which is a enum value. If the 'windingRule' argument is not given,
   # the default value 'NonZero' is used.
-  var
-    x, y: cdouble
-    value: int = 0
-    matrix3: vmath.Mat3
-
   if objc notin (3..5):
     let errMsg = "<path> {x y} or <path> {x y} 'matrix' or <path> {x y} 'matrix' enum:windingRule"
     Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  var
+    x, y: cdouble
+    value: int = 0
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
+  let windingRule = 
+    if objc == 5:
+      try:
+        parseEnum[WindingRule]($Tcl.GetString(objv[4]))
+      except Exception as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    else: 
+      NonZero
+    
+  var matrix3: vmath.Mat3 = mat3()
+
+  if objc in (4..5):
+    if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+
   try:
-    if objc == 3:
-      if path.fillOverlaps(vec2(x, y)): value = 1
-    elif objc == 4:
-      # Matrix 3x3 check
-      if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
-        return Tcl.ERROR
-      if path.fillOverlaps(vec2(x, y), transform = matrix3): value = 1
-    else:
-      # Matrix 3x3 check
-      if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
-        return Tcl.ERROR
-
-      let myEnum = parseEnum[WindingRule]($Tcl.GetString(objv[4]))
-
-      if path.fillOverlaps(vec2(x, y), transform = matrix3, windingRule = myEnum):
-         value = 1
+    if path.fillOverlaps(vec2(x, y), matrix3, windingRule):
+      value = 1
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -539,15 +496,12 @@ proc pix_path_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var matrix3: vmath.Mat3
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Matrix 3x3 check
+  var matrix3: vmath.Mat3
+
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
@@ -570,15 +524,12 @@ proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var matrix3: vmath.Mat3
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Matrix 3x3 check
+  var matrix3: vmath.Mat3
+
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
@@ -609,12 +560,8 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   let pathcopy = try:
     path.copy()
@@ -642,15 +589,12 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var x, y, rx, ry: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, rx, ry: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -679,21 +623,17 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   # coordinates         - list x,y 
   #
   # Returns: Nothing.
-  var
-    x, y, rx, ry, xAxisRotation: cdouble
-    largeA, sweepF: int
-
   if objc != 7:
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}")
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  var
+    x, y, rx, ry, xAxisRotation: cdouble
+    largeA, sweepF: int
 
   # Coordinates radius
   if pixParses.getListDouble(interp, objv[2], rx, ry, 
@@ -734,15 +674,12 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
-  var x1, y1, x2, y2: cdouble
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   # Coordinates1
+  var x1, y1, x2, y2: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x1, y1,
     "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
     return Tcl.ERROR
@@ -770,24 +707,20 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # ccw          - boolean value (optional:true)
   #
   # Returns: Nothing.
+  if objc notin (5..6):
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} {nw ne se sw} ?ccw:optional")
+    return Tcl.ERROR
+
+  # Path
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
+
   var
     x, y, width, height, nw, ne, se, sw: cdouble
     count: Tcl.Size
     clockcw: int
     ccw: bool = true
     elements: Tcl.PPObj
-
-  if objc notin (5..6):
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} {nw ne se sw} ?ccw:optional")
-    return Tcl.ERROR
-
-  # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y,
@@ -845,23 +778,18 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # contained by the stroking of a path. The point is considered
   # inside if it is contained in the stroked path and not in any
   # holes.
-  var
-    x, y: cdouble
-    value: int = 0
-
   if objc notin (3..4):
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} ?{key value key value ...}:optional")
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  var value: int = 0
 
   # Coordinates
+  var x, y: cdouble
   if pixParses.getListDouble(interp, objv[2], x, y,
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
