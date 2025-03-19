@@ -17,7 +17,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     return Tcl.ERROR
 
   if objc == 2:
-    # Image
+    # Image or size coordinates.
     let arg1 = $Tcl.GetString(objv[1])
     if pixTables.hasImage(arg1):
       img = pixTables.getImage(arg1)
@@ -65,29 +65,35 @@ proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # Sets color style current context.
   #
   # context - [ctx::new]
-  # color   - string [color]
+  # color   - [paint::new] or string [color]
   #
   # If the string is not in the correct format, an error
   # will be generated.
   #
   # Returns: Nothing.
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> color")
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> color|<paint>")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
+  # Paint or string [color].
+  let arg2 = $Tcl.GetString(objv[2])
 
-  let ctx = pixTables.getContext(arg1)
-
-  try:
-    # The color is set for the current context.
-    ctx.strokeStyle = SomePaint(pixUtils.getColor(objv[2]))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  if pixTables.hasPaint(arg2):
+    # Paint
+    try:
+      ctx.strokeStyle = pixTables.getPaint(arg2)
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  else:
+    # Color
+    try:
+      ctx.strokeStyle = pixUtils.getColor(objv[2])
+    except Exception as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -108,12 +114,8 @@ proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.save()
@@ -137,17 +139,11 @@ proc pix_ctx_textBaseline(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let
-    ctx = pixTables.getContext(arg1)
-    arg2 = $Tcl.GetString(objv[2])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
-    let baseline = parseEnum[BaselineAlignment](arg2)
+    let baseline = parseEnum[BaselineAlignment]($Tcl.GetString(objv[2]))
     ctx.textBaseline = baseline
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
@@ -166,12 +162,8 @@ proc pix_ctx_restore(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.restore()
@@ -193,12 +185,8 @@ proc pix_ctx_saveLayer(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.saveLayer()
@@ -226,15 +214,12 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, x1, y1: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates segment
+  var x, y, x1, y1: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates1' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -268,15 +253,12 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, width, height: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, width, height: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -309,15 +291,12 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, cpx, cpy: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, cpx, cpy: cdouble
+
   if pixParses.getListDouble(interp, objv[2], cpx, cpy, 
     "wrong # args: 'coordinates1' should be 'cpx' 'cpy'") != Tcl.OK:
     return Tcl.ERROR
@@ -344,24 +323,20 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # ccw         - boolean value (optional:false)
   #
   # Returns: Nothing.
-  var
-    x, y, r, a0, a1: cdouble
-    clockcw: int
-    ccw: bool = false
-
   if objc notin (6..7):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} r angleStart angleEnd ?ccw:optional")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var
+    x, y, r, a0, a1: cdouble
+    clockcw: int
+    ccw: bool = false
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -397,15 +372,12 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x1, y1, x2, y2, radius: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates1
+  var x1, y1, x2, y2, radius: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x1, y1, 
     "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
     return Tcl.ERROR
@@ -442,15 +414,12 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var cp1x, cp1y, cp2x, cp2y, x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var cp1x, cp1y, cp2x, cp2y, x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], cp1x, cp1y, 
     "wrong # args: 'coordinates1' should be 'cp1x' 'cp1y'") != Tcl.OK:
     return Tcl.ERROR
@@ -483,15 +452,12 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var cx, cy, radius: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var cx, cy, radius: cdouble
+
   if pixParses.getListDouble(interp, objv[2], cx, cy, 
     "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
@@ -521,14 +487,11 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let 
-    ctx = pixTables.getContext(arg1)
-    arg2 = $Tcl.GetString(objv[2])
+  # Path or Enum
+  let arg2 = $Tcl.GetString(objv[2])
 
   try:
     if objc == 3:
@@ -566,12 +529,9 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
   # Text
   let metrics = try:
     ctx.measureText($Tcl.GetString(objv[2]))
@@ -597,12 +557,8 @@ proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.resetTransform()
@@ -648,20 +604,13 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Image
-  let arg2 = $Tcl.GetString(objv[2])
+  let img = pixTables.loadImage(interp, objv[2])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg2):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
-
-  let img = pixTables.getImage(arg2)
   var dx, dy, dWidth, dHeight: cdouble
 
   if objc == 5:
@@ -734,15 +683,12 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, rx, ry: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, rx, ry: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -774,15 +720,12 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, rx, ry: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, rx, ry: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -826,15 +769,12 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var matrix3: vmath.Mat3
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Matrix 3x3 check
+  var matrix3: vmath.Mat3
+
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
@@ -873,15 +813,12 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var matrix3: vmath.Mat3
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Matrix 3x3 check
+  var matrix3: vmath.Mat3
+
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
@@ -908,15 +845,12 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var angle: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Angle
+  var angle: cdouble
+
   if Tcl.GetDoubleFromObj(interp, objv[2], angle) != Tcl.OK:
     return Tcl.ERROR
 
@@ -949,15 +883,12 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -985,18 +916,12 @@ proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-  # Enum
-  let arg2 = $Tcl.GetString(objv[2])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     # Enum
-    ctx.lineJoin = parseEnum[LineJoin](arg2)
+    ctx.lineJoin = parseEnum[LineJoin]($Tcl.GetString(objv[2]))
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -1021,12 +946,8 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   if objc == 3:
     # Path
@@ -1045,10 +966,8 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   elif objc == 4:
     # Path + Enum
-    let arg2 = $Tcl.GetString(objv[2])
-    if not pixTables.hasPath(arg2):
-      return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg2 & "'")
-    let path = pixTables.getPath(arg2)
+    let path = pixTables.loadPath(interp, objv[2])
+    if paint.isNil: return Tcl.ERROR
     try:
       ctx.fill(path, parseEnum[WindingRule]($Tcl.GetString(objv[3])))
     except Exception as e:
@@ -1075,15 +994,12 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, width, height: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, width, height: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1113,15 +1029,12 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, width, height: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, width, height: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1147,23 +1060,19 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # radius       - list {nw ne se sw}
   #
   # Returns: Nothing.
-  var
-    x, y, width, height: cdouble
-    nw, ne, se, sw: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} {nw ne se sw}")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y, width, height: cdouble
+    nw, ne, se, sw: cdouble
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1203,23 +1112,19 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # radius      - double value or list radius {nw ne se sw}
   #
   # Returns: Nothing.
-  var
-    x, y, width, height: cdouble
-    radius, nw, ne, se, sw: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y, width, height: cdouble
+    radius, nw, ne, se, sw: cdouble
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1274,23 +1179,19 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   # radius      - double value or list radius {nw ne se sw}
   #
   # Returns: Nothing.
-  var
-    x, y, width, height: cdouble
-    radius, nw, ne, se, sw: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y, width, height: cdouble
+    radius, nw, ne, se, sw: cdouble
+    count: Tcl.Size
+    elements: Tcl.PPObj
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1348,15 +1249,12 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, width, height: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, width, height: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1385,14 +1283,11 @@ proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let 
-    ctx  = pixTables.getContext(arg1)
-    arg2 = $Tcl.GetString(objv[2])
+  # Paint or string [color].
+  let arg2 = $Tcl.GetString(objv[2])
 
   if pixTables.hasPaint(arg2):
     # Paint
@@ -1425,12 +1320,10 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  # Alpha
   var alpha: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], alpha) != Tcl.OK:
@@ -1469,15 +1362,12 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1499,21 +1389,17 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # path        - [path::new] (optional)
   #
   # Returns: A Tcl boolean value.
-  var
-    x, y: cdouble
-    value: int = 0
-
   if objc notin (3..4):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} ?<path>:optional")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y: cdouble
+    value: int = 0
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1522,13 +1408,8 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   if objc == 4:
     # Path
-    let arg3 = $Tcl.GetString(objv[3])
-
-    if not pixTables.hasPath(arg3):
-      return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg3 & "'")
-
-    let path = pixTables.getPath(arg3)
-
+    let path = pixTables.loadPath(interp, objv[3])
+    if paint.isNil: return Tcl.ERROR
     try:
       if ctx.isPointInStroke(path, x, y): value = 1
     except Exception as e:
@@ -1553,27 +1434,24 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # windingRule - Enum value (optional:NonZero)
   #
   # Returns: A Tcl boolean value.
-  var
-    x, y: cdouble
-    value: int = 0
-
   if objc notin (3..5):
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} ?<path>:optional ?enum=WindingRule:optional")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y: cdouble
+    value: int = 0
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
+  # Path or Enum value.
   let arg3 = $Tcl.GetString(objv[3])
 
   if objc == 4:
@@ -1594,11 +1472,11 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   elif objc == 5:
     # Enum + Path
-    if not pixTables.hasPath(arg3):
-      return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg3 & "'")
+    let path = pixTables.loadPath(interp, objv[3])
+    if path.isNil: return Tcl.ERROR
     try:
       if ctx.isPointInPath(
-        pixTables.getPath(arg3),
+        path,
         x, y,
         windingRule = parseEnum[WindingRule]($Tcl.GetString(objv[4]))
       ): value = 1
@@ -1645,15 +1523,12 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1677,21 +1552,16 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   if objc == 3:
     # Path
-    let arg2 = $Tcl.GetString(objv[2])
-    if not pixTables.hasPath(arg2):
-      return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg2 & "'")
+    let path = pixTables.loadPath(interp, objv[2])
+    if paint.isNil: return Tcl.ERROR
 
     try:
-      ctx.stroke(pixTables.getPath(arg2))
+      ctx.stroke(path)
     except Exception as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
@@ -1714,15 +1584,12 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1757,17 +1624,12 @@ proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let 
-    ctx  = pixTables.getContext(arg1)
-    file = $Tcl.GetString(objv[2])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
-    ctx.image.writeFile(file)
+    # File
+    ctx.image.writeFile($Tcl.GetString(objv[2]))
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -1787,12 +1649,8 @@ proc pix_ctx_beginPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.beginPath()
@@ -1814,12 +1672,8 @@ proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.closePath()
@@ -1840,12 +1694,10 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  # LineWidth
   var width: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], width) != Tcl.OK:
@@ -1870,12 +1722,8 @@ proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     ctx.font = $Tcl.GetString(objv[2])
@@ -1896,12 +1744,10 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  # Context font size.
   var fsize: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
@@ -1928,23 +1774,18 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let 
-    ctx  = pixTables.getContext(arg1)
-    text = $Tcl.GetString(objv[2])
-  var x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[3], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
   try:
-    ctx.fillText(text, x, y)
+    ctx.fillText($Tcl.GetString(objv[2]), x, y)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -1963,15 +1804,12 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var cx, cy, radius: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var cx, cy, radius: cdouble
+
   if pixParses.getListDouble(interp, objv[2], cx, cy, 
     "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
@@ -2005,15 +1843,12 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var x, y, rx, ry: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, rx, ry: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -2039,29 +1874,29 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # sides       - integer value
   #
   # Returns: Nothing.
-  var
-    x, y, size: cdouble
-    sides: int
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y, size: cdouble
+    sides: int
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK: return Tcl.ERROR
-  if Tcl.GetIntFromObj(interp, objv[4], sides)   != Tcl.OK: return Tcl.ERROR
+  # Size
+  if Tcl.GetDoubleFromObj(interp, objv[3], size) != Tcl.OK:
+    return Tcl.ERROR
+  # Sides
+  if Tcl.GetIntFromObj(interp, objv[4], sides) != Tcl.OK:
+    return Tcl.ERROR
 
   try:
     ctx.fillPolygon(vec2(x, y), size, sides)
@@ -2079,21 +1914,17 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   # sides       - integer value
   #
   # Returns: Nothing.
-  var
-    x, y, size: cdouble
-    sides: int
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y, size: cdouble
+    sides: int
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -2124,21 +1955,17 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # sides       - integer value
   #
   # Returns: Nothing.
-  var
-    x, y, size: cdouble
-    sides: int
-
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} size sides")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    x, y, size: cdouble
+    sides: int
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -2173,15 +2000,12 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
-  var cx, cy, radius: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var cx, cy, radius: cdouble
+
   if pixParses.getListDouble(interp, objv[2], cx, cy, 
     "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
     return Tcl.ERROR
@@ -2213,23 +2037,18 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let
-    ctx = pixTables.getContext(arg1)
-    text = $Tcl.GetString(objv[2])
-  var x, y: cdouble
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[3], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
   try:
-    ctx.strokeText(text, x, y)
+    ctx.strokeText($Tcl.GetString(objv[2]), x, y)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -2247,18 +2066,12 @@ proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let 
-    ctx  = pixTables.getContext(arg1)
-    arg2 = $Tcl.GetString(objv[2])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   try:
     # Enum
-    ctx.textAlign = parseEnum[HorizontalAlignment](arg2)
+    ctx.textAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(objv[2]))
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -2293,24 +2106,20 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # Returns: 
   # A Tcl dictionary object that contains various properties (see above) of the context,
   # which can be useful for introspection or debugging.
-  let 
-    dictObj       = Tcl.NewDictObj()
-    dictImgObj    = Tcl.NewDictObj()
-    newListMatobj = Tcl.NewListObj(0, nil)
-
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
   let 
-    ctx = pixTables.getContext(arg1)
-    img = arg1.replace("^ctx", "^img")
+    dictObj       = Tcl.NewDictObj()
+    dictImgObj    = Tcl.NewDictObj()
+    newListMatobj = Tcl.NewListObj(0, nil)
+    ctxKey        = $Tcl.GetString(objv[1])
+    img           = ctxKey.replace("^ctx", "^img")
 
   try:
     let 
@@ -2354,23 +2163,19 @@ proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # dashes  - list
   #
   # Returns: Nothing.
-  var
-    v: cdouble
-    count: Tcl.Size
-    elements: Tcl.PPObj
-    pattern : seq[float32]
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> dashes")
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  var
+    v: cdouble
+    count: Tcl.Size
+    elements: Tcl.PPObj
+    pattern : seq[float32]
 
   if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
     return Tcl.ERROR
@@ -2408,14 +2213,10 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Context
-  let arg1 = $Tcl.GetString(objv[1])
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let
-    ctx = pixTables.getContext(arg1)
-    newListobj = Tcl.NewListObj(0, nil)
+  let newListobj = Tcl.NewListObj(0, nil)
 
   try:
     # Get the transformation matrix for the context.
@@ -2441,14 +2242,10 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Context
-  let 
-    arg1 = $Tcl.GetString(objv[1])
-    newSeqListobj = Tcl.NewListObj(0, nil)
+  let ctx = pixTables.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
 
-  if not pixTables.hasContext(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-
-  let ctx = pixTables.getContext(arg1)
+  let newSeqListobj = Tcl.NewListObj(0, nil)
 
   try:
     for _, value in ctx.getLineDash():
