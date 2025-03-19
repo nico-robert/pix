@@ -43,12 +43,8 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   # Attempt to create a copy of the image object
   let copyimg = try:
@@ -80,21 +76,13 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     Tcl.WrongNumArgs(interp, 1, objv, "<img1> <img2> ?matrix3:optional ?blendMode:optional")
     return Tcl.ERROR
 
-  # # Get destination image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img1 = pixTables.getImage(arg1)
+  # Get destination image
+  let img1 = pixTables.loadImage(interp, objv[1])
+  if img1.isNil: return Tcl.ERROR
 
   # Get source image
-  let arg2 = $Tcl.GetString(objv[2])
-
-  if not pixTables.hasImage(arg2):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
-
-  let img2 = pixTables.getImage(arg2)
+  let img2 = pixTables.loadImage(interp, objv[2])
+  if img2.isNil: return Tcl.ERROR
 
   try:
     if objc == 3:
@@ -148,12 +136,9 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     Tcl.WrongNumArgs(interp, 1, objv, "<img> color|<paint>")
     return Tcl.ERROR
 
-  # Get image object
-  let imgName = $Tcl.GetString(objv[1])
-  if not pixTables.hasImage(imgName):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & imgName & "'")
-
-  let img = pixTables.getImage(imgName)
+  # Image
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   # Get fill value argument
   let fillArg = $Tcl.GetString(objv[2])
@@ -217,30 +202,24 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #             numbers.
   #
   # Returns: Nothing.
+  if objc notin (4..5):
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional")
+    return Tcl.ERROR
+
   var
     img: pixie.Image
     matrix3: vmath.Mat3
     hasMatrix: bool = false
 
-  if objc notin (4..5):
-    Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional")
-    return Tcl.ERROR
-
-  # Get image object
-  let
-    cmdName = $Tcl.GetString(objv[0])
-    imgName = $Tcl.GetString(objv[1])
-
-  if cmdName == "pix::ctx::fillPath":
-    if not pixTables.hasContext(imgName):
-      return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & imgName & "'")
-
-    img = pixTables.getContext(imgName).image
+  if $Tcl.GetString(objv[0]) == "pix::ctx::fillPath":
+    # Context
+    let ctx = pixTables.loadContext(interp, objv[1])
+    if ctx.isNil: return Tcl.ERROR
+    img = ctx.image
   else:
-    if not pixTables.hasImage(imgName):
-      return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & imgName & "'")
-
-    img = pixTables.getImage(imgName)
+    # Image
+    img = pixTables.loadImage(interp, objv[1])
+    if img.isNil: return Tcl.ERROR
 
   # Get path and paint/color arguments
   let
@@ -296,33 +275,45 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<img> 'pathstring' 'color|<paint>' {key value key value ...}")
+    Tcl.WrongNumArgs(
+      interp, 1, objv,
+      "<img> 'pathstring' 'color|<paint>' {?strokeWidth ?value ?transform ?value ...}"
+    )
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
   var img: pixie.Image
 
   if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
-    if not pixTables.hasContext(arg1):
-      return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg1 & "'")
-    img = pixTables.getContext(arg1).image
+    # Context
+    let ctx = pixTables.loadContext(interp, objv[1])
+    if ctx.isNil: return Tcl.ERROR
+    img = ctx.image
   else:
-    if not pixTables.hasImage(arg1):
-      return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-    img = pixTables.getImage(arg1)
+    # Image
+    img = pixTables.loadImage(interp, objv[1])
+    if img.isNil: return Tcl.ERROR
 
   let
-    arg2 = $Tcl.GetString(objv[2])
-    arg3 = $Tcl.GetString(objv[3])
+    somepath = $Tcl.GetString(objv[2])
+    somepaint = $Tcl.GetString(objv[3])
+
+  # Parse the options from the Tcl dict and set the fields of 
+  # the 'RenderOptions' object.
+  var opts = pixParses.RenderOptions()
 
   try:
-    # Parse the options from the Tcl dict and set the fields of 
-    # the 'RenderOptions' object.
-    var opts = pixParses.RenderOptions()
     pixParses.dictOptions(interp, objv[4], opts)
 
-    let path  = if pixTables.hasPath(arg2) : pixTables.getPath(arg2)  else: parsePath(arg2)
-    let paint = if pixTables.hasPaint(arg3): pixTables.getPaint(arg3) else: SomePaint(pixUtils.getColor(objv[3]))
+    let path = 
+      if pixTables.hasPath(somepath):
+        pixTables.getPath(somepath)
+      else: 
+        parsePath(somepath)
+    let paint = 
+      if pixTables.hasPaint(somepaint): 
+        pixTables.getPaint(somepaint) 
+      else:
+        SomePaint(pixUtils.getColor(objv[3]))
 
     img.strokePath(
       path,
@@ -352,19 +343,16 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
-  var radius: cdouble
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   # Radius
+  var radius: cdouble
+
   if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK:
     return Tcl.ERROR
 
-  # 'blur' blurs the image using a Gaussian blur algorithm.  The blur radius
+  # 'blur' blurs the image using a Gaussian blur algorithm. The blur radius
   # is the distance from the point of the image to the point of the blur
   # effect.  The color is the color of the blur effect.
   try:
@@ -391,18 +379,15 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
   var shadow: pixie.Image
+  # Parse the options from the Tcl dict and set the fields of 
+  # the 'ShadowOptions' object.
+  var opts = pixParses.RenderShadow()
 
   try:
-    # Parse the options from the Tcl dict and set the fields of 
-    # the 'ShadowOptions' object.
-    var opts = pixParses.RenderShadow()
     pixParses.shadowOptions(interp, objv[2], opts)
 
     shadow = img.shadow(
@@ -459,14 +444,11 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let
-    img  = pixTables.getImage(arg1)
-    arg2 = $Tcl.GetString(objv[2])
+  # Font or arrangement.
+  let arg2 = $Tcl.GetString(objv[2])
 
   var matrix3: vmath.Mat3
 
@@ -491,19 +473,19 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       except Exception as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
-    if not pixTables.hasFont(arg2):
-      return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg2 & "'")
+    # Font
+    let font = pixTables.loadFont(interp, objv[2])
+    if font.isNil: return Tcl.ERROR
 
-    let font = pixTables.getFont(arg2)
     if objc < 4:
       return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
 
     let text = $Tcl.GetString(objv[3])
+    # Create a new RenderOptions object to store font rendering options.
+    var opts = pixParses.RenderOptions()
 
     try:
       if objc == 5:
-        # Create a new RenderOptions object to store font rendering options.
-        var opts = pixParses.RenderOptions()
         pixParses.fontOptions(interp, objv[4], opts)
 
         img.fillText(
@@ -533,12 +515,10 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  # Gets size.
   var width, height: int
 
   if pixParses.getListInt(interp, objv[2], width, height, 
@@ -573,14 +553,10 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let
-    img = pixTables.getImage(arg1)
-    dictObj = Tcl.NewDictObj()
+  let dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height))
@@ -602,12 +578,10 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  # Gets coordinates.
   var x, y: int
 
   if pixParses.getListInt(interp, objv[2], x, y, 
@@ -643,12 +617,10 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  # Gets coordinates.
   var x, y: int
 
   if pixParses.getListInt(interp, objv[2], x, y, 
@@ -679,15 +651,12 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  # Gets opacity.
   var opacity: cdouble
 
-  # opacity
   if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
     return Tcl.ERROR
 
@@ -714,12 +683,8 @@ proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   try:
     img.ceil()
@@ -754,20 +719,12 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image master
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let masterimg = pixTables.getImage(arg1)
+  let masterimg = pixTables.loadImage(interp, objv[1])
+  if masterimg.isNil: return Tcl.ERROR
 
   # Image
-  let arg2 = $Tcl.GetString(objv[2])
-
-  if not pixTables.hasImage(arg2):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
-
-  let img = pixTables.getImage(arg2)
+  let img = pixTables.loadImage(interp, objv[2])
+  if img.isNil: return Tcl.ERROR
 
   let (score, newimg) = try:
     masterimg.diff(img)
@@ -799,12 +756,8 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   try:
     img.flipHorizontal()
@@ -827,12 +780,8 @@ proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   try:
     img.flipVertical()
@@ -854,12 +803,10 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  # Gets coordinates.
   var x, y: int
 
   if pixParses.getListInt(interp, objv[2], x, y, 
@@ -894,12 +841,10 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  # Gets coordinates.
   var x, y: int
 
   if pixParses.getListInt(interp, objv[2], x, y, 
@@ -936,12 +881,8 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   try:
     # Invert the image.
@@ -962,12 +903,8 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   let value = try:
     if img.isOneColor(): 1 else: 0
@@ -989,12 +926,8 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   let value = try:
     if img.isOpaque(): 1 else: 0
@@ -1016,12 +949,8 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   let value = try:
     if img.isTransparent(): 1 else: 0
@@ -1042,21 +971,17 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # This is a convenience for the user.
   #
   # Returns: A *new* [img] object.
-  var
-    power: int = 1
-    newimg: pixie.Image
-
   if objc notin (2..3):
     Tcl.WrongNumArgs(interp, 1, objv, "<img> ?power:optional")
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  var
+    power: int = 1
+    newimg: pixie.Image
 
   if objc == 3:
     if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
@@ -1091,21 +1016,17 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # down by 2^power.
   #
   # Returns: A *new* [img] object.
-  var
-    power: int = 1
-    newimg: pixie.Image
-
   if objc notin (2..3):
     Tcl.WrongNumArgs(interp, 1, objv, "<img> ?power:optional")
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  var
+    power: int = 1
+    newimg: pixie.Image
 
   if objc == 3:
     if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
@@ -1143,12 +1064,8 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   let rect = try:
     img.opaqueBounds()
@@ -1177,12 +1094,8 @@ proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   try:
     img.rotate90()
@@ -1207,15 +1120,12 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
-  var x, y, width, height: int
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, width, height: int
+
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1262,15 +1172,12 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
-  var x, y, width, height: int
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   # Coordinates
+  var x, y, width, height: int
+
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -1304,20 +1211,12 @@ proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   # Paint
-  let arg2 = $Tcl.GetString(objv[2])
-
-  if not pixTables.hasPaint(arg2):
-    return pixUtils.errorMSG(interp, "pix(error): no key <paint> object found '" & arg2 & "'")
-
-  let paint = pixTables.getPaint(arg2)
+  let paint = pixTables.loadPaint(interp, objv[2])
+  if paint.isNil: return Tcl.ERROR
 
   try:
     img.fillGradient(paint)
@@ -1361,21 +1260,19 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
+  # Font or Arrangement.
+  let arg2 = $Tcl.GetString(objv[2])
 
-  let
-    img  = pixTables.getImage(arg1)
-    arg2 = $Tcl.GetString(objv[2])
-
+  # Arrangement
   if pixTables.hasArr(arg2):
-    # Arrangement
     let arrangement = pixTables.getArr(arg2)
+    var opts = pixParses.RenderOptions()
+
     try:
       if objc == 4:
-        var opts = pixParses.RenderOptions()
         pixParses.dictOptions(interp, objv[3], opts)
 
         img.strokeText(
@@ -1391,19 +1288,19 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
         img.strokeText(arrangement)
     except Exception as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
   else:
-    if not pixTables.hasFont(arg2):
-      return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg2 & "'")
+    # Font
+    let font = pixTables.loadFont(interp, objv[2])
+    if font.isNil: return Tcl.ERROR
 
-    let font = pixTables.getFont(arg2)
     if objc < 4:
       return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
 
     let text = $Tcl.GetString(objv[3])
+    var opts = pixParses.RenderOptions()
+
     try:
       if objc == 5:
-        var opts = pixParses.RenderOptions()
         pixParses.fontOptions(interp, objv[4], opts)
 
         img.strokeText(
@@ -1438,12 +1335,8 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Image
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasImage(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg1 & "'")
-
-  let img  = pixTables.getImage(arg1)
+  let img = pixTables.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
 
   try:
     # Call the writeFile method of the image to save the image to the
