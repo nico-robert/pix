@@ -297,12 +297,8 @@ proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPath(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <path> object found '" & arg1 & "'")
-
-  let path = pixTables.getPath(arg1)
+  let path = pixTables.loadPath(interp, objv[1])
+  if path.isNil: return Tcl.ERROR
 
   let pathStr = try:
     $path
@@ -355,7 +351,8 @@ proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: 
   elif pixTables.hasImage(arg1):
     pixTables.getImage(arg1)
   else:
-    return pixUtils.errorMSG(interp, "pix(error): no key <ctx>|<img> object found '" & arg1 & "'")
+    return pixUtils.errorMSG(interp,
+      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'") 
 
   let b64 = try:
     let data = encodeImage(img, FileFormat.PngFormat)
