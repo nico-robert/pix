@@ -931,7 +931,7 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # Fills the path with the current fillStyle.
   #
   # context     - [ctx::new]
-  # path        - [path::new] or string path (optional)
+  # path        - [path::new] (optional)
   # windingRule - Enum value (optional:NonZero)
   #
   # If no path is specified, then call *pix::ctx::fill $ctx* with no arguments.
