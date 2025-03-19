@@ -55,7 +55,7 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let arg1 = $Tcl.GetString(objv[1])
 
   if not pixTables.hasSVG(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <svg> object found '" & arg1 & "'")
+    return pixUtils.errorMSG(interp, "pix(error): unknown <svg> key object found '" & arg1 & "'")
 
   let svg = pixTables.getSVG(arg1)
 
