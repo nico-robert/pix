@@ -56,12 +56,8 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Paint
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPaint(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <paint> object found '" & arg1 & "'")
-
-  let paint = pixTables.getPaint(arg1)
+  let paint = pixTables.loadPaint(interp, objv[1])
+  if paint.isNil: return Tcl.ERROR
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
@@ -136,12 +132,8 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Paint
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasPaint(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <paint> object found '" & arg1 & "'")
-
-  let paint = pixTables.getPaint(arg1)
+  let paint = pixTables.loadPaint(interp, objv[1])
+  if paint.isNil: return Tcl.ERROR
 
   let copy = try:
     paint.copy()
@@ -167,19 +159,12 @@ proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Paint
-  let arg1 = $Tcl.GetString(objv[1])
+  let paint = pixTables.loadPaint(interp, objv[1])
+  if paint.isNil: return Tcl.ERROR
+
   # Image
-  let arg2 = $Tcl.GetString(objv[2])
-
-  if not pixTables.hasPaint(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <paint> object found '" & arg1 & "'")
-
-  if not pixTables.hasImage(arg2):
-    return pixUtils.errorMSG(interp, "pix(error): no key <image> object found '" & arg2 & "'")
-
-  let
-    paint = pixTables.getPaint(arg1)
-    img   = pixTables.getImage(arg2)
+  let img = pixTables.loadImage(interp, objv[2])
+  if img.isNil: return Tcl.ERROR
 
   try:
     img.fillGradient(paint)
