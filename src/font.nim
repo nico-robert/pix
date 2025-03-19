@@ -42,12 +42,10 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
+  # Font size.
   var fsize: cdouble
 
   if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
@@ -72,12 +70,8 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
   try:
     # Color gets.
@@ -103,12 +97,8 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   # Create a new pixie.Font from the given TypeFace object.
   let font = try:
@@ -135,18 +125,13 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
-  # Text
-  let text = $Tcl.GetString(objv[2])
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
   # Create a new span object.
   let span = try:
-    newSpan(text, font)
+    # Text
+    newSpan($Tcl.GetString(objv[2]), font)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -170,22 +155,16 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
   if objc == 3:
     # Paint
-    let arg2 = $Tcl.GetString(objv[2])
-
-    if not pixTables.hasPaint(arg2):
-      return pixUtils.errorMSG(interp, "pix(error): no key <ctx> object found '" & arg2 & "'")
+    let paint = pixTables.loadPaint(interp, objv[2])
+    if paint.isNil: return Tcl.ERROR
 
     try:
-      font.paint = pixTables.getPaint(arg2)
+      font.paint = paint
     except Exception as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
@@ -269,12 +248,8 @@ proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   # Gets the font ascender value in font units.
   let ascentValue = try:
@@ -315,12 +290,8 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Arrangement
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasArr(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <Arrangement> object found '" & arg1 & "'")
-
-  let arr = pixTables.getArr(arg1)
+  let arr = pixTables.loadArr(interp, objv[1])
+  if arr.isNil: return Tcl.ERROR
 
   if objc == 3:
     # Matrix 3x3 check
@@ -358,12 +329,8 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
   let newfont = try:
     font.copy()
@@ -398,12 +365,8 @@ proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
   let defaultLineHeight = try:
     font.defaultLineHeight()
@@ -429,12 +392,8 @@ proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
   
   # Gets the font descender value in font units.
   let descentValue = try:
@@ -458,12 +417,8 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   # Rune
   let 
@@ -471,7 +426,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     c = char1.runeAt(0)
 
   if tface.hasGlyph(c):
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(arg1.cstring, -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(Tcl.GetString(objv[1]), -1))
   else:
     # New Typeface
     let newtface = try:
@@ -503,12 +458,9 @@ proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
   # Rune
   let 
     char1 = $Tcl.GetString(objv[2])
@@ -535,12 +487,8 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   # Rune
   let
@@ -580,12 +528,8 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   # Rune
   let 
@@ -615,12 +559,8 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   # Rune
   let
@@ -718,12 +658,8 @@ proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   let lineGap = try:
     tface.lineGap()
@@ -753,12 +689,8 @@ proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   let lineHeight = try:
     tface.lineHeight()
@@ -780,12 +712,8 @@ proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # TypeFace
-  let arg1 = $Tcl.GetString(objv[1])
-
-  if not pixTables.hasTFace(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <TypeFace> object found '" & arg1 & "'")
-
-  let tface = pixTables.getTFace(arg1)
+  let tface = pixTables.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
 
   let name = try:
     tface.name()
@@ -896,7 +824,8 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       let typeface = pixTables.getTFace(arg1)
       typeface.scale()
     else:
-      return pixUtils.errorMSG(interp, "pix(error): no <font> or <TypeFace> object found.")
+      return pixUtils.errorMSG(interp,
+        "pix(error): unknown <font> or <TypeFace> key object found '" & arg1 & "'") 
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -954,10 +883,10 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     for j in 0..count-1:
       spans.add(pixTables.getSpan($Tcl.GetString(elements[j])))
 
-  if (objc == 4 and hasFont) or (objc == 3 and hasFont == false):
+  if (objc == 4 and hasFont) or (objc == 3 and not hasFont):
     if hasFont == false: jj = 2
+    var opts = pixParses.RenderOptions()
     try:
-      var opts = pixParses.RenderOptions()
       pixParses.typeSetOptions(interp, objv[jj], opts)
 
       arr = if hasFont: 
@@ -1007,23 +936,19 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # #EndTable
   #
   # Returns: Nothing.
-  var
-    fsize, flineHeight: cdouble
-    count, countP: Tcl.Size
-    myBool: int = 0
-    elements, elementsP: Tcl.PPObj
-
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}")
     return Tcl.ERROR
 
   # Font
-  let arg1 = $Tcl.GetString(objv[1])
+  let font = pixTables.loadFont(interp, objv[1])
+  if font.isNil: return Tcl.ERROR
 
-  if not pixTables.hasFont(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <font> object found '" & arg1 & "'")
-
-  let font = pixTables.getFont(arg1)
+  var
+    fsize, flineHeight: cdouble
+    count, countP: Tcl.Size
+    myBool: int = 0
+    elements, elementsP: Tcl.PPObj
 
   if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
     return Tcl.ERROR
@@ -1113,14 +1038,10 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     return Tcl.ERROR
 
   # Arrangement
-  let arg1 = $Tcl.GetString(objv[1])
+  let arr = pixTables.loadArr(interp, objv[1])
+  if arr.isNil: return Tcl.ERROR
 
-  if not pixTables.hasArr(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): no key <Arrangement> object found '" & arg1 & "'")
-
-  let 
-    arr = pixTables.getArr(arg1)
-    dictGlobobj = Tcl.NewDictObj()
+  let dictGlobobj = Tcl.NewDictObj()
 
   try:
     for index, rect in arr.selectionRects:
