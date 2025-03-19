@@ -150,7 +150,7 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns: 
   # A *new* [paint] if no paint optional argument is set, otherwise set the font paint.
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<font> ?<paint>:optional")
     return Tcl.ERROR
 
@@ -285,7 +285,7 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     matrix3: vmath.Mat3
     rect: Rect
 
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> ?transform:optional")
     return Tcl.ERROR
 
@@ -591,7 +591,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     elements: Tcl.PPObj
     bounds: vmath.Vec2
 
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> or <font> + 'text' or <span>")
     return Tcl.ERROR
 

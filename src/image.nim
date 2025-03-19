@@ -202,7 +202,7 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #             numbers.
   #
   # Returns: Nothing.
-  if objc notin (4..5):
+  if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional")
     return Tcl.ERROR
 
@@ -338,7 +338,7 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # color   - string [color] (optional:transparent)
   #
   # Returns: Nothing.
-  if objc notin (3..4):
+  if objc notin [3, 4]:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> radius ?color:optional")
     return Tcl.ERROR
 
@@ -971,7 +971,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # This is a convenience for the user.
   #
   # Returns: A *new* [img] object.
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> ?power:optional")
     return Tcl.ERROR
 
@@ -1016,7 +1016,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # down by 2^power.
   #
   # Returns: A *new* [img] object.
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> ?power:optional")
     return Tcl.ERROR
 

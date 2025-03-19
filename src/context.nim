@@ -12,7 +12,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     width, height: int
     img: pixie.Image
 
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "'{width height} ?color:optional' or <image>")
     return Tcl.ERROR
 
@@ -323,7 +323,7 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # ccw         - boolean value (optional:false)
   #
   # Returns: Nothing.
-  if objc notin (6..7):
+  if objc notin [6, 7]:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} r angleStart angleEnd ?ccw:optional")
     return Tcl.ERROR
 
@@ -1389,7 +1389,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # path        - [path::new] (optional)
   #
   # Returns: A Tcl boolean value.
-  if objc notin (3..4):
+  if objc notin [3, 4]:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} ?<path>:optional")
     return Tcl.ERROR
 
@@ -1547,7 +1547,7 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # path    - [path::new] (optional)
   #
   # Returns: Nothing.
-  if objc notin (2..3):
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> ?<path>:optional")
     return Tcl.ERROR
 
@@ -2259,7 +2259,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
 proc pix_ctx_fillPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # See [img::fillPath] procedure.
-  if objc notin (4..5):
+  if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx> <path>|stringPath 'color|<paint>' ?matrix:optional")
     return Tcl.ERROR
 

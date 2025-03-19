@@ -115,7 +115,7 @@ proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   if Tcl.ListObjGetElements(nil, obj, count, elements) != Tcl.OK:
     return false
 
-  if count notin (3..4):
+  if count notin [3, 4]:
     return false
 
   for i in 0..count-1:

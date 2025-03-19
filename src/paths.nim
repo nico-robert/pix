@@ -107,7 +107,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     clockcw: int
     ccw: bool = false
 
-  if objc notin (6..7):
+  if objc notin [6, 7]:
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} r a0 a1 ?ccw:optional")
     return Tcl.ERROR
 
@@ -357,7 +357,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   # ccw           - boolean value (optional:true)
   #
   # Returns: Nothing.
-  if objc notin (4..5):
+  if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} ?ccw:optional")
     return Tcl.ERROR
 
@@ -470,7 +470,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     
   var matrix3: vmath.Mat3 = mat3()
 
-  if objc in (4..5):
+  if objc in [4, 5]:
     if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
       return Tcl.ERROR
 
@@ -707,7 +707,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # ccw          - boolean value (optional:true)
   #
   # Returns: Nothing.
-  if objc notin (5..6):
+  if objc notin [5, 6]:
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} {nw ne se sw} ?ccw:optional")
     return Tcl.ERROR
 
@@ -778,7 +778,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # contained by the stroking of a path. The point is considered
   # inside if it is contained in the stroked path and not in any
   # holes.
-  if objc notin (3..4):
+  if objc notin [3, 4]:
     Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} ?{key value key value ...}:optional")
     return Tcl.ERROR
 
