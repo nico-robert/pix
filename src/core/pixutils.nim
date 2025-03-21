@@ -27,34 +27,34 @@ proc isValidHex(s: string): bool =
   # Checks whether a string is a valid hex format.
   if s.len == 0:
     return false
-    
+
   for c in s:
     if not isHexDigit(c):
       return false
-      
+
     # Only uppercase hex characters are accepted.
     if c >= 'a' and c <= 'f':
       return false
-      
+
   return true
   
 proc isHexFormat*(s: string): bool =
   # Checks whether a string is in ‘hex’ format (e.g. FF0000)
   # - Only uppercase hexadecimal characters
   # - Length of 6 characters (typical for an RGB color)
-  
+
   return (s.len == 6) and isValidHex(s)
 
 proc isHexAlphaFormat*(s: string): bool =
   # Checks whether a string is in ‘hexalpha’ format (e.g. FF0000FF)
   # - Only uppercase hexadecimal characters
   # - Length of 8 characters (typical for an RGBA color)
-  
+
   return (s.len == 8) and isValidHex(s)
 
 proc isHexHtmlFormat*(s: string): bool =
   # Checks whether a string is in ‘hexHtml’ format (e.g. #F8D1DD)
-  
+
   return (s.len == 7) and (s[0] == '#')
 
 proc isRGBXFormat*(s: string): bool =
@@ -68,7 +68,7 @@ proc isRGBXFormat*(s: string): bool =
   for c in s[5..^2]:
     if c == ',':
       inc count
-  
+
   return count == 4
 
 proc isRGBAFormat*(s: string): bool =
@@ -82,7 +82,7 @@ proc isRGBAFormat*(s: string): bool =
   for c in s[5..^2]:
     if c == ',':
       inc count
-  
+
   return count == 4
 
 proc isRGBFormat*(s: string): bool =
@@ -96,7 +96,21 @@ proc isRGBFormat*(s: string): bool =
   for c in s[4..^2]:
     if c == ',':
       inc count
-  
+
+  return count == 3
+
+proc isHSLFormat*(s: string): bool =
+  # Checks if the color is a color in the hsl 
+  # format (e.g. hsl(x,x,x)).
+
+  if (s.len < 3) or (s[0..2] != "hsl"):
+    return false
+
+  var count = 1
+  for c in s[4..^2]:
+    if c == ',':
+      inc count
+
   return count == 3
   
 proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
@@ -132,6 +146,34 @@ proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   return true
 
   
+proc parseColorHSL*(s: string): ColorHSL =
+  # This procedure attempts to parse a color from a string input.
+  #
+  # s - The color to check.
+  #
+  # Returns: A color in ColorHSL format.
+  var
+    color: array[3, float32]
+    start = 4  # Position after "hsl("
+    endPos = 0
+
+  for i in 0..2:
+    while start < s.len and s[start] == ' ':
+      inc start
+
+    endPos = start
+    while (endPos < s.len) and (s[endPos] != ',') and (s[endPos] != ')'):
+      inc endPos
+
+    try:
+      color[i] = parseFloat(s[start..<endPos])
+    except ValueError as e:
+      raise newException(InvalidColor, "invalid color format: " & e.msg)
+
+    start = endPos + 1
+
+  return hsl(color[0], color[1], color[2])
+
 proc parseColorRGBX*(s: string): ColorRGBX =
   # This procedure attempts to parse a color from a string input.
   #
@@ -142,7 +184,7 @@ proc parseColorRGBX*(s: string): ColorRGBX =
     color: array[4, uint8]
     start = 5  # Position after "rgbx("
     endPos = 0
-    
+
   for i in 0..3:
     while start < s.len and s[start] == ' ':
       inc start
@@ -150,12 +192,16 @@ proc parseColorRGBX*(s: string): ColorRGBX =
     endPos = start
     while (endPos < s.len) and (s[endPos] != ',') and (s[endPos] != ')'):
       inc endPos
-    
-    color[i] = parseInt(s[start..<endPos]).uint8
+
+    try:
+      color[i] = parseInt(s[start..<endPos]).uint8
+    except ValueError as e:
+      raise newException(InvalidColor, "invalid color format: " & e.msg)
+
     start = endPos + 1
 
-  return rgbx(color[0],color[1],color[2],color[3])
-  
+  return rgbx(color[0], color[1], color[2], color[3])
+
 proc getColor*(obj: Tcl.PObj): Color =
   # This procedure attempts to parse a color from a string input.
   # The string can be in various formats such as hexalpha, colorRGBX
@@ -188,6 +234,9 @@ proc getColor*(obj: Tcl.PObj): Color =
   # in 'rgbx' format (e.g. rgbx(x,x,x,x))
   elif scolor.isRGBXFormat():
     return parseColorRGBX(scolor).color
+   # in 'hsl' format (e.g. hsl(x,x,x))
+  elif scolor.isHSLFormat():
+    return parseColorHSL(scolor).color
   # a simple color format (e.g. {0.0 0.0 0.0 0.0})
   elif isColorSimpleFormat(obj, color): 
     return color
@@ -242,7 +291,9 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
     return Tcl.ERROR
 
   if count != 9:
-    return pixUtils.errorMSG(interp, "wrong # args: 'matrix' should be 'Matrix 3x3'")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'matrix' should be 'Matrix 3x3'"
+    )
 
   value.setlen(count)
 
@@ -272,7 +323,7 @@ proc colorHTMLtoRGBA*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # Parse
   let color = try:
     getColor(objv[1]).rgba
-  except Exception as e:
+  except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let newobj = Tcl.NewListObj(0, nil)
@@ -300,12 +351,7 @@ proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let path = pixTables.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  let pathStr = try:
-    $path
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(pathStr.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring($path), -1))
 
   return Tcl.OK
 
@@ -324,7 +370,7 @@ proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   let parse = try:
     parsePath(arg1)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(parse)
@@ -352,10 +398,14 @@ proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: 
     pixTables.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
-      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'") 
+      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'")
+
+  let data = try:
+    encodeImage(img, FileFormat.PngFormat)
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let b64 = try:
-    let data = encodeImage(img, FileFormat.PngFormat)
     encode(data)
   except Exception as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
