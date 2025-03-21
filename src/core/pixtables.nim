@@ -32,6 +32,12 @@ proc hasContext*(key: string): bool =
 proc addContext*(key: string, value: pixie.Context): void = 
   ctxTable[key] = value
 
+proc clearContext*(): void = 
+  ctxTable.clear()
+
+proc delKeyContext*(key: string): void = 
+  ctxTable.del(key)
+
 proc loadContext*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Context =
 # Searches the pixie.Context table for a key that matches the given obj.
 #
@@ -56,6 +62,12 @@ proc hasImage*(key: string): bool =
 
 proc addImage*(key: string, value: pixie.Image): void = 
   imgTable[key] = value
+
+proc clearImage*(): void = 
+  imgTable.clear()
+
+proc delKeyImage*(key: string): void = 
+  imgTable.del(key)
 
 proc loadImage*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Image =
 # Searches the pixie.Image table for a key that matches the given obj.
@@ -82,6 +94,12 @@ proc hasFont*(key: string): bool =
 proc addFont*(key: string, value: pixie.Font): void = 
   fontTable[key] = value
 
+proc clearFont*(): void = 
+  fontTable.clear()
+
+proc delKeyFont*(key: string): void = 
+  fontTable.del(key)
+
 proc loadFont*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Font =
 # Searches the pixie.Font table for a key that matches the given obj.
 #
@@ -107,6 +125,12 @@ proc hasPaint*(key: string): bool =
 proc addPaint*(key: string, value: pixie.Paint): void = 
   paintTable[key] = value
 
+proc clearPaint*(): void = 
+  paintTable.clear()
+
+proc delKeyPaint*(key: string): void = 
+  paintTable.del(key)
+
 proc loadPaint*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Paint =
 # Searches the pixie.Paint table for a key that matches the given obj.
 #
@@ -131,6 +155,12 @@ proc hasPath*(key: string): bool =
 
 proc addPath*(key: string, value: pixie.Path): void = 
   pathTable[key] = value
+
+proc clearPath*(): void = 
+  pathTable.clear()
+
+proc delKeyPath*(key: string): void = 
+  pathTable.del(key)
 
 proc loadPath*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Path =
 # Searches the pixie.Path table for a key that matches the given obj.
@@ -215,6 +245,12 @@ proc hasSVG*(key: string): bool =
 
 proc addSVG*(key: string, value: Svg): void = 
   svgTable[key] = value
+
+proc clearSVG*(): void = 
+  svgTable.clear()
+
+proc delKeySVG*(key: string): void = 
+  svgTable.del(key)
 
 proc getSpan*(key: string): pixie.Span = 
   result = spanTable[key]
