@@ -16,7 +16,7 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   try:
     let myEnum = parseEnum[PaintKind]($Tcl.GetString(objv[1]))
     paint = newPaint(myEnum)
-  except Exception as e:
+  except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(paint)
@@ -43,17 +43,17 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # #EndTable
   #
   # Returns: Nothing.
-  var
-    x, y, p, opacity: cdouble
-    count, subcount, len: Tcl.Size
-    elements, subelements, stop: Tcl.PPObj
-    matrix3: vmath.Mat3
-
   if objc != 3:
     let errMsg = "wrong # args: <paint> {image? ?value imageMat? ?value color? ?value blendMode? " &
     "?value gradientHandlePositions? ?value gradientStops? ?value opacity? ?value}"
     Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
     return Tcl.ERROR
+
+  var
+    x, y, p, opacity: cdouble
+    count, subcount, len: Tcl.Size
+    elements, subelements, stop: Tcl.PPObj
+    matrix3: vmath.Mat3
 
   # Paint
   let paint = pixTables.loadPaint(interp, objv[1])
@@ -64,7 +64,9 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   if count mod 2 != 0:
-    return pixUtils.errorMSG(interp, "wrong # args: 'dict options' should be key value ?key1 ?value1")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'dict options' should be key value ?key1 ?value1"
+    )
 
   try:
     for i in countup(0, count - 1, 2):
@@ -107,7 +109,9 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
               if Tcl.ListObjGetElements(interp, subelements[j], len, stop) != Tcl.OK:
                 return Tcl.ERROR
               if len != 2:
-                return pixUtils.errorMSG(interp, "wrong # args: 'items' should be 'color' 'position'")
+                return pixUtils.errorMSG(interp,
+                "wrong # args: 'items' should be 'color' 'position'"
+                )
 
               if Tcl.GetDoubleFromObj(interp, stop[1], p) != Tcl.OK: 
                 return Tcl.ERROR
@@ -115,8 +119,12 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
               colorstops.add(ColorStop(color: pixUtils.getColor(stop[0]), position: p))
             paint.gradientStops = colorstops
         else:
-          return pixUtils.errorMSG(interp, "wrong # args: Key '" & mkey & "' not supported.")
-  except Exception as e:
+          return pixUtils.errorMSG(interp,
+          "wrong # args: Key '" & mkey & "' not supported."
+          )
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -135,10 +143,7 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   let paint = pixTables.loadPaint(interp, objv[1])
   if paint.isNil: return Tcl.ERROR
 
-  let copy = try:
-    paint.copy()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let copy = paint.copy()
 
   let p = toHexPtr(copy)
   pixTables.addPaint(p, copy)
@@ -168,7 +173,7 @@ proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
   try:
     img.fillGradient(paint)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -183,11 +188,11 @@ proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "<paint>|string('all')")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
+  let key = $Tcl.GetString(objv[1])
   # Paint
-  if arg1 == "all":
-    paintTable.clear()
+  if key == "all":
+    pixTables.clearPaint()
   else:
-    paintTable.del(arg1)
+    pixTables.delKeyPaint(key)
 
   return Tcl.OK

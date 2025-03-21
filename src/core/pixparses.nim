@@ -39,13 +39,13 @@ proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var int, errorMsg:
   var
     count: Tcl.Size
     elements: Tcl.PPObj
-  
+
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
     return Tcl.ERROR
 
   if count != 2:
     return pixUtils.errorMSG(interp, errorMsg)
-  
+
   if Tcl.GetIntFromObj(interp, elements[0], v1) != Tcl.OK or
      Tcl.GetIntFromObj(interp, elements[1], v2) != Tcl.OK: 
     return Tcl.ERROR
@@ -66,13 +66,13 @@ proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, er
   var
     count: Tcl.Size
     elements: Tcl.PPObj
-  
+
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
     return Tcl.ERROR
-  
+
   if count != 2:
     return pixUtils.errorMSG(interp, errorMsg)
-  
+
   if Tcl.GetDoubleFromObj(interp, elements[0], v1) != Tcl.OK or
      Tcl.GetDoubleFromObj(interp, elements[1], v2) != Tcl.OK: 
     return Tcl.ERROR
@@ -92,13 +92,15 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
     count: Tcl.Size
     elements: Tcl.PPObj
     x, y: cdouble
-  
+
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
     raise newException(ValueError, $Tcl.GetStringResult(interp))
 
   if count mod 2 != 0:
-    raise newException(ValueError, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
+    raise newException(ValueError,
+    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+    )
 
   for i in countup(0, count - 1, 2):
     let 
@@ -118,7 +120,10 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
         opts.offset = vec2(x, y)
       of "color":
+        try:
           opts.color = pixUtils.getColor(value)
+        except InvalidColor as e:
+          raise newException(ValueError, e.msg)
       else:
         raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
 
@@ -135,13 +140,15 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
     count, dashescount: Tcl.Size
     elements, dasheselements: Tcl.PPObj
     dashes: cdouble
-  
+
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
     raise newException(ValueError, $Tcl.GetStringResult(interp))
 
   if count mod 2 != 0:
-    raise newException(ValueError, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
+    raise newException(ValueError,
+    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+    )
 
   for i in countup(0, count - 1, 2):
     let 
@@ -155,12 +162,18 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
         if pixUtils.matrix3x3(interp, value, opts.transform) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "lineCap":
-        opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
+        try:
+          opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "miterLimit":
         if Tcl.GetDoubleFromObj(interp, value, opts.miterLimit) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "lineJoin":
-        opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
+        try:
+          opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
@@ -185,13 +198,15 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
     count, dashescount: Tcl.Size
     elements, dasheselements: Tcl.PPObj
     x, y, dashes: cdouble
-  
+
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
     raise newException(ValueError, $Tcl.GetStringResult(interp))
 
   if count mod 2 != 0:
-    raise newException(ValueError, "wrong # args: 'font options' should be :key value ?key1 ?value1 ...")
+    raise newException(ValueError,
+    "wrong # args: 'font options' should be :key value ?key1 ?value1 ..."
+    )
 
   for i in countup(0, count - 1, 2):
     let 
@@ -208,13 +223,25 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
         if Tcl.GetDoubleFromObj(interp, value, opts.miterLimit) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "hAlign":
-        opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
+        try:
+          opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "vAlign":
-        opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
+        try:
+          opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "lineCap":
-        opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
+        try:
+          opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "lineJoin":
-        opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
+        try:
+          opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
@@ -252,7 +279,9 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
     raise newException(ValueError, $Tcl.GetStringResult(interp))
 
   if count mod 2 != 0:
-    raise newException(ValueError, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
+    raise newException(ValueError,
+    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+    )
 
   for i in countup(0, count - 1, 2):
     let
@@ -264,9 +293,15 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
           raise newException(ValueError, $Tcl.GetStringResult(interp))
         opts.wrap = wrapB.bool
       of "hAlign":
-        opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
+        try:
+          opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "vAlign":
-        opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
+        try:
+          opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
+        except ValueError as e:
+          raise newException(ValueError, e.msg)
       of "bounds":
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
@@ -274,4 +309,6 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
 
         opts.bounds = vec2(x, y)
       else:
-        raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
+        raise newException(ValueError,
+        "wrong # args: Key '" & key & "' not supported."
+        )

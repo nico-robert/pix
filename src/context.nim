@@ -8,13 +8,15 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # value - string [color] or [img::new] (optional:none)
   #
   # Returns: A *new* [ctx] object.
+  if objc notin [2, 3]:
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "'{width height} ?color:optional' or <image>"
+    )
+    return Tcl.ERROR
+
   var 
     width, height: int
     img: pixie.Image
-
-  if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "'{width height} ?color:optional' or <image>")
-    return Tcl.ERROR
 
   if objc == 2:
     # Image or size coordinates.
@@ -29,7 +31,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 
       try:
         img = newImage(width, height)
-      except Exception as e:
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Size
@@ -41,13 +43,12 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
       img = newImage(width, height)
       # Color gets.
       img.fill(pixUtils.getColor(objv[2]))
-    except Exception as e:
+    except InvalidColor as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let ctx = try:
-    newContext(img)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let ctx = newContext(img)
 
   let 
     pc = toHexPtr(ctx)
@@ -58,7 +59,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   pixTables.addImage(pi, img)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(pc.cstring, -1))
-    
+
   return Tcl.OK
 
 proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
@@ -83,22 +84,17 @@ proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   let arg2 = $Tcl.GetString(objv[2])
 
   if pixTables.hasPaint(arg2):
-    # Paint
-    try:
-      ctx.strokeStyle = pixTables.getPaint(arg2)
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    ctx.strokeStyle = pixTables.getPaint(arg2) # Paint
   else:
-    # Color
     try:
-      ctx.strokeStyle = pixUtils.getColor(objv[2])
-    except Exception as e:
+      ctx.strokeStyle = pixUtils.getColor(objv[2]) # Color
+    except InvalidColor as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
 proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Saves the entire state of the context  
+  # Saves the entire state of the context
   # by pushing the current state onto a stack.
   #
   # context - [ctx::new]
@@ -117,10 +113,7 @@ proc pix_ctx_save(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  try:
-    ctx.save()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.save()
 
   return Tcl.OK
 
@@ -142,11 +135,12 @@ proc pix_ctx_textBaseline(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  try:
-    let baseline = parseEnum[BaselineAlignment]($Tcl.GetString(objv[2]))
-    ctx.textBaseline = baseline
-  except Exception as e:
+  let baseline = try:
+    parseEnum[BaselineAlignment]($Tcl.GetString(objv[2]))
+  except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  ctx.textBaseline = baseline # Enum
 
   return Tcl.OK
 
@@ -167,7 +161,7 @@ proc pix_ctx_restore(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
   try:
     ctx.restore()
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -190,7 +184,7 @@ proc pix_ctx_saveLayer(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   try:
     ctx.saveLayer()
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -234,7 +228,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   try:
     ctx.strokeSegment(segment(start, stop))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -270,7 +264,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   try:
     ctx.strokeRect(x, y, width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -305,10 +299,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     "wrong # args: 'coordinates2' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.quadraticCurveTo(cpx, cpy, x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.quadraticCurveTo(cpx, cpy, x, y)
 
   return Tcl.OK
 
@@ -324,7 +315,9 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   #
   # Returns: Nothing.
   if objc notin [6, 7]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} r angleStart angleEnd ?ccw:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> {x y} r angleStart angleEnd ?ccw:optional"
+    )
     return Tcl.ERROR
 
   # Context
@@ -353,7 +346,7 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
 
   try:
     ctx.arc(x, y, r, a0, a1, ccw)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -392,7 +385,7 @@ proc pix_ctx_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
   try:
     ctx.arcTo(x1, y1, x2, y2, radius)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -432,10 +425,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     "wrong # args: 'coordinates3' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.bezierCurveTo(vec2(cp1x, cp1y), vec2(cp2x, cp2y), vec2(x, y))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.bezierCurveTo(vec2(cp1x, cp1y), vec2(cp2x, cp2y), vec2(x, y))
 
   return Tcl.OK
 
@@ -465,10 +455,7 @@ proc pix_ctx_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.circle(cx, cy, radius)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.circle(cx, cy, radius)
 
   return Tcl.OK
 
@@ -483,7 +470,9 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   #
   # Returns: Nothing.
   if objc notin (2..4):
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> ?<path>:optional ?enum=WindingRule:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> ?<path>:optional ?enum=WindingRule:optional"
+    )
     return Tcl.ERROR
 
   # Context
@@ -511,7 +500,9 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       ctx.clip(path, myEnum)
     else:
       ctx.clip()
-  except Exception as e:
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -535,7 +526,7 @@ proc pix_ctx_measureText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # Text
   let metrics = try:
     ctx.measureText($Tcl.GetString(objv[2]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let dictObj = Tcl.NewDictObj()
@@ -560,10 +551,7 @@ proc pix_ctx_resetTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  try:
-    ctx.resetTransform()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.resetTransform()
 
   return Tcl.OK
 
@@ -626,7 +614,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     try:
       ctx.drawImage(img, dx, dy, dWidth, dHeight)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   elif objc == 7:
@@ -653,7 +641,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     try:
       ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   else:
@@ -664,7 +652,7 @@ proc pix_ctx_drawImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
     try:
       ctx.drawImage(img, dx, dy)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -698,10 +686,7 @@ proc pix_ctx_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
      Tcl.GetDoubleFromObj(interp, objv[4], ry) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.ellipse(x, y, rx, ry)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.ellipse(x, y, rx, ry)
 
   return Tcl.OK
 
@@ -737,7 +722,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   try:
     ctx.strokeEllipse(vec2(x, y), rx, ry)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -778,10 +763,7 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.setTransform(matrix3)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.setTransform(matrix3)
 
   return Tcl.OK
 
@@ -822,10 +804,7 @@ proc pix_ctx_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.transform(matrix3)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.transform(matrix3)
 
   return Tcl.OK
 
@@ -854,10 +833,7 @@ proc pix_ctx_rotate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   if Tcl.GetDoubleFromObj(interp, objv[2], angle) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.rotate(angle)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.rotate(angle)
 
   return Tcl.OK
 
@@ -893,10 +869,7 @@ proc pix_ctx_translate(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.translate(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.translate(x, y)
 
   return Tcl.OK
 
@@ -922,7 +895,7 @@ proc pix_ctx_lineJoin(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   try:
     # Enum
     ctx.lineJoin = parseEnum[LineJoin]($Tcl.GetString(objv[2]))
-  except Exception as e:
+  except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -942,7 +915,9 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   #
   # Returns: Nothing.
   if objc notin (2..4):
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> ?<path>:optional ?enum=WindingRule:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> ?<path>:optional ?enum=WindingRule:optional"
+    )
     return Tcl.ERROR
 
   # Context
@@ -956,13 +931,15 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
       let path = pixTables.getPath(arg2)
       try:
         ctx.fill(path)
-      except Exception as e:
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else:
       # Enum only
       try:
         ctx.fill(parseEnum[WindingRule](arg2))
-      except Exception as e:
+      except ValueError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   elif objc == 4:
     # Path + Enum
@@ -970,13 +947,15 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     if paint.isNil: return Tcl.ERROR
     try:
       ctx.fill(path, parseEnum[WindingRule]($Tcl.GetString(objv[3])))
-    except Exception as e:
+    except ValueError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # No path
     try:
       ctx.fill()
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1009,10 +988,7 @@ proc pix_ctx_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.rect(x, y, width, height)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.rect(x, y, width, height)
 
   return Tcl.OK
 
@@ -1046,7 +1022,7 @@ proc pix_ctx_fillRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   try:
     ctx.fillRect(x, y, width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1061,7 +1037,9 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} {nw ne se sw}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> {x y} {width height} {nw ne se sw}"
+    )
     return Tcl.ERROR
 
   # Context
@@ -1088,7 +1066,9 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   if count != 4:
-    return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be {nw ne se sw}")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'radius' should be {nw ne se sw}"
+    )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
      Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK or
@@ -1096,10 +1076,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
      Tcl.GetDoubleFromObj(interp, elements[3], sw) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.roundedRect(x, y, width, height, nw, ne, se, sw)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.roundedRect(x, y, width, height, nw, ne, se, sw)
 
   return Tcl.OK
 
@@ -1113,7 +1090,9 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> {x y} {width height} radius|{nw ne se sw}"
+    )
     return Tcl.ERROR
 
   # Context
@@ -1149,7 +1128,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     try:
       ctx.fillRoundedRect(rect(pos, wh), radius)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   elif count == 4:
@@ -1161,11 +1140,13 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
     try:
       ctx.fillRoundedRect(rect(pos, wh), nw, ne, se, sw)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   else:
-    return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}, or simple value.")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'radius' should be a list {nw ne se sw}, or simple value."
+    )
 
   return Tcl.OK
 
@@ -1180,7 +1161,9 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} {width height} radius|{nw ne se sw}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> {x y} {width height} radius|{nw ne se sw}"
+    )
     return Tcl.ERROR
 
   # Context
@@ -1216,7 +1199,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
     try:
       ctx.strokeRoundedRect(rect(pos, wh), radius)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   elif count == 4:
@@ -1228,11 +1211,13 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
     try:
       ctx.strokeRoundedRect(rect(pos, wh), nw, ne, se, sw)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   else:
-    return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be a list {nw ne se sw}, or simple value.")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'radius' should be a list {nw ne se sw}, or simple value."
+    )
 
   return Tcl.OK
 
@@ -1266,7 +1251,7 @@ proc pix_ctx_clearRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   try:
     ctx.clearRect(x, y, width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1290,16 +1275,12 @@ proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   let arg2 = $Tcl.GetString(objv[2])
 
   if pixTables.hasPaint(arg2):
-    # Paint
-    try:
-      ctx.fillStyle = pixTables.getPaint(arg2)
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    ctx.fillStyle = pixTables.getPaint(arg2) # Paint
   else:
     # Color
     try:
       ctx.fillStyle = pixUtils.getColor(objv[2])
-    except Exception as e:
+    except InvalidColor as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1332,11 +1313,8 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   if alpha < 0.0 or alpha > 1.0:
     return pixUtils.errorMSG(interp, "global alpha must be between 0 and 1" )
 
-  try:
-    # Set the global alpha value for the context.
-    ctx.globalAlpha = alpha
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Set the global alpha value for the context.
+  ctx.globalAlpha = alpha
 
   return Tcl.OK
 
@@ -1372,11 +1350,8 @@ proc pix_ctx_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    # Start a new sub-path at the point (x, y).
-    ctx.moveTo(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Start a new sub-path at the point (x, y).
+  ctx.moveTo(x, y)
 
   return Tcl.OK
 
@@ -1412,13 +1387,13 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     if paint.isNil: return Tcl.ERROR
     try:
       if ctx.isPointInStroke(path, x, y): value = 1
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # No Path
     try:
       if ctx.isPointInStroke(x, y): value = 1
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
@@ -1435,7 +1410,9 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   #
   # Returns: A Tcl boolean value.
   if objc notin (3..5):
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> {x y} ?<path>:optional ?enum=WindingRule:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> {x y} ?<path>:optional ?enum=WindingRule:optional"
+    )
     return Tcl.ERROR
 
   # Context
@@ -1459,7 +1436,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     if pixTables.hasPath(arg3):
       try:
         if ctx.isPointInPath(pixTables.getPath(arg3), x, y): value = 1
-      except Exception as e:
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else:
       # Enum
@@ -1468,7 +1445,9 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
           x, y, 
           windingRule = parseEnum[WindingRule](arg3)
         ): value = 1
-      except Exception as e:
+      except ValueError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   elif objc == 5:
     # Enum + Path
@@ -1480,12 +1459,14 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
         x, y,
         windingRule = parseEnum[WindingRule]($Tcl.GetString(objv[4]))
       ): value = 1
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)    
+    except ValueError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except PixieError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     try:
       if ctx.isPointInPath(x, y): value = 1
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
@@ -1533,10 +1514,7 @@ proc pix_ctx_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.lineTo(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.lineTo(x, y)
 
   return Tcl.OK
 
@@ -1562,12 +1540,12 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
     try:
       ctx.stroke(path)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     try:
       ctx.stroke()
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1594,10 +1572,7 @@ proc pix_ctx_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.scale(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.scale(x, y)
 
   return Tcl.OK
 
@@ -1630,7 +1605,7 @@ proc pix_ctx_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   try:
     # File
     ctx.image.writeFile($Tcl.GetString(objv[2]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1652,10 +1627,7 @@ proc pix_ctx_beginPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  try:
-    ctx.beginPath()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.beginPath()
 
   return Tcl.OK
 
@@ -1675,10 +1647,7 @@ proc pix_ctx_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  try:
-    ctx.closePath()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.closePath()
 
   return Tcl.OK
 
@@ -1703,10 +1672,7 @@ proc pix_ctx_lineWidth(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   if Tcl.GetDoubleFromObj(interp, objv[2], width) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.lineWidth = width
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.lineWidth = width
 
   return Tcl.OK
 
@@ -1725,10 +1691,7 @@ proc pix_ctx_font(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  try:
-    ctx.font = $Tcl.GetString(objv[2])
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.font = $Tcl.GetString(objv[2])
 
   return Tcl.OK
 
@@ -1753,10 +1716,7 @@ proc pix_ctx_fontSize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    ctx.fontSize = fsize
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.fontSize = fsize
 
   return Tcl.OK
 
@@ -1786,7 +1746,7 @@ proc pix_ctx_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   try:
     ctx.fillText($Tcl.GetString(objv[2]), x, y)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1824,7 +1784,7 @@ proc pix_ctx_fillCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   try:
     ctx.fillCircle(circle)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1859,7 +1819,7 @@ proc pix_ctx_fillEllipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   try:
     ctx.fillEllipse(vec2(x, y), rx, ry)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1900,7 +1860,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   try:
     ctx.fillPolygon(vec2(x, y), size, sides)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1940,7 +1900,7 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
   try:
     ctx.polygon(x, y, size, sides)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1981,7 +1941,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   try:
     ctx.strokePolygon(vec2(x, y), size, sides)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -2019,7 +1979,7 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   try:
     let circle = Circle(pos: vec2(cx, cy), radius: radius)
     ctx.strokeCircle(circle)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -2049,7 +2009,7 @@ proc pix_ctx_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   try:
     ctx.strokeText($Tcl.GetString(objv[2]), x, y)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -2072,7 +2032,7 @@ proc pix_ctx_textAlign(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   try:
     # Enum
     ctx.textAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(objv[2]))
-  except Exception as e:
+  except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -2121,36 +2081,27 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     ctxKey        = $Tcl.GetString(objv[1])
     img           = ctxKey.replace("^ctx", "^img")
 
-  try:
-    let 
-      myEnumLineCap      = ctx.lineCap
-      myEnumLineJoin     = ctx.lineJoin
-      myEnumTextAlign    = ctx.textAlign
-      myEnumTextBaseline = ctx.textBaseline
+  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4), Tcl.NewStringObj(img.cstring, -1))
+  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width))
+  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height))
 
-    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4), Tcl.NewStringObj(img.cstring, -1))
-    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width))
-    discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height))
+  let mat = ctx.getTransform()
+  for x in 0..2:
+    for y in 0..2:
+      if Tcl.ListObjAppendElement(interp, newListMatobj, Tcl.NewDoubleObj(mat[x][y])) != Tcl.OK:
+        return Tcl.ERROR
 
-    let mat = ctx.getTransform()
-
-    for x in 0..2:
-      for y in 0..2:
-        discard Tcl.ListObjAppendElement(interp, newListMatobj, Tcl.NewDoubleObj(mat[x][y]))
-
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("image", 5), dictImgObj)
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("globalAlpha", 11),  Tcl.NewDoubleObj(ctx.globalAlpha))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineWidth", 9),     Tcl.NewDoubleObj(ctx.lineWidth))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("miterLimit", 10),   Tcl.NewDoubleObj(ctx.miterLimit))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineCap", 7),       Tcl.NewStringObj(cstring($myEnumLineCap), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineJoin", 8),      Tcl.NewStringObj(cstring($myEnumLineJoin), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("font", 4),          Tcl.NewStringObj(cstring(ctx.font), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("fontSize", 8),      Tcl.NewDoubleObj(ctx.fontSize))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("transform", 9),     newListMatobj)
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textAlign", 9),     Tcl.NewStringObj(cstring($myEnumTextAlign), -1))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textBaseline", 12), Tcl.NewStringObj(cstring($myEnumTextBaseline), -1))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("image", 5), dictImgObj)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("globalAlpha", 11),  Tcl.NewDoubleObj(ctx.globalAlpha))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineWidth", 9),     Tcl.NewDoubleObj(ctx.lineWidth))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("miterLimit", 10),   Tcl.NewDoubleObj(ctx.miterLimit))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineCap", 7),       Tcl.NewStringObj(cstring($ctx.lineCap), -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("lineJoin", 8),      Tcl.NewStringObj(cstring($ctx.lineJoin), -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("font", 4),          Tcl.NewStringObj(cstring(ctx.font), -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("fontSize", 8),      Tcl.NewDoubleObj(ctx.fontSize))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("transform", 9),     newListMatobj)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textAlign", 9),     Tcl.NewStringObj(cstring($ctx.textAlign), -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("textBaseline", 12), Tcl.NewStringObj(cstring($ctx.textBaseline), -1))
 
   Tcl.SetObjResult(interp, dictObj)
 
@@ -2185,10 +2136,7 @@ proc pix_ctx_setLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
     pattern.add(v)
 
-  try:
-    ctx.setLineDash(pattern)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.setLineDash(pattern)
 
   return Tcl.OK
 
@@ -2218,14 +2166,12 @@ proc pix_ctx_getTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
   let newListobj = Tcl.NewListObj(0, nil)
 
-  try:
-    # Get the transformation matrix for the context.
-    let mat = ctx.getTransform()
-    for x in 0..2:
-      for y in 0..2:
-        discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewDoubleObj(mat[x][y]))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Get the transformation matrix for the context.
+  let mat = ctx.getTransform()
+  for x in 0..2:
+    for y in 0..2:
+      if Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewDoubleObj(mat[x][y])) != Tcl.OK:
+        return Tcl.ERROR
 
   Tcl.SetObjResult(interp, newListobj)
 
@@ -2247,11 +2193,9 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   let newSeqListobj = Tcl.NewListObj(0, nil)
 
-  try:
-    for _, value in ctx.getLineDash():
-      discard Tcl.ListObjAppendElement(interp, newSeqListobj, Tcl.NewDoubleObj(value))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  for _, value in ctx.getLineDash():
+    if Tcl.ListObjAppendElement(interp, newSeqListobj, Tcl.NewDoubleObj(value)) != Tcl.OK:
+      return Tcl.ERROR
 
   Tcl.SetObjResult(interp, newSeqListobj)
 
@@ -2260,7 +2204,9 @@ proc pix_ctx_getLineDash(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_fillPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # See [img::fillPath] procedure.
   if objc notin [4, 5]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> <path>|stringPath 'color|<paint>' ?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> <path>|stringPath 'color|<paint>' ?matrix:optional"
+    )
     return Tcl.ERROR
 
   if pix_image_fillpath(clientData, interp, objc, objv) != Tcl.OK:
@@ -2269,7 +2215,9 @@ proc pix_ctx_fillPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 proc pix_ctx_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # See [img::strokePath] procedure.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> <path>|stringPath 'color|<paint>' {key value key value ...}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<ctx> <path>|stringPath 'color|<paint>' {key value key value ...}"
+    )
     return Tcl.ERROR
 
   if pix_image_strokePath(clientData, interp, objc, objv) != Tcl.OK:
@@ -2285,11 +2233,11 @@ proc pix_ctx_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|string('all')")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
+  let key = $Tcl.GetString(objv[1])
   # Context
-  if arg1 == "all":
-    ctxTable.clear()
+  if key == "all":
+    pixTables.clearContext()
   else:
-    ctxTable.del(arg1)
+    pixTables.delKeyContext(key)
 
   return Tcl.OK

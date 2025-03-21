@@ -17,11 +17,11 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   if pixParses.getListInt(interp, objv[1], width, height, 
     "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
     return Tcl.ERROR
-    
+
   # Create a new image of the specified width and height.
   let img = try:
     newImage(width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(img)
@@ -47,10 +47,7 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   if img.isNil: return Tcl.ERROR
 
   # Attempt to create a copy of the image object
-  let copyimg = try:
-    img.copy()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let copyimg = img.copy()
 
   let p = toHexPtr(copyimg)
   pixTables.addImage(p, copyimg)
@@ -68,13 +65,15 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # blendMode - Enum value (optional:NormalBlend)
   #
   # Returns: Nothing.
+  if objc notin (3..5):
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<img1> <img2> ?matrix3:optional ?blendMode:optional"
+    )
+    return Tcl.ERROR
+
   var
     count: Tcl.Size
     matrix3: vmath.Mat3
-
-  if objc notin (3..5):
-    Tcl.WrongNumArgs(interp, 1, objv, "<img1> <img2> ?matrix3:optional ?blendMode:optional")
-    return Tcl.ERROR
 
   # Get destination image
   let img1 = pixTables.loadImage(interp, objv[1])
@@ -113,7 +112,9 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       let myEnum = parseEnum[BlendMode]($Tcl.GetString(objv[5]))
 
       img1.draw(img2, transform = matrix3, blendMode = myEnum)
-  except Exception as e:
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -143,15 +144,15 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   # Get fill value argument
   let fillArg = $Tcl.GetString(objv[2])
 
-  try:
-    # Handle paint object or color value
-    if pixTables.hasPaint(fillArg):
-      img.fill(pixTables.getPaint(fillArg))
-    else:
+  # Handle paint object or color value
+  if pixTables.hasPaint(fillArg):
+    img.fill(pixTables.getPaint(fillArg))
+  else:
+    try:
       # Fall back to color parsing.
       img.fill(pixUtils.getColor(objv[2]))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except InvalidColor as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -175,7 +176,7 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # or if the file is not a valid image or supported.
   let img = try:
     readimage(file)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(img)
@@ -203,7 +204,9 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns: Nothing.
   if objc notin [4, 5]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional"
+    )
     return Tcl.ERROR
 
   var
@@ -246,8 +249,9 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       img.fillPath(path, paint, matrix3)
     else:
       img.fillPath(path, paint)
-
-  except Exception as e:
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -275,9 +279,8 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(
-      interp, 1, objv,
-      "<img> 'pathstring' 'color|<paint>' {?strokeWidth ?value ?transform ?value ...}"
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<img> 'pathstring' 'color|<paint>' {?strokeWidth ?value ?transform ?value ...}"
     )
     return Tcl.ERROR
 
@@ -325,7 +328,11 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       miterLimit = opts.miterLimit,
       dashes = opts.dashes
     )
-  except Exception as e:
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -362,7 +369,9 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       img.blur(radius, color)
     else:
       img.blur(radius)
-  except Exception as e:
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -375,7 +384,9 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   #
   # Returns: Nothing.
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "<img> {offset? ?value spread? ?value blur? ?value color? ?value}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<img> {offset? ?value spread? ?value blur? ?value color? ?value}"
+    )
     return Tcl.ERROR
 
   # Image
@@ -396,8 +407,9 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
       blur   = opts.blur,
       color  = opts.color
     )
-
-  except Exception as e:
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(shadow)
@@ -464,13 +476,13 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         # The matrix3 argument is a transformation matrix that will be applied to the text.
         # This allows for transformations such as scaling, rotation, or translation of the text.
         img.fillText(arrangement, matrix3)
-      except Exception as e:
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
     else:
       try:
         img.fillText(arrangement)
-      except Exception as e:
+      except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Font
@@ -478,7 +490,9 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     if font.isNil: return Tcl.ERROR
 
     if objc < 4:
-      return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+      return pixUtils.errorMSG(interp,
+      "pix(error): If <font> is present, a 'text' must be associated."
+      )
 
     let text = $Tcl.GetString(objv[3])
     # Create a new RenderOptions object to store font rendering options.
@@ -498,7 +512,9 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         )
       else:
         img.fillText(font, text)
-    except Exception as e:
+    except ValueError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -531,7 +547,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # to scale the image to the new size.
   let newimg = try:
     img.resize(width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
@@ -588,12 +604,9 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  let data = try:
-    img[x, y]
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  let dictObj = Tcl.NewDictObj()
+  let 
+    data = img[x, y]
+    dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.int))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.int))
@@ -629,7 +642,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   try:
     img[x, y] = pixUtils.getColor(objv[3])
-  except Exception as e:
+  except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -660,10 +673,7 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    img.applyOpacity(opacity)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  img.applyOpacity(opacity)
 
   return Tcl.OK
 
@@ -686,10 +696,7 @@ proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  try:
-    img.ceil()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  img.ceil()
 
   return Tcl.OK
 
@@ -728,7 +735,7 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   let (score, newimg) = try:
     masterimg.diff(img)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
@@ -759,10 +766,7 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  try:
-    img.flipHorizontal()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  img.flipHorizontal()
 
   return Tcl.OK
 
@@ -783,10 +787,7 @@ proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  try:
-    img.flipVertical()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  img.flipVertical()
 
   return Tcl.OK
 
@@ -813,11 +814,8 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  let color = try:
-    # Retrieve the color of the pixel at coordinates (x, y) from the image.
-    img.getColor(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Retrieve the color of the pixel at coordinates (x, y) from the image.
+  let color = img.getColor(x, y)
 
   let dictObj = Tcl.NewDictObj()
 
@@ -851,10 +849,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  let value = try:
-    if img.inside(x, y): 1 else: 0
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let value = if img.inside(x, y): 1 else: 0
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
@@ -884,11 +879,8 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  try:
-    # Invert the image.
-    img.invert()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Invert the image.
+  img.invert()
 
   return Tcl.OK
 
@@ -906,10 +898,7 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let value = try:
-    if img.isOneColor(): 1 else: 0
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let value = if img.isOneColor(): 1 else: 0
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
@@ -929,10 +918,7 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let value = try:
-    if img.isOpaque(): 1 else: 0
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let value = if img.isOpaque(): 1 else: 0
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
@@ -952,10 +938,7 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let value = try:
-    if img.isTransparent(): 1 else: 0
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let value = if img.isTransparent(): 1 else: 0
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
@@ -987,15 +970,14 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
       return Tcl.ERROR
     try:
-      newimg = img.magnifyBy2(power.int)
-    except Exception as e:
+      newimg = img.magnifyBy2(power)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
   else:
     try:
       # The result is stored in newimg.
       newimg = img.magnifyBy2()
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
@@ -1032,13 +1014,13 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
       return Tcl.ERROR
     try:
-      newimg = img.minifyBy2(power.int)
-    except Exception as e:
+      newimg = img.minifyBy2(power)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     try:
       newimg = img.minifyBy2()
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
@@ -1067,12 +1049,9 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   let img = pixTables.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let rect = try:
-    img.opaqueBounds()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  let dictObj = Tcl.NewDictObj()
+  let
+    rect = img.opaqueBounds()
+    dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
@@ -1099,7 +1078,7 @@ proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   try:
     img.rotate90()
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1139,7 +1118,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   # coordinates and size.
   let subimage = try:
     img.subImage(x, y, width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(subimage)
@@ -1189,7 +1168,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
   let subimage = try:
     img.superImage(x, y, width, height)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(subimage)
@@ -1220,7 +1199,7 @@ proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
   try:
     img.fillGradient(paint)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1286,7 +1265,9 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
         )
       else:
         img.strokeText(arrangement)
-    except Exception as e:
+    except ValueError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Font
@@ -1294,7 +1275,9 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     if font.isNil: return Tcl.ERROR
 
     if objc < 4:
-      return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+      return pixUtils.errorMSG(interp,
+      "pix(error): If <font> is present, a 'text' must be associated."
+      )
 
     let text = $Tcl.GetString(objv[3])
     var opts = pixParses.RenderOptions()
@@ -1318,7 +1301,9 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
         )
       else:
         img.strokeText(font, text)
-    except Exception as e:
+    except ValueError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1342,7 +1327,7 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     # Call the writeFile method of the image to save the image to the
     # file specified by filePath.
     img.writeFile($Tcl.GetString(objv[2]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1357,11 +1342,11 @@ proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "<img>|string('all')")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
+  let key = $Tcl.GetString(objv[1])
   # Image
-  if arg1 == "all":
-    imgTable.clear()
+  if key == "all":
+    pixTables.clearImage()
   else:
-    imgTable.del(arg1)
+    pixTables.delKeyImage(key)
 
   return Tcl.OK

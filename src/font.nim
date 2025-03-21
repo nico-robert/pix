@@ -15,12 +15,10 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "filePath")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
-
   # Font
   let font = try:
-    readFont(arg1)
-  except Exception as e:
+    readFont($Tcl.GetString(objv[1]))
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(font)
@@ -51,10 +49,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    font.size = fsize
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  font.size = fsize
 
   return Tcl.OK
 
@@ -76,7 +71,7 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   try:
     # Color gets.
     font.paint.color = pixUtils.getColor(objv[2])
-  except Exception as e:
+  except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -101,10 +96,7 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if tface.isNil: return Tcl.ERROR
 
   # Create a new pixie.Font from the given TypeFace object.
-  let font = try:
-    newFont(tface)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let font = newFont(tface)
 
   let p = toHexPtr(font)
   pixTables.addFont(p, font)
@@ -129,11 +121,7 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if font.isNil: return Tcl.ERROR
 
   # Create a new span object.
-  let span = try:
-    # Text
-    newSpan($Tcl.GetString(objv[2]), font)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let span = newSpan($Tcl.GetString(objv[2]), font)
 
   let p = toHexPtr(span)
   pixTables.addSpan(p, span)
@@ -163,17 +151,10 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     let paint = pixTables.loadPaint(interp, objv[2])
     if paint.isNil: return Tcl.ERROR
 
-    try:
-      font.paint = paint
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    font.paint = paint
   else:
     # No Paint object gets the font paint.
-    let paint = try:
-      font.paint
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    
+    let paint = font.paint
     let p = toHexPtr(paint)
     pixTables.addPaint(p, paint)
 
@@ -196,7 +177,7 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # Typeface
   let typeface = try:
     readTypeface($Tcl.GetString(objv[1]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
@@ -224,7 +205,7 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       let p = toHexPtr(typeface)
       pixTables.addTface(p, typeface)
       discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewStringObj(p.cstring, -1))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, newListobj)
@@ -252,10 +233,7 @@ proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   if tface.isNil: return Tcl.ERROR
 
   # Gets the font ascender value in font units.
-  let ascentValue = try:
-    tface.ascent()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let ascentValue = tface.ascent()
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(ascentValue))
 
@@ -281,13 +259,13 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   #    **y** : is the y offset of the top-left corner of the bounds.<br>
   #    **w** : is the width of the bounds.<br>
   #    **h** : is the height of the bounds.<br>
-  var
-    matrix3: vmath.Mat3
-    rect: Rect
-
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> ?transform:optional")
     return Tcl.ERROR
+
+  var
+    matrix3: vmath.Mat3
+    rect: Rect
 
   # Arrangement
   let arr = pixTables.loadArr(interp, objv[1])
@@ -299,12 +277,12 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
       return Tcl.ERROR
     try:
       rect = arr.computeBounds(matrix3)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     try:
       rect = arr.computeBounds()
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let dictObj = Tcl.NewDictObj()
@@ -332,11 +310,7 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   let font = pixTables.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
-  let newfont = try:
-    font.copy()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
+  let newfont = font.copy()
   let p = toHexPtr(newfont)
   pixTables.addFont(p, newfont)
 
@@ -368,10 +342,7 @@ proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp
   let font = pixTables.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
-  let defaultLineHeight = try:
-    font.defaultLineHeight()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let defaultLineHeight = font.defaultLineHeight()
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(defaultLineHeight))
 
@@ -394,12 +365,9 @@ proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # TypeFace
   let tface = pixTables.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
-  
+
   # Gets the font descender value in font units.
-  let descentValue = try:
-    tface.descent
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let descentValue = tface.descent
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(descentValue))
 
@@ -421,21 +389,25 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let 
-    char1 = $Tcl.GetString(objv[2])
-    c = char1.runeAt(0)
+  let str = $Tcl.GetString(objv[2])
+
+  if str.len == 0:
+    return pixUtils.errorMSG(interp, 
+    "pix(error): the len of 'char' is 0."
+    )
+
+  let c = str.runeAt(0)
 
   if tface.hasGlyph(c):
     Tcl.SetObjResult(interp, Tcl.NewStringObj(Tcl.GetString(objv[1]), -1))
   else:
     # New Typeface
-    let newtface = try:
-      tface.fallbackTypeface(c)
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg) 
+    let newtface = tface.fallbackTypeface(c)
 
     if newtface == nil:
-      return pixUtils.errorMSG(interp, "pix(error): the '<TypeFace>' return object is 'null'.")
+      return pixUtils.errorMSG(interp,
+      "pix(error): the '<TypeFace>' return object is 'null'."
+      )
 
     let p = toHexPtr(newtface)
     pixTables.addTface(p, newtface)
@@ -462,14 +434,15 @@ proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let 
-    char1 = $Tcl.GetString(objv[2])
-    c = char1.runeAt(0)
+  let str = $Tcl.GetString(objv[2])
 
-  let advance = try:
-    tface.getAdvance(c)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  if str.len == 0:
+    Tcl.SetObjResult(interp, Tcl.NewDoubleObj(0))
+    return Tcl.OK
+
+  let 
+    c = str.runeAt(0)
+    advance = tface.getAdvance(c)
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(advance))
 
@@ -491,17 +464,24 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let
-    char1 = $Tcl.GetString(objv[2])
-    c = char1.runeAt(0)
+  let str = $Tcl.GetString(objv[2])
+
+  if str.len == 0:
+    return pixUtils.errorMSG(
+      interp, "pix(error): the len of 'char' is 0."
+    )
+
+  let c = str.runeAt(0)
 
   let path = try:
     tface.getGlyphPath(c)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   if path == nil:
-    return pixUtils.errorMSG(interp, "pix(error): the '<path>' return object is 'null'.")
+    return pixUtils.errorMSG(interp,
+    "pix(error): the '<path>' return object is 'null'."
+    )
 
   let p = toHexPtr(path)
   pixTables.addPath(p, path)
@@ -533,15 +513,20 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
 
   # Rune
   let 
-    char1 = $Tcl.GetString(objv[2])
-    c1 = char1.runeAt(0)
-    char2 = $Tcl.GetString(objv[3])
-    c2 = char2.runeAt(0)
+    str1 = $Tcl.GetString(objv[2])
+    str2 = $Tcl.GetString(objv[3])
 
-  let adjustment = try:
-    tface.getKerningAdjustment(c1, c2)
+  let c1 = try:
+    str1.runeAt(0)
   except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix2(error): " & e.msg)
+
+  let c2 = try:
+    str2.runeAt(0)
+  except Exception as e:
+    return pixUtils.errorMSG(interp, "pix1(error): " & e.msg)
+
+  let adjustment = tface.getKerningAdjustment(c1, c2)
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(adjustment))
 
@@ -563,14 +548,14 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let
-    char1 = $Tcl.GetString(objv[2])
-    c = char1.runeAt(0)
+  let str = $Tcl.GetString(objv[2])
 
-  let hasglyph = try:
-    if tface.hasGlyph(c): 1 else: 0
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  if str.len == 0:
+    Tcl.SetObjResult(interp, Tcl.NewIntObj(0))
+    return Tcl.OK
+
+  let c = str.runeAt(0)
+  let hasglyph = if tface.hasGlyph(c): 1 else: 0
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(hasglyph))
 
@@ -586,52 +571,48 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   #
   # Returns: A Tcl dict value {x y} where the x is the width of the bounds in pixels,
   # and the y is the height of the bounds in pixels.
+  if objc notin [2, 3]:
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<Arrangement> or <font> + 'text' or <span>"
+    )
+    return Tcl.ERROR
+
   var
     count: Tcl.Size
     elements: Tcl.PPObj
     bounds: vmath.Vec2
-
-  if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> or <font> + 'text' or <span>")
-    return Tcl.ERROR
 
   let arg1 = $Tcl.GetString(objv[1])
 
   if pixTables.hasArr(arg1):
     # Arrangement
     let arr = pixTables.getArr(arg1)
-    try:
-      bounds = arr.layoutBounds()
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    
+    bounds = arr.layoutBounds()
+
   elif pixTables.hasFont(arg1):
     # Font + text
     let font = pixTables.getFont(arg1)
     if objc != 3:
-      return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+      return pixUtils.errorMSG(interp,
+      "pix(error): If <font> is present, a 'text' must be associated."
+      )
 
-    try:
-      bounds = font.layoutBounds($Tcl.GetString(objv[2]))
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
+    bounds = font.layoutBounds($Tcl.GetString(objv[2]))
   else:
     # Span
     if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
       return Tcl.ERROR
 
     if count == 0:
-      return pixUtils.errorMSG(interp, "pix(error): list <span> object is empty.")
+      return pixUtils.errorMSG(interp, 
+      "pix(error): list <span> object is empty."
+      )
 
     var spans = newSeq[Span]()
     for i in 0..count-1:
       spans.add(pixTables.getSpan($Tcl.GetString(elements[i])))
 
-    try:
-      bounds = spans.layoutBounds()
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    bounds = spans.layoutBounds()
 
   let newListobj = Tcl.NewListObj(0, nil)
 
@@ -661,10 +642,7 @@ proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let tface = pixTables.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
-  let lineGap = try:
-    tface.lineGap()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let lineGap = tface.lineGap()
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(lineGap))
 
@@ -692,10 +670,7 @@ proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   let tface = pixTables.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
-  let lineHeight = try:
-    tface.lineHeight()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let lineHeight = tface.lineHeight()
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(lineHeight))
 
@@ -715,10 +690,7 @@ proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   let tface = pixTables.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
-  let name = try:
-    tface.name()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let name = tface.name()
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(name.cstring, -1))
 
@@ -740,7 +712,7 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # Buffer
   let typeface = try:
     parseOtf($Tcl.GetString(objv[1]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
@@ -762,11 +734,11 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
-  
+
   # Buffer
   let typeface = try:
     parseSvgFont($Tcl.GetString(objv[1]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
@@ -792,9 +764,9 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # Buffer
   let typeface = try:
     parseTtf($Tcl.GetString(objv[1]))
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  
+
   let p = toHexPtr(typeface)
   pixTables.addTface(p, typeface)
 
@@ -814,7 +786,7 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   let arg1 = $Tcl.GetString(objv[1])
 
-  let scale = try:
+  let scale =
     if pixTables.hasFont(arg1):
       # Font
       let font = pixTables.getFont(arg1)
@@ -825,9 +797,8 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
       typeface.scale()
     else:
       return pixUtils.errorMSG(interp,
-        "pix(error): unknown <font> or <TypeFace> key object found '" & arg1 & "'") 
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      "pix(error): unknown <font> or <TypeFace> key object found '" & arg1 & "'"
+      ) 
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(scale))
 
@@ -847,6 +818,12 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   # #EndTable
   #
   # Returns: A *new* arrangement object.
+  if objc notin (2..4):
+    let errMsg = "<font> 'text' {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value} or " &
+    "<span> {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value}"
+    Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
+    return Tcl.ERROR
+
   var
     count: Tcl.Size
     elements: Tcl.PPObj
@@ -857,19 +834,15 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     hasFont: bool = true
     jj = 3
 
-  if objc notin (2..4):
-    let errMsg = "<font> 'text' {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value} or " &
-    "<span> {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value}"
-    Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
-    return Tcl.ERROR
-
   let arg1 = $Tcl.GetString(objv[1])
 
   if pixTables.hasFont(arg1):
     # Font
     font = pixTables.getFont(arg1)
     if objc < 3:
-      return pixUtils.errorMSG(interp, "pix(error): If <font> is present, a 'text' must be associated.")
+      return pixUtils.errorMSG(interp,
+      "pix(error): If <font> is present, a 'text' must be associated."
+      )
     text = $Tcl.GetString(objv[2])
   else:
     # Spans
@@ -903,14 +876,11 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
           vAlign = opts.vAlign,
           wrap = opts.wrap
         )
-    except Exception as e:
+    except ValueError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   else:
-    try:
-      arr = if hasFont: typeset(font, text) else: typeset(spans)
-    except Exception as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    arr = if hasFont: typeset(font, text) else: typeset(spans)
 
   let p = toHexPtr(arr)
   pixTables.addArr(p, arr)
@@ -937,7 +907,9 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   #
   # Returns: Nothing.
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}"
+    )
     return Tcl.ERROR
 
   # Font
@@ -954,7 +926,9 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   if count mod 2 != 0:
-    return pixUtils.errorMSG(interp, "wrong # args: 'dict options' should be :key value ?key1 ?value1 ...")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+    )
 
   for i in countup(0, count - 1, 2):
     let 
@@ -962,59 +936,50 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
       value = elements[i+1]
     case mkey:
       of "noKerningAdjustments":
-        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK: return Tcl.ERROR
-        try:
-          font.noKerningAdjustments = myBool.bool
-        except Exception as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK: 
+          return Tcl.ERROR
+        font.noKerningAdjustments = myBool.bool
       of "underline":
-        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK: return Tcl.ERROR
-        try:
-          font.underline = myBool.bool
-        except Exception as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK:
+          return Tcl.ERROR
+        font.underline = myBool.bool
       of "strikethrough":
-        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK: return Tcl.ERROR
-        try:
-          font.strikethrough = myBool.bool
-        except Exception as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK:
+          return Tcl.ERROR
+        font.strikethrough = myBool.bool
       of "size":
-        if Tcl.GetDoubleFromObj(interp, value, fsize) != Tcl.OK: return Tcl.ERROR
-        try:
-          font.size = fsize
-        except Exception as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        if Tcl.GetDoubleFromObj(interp, value, fsize) != Tcl.OK: 
+          return Tcl.ERROR
+        font.size = fsize
       of "lineHeight":
-        if Tcl.GetDoubleFromObj(interp, value, flineHeight) != Tcl.OK: return Tcl.ERROR
-        try:
-          font.lineHeight = flineHeight
-        except Exception as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        if Tcl.GetDoubleFromObj(interp, value, flineHeight) != Tcl.OK:
+          return Tcl.ERROR
+        font.lineHeight = flineHeight
       of "paint":
         try:
           font.paint = SomePaint(pixUtils.getColor(value))
-        except Exception as e:
+        except InvalidColor as e:
           return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
       of "color":
         try:
           font.paint.color = pixUtils.getColor(value)
-        except Exception as e:
+        except InvalidColor as e:
           return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
       of "paints":
-        if Tcl.ListObjGetElements(interp, value, countP, elementsP) != Tcl.OK: return Tcl.ERROR
+        if Tcl.ListObjGetElements(interp, value, countP, elementsP) != Tcl.OK:
+          return Tcl.ERROR
         if countP != 0:
           var paints = newSeq[pixie.Paint]()
           for ps in 0..countP-1:
-            try:
-              let paint = pixTables.getPaint($Tcl.GetString(elementsP[ps]))
-              paints.add(paint)
-            except Exception as e:
-              return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+            let paint = pixTables.loadPaint(interp, elementsP[ps])
+            if paint.isNil: return Tcl.ERROR
+            paints.add(paint)
 
           font.paints = paints
       else:
-        return pixUtils.errorMSG(interp, "wrong # args: Key '" & mkey & "' not supported.")
+        return pixUtils.errorMSG(interp, 
+        "wrong # args: Key '" & mkey & "' not supported."
+        )
 
   return Tcl.OK
 
@@ -1043,16 +1008,13 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   let dictGlobobj = Tcl.NewDictObj()
 
-  try:
-    for index, rect in arr.selectionRects:
-      let dictObj = Tcl.NewDictObj()
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
-      discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
-      discard Tcl.DictObjPut(nil, dictGlobobj, Tcl.NewIntObj(index), dictObj)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  for index, rect in arr.selectionRects:
+    let dictObj = Tcl.NewDictObj()
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
+    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
+    discard Tcl.DictObjPut(nil, dictGlobobj, Tcl.NewIntObj(index), dictObj)
 
   Tcl.SetObjResult(interp, dictGlobobj)
 
@@ -1068,11 +1030,11 @@ proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     Tcl.WrongNumArgs(interp, 1, objv, "<font>|string('all')")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
+  let key = $Tcl.GetString(objv[1])
   # Font
-  if arg1 == "all":
-    fontTable.clear()
+  if key == "all":
+    pixTables.clearFont()
   else:
-    fontTable.del(arg1)
+    pixTables.delKeyFont(key)
 
   return Tcl.OK

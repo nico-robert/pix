@@ -5,10 +5,7 @@ proc pix_path(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv
   # Sets a new path.
   #
   # Returns: A *new* [path] object.
-  let path = try:
-    newPath()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let path = newPath()
 
   let p = toHexPtr(path)
   pixTables.addPath(p, path)
@@ -36,10 +33,7 @@ proc pix_path_addPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let path2 = pixTables.loadPath(interp, objv[2])
   if path2.isNil: return Tcl.ERROR
 
-  try:
-    path.addPath(path2)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.addPath(path2)
 
   return Tcl.OK
 
@@ -58,10 +52,7 @@ proc pix_path_angleToMiterLimit(clientData: Tcl.PClientData, interp: Tcl.PInterp
   if Tcl.GetDoubleFromObj(interp, objv[1], angle) != Tcl.OK:
     return Tcl.ERROR
 
-  let miterLimit = try:
-    angleToMiterLimit(angle)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let miterLimit = angleToMiterLimit(angle)
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(miterLimit))
 
@@ -82,10 +73,7 @@ proc pix_path_miterLimitToAngle(clientData: Tcl.PClientData, interp: Tcl.PInterp
   if Tcl.GetDoubleFromObj(interp, objv[1], angle) != Tcl.OK:
     return Tcl.ERROR
 
-  let miterLimit = try:
-    miterLimitToAngle(angle)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let miterLimit = miterLimitToAngle(angle)
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(miterLimit))
 
@@ -102,14 +90,16 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # ccw          - boolean value (optional:false)
   #
   # Returns: Nothing.
+  if objc notin [6, 7]:
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x y} r a0 a1 ?ccw:optional"
+    )
+    return Tcl.ERROR
+
   var
     x, y, r, a0, a1: cdouble
     clockcw: int
     ccw: bool = false
-
-  if objc notin [6, 7]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} r a0 a1 ?ccw:optional")
-    return Tcl.ERROR
 
   # Path
   let path = pixTables.loadPath(interp, objv[1])
@@ -124,7 +114,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
      Tcl.GetDoubleFromObj(interp, objv[4], a0) != Tcl.OK or
      Tcl.GetDoubleFromObj(interp, objv[5], a1) != Tcl.OK:
     return Tcl.ERROR
-      
+
   if objc == 7:
     if Tcl.GetBooleanFromObj(interp, objv[6], clockcw) != Tcl.OK:
       return Tcl.ERROR
@@ -132,7 +122,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
   try:
     path.arc(x, y, r, a0, a1, ccw)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -148,7 +138,9 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x1 y1} {x2 y2} radius")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x1 y1} {x2 y2} radius"
+    )
     return Tcl.ERROR
 
   # Path
@@ -173,7 +165,7 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   try:
     path.arcTo(x1, y1, x2, y2, radius)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -193,7 +185,9 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x1 y1} {x2 y2} {x3 y3}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x1 y1} {x2 y2} {x3 y3}"
+    )
     return Tcl.ERROR
 
   # Path
@@ -206,21 +200,18 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   if pixParses.getListDouble(interp, objv[2], x1, y1, 
     "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
     return Tcl.ERROR
-      
+
   # Coordinates2
   if pixParses.getListDouble(interp, objv[3], x2, y2, 
     "wrong # args: 'coordinates2' should be 'x2' 'y2'") != Tcl.OK:
     return Tcl.ERROR
-      
+
   # Coordinates3
   if pixParses.getListDouble(interp, objv[4], x3, y3, 
     "wrong # args: 'coordinates3' should be 'x3' 'y3'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.bezierCurveTo(vec2(x1, y1), vec2(x2, y2), vec2(x3, y3))
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.bezierCurveTo(x1, y1, x2, y2, x3, y3)
 
   return Tcl.OK
 
@@ -246,10 +237,7 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.moveTo(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.moveTo(x, y)
 
   return Tcl.OK
 
@@ -276,10 +264,7 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.lineTo(x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.lineTo(x, y)
 
   return Tcl.OK
 
@@ -299,10 +284,7 @@ proc pix_path_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   let path = pixTables.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  try:
-    path.closePath()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.closePath()
 
   return Tcl.OK
     
@@ -342,7 +324,7 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   try:
     path.polygon(x, y, size, sides)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -358,7 +340,9 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   #
   # Returns: Nothing.
   if objc notin [4, 5]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} ?ccw:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x y} {width height} ?ccw:optional"
+    )
     return Tcl.ERROR
 
   # Path
@@ -385,10 +369,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return Tcl.ERROR
     ccw = clockcw.bool
 
-  try:
-    path.rect(x, y, width, height, ccw)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.rect(x, y, width, height, ccw)
 
   return Tcl.OK
 
@@ -419,10 +400,7 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
   if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.circle(cx, cy, radius)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.circle(cx, cy, radius)
 
   return Tcl.OK
 
@@ -442,19 +420,18 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   # which is a enum value. If the 'windingRule' argument is not given,
   # the default value 'NonZero' is used.
   if objc notin (3..5):
-    let errMsg = "<path> {x y} or <path> {x y} 'matrix' or <path> {x y} 'matrix' enum:windingRule"
-    Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x y} or <path> {x y} 'matrix' or <path> {x y} 'matrix' enum:windingRule"
+    )
     return Tcl.ERROR
 
   # Path
   let path = pixTables.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  var
-    x, y: cdouble
-    value: int = 0
-
   # Coordinates
+  var x, y: cdouble
+
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
@@ -463,21 +440,20 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     if objc == 5:
       try:
         parseEnum[WindingRule]($Tcl.GetString(objv[4]))
-      except Exception as e:
+      except ValueError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else: 
       NonZero
-    
+
   var matrix3: vmath.Mat3 = mat3()
 
   if objc in [4, 5]:
     if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
       return Tcl.ERROR
 
-  try:
-    if path.fillOverlaps(vec2(x, y), matrix3, windingRule):
-      value = 1
-  except Exception as e:
+  let value = try:
+    if path.fillOverlaps(vec2(x, y), matrix3, windingRule): 1 else: 0
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
@@ -505,10 +481,7 @@ proc pix_path_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.transform(matrix3)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.transform(matrix3)
 
   return Tcl.OK
   
@@ -535,7 +508,7 @@ proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
   let rect = try:
     path.computeBounds(matrix3)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let dictObj = Tcl.NewDictObj()
@@ -544,7 +517,7 @@ proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1),  Tcl.NewDoubleObj(rect.y))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1),  Tcl.NewDoubleObj(rect.w))
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1),  Tcl.NewDoubleObj(rect.h))
-  
+
   Tcl.SetObjResult(interp, dictObj)
 
   return Tcl.OK
@@ -563,10 +536,7 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   let path = pixTables.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  let pathcopy = try:
-    path.copy()
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let pathcopy = path.copy()
 
   let p = toHexPtr(pathcopy)
   pixTables.addPath(p, pathcopy)
@@ -598,16 +568,13 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if pixParses.getListDouble(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
-    
+
   # Radius
   if Tcl.GetDoubleFromObj(interp, objv[3], rx) != Tcl.OK or
     Tcl.GetDoubleFromObj(interp, objv[4], ry)  != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.ellipse(x, y, rx, ry)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.ellipse(x, y, rx, ry)
 
   return Tcl.OK
 
@@ -624,7 +591,9 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
   #
   # Returns: Nothing.
   if objc != 7:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}"
+    )
     return Tcl.ERROR
 
   # Path
@@ -651,10 +620,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.ellipticalArcTo(rx, ry, xAxisRotation, largeA.bool, sweepF.bool, x, y)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.ellipticalArcTo(rx, ry, xAxisRotation, largeA.bool, sweepF.bool, x, y)
 
   return Tcl.OK
 
@@ -689,10 +655,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     "wrong # args: 'coordinates2' should be 'x2' 'y2'") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
-    path.quadraticCurveTo(x1, y1, x2, y2)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.quadraticCurveTo(x1, y1, x2, y2)
 
   return Tcl.OK
 
@@ -708,7 +671,9 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   #
   # Returns: Nothing.
   if objc notin [5, 6]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} {width height} {nw ne se sw} ?ccw:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x y} {width height} {nw ne se sw} ?ccw:optional"
+    )
     return Tcl.ERROR
 
   # Path
@@ -737,7 +702,9 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   if count != 4:
-    return pixUtils.errorMSG(interp, "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'")
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'"
+    )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
      Tcl.GetDoubleFromObj(interp, elements[1], ne) != Tcl.OK or
@@ -750,10 +717,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return Tcl.ERROR
     ccw = clockcw.bool
 
-  try:
-    path.roundedRect(x, y, width, height, nw, ne, se, sw, ccw)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  path.roundedRect(x, y, width, height, nw, ne, se, sw, ccw)
 
   return Tcl.OK
 
@@ -779,7 +743,9 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   # inside if it is contained in the stroked path and not in any
   # holes.
   if objc notin [3, 4]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} ?{key value key value ...}:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "<path> {x y} ?{key value key value ...}:optional"
+    )
     return Tcl.ERROR
 
   # Path
@@ -810,7 +776,9 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
       ): value = 1
     else:
       if path.strokeOverlaps(vec2(x, y)): value = 1
-  except Exception as e:
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
@@ -827,11 +795,11 @@ proc pix_path_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     Tcl.WrongNumArgs(interp, 1, objv, "<path>|string('all')")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
+  let key = $Tcl.GetString(objv[1])
   # Path
-  if arg1 == "all":
-    pathTable.clear()
+  if key == "all":
+    pixTables.clearPath()
   else:
-    pathTable.del(arg1)
+    pixTables.delKeyPath(key)
 
   return Tcl.OK

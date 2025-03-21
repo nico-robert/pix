@@ -9,7 +9,9 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   #
   # Returns: A *new* [svg] object.
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "'svg string' ?{width height}:optional")
+    Tcl.WrongNumArgs(interp, 1, objv,
+    "'svg string' ?{width height}:optional"
+    )
     return Tcl.ERROR
 
   # Svg string
@@ -26,12 +28,12 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
     try:
        svg = parseSvg(arg1, width, height)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     try:
        svg = parseSvg(arg1)
-    except Exception as e:
+    except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(svg)
@@ -55,13 +57,15 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   let arg1 = $Tcl.GetString(objv[1])
 
   if not pixTables.hasSVG(arg1):
-    return pixUtils.errorMSG(interp, "pix(error): unknown <svg> key object found '" & arg1 & "'")
+    return pixUtils.errorMSG(interp,
+    "pix(error): unknown <svg> key object found '" & arg1 & "'"
+    )
 
   let svg = pixTables.getSVG(arg1)
 
   let img = try:
     newImage(svg)
-  except Exception as e:
+  except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(img)
@@ -81,11 +85,11 @@ proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     Tcl.WrongNumArgs(interp, 1, objv, "<svg>|string('all')")
     return Tcl.ERROR
 
-  let arg1 = $Tcl.GetString(objv[1])
+  let key = $Tcl.GetString(objv[1])
   # Svg
-  if arg1 == "all":
-    svgTable.clear()
+  if key == "all":
+    pixTables.clearSVG()
   else:
-    svgTable.del(arg1)
+    pixTables.delKeySVG(key)
 
   return Tcl.OK
