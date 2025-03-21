@@ -215,3 +215,19 @@ set typeface [pix::font::readTypeface [file join [file dirname [info script]] fo
 if {[pix::font::getKerningAdjustment $typeface "T" "e"] != -99.0} {
     error "pix::font::getKerningAdjustment Test 19"
 }
+
+# Test 20 : Works only with Tcl9!
+set font [pix::font::readFont [file join [file dirname [info script]] fonts NotoEmoji.otf]]
+pix::font::configure $font {size 26}
+
+set image [pix::img::new {800 300}]
+pix::img::fill $image "rgba(255, 255, 255, 255)"
+
+pix::img::fillText $image $font {
+🚑🐑👭🔉🚷🦣💆🔁💺🚵🕦🔦🗓🦟😶🦄⌛🍙😄🇽
+🐠💓🦗🎭🏛🔴🫕🧶🍖🦁🏋🌗🛬🕐💡👉🎯🕔🚏🚲
+🐵🎍💳🥬🟦🪘📠📊🎧🎦🎁🌌🪲🦩🤢☎🚺🚾👺🚃
+🐨🌆🥉💭🗳🦵🟪📆🥮⏯🩴💷🦲➗🌶🧜🖖⏰🛗🔻
+📁🧞😃🌴🚶󾠫🦙🔎⏲🔵🖐☦😪🌯🙆🇺😂🍅🇿🚟🤜
+📼👰🍁📽☪🔄🤝🔧🦸🏰🏳🔜🎥🚋🇫🦨🏜🆖🏤🪖⏏
+}
