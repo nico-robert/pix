@@ -519,12 +519,12 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
   let c1 = try:
     str1.runeAt(0)
   except Exception as e:
-    return pixUtils.errorMSG(interp, "pix2(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let c2 = try:
     str2.runeAt(0)
   except Exception as e:
-    return pixUtils.errorMSG(interp, "pix1(error): " & e.msg)
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let adjustment = tface.getKerningAdjustment(c1, c2)
 
