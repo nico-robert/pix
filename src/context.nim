@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Sets a new context.
+  # Sets a *new* context.
   #
   # size  - list width,height
   # value - string [color] or [img::new] (optional:none)
@@ -48,9 +48,8 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let ctx = newContext(img)
-
-  let 
+  let
+    ctx = newContext(img) 
     pc = toHexPtr(ctx)
     pi = pc.replace("^ctx", "^img")
 
@@ -83,13 +82,14 @@ proc pix_ctx_strokeStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   # Paint or string [color].
   let arg2 = $Tcl.GetString(objv[2])
 
-  if pixTables.hasPaint(arg2):
-    ctx.strokeStyle = pixTables.getPaint(arg2) # Paint
-  else:
-    try:
-      ctx.strokeStyle = pixUtils.getColor(objv[2]) # Color
-    except InvalidColor as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.strokeStyle =
+    if pixTables.hasPaint(arg2):
+      pixTables.getPaint(arg2) # Paint
+    else:
+      try:
+        pixUtils.getColor(objv[2]) # Color
+      except InvalidColor as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -944,7 +944,7 @@ proc pix_ctx_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   elif objc == 4:
     # Path + Enum
     let path = pixTables.loadPath(interp, objv[2])
-    if paint.isNil: return Tcl.ERROR
+    if path.isNil: return Tcl.ERROR
     try:
       ctx.fill(path, parseEnum[WindingRule]($Tcl.GetString(objv[3])))
     except ValueError as e:
@@ -1274,14 +1274,14 @@ proc pix_ctx_fillStyle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   # Paint or string [color].
   let arg2 = $Tcl.GetString(objv[2])
 
-  if pixTables.hasPaint(arg2):
-    ctx.fillStyle = pixTables.getPaint(arg2) # Paint
-  else:
-    # Color
-    try:
-      ctx.fillStyle = pixUtils.getColor(objv[2])
-    except InvalidColor as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  ctx.fillStyle =
+    if pixTables.hasPaint(arg2):
+      pixTables.getPaint(arg2) # Paint
+    else:
+      try:
+        pixUtils.getColor(objv[2]) # Color
+      except InvalidColor as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -1311,7 +1311,9 @@ proc pix_ctx_globalAlpha(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   if alpha < 0.0 or alpha > 1.0:
-    return pixUtils.errorMSG(interp, "global alpha must be between 0 and 1" )
+    return pixUtils.errorMSG(interp,
+    "pix(error): the global alpha should be in the range 0 to 1."
+    )
 
   # Set the global alpha value for the context.
   ctx.globalAlpha = alpha
@@ -1384,7 +1386,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   if objc == 4:
     # Path
     let path = pixTables.loadPath(interp, objv[3])
-    if paint.isNil: return Tcl.ERROR
+    if path.isNil: return Tcl.ERROR
     try:
       if ctx.isPointInStroke(path, x, y): value = 1
     except PixieError as e:
@@ -1536,7 +1538,7 @@ proc pix_ctx_stroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   if objc == 3:
     # Path
     let path = pixTables.loadPath(interp, objv[2])
-    if paint.isNil: return Tcl.ERROR
+    if path.isNil: return Tcl.ERROR
 
     try:
       ctx.stroke(path)
@@ -1974,7 +1976,9 @@ proc pix_ctx_strokeCircle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   if radius <= 0:
-    return pixUtils.errorMSG(interp, "The radius must be greater than 0")
+    return pixUtils.errorMSG(interp,
+    "pix(error): the radius must be greater than 0."
+    )
 
   try:
     let circle = Circle(pos: vec2(cx, cy), radius: radius)
