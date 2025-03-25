@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 package ifneeded pix 0.4 [list apply {dir {
-    # REMINDER ME : Change the 3 values for the version.
+    # REMINDER ME : Change the 2 values for the version.
     package require platform
     
     # Check Tcl version.
@@ -11,13 +11,22 @@ package ifneeded pix 0.4 [list apply {dir {
     }]
 
     set os [platform::generic]
-    if {$os in {macosx-x86_64 macosx-arm}} {
-        load [file join $dir $os lib${version}pix0.4.dylib] Pix
-    } elseif {$os eq "win32-x86_64"} {
-        load [file join $dir $os pix${version}-0.4.dll] Pix
-    } elseif {$os eq "linux-x86_64"} {
-        load [file join $dir $os lib${version}pix0.4.so] Pix
-    } else {
-        error "'$os' not supported for 'pix' package."
+    set ext [info sharedlibextension]
+    set pixv 0.4
+
+    switch -exact $os {
+        macosx-x86_64 - 
+        macosx-arm    - 
+        linux-x86_64 {
+            set lib [format {lib%spix%s%s} $version $pixv $ext]
+        }
+        win32-x86_64 {
+            set lib [format {pix%s-%s%s} $version $pixv $ext]
+        }
+        default {
+            error "'$os' not supported for 'pix' package."
+        }
     }
+    # Load library.
+    load [file join $dir $os $lib] Pix
 }} $dir]
