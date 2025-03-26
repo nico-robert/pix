@@ -1,6 +1,6 @@
 pix - 2D graphics library
 ================
-Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in [Nim](https://nim-lang.org).
+Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in 👑 [Nim](https://nim-lang.org).
 ![Photo gallery](examples/pix.png)
 
 Compatibility :
