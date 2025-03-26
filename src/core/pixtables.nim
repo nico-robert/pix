@@ -228,15 +228,6 @@ proc loadArr*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Arrangement =
 
   return getArr(key)
 
-proc getMasterTable*(key: string): Tk.ImageMaster = 
-  result = masterTable[key]
-
-proc hasMasterTable*(key: string): bool = 
-  result = masterTable.hasKey(key)
-  
-proc addMasterTable*(key: string, value: Tk.ImageMaster): void = 
-  masterTable[key] = value
-
 proc getSVG*(key: string): Svg = 
   result = svgTable[key]
 
@@ -251,6 +242,31 @@ proc clearSVG*(): void =
 
 proc delKeySVG*(key: string): void = 
   svgTable.del(key)
+
+proc loadSVG*(interp: Tcl.PInterp, obj: Tcl.PObj): Svg =
+# Searches the Svg table for a key that matches the given obj.
+#
+# Returns:
+# If found, it returns the associated Svg object.
+# If not found, it sets an error message on the given interp and returns nil.
+  let key = $Tcl.GetString(obj)
+
+  if not hasSVG(key):
+    let msg = cstring("pix(error): unknown <svg> key object found: '" & key & "'.")
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    # We return nil to indicate that an error occurred.
+    return nil
+
+  return getSVG(key)
+
+proc getMasterTable*(key: string): Tk.ImageMaster = 
+  result = masterTable[key]
+
+proc hasMasterTable*(key: string): bool = 
+  result = masterTable.hasKey(key)
+  
+proc addMasterTable*(key: string, value: Tk.ImageMaster): void = 
+  masterTable[key] = value
 
 proc getSpan*(key: string): pixie.Span = 
   result = spanTable[key]
