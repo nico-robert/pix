@@ -44,7 +44,7 @@ requires "pixie == 5.0.7"
 task pixTclTkBindings, "Generate pix Tcl library.":
 
   proc compile(libName: string, flags= "") =
-    exec "nim c " & flags & " -d:strip -d:release --app:lib --out:" & libName & " src/pix.nim"
+    exec "nim c " & flags & " -d:strip -d:release --out:" & libName & " src/pix.nim"
 
   proc getArchFolder(): tuple[folder: string, prefix: string, ext: string] =
     when defined(arm64):
