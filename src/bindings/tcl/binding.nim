@@ -28,6 +28,7 @@ type
   TFindNamespace        = proc(interp: PInterp, name: cstring, contextNsPtr: PNamespace, flags: cint): PNamespace {.cdecl.}
   TWrongNumArgs         = proc(interp: PInterp, objc: Size, objv: PPObj, message: cstring) {.cdecl.}
   TGetObjResult         = proc(interp: PInterp): PObj {.cdecl.}
+  TNewByteArrayObj      = proc(bytes: cstring, length: Size): PObj {.cdecl.}
 
 var
   PkgProvideEx*        : TPkgProvideEx
@@ -50,6 +51,7 @@ var
   FindNamespace*       : TFindNamespace
   WrongNumArgs*        : TWrongNumArgs
   GetObjResult*        : TGetObjResult
+  NewByteArrayObj*     : TNewByteArrayObj
 
 when not defined(tcl9):
   var NewIntObj*        : TNewIntObj
@@ -76,6 +78,7 @@ type TclStubs = object
   tcl_FindNamespace        : TFindNamespace
   tcl_WrongNumArgs         : TWrongNumArgs
   tcl_GetObjResult         : TGetObjResult
+  tcl_NewByteArrayObj      : TNewByteArrayObj
   when not defined(tcl9):
     tcl_NewIntObj          : TNewIntObj
     tcl_NewBooleanObj      : TNewBooleanObj
@@ -113,6 +116,7 @@ proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl
   FindNamespace        = cast[TFindNamespace](tclStubsPtr.tcl_FindNamespace)
   WrongNumArgs         = cast[TWrongNumArgs](tclStubsPtr.tcl_WrongNumArgs)
   GetObjResult         = cast[TGetObjResult](tclStubsPtr.tcl_GetObjResult)
+  NewByteArrayObj      = cast[TNewByteArrayObj](tclStubsPtr.tcl_NewByteArrayObj)
   when not defined(tcl9):
     NewIntObj          = cast[TNewIntObj](tclStubsPtr.tcl_NewIntObj)
     NewBooleanObj      = cast[TNewBooleanObj](tclStubsPtr.tcl_NewBooleanObj)
