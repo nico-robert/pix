@@ -1,8 +1,4 @@
 # Test all files.
-lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
-
-package require pix
-
 set files {
     test_context.test
     test_fonts.test
@@ -17,7 +13,11 @@ set dir [file dirname [info script]]
 foreach fc [split $files "\n"] {
     set file [string trim $fc]
     if {[string length $file] == 0 || [string first "#" $file] > -1} {continue}
-    source [file join $dir $file]
+    set tclTestFile [file join $dir $file]
+    exec tclsh9.0 $tclTestFile
+    puts stdout "Tcl90 : $file > Ok"
+    exec tclsh8.6 $tclTestFile
+    puts stdout "Tcl86 : $file > Ok"
 }
 
 exit 0
