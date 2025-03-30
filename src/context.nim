@@ -479,12 +479,10 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = pixTables.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  # Path or Enum
-  let arg2 = $Tcl.GetString(objv[2])
-
   try:
     if objc == 3:
       # Path
+      let arg2 = $Tcl.GetString(objv[2])
       if pixTables.hasPath(arg2):
         let path = pixTables.getPath(arg2)
         ctx.clip(path)
@@ -495,7 +493,7 @@ proc pix_ctx_clip(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     elif objc == 4:
       # Path
       let 
-        path = pixTables.getPath(arg2)
+        path = pixTables.getPath($Tcl.GetString(objv[2]))
         myEnum = parseEnum[WindingRule]($Tcl.GetString(objv[3]))
       ctx.clip(path, myEnum)
     else:
@@ -1430,11 +1428,9 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  # Path or Enum value.
-  let arg3 = $Tcl.GetString(objv[3])
-
   if objc == 4:
     # Path
+    let arg3 = $Tcl.GetString(objv[3])
     if pixTables.hasPath(arg3):
       try:
         if ctx.isPointInPath(pixTables.getPath(arg3), x, y): value = 1
