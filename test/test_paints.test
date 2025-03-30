@@ -3,6 +3,9 @@ lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 # source all.tcl
 if {[catch {package present pix}]} {package require pix}
 
+# Data
+source [file join [file dirname [info script]] data_b64.test]
+
 set heartShape {
     M 10,30
     A 20,20 0,0,1 50,30
@@ -21,6 +24,10 @@ pix::paint::configure $paint [list \
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
+if {![isEqual [pix::toBinary $image] $data_paint_test1]} {
+    error "data test 1 doesn't match with 'data_paint_test1'"
+}
+
 # Test 2
 set paint [pix::paint::new "ImagePaint"]
 pix::paint::configure $paint [list \
@@ -32,6 +39,10 @@ pix::paint::configure $paint [list \
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
+if {![isEqual [pix::toBinary $image] $data_paint_test2]} {
+    error "data test 2 doesn't match with 'data_paint_test2'"
+}
+
 # Test 3
 set paint [pix::paint::new "TiledImagePaint"]
 pix::paint::configure $paint [list \
@@ -41,6 +52,10 @@ pix::paint::configure $paint [list \
 
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
+
+if {![isEqual [pix::toBinary $image] $data_paint_test3]} {
+    error "data test 3 doesn't match with 'data_paint_test3'"
+}
 
 # Test 4
 set paint [pix::paint::new "LinearGradientPaint"]
@@ -52,6 +67,10 @@ pix::paint::configure $paint {
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
+if {![isEqual [pix::toBinary $image] $data_paint_test4]} {
+    error "data test 4 doesn't match with 'data_paint_test4'"
+}
+
 # Test 5
 set paint [pix::paint::new "RadialGradientPaint"]
 pix::paint::configure $paint {
@@ -61,6 +80,10 @@ pix::paint::configure $paint {
 
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
+
+if {![isEqual [pix::toBinary $image] $data_paint_test5]} {
+    error "data test 5 doesn't match with 'data_paint_test5'"
+}
 
 # Test 6
 set paint [pix::paint::new "AngularGradientPaint"]
@@ -72,6 +95,10 @@ pix::paint::configure $paint {
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
+if {![isEqual [pix::toBinary $image] $data_paint_test6]} {
+    error "data test 6 doesn't match with 'data_paint_test6'"
+}
+
 # Test 7
 set paint [pix::paint::new "ImagePaint"]
 pix::paint::configure $paint [list \
@@ -82,3 +109,9 @@ pix::paint::configure $paint [list \
 
 set image [pix::img::new {100 100}]
 pix::img::fill $image $paint
+
+if {![isEqual [pix::toBinary $image] $data_paint_test7]} {
+    error "data test 7 doesn't match with 'data_paint_test7'"
+}
+
+exit 0

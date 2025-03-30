@@ -3,6 +3,9 @@ lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 # source all.tcl
 if {[catch {package present pix}]} {package require pix}
 
+# Data
+source [file join [file dirname [info script]] data_b64.test]
+
 # Test 1
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 24}
@@ -26,6 +29,10 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "fill"
 
+if {![isEqual [pix::toBinary $image] $data_font_test3]} {
+    error "data test 3 doesn't match with 'data_font_test3'"
+}
+
 # Test 4
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 64}
@@ -33,11 +40,19 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::strokeText $image $font "stroke"
 
+if {![isEqual [pix::toBinary $image] $data_font_test4]} {
+    error "data test 4 doesn't match with 'data_font_test4'"
+}
+
 # Test 5
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Changa-Bold.svg]]
 pix::font::configure $font {size 48}
 set image [pix::img::new {200 100}]
 pix::img::fillText $image $font "Changa"
+
+if {![isEqual [pix::toBinary $image] $data_font_test5]} {
+    error "data test 5 doesn't match with 'data_font_test5'"
+}
 
 # Test 6
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -45,6 +60,10 @@ pix::font::configure $font {size 24 lineHeight 200}
 set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "Line height"
+
+if {![isEqual [pix::toBinary $image] $data_font_test6]} {
+    error "data test 6 doesn't match with 'data_font_test6'"
+}
 
 # Test 7
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -55,12 +74,21 @@ pix::img::fillText $image $font "First line"
 set defaultLH [pix::font::defaultLineHeight $font]
 pix::img::fillText $image $font "Second line" [list transform [list 1 0 0 0 1 0 0 $defaultLH 1]]
 
+if {![isEqual [pix::toBinary $image] $data_font_test7]} {
+    error "data test 7 doesn't match with 'data_font_test7'"
+}
+
 # Test 8
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 24}
 set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "Wrapping text to new line" {bounds {200 0}}
+
+if {![isEqual [pix::toBinary $image] $data_font_test8]} {
+    error "data test 8 doesn't match with 'data_font_test8'"
+}
+
 
 # Test 9
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -69,6 +97,10 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "a b c d e f g h i j k l m n o p" {bounds {200 0} hAlign "RightAlign"}
 
+if {![isEqual [pix::toBinary $image] $data_font_test9]} {
+    error "data test 9 doesn't match with 'data_font_test9'"
+}
+
 # Test 10
 set paragraph "ShehadcometotheconclusionthatyoucouldtellalotaboutapersonbytheirearsThewaytheystuckoutandthesizeoftheearlobescouldgiveyou"
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -76,6 +108,10 @@ pix::font::configure $font {size 16 noKerningAdjustments true}
 set image [pix::img::new {1000 150}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font $paragraph {bounds {1000 150}}
+
+if {![isEqual [pix::toBinary $image] $data_font_test10]} {
+    error "data test 10 doesn't match with 'data_font_test10'"
+}
 
 # Test 11
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -90,6 +126,10 @@ Fifth line
 Sixth line
 Seventh line
 } {bounds {200 150}}
+
+if {![isEqual [pix::toBinary $image] $data_font_test11]} {
+    error "data test 11 doesn't match with 'data_font_test11'"
+}
 
 # Test 12
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -106,6 +146,10 @@ pix::img::fillText $image $font "BottomLeft"    {bounds {800 800} hAlign "LeftAl
 pix::img::fillText $image $font "BottomCenter"  {bounds {800 800} hAlign "CenterAlign" vAlign "BottomAlign"}
 pix::img::fillText $image $font "BottomRight"   {bounds {800 800} hAlign "RightAlign" vAlign "BottomAlign"}
 
+if {![isEqual [pix::toBinary $image] $data_font_test12]} {
+    error "data test 12 doesn't match with 'data_font_test12'"
+}
+
 # Test 13
 set font [pix::font::readFont [file join [file dirname [info script]] fonts IBMPlexSans-Regular_2.ttf]]
 pix::font::configure $font {size 48}
@@ -119,6 +163,10 @@ pix::paint::configure $paint {
 set image [pix::img::new {100 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "Text"
+
+if {![isEqual [pix::toBinary $image] $data_font_test13]} {
+    error "data test 13 doesn't match with 'data_font_test13'"
+}
 
 # Test 14
 set font1 [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -151,6 +199,10 @@ foreach {index arrangement} [pix::font::selectionRects $arr] {
     pix::ctx::fillRect $ctx [list $x $y] [list $w $h]
 }
 
+if {![isEqual [pix::toBinary $ctx] $data_font_test14]} {
+    error "data test 14 doesn't match with 'data_font_test14'"
+}
+
 # Test 15
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 16}
@@ -174,6 +226,10 @@ foreach {index arrangement} [pix::font::selectionRects $arr] {
     pix::ctx::fillRect $ctx [list $x $y] [list $w $h]
 }
 
+if {![isEqual [pix::toBinary $ctx] $data_font_test15]} {
+    error "data test 15 doesn't match with 'data_font_test15'"
+}
+
 # Test 16
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 24 underline true}
@@ -183,6 +239,10 @@ pix::img::fill $image "rgba(255, 255, 255, 255)"
 
 pix::img::strokeText $image $font "Wrapping text to new line" {bounds {200 0}}
 
+if {![isEqual [pix::toBinary $image] $data_font_test16]} {
+    error "data test 16 doesn't match with 'data_font_test16'"
+}
+
 # Test 17
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 24 strikethrough true paint "rgba(0, 0, 0, 0.5)"}
@@ -191,6 +251,10 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 
 pix::img::fillText $image $font "Wrapping text to new line" {bounds {200 0}}
+
+if {![isEqual [pix::toBinary $image] $data_font_test17]} {
+    error "data test 17 doesn't match with 'data_font_test18'"
+}
 
 # Test 18
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -208,6 +272,10 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 
 pix::img::fillText $image $font "Multiple fills" {bounds {200 0}}
+
+if {![isEqual [pix::toBinary $image] $data_font_test18]} {
+    error "data test 18 doesn't match with 'data_font_test18'"
+}
 
 # Test 19
 set typeface [pix::font::readTypeface [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
@@ -231,3 +299,10 @@ pix::img::fillText $image $font {
 📁🧞😃🌴🚶󾠫🦙🔎⏲🔵🖐☦😪🌯🙆🇺😂🍅🇿🚟🤜
 📼👰🍁📽☪🔄🤝🔧🦸🏰🏳🔜🎥🚋🇫🦨🏜🆖🏤🪖⏏
 }
+
+if {[package vsatisfies [package provide Tcl] 9.0-]} {
+    if {![isEqual [pix::toBinary $image] $data_font_test20]} {
+        error "data test 20 doesn't match with 'data_font_test20'"
+    }
+}
+exit 0

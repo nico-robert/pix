@@ -3,6 +3,9 @@ lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 # source all.tcl
 if {[catch {package present pix}]} {package require pix}
 
+# Data
+source [file join [file dirname [info script]] data_b64.test]
+
 # Test 1
 set image [pix::img::new {10 10}]
 pix::img::setPixel $image {0 0} "rgba(255, 255, 255, 255)"
@@ -43,17 +46,33 @@ pix::img::draw $a $b
 pix::img::flipVertical $a
 pix::img::flipHorizontal $a
 
+if {![isEqual [pix::toBinary $a] $data_image_test4]} {
+    error "data test 4 doesn't match with 'data_image_test4'"
+}
+
 # Test 5
 set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
 set b [pix::img::superImage $a {-10 0} {20 20}]
+
+if {![isEqual [pix::toBinary $b] $data_image_test5]} {
+    error "data test 5 doesn't match with 'data_image_test5'"
+}
 
 # Test 6
 set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
 set b [pix::img::minifyBy2 $a]
 
+if {![isEqual [pix::toBinary $b] $data_image_test6]} {
+    error "data test 6 doesn't match with 'data_image_test6'"
+}
+
 # Test 7
 set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
 set b [pix::img::magnifyBy2 $a]
+
+if {![isEqual [pix::toBinary $b] $data_image_test7]} {
+    error "data test 7 doesn't match with 'data_image_test7'"
+}
 
 # Test 8
 set a [pix::img::new {100 100}]
@@ -73,6 +92,10 @@ pix::img::fill $img "rgba(0, 0, 0, 255)"
 pix::ctx::fillRect $ctx {25 25} {50 50}
 pix::img::blur $img 20
 
+if {![isEqual [pix::toBinary $img] $data_image_test9]} {
+    error "data test 9 doesn't match with 'data_image_test9'"
+}
+
 # Test 10
 set ctx [pix::ctx::new {100 100}]
 pix::ctx::fillStyle $ctx "rgba(255, 255, 255, 255)"
@@ -80,6 +103,10 @@ set img [dict get [pix::ctx::get $ctx] image addr]
 pix::img::fill $img "rgba(0, 0, 0, 255)"
 pix::ctx::fillRect $ctx {25 25} {50 50}
 pix::img::blur $img 20 "rgba(0, 0, 0, 255)"
+
+if {![isEqual [pix::toBinary $img] $data_image_test10]} {
+    error "data test 10 doesn't match with 'data_image_test10'"
+}
 
 # Test 11
 set image [pix::img::new {100 100}]
@@ -144,3 +171,9 @@ scan $y %d ytoInt
 scan $w %d wtoInt
 scan $h %d htoInt
 set trimmedImage [pix::img::subImage $image [list $xtoInt $ytoInt] [list $wtoInt $htoInt]]
+
+if {![isEqual [pix::toBinary $trimmedImage] $data_image_test18]} {
+    error "data test 18 doesn't match with 'data_image_test18'"
+}
+
+exit 0

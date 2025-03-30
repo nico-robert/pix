@@ -5,6 +5,9 @@ if {[catch {package present pix}]} {package require pix}
 
 set font [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]
 
+# Data
+source [file join [file dirname [info script]] data_b64.test]
+
 # test 1
 set ctx [pix::ctx::new {300 150} white]
 set ctxinfo [pix::ctx::get $ctx]
@@ -23,6 +26,10 @@ pix::ctx::fill $ctx
 
 pix::ctx::clearRect $ctx {10 10} {120 100}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test1]} {
+    error "data test 1 doesn't match with 'data_context_test1'"
+}
+
 # test 2
 set ctx [pix::ctx::new {300 150} white]
 
@@ -38,6 +45,10 @@ pix::ctx::moveTo $ctx {20 20}
 pix::ctx::lineTo $ctx {120 120}
 pix::ctx::stroke $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test2]} {
+    error "data test 2 doesn't match with 'data_context_test2'"
+}
+
 # test 3
 set ctx [pix::ctx::new {300 150} white]
 
@@ -47,6 +58,10 @@ pix::ctx::lineTo $ctx {200 50}
 pix::ctx::moveTo $ctx {50 90}
 pix::ctx::lineTo $ctx {280 120}
 pix::ctx::stroke $ctx
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test3]} {
+    error "data test 3 doesn't match with 'data_context_test3'"
+}
 
 # test 4
 set ctx [pix::ctx::new {300 150} white]
@@ -63,11 +78,19 @@ pix::path::closePath $region
 pix::ctx::fillStyle $ctx "green"
 pix::ctx::fill $ctx $region "EvenOdd"
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test4]} {
+    error "data test 4 doesn't match with 'data_context_test4'"
+}
+
 # test 5
 set ctx [pix::ctx::new {300 150} white]
 
 pix::ctx::rect $ctx {10 10} {150 100}
 pix::ctx::stroke $ctx
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test5]} {
+    error "data test 5 doesn't match with 'data_context_test5'"
+}
 
 # test 6
 set ctx [pix::ctx::new {300 150} white]
@@ -90,6 +113,10 @@ pix::ctx::moveTo $ctx {20 140}
 pix::ctx::lineTo $ctx {280 140}
 pix::ctx::stroke $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test6]} {
+    error "data test 6 doesn't match with 'data_context_test6'"
+}
+
 # test 7
 set ctx [pix::ctx::new {300 150} white]
 
@@ -106,6 +133,10 @@ pix::ctx::rect $ctx {175 25} {100 100}
 pix::ctx::stroke $ctx
 pix::ctx::fill $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test7]} {
+    error "data test 7 doesn't match with 'data_context_test7'"
+}
+
 # test 8
 set ctx [pix::ctx::new {300 150} white]
 
@@ -116,6 +147,10 @@ pix::ctx::lineTo $ctx {220 140}
 pix::ctx::closePath $ctx
 pix::ctx::stroke $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test8]} {
+    error "data test 8 doesn't match with 'data_context_test8'"
+}
+
 # test 9
 set ctx [pix::ctx::new {300 150} white]
 
@@ -123,6 +158,10 @@ pix::ctx::beginPath $ctx
 pix::ctx::moveTo $ctx {50 20}
 pix::ctx::bezierCurveTo $ctx {230 30} {150 80} {250 100}
 pix::ctx::stroke $ctx
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test9]} {
+    error "data test 9 doesn't match with 'data_context_test9'"
+}
 
 # test 10
 set ctx [pix::ctx::new {300 150} white]
@@ -132,6 +171,10 @@ pix::ctx::moveTo $ctx {30 30}
 pix::ctx::bezierCurveTo $ctx {120 160} {180 10} {220 140}
 pix::ctx::stroke $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test10]} {
+    error "data test 10 doesn't match with 'data_context_test10'"
+}
+
 # test 11
 set ctx [pix::ctx::new {300 150} white]
 
@@ -140,6 +183,10 @@ pix::ctx::moveTo $ctx {50 20}
 pix::ctx::quadraticCurveTo $ctx {230 150} {250 20}
 pix::ctx::stroke $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test11]} {
+    error "data test 11 doesn't match with 'data_context_test11'"
+}
+
 # test 12
 set ctx [pix::ctx::new {300 150} white]
 
@@ -147,11 +194,19 @@ pix::ctx::beginPath $ctx
 pix::ctx::ellipse $ctx {100 75} 75 50
 pix::ctx::stroke $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test12]} {
+    error "data test 12 doesn't match with 'data_context_test12'"
+}
+
 # test 13
 set ctx [pix::ctx::new {300 150} white]
 
 pix::ctx::strokeStyle $ctx "green"
 pix::ctx::strokeRect $ctx {20 10} {160 100}
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test13]} {
+    error "data test 13 doesn't match with 'data_context_test13'"
+}
 
 # test 14
 set ctx [pix::ctx::new {300 150} white]
@@ -161,17 +216,29 @@ pix::ctx::lineWidth $ctx 15
 pix::ctx::strokeStyle $ctx "#38f"
 pix::ctx::strokeRect $ctx {30 30} {160 90}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test14]} {
+    error "data test 14 doesn't match with 'data_context_test14'"
+}
+
 # test 15
 set ctx [pix::ctx::new {300 150} white]
 
 pix::ctx::setTransform $ctx {1 0.2 0 0.8 1 0 0 0 1}
 pix::ctx::fillRect $ctx {0 0} {100 100}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test15]} {
+    error "data test 15 doesn't match with 'data_context_test15'"
+}
+
 # test 16
 set ctx [pix::ctx::new {300 150} white]
 
 pix::ctx::rotate $ctx [expr {45 * 3.14 /180.}]
 pix::ctx::fillRect $ctx {60 0} {100 30}
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test16]} {
+    error "data test 16 doesn't match with 'data_context_test16'"
+}
 
 # test 17
 set ctx [pix::ctx::new {300 150} white]
@@ -186,6 +253,10 @@ pix::ctx::fillStyle $ctx "red"
 pix::ctx::fillRect $ctx {40 40} {50 20}
 pix::ctx::fillRect $ctx {40 90} {50 20}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test17]} {
+    error "data test 17 doesn't match with 'data_context_test17'"
+}
+
 # test 18
 set ctx [pix::ctx::new {300 150} white]
 
@@ -198,6 +269,10 @@ pix::ctx::setTransform $ctx {1 0 0 0 1 0 0 0 1}
 pix::ctx::fillStyle $ctx "gray"
 pix::ctx::fillRect $ctx {0 0} {80 80}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test18]} {
+    error "data test 18 doesn't match with 'data_context_test18'"
+}
+
 # test 19
 set ctx [pix::ctx::new {300 150} white]
 
@@ -209,6 +284,10 @@ pix::ctx::setTransform $ctx {1 0 0 0 1 0 0 0 1}
 pix::ctx::fillStyle $ctx "gray"
 pix::ctx::fillRect $ctx {10 10} {8 20}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test19]} {
+    error "data test 19 doesn't match with 'data_context_test19'"
+}
+
 # test 20
 set ctx [pix::ctx::new {300 150} white]
 
@@ -218,6 +297,10 @@ pix::ctx::fillRect $ctx {100 0} {80 20}
 pix::ctx::rotate $ctx [expr {45 * 3.14 / 180.}]
 pix::ctx::fillStyle $ctx "red"
 pix::ctx::fillRect $ctx {100 0} {80 20}
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test20]} {
+    error "data test 20 doesn't match with 'data_context_test20'"
+}
 
 # test 21
 set ctx [pix::ctx::new {300 150} white]
@@ -230,6 +313,10 @@ pix::ctx::restore $ctx
 
 pix::ctx::fillText $ctx "Hello world" {50 90}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test21]} {
+    error "data test 21 doesn't match with 'data_context_test21'"
+}
+
 # test 22
 set ctx [pix::ctx::new {300 150} white]
 
@@ -237,6 +324,10 @@ pix::ctx::font $ctx $font
 pix::ctx::fontSize $ctx 50
 
 pix::ctx::strokeText $ctx "Hello world" {50 90}
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test22]} {
+    error "data test 22 doesn't match with 'data_context_test22'"
+}
 
 # test 23
 set ctx [pix::ctx::new {300 150} white]
@@ -247,6 +338,10 @@ pix::ctx::fillStyle $ctx "green"
 pix::ctx::fillRect $ctx {10 10} {100 100}
 pix::ctx::restore $ctx
 pix::ctx::fillRect $ctx {150 40} {100 100}
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test23]} {
+    error "data test 23 doesn't match with 'data_context_test23'"
+}
 
 # test 24
 set ctx [pix::ctx::new {300 150} white]
@@ -260,6 +355,10 @@ pix::ctx::fillStyle $ctx "blue"
 pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 pix::ctx::fillStyle $ctx "orange"
 pix::ctx::fillRect $ctx {0 0} {100 100}
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test24]} {
+    error "data test 24 doesn't match with 'data_context_test24'"
+}
 
 # test 25
 set ctx [pix::ctx::new {300 150} white]
@@ -280,6 +379,10 @@ pix::ctx::fillStyle $ctx "orange"
 pix::ctx::fillRect $ctx {0 0} {100 100}
 
 pix::ctx::restore $ctx
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test25]} {
+    error "data test 25 doesn't match with 'data_context_test25'"
+}
 
 # test 26
 set ctx [pix::ctx::new {300 150} white]
@@ -304,6 +407,10 @@ pix::ctx::restore $ctx
 pix::ctx::fillStyle $ctx "blue"
 pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test26]} {
+    error "data test 26 doesn't match with 'data_context_test26'"
+}
+
 # test 27
 set ctx [pix::ctx::new {300 150} white]
 set ctxinfo [pix::ctx::get $ctx]
@@ -327,6 +434,10 @@ pix::ctx::fillRect $ctx {0 0} {100 100}
 
 pix::ctx::restore $ctx
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test27]} {
+    error "data test 27 doesn't match with 'data_context_test27'"
+}
+
 # test 28
 set ctx [pix::ctx::new {300 150} white]
 set ctxinfo [pix::ctx::get $ctx]
@@ -340,6 +451,10 @@ pix::ctx::clip $ctx $region "EvenOdd"
 
 pix::ctx::fillStyle $ctx "blue"
 pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test28]} {
+    error "data test 28 doesn't match with 'data_context_test28'"
+}
 
 # test 29
 set ctx [pix::ctx::new {300 150} white]
@@ -355,6 +470,10 @@ pix::ctx::clip $ctx $squarePath
 
 pix::ctx::fillStyle $ctx "blue"
 pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test29]} {
+    error "data test 29 doesn't match with 'data_context_test29'"
+}
 
 # test 30
 set ctx [pix::ctx::new {300 150} white]
@@ -373,6 +492,10 @@ pix::ctx::clip $ctx $circlePath
 pix::ctx::fillText $ctx "Hello world" {50 90}
 
 pix::ctx::restore $ctx
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test30]} {
+    error "data test 30 doesn't match with 'data_context_test30'"
+}
 
 # test 31
 set ctx [pix::ctx::new {300 150} white]
@@ -400,7 +523,11 @@ foreach pattern {
     incr y 20
 }
 
-# test 32
+if {![isEqual [pix::toBinary $ctx] $data_context_test32]} {
+    error "data test 33 doesn't match with 'data_context_test32'"
+}
+
+# test 33
 set ctx [pix::ctx::new {300 150} white]
 
 set paint [pix::paint::new "SolidPaint"]
@@ -409,7 +536,11 @@ pix::paint::configure $paint {color "rgb(0,0,255)" blendMode "ExclusionBlend"}
 pix::ctx::fillStyle $ctx $paint
 pix::ctx::fillRect $ctx {0 0} {100 100}
 
-# test 33
+if {![isEqual [pix::toBinary $ctx] $data_context_test33]} {
+    error "data test 33 doesn't match with 'data_context_test33'"
+}
+
+# test 34
 set ctx [pix::ctx::new {300 150} white]
 
 pix::ctx::globalAlpha $ctx 0.5
@@ -420,7 +551,11 @@ pix::ctx::fillRect $ctx {10 10} {100 100}
 pix::ctx::fillStyle $ctx "red"
 pix::ctx::fillRect $ctx {50 50} {100 100}
 
-# test 34
+if {![isEqual [pix::toBinary $ctx] $data_context_test34]} {
+    error "data test 34 doesn't match with 'data_context_test34'"
+}
+
+# test 35
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
@@ -429,7 +564,11 @@ set testImage [pix::img::readImage $file]
 pix::ctx::drawImage $ctx $testImage {0 0}
 pix::ctx::drawImage $ctx $testImage {30 30}
 
-# test 35
+if {![isEqual [pix::toBinary $ctx] $data_context_test35]} {
+    error "data test 35 doesn't match with 'data_context_test35'"
+}
+
+# test 36
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
@@ -439,7 +578,11 @@ pix::ctx::translate $ctx {30 30}
 pix::ctx::drawImage $ctx $testImage {-30 -30}
 pix::ctx::drawImage $ctx $testImage {0 0}
 
-# test 36
+if {![isEqual [pix::toBinary $ctx] $data_context_test36]} {
+    error "data test 36 doesn't match with 'data_context_test36'"
+}
+
+# test 37
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
@@ -450,7 +593,11 @@ pix::ctx::drawImage $ctx $testImage {0 0}
 pix::ctx::scale $ctx {0.25 0.25}
 pix::ctx::drawImage $ctx $testImage {0 0}
 
-# test 37
+if {![isEqual [pix::toBinary $ctx] $data_context_test37]} {
+    error "data test 37 doesn't match with 'data_context_test37'"
+}
+
+# test 38
 set ctx [pix::ctx::new {100 100} white]
 
 set file [file join [file dirname [info script]] images pip1.png]
@@ -458,7 +605,11 @@ set testImage [pix::img::readImage $file]
 
 pix::ctx::drawImage $ctx $testImage {30 30} {20 20}
 
-# test 38
+if {![isEqual [pix::toBinary $ctx] $data_context_test38]} {
+    error "data test 38 doesn't match with 'data_context_test38'"
+}
+
+# test 39
 set ctx [pix::ctx::new {300 227} white]
 
 set file [file join [file dirname [info script]] images rhino.png]
@@ -466,29 +617,32 @@ set testImage [pix::img::readImage $file]
 
 pix::ctx::drawImage $ctx $testImage {30 71} {104 124} {21 20} {87 104}
 
+if {![isEqual [pix::toBinary $ctx] $data_context_test39]} {
+    error "data test 39 doesn't match with 'data_context_test39'"
+}
 
-# test 39
+# test 40
 set ctx [pix::ctx::new {100 100} white]
 pix::ctx::rect $ctx {10 10} {100 100}
 if {![pix::ctx::isPointInPath $ctx {30 70}]} {
     error "Point {30 70} should be in rectangle"
 }
 
-# test 40
+# test 41
 set ctx [pix::ctx::new {300 150} white]
 pix::ctx::arc $ctx {150 75} 50 0 6.28
 if {![pix::ctx::isPointInPath $ctx {150 50}]} {
     error "Point {150 50} should be in arc"
 }
 
-# test 41
+# test 42
 set ctx [pix::ctx::new {100 100} white]
 pix::ctx::rect $ctx {10 10} {100 100}
 if {![pix::ctx::isPointInStroke $ctx {50 10}]} {
     error "Point {50 10} should be in rectangle"
 }
 
-# test 42
+# test 43
 set ctx [pix::ctx::new {300 150} white]
 pix::ctx::ellipse $ctx {150 75} 40 60
 pix::ctx::lineWidth $ctx 25
@@ -497,7 +651,7 @@ if {![pix::ctx::isPointInStroke $ctx {110 75}]} {
 }
 
 
-# test 43
+# test 44
 set ctx [pix::ctx::new {100 100} white]
 set ctxinfo [pix::ctx::get $ctx]
 
@@ -507,7 +661,11 @@ pix::ctx::fillStyle $ctx "rgba(0,0,255,1)"
 pix::ctx::restore $ctx
 pix::ctx::fillRect $ctx {0 0} [list [dict get $ctxinfo image width] [dict get $ctxinfo image height]]
 
-# test 44
+if {![isEqual [pix::toBinary $ctx] $data_context_test44]} {
+    error "data test 44 doesn't match with 'data_context_test44'"
+}
+
+# test 45
 # From https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline
 set ctx [pix::ctx::new {550 500} white]
 
@@ -530,7 +688,11 @@ foreach baseline {
     incr index
 }
 
-# test 45
+if {![isEqual [pix::toBinary $ctx] $data_context_test45]} {
+    error "data test 45 doesn't match with 'data_context_test45'"
+}
+
+# test 46
 set ctx [pix::ctx::new {100 100}]
 
 set pathstr "M 10 10 H 90 V 90 H 10 L 10 10"
@@ -538,7 +700,11 @@ set color "rgba(0,0,0,255)"
 
 pix::ctx::fillPath $ctx $pathstr $color
 
-# test 46
+if {![isEqual [pix::toBinary $ctx] $data_context_test46]} {
+    error "data test 46 doesn't match with 'data_context_test46'"
+}
+
+# test 47
 set image [pix::img::new {256 256}]
 set ctx [pix::ctx::new $image]
 pix::img::fill $image "rgba(255,255,255,255)" 
@@ -567,3 +733,9 @@ pix::ctx::fillStyle $ctx "red"
 pix::ctx::arc $ctx {200 130} 5 0 6.28
 pix::ctx::arc $ctx {50 20} 5 0 6.28
 pix::ctx::fill $ctx
+
+if {![isEqual [pix::toBinary $ctx] $data_context_test47]} {
+    error "data test 47 doesn't match with 'data_context_test47'"
+}
+
+exit 0

@@ -3,6 +3,9 @@ lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
 # source all.tcl
 if {[catch {package present pix}]} {package require pix}
 
+# Data
+source [file join [file dirname [info script]] data_b64.test]
+
 # Test 0
 set testPath [pix::svgStyleToPathObj "m 1 2 3 4 5 6"]
 if {[pix::pathObjToString $testPath] ne "m1 2 l3 4 l5 6"} {
@@ -16,12 +19,20 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::strokePath $image $pathStr $color {strokeWidth 10}
 
+if {![isEqual [pix::toBinary $image] $data_path_test1]} {
+    error "data test 1 doesn't match with 'data_path_test1'"
+}
+
 # Test 2
 set image [pix::img::new {100 100}]
 set pathStr "M 10 10 L 50 60 90 90"
 set color "rgba(255, 0, 0, 1)"
 
 pix::img::strokePath $image $pathStr $color {strokeWidth 10}
+
+if {![isEqual [pix::toBinary $image] $data_path_test2]} {
+    error "data test 2 doesn't match with 'data_path_test2'"
+}
 
 # Test 3
 set image [pix::img::new {100 100}]
@@ -30,6 +41,10 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::strokePath $image $pathStr $color {strokeWidth 10}
 
+if {![isEqual [pix::toBinary $image] $data_path_test3]} {
+    error "data test 3 doesn't match with 'data_path_test3'"
+}
+
 # Test 4
 set image [pix::img::new {100 100}]
 set pathStr "M 10 10 H 90 V 90 H 10 L 10 10"
@@ -37,12 +52,19 @@ set color "rgba(0, 0, 0, 1)"
 
 pix::img::fillPath $image $pathStr $color
 
+if {![isEqual [pix::toBinary $image] $data_path_test4]} {
+    error "data test 4 doesn't match with 'data_path_test4'"
+}
 # Test 5
 set image [pix::img::new {100 100}]
 set pathStr "M 10 10 H 90 V 90 H 10 Z"
 set color "rgba(0, 0, 0, 1)"
 
 pix::img::fillPath $image $pathStr $color
+
+if {![isEqual [pix::toBinary $image] $data_path_test5]} {
+    error "data test 5 doesn't match with 'data_path_test5'"
+}
 
 # Test 6
 set image [pix::img::new {100 100}]
@@ -57,6 +79,10 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::fillPath $image $path $color
 
+if {![isEqual [pix::toBinary $image] $data_path_test6]} {
+    error "data test 6 doesn't match with 'data_path_test6'"
+}
+
 # Test 7
 set image [pix::img::new {100 100}]
 set path {
@@ -69,6 +95,10 @@ set path {
 
 pix::img::fillPath $image $path "#FC427B"
 
+if {![isEqual [pix::toBinary $image] $data_path_test7]} {
+    error "data test 7 doesn't match with 'data_path_test7'"
+}
+
 # Test 8
 set image [pix::img::new {200 200}]
 pix::img::fill $image "rgba(255,255,255,1)"
@@ -78,6 +108,10 @@ set path [pix::svgStyleToPathObj "M1 0.5C1 0.776142 0.776142 1 0.5 1C0.223858 1 
 pix::img::fillPath   $image [pix::pathObjToString $path] "rgba(255,0,0,1)" {200 0 0 0 200 0 0 0 1}
 pix::img::strokePath $image [pix::pathObjToString $path] "rgba(0,255,0,1)" {transform {200 0 0 0 200 0 0 0 1} strokeWidth 0.01}
 
+if {![isEqual [pix::toBinary $image] $data_path_test8]} {
+    error "data test 8 doesn't match with 'data_path_test8'"
+}
+
 # Test 9
 set image [pix::img::new {60 60}]
 pix::img::fill $image "rgba(255,255,255,1)"
@@ -85,6 +119,10 @@ pix::img::fill $image "rgba(255,255,255,1)"
 set path {M 3 3 L 20 3 L 20 20 L 3 20 Z}
 
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 10 10 1} strokeWidth 10 lineCap "RoundCap" lineJoin "RoundJoin"}
+
+if {![isEqual [pix::toBinary $image] $data_path_test9]} {
+    error "data test 9 doesn't match with 'data_path_test9'"
+}
 
 # Test 10
 set image [pix::img::new {60 120}]
@@ -98,6 +136,10 @@ pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 45 1
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 65 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin"}
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 85 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1}}
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 105 1} strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1 2 3 4 5 6 7 8 9}}
+
+if {![isEqual [pix::toBinary $image] $data_path_test10]} {
+    error "data test 10 doesn't match with 'data_path_test10'"
+}
 
 # Test 11
 set path [pix::path::new]
@@ -182,3 +224,9 @@ pix::paint::configure $paint {color "rgba(255,0,255,128)" opacity 0.5}
 
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $path $paint
+
+if {![isEqual [pix::toBinary $image] $data_path_test15]} {
+    error "data test 15 doesn't match with 'data_path_test15'"
+}
+
+exit 0
