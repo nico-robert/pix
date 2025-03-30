@@ -398,10 +398,11 @@ proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: 
     pixTables.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
-      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'")
+    "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+    )
 
   let data = try:
-    encodeImage(img, FileFormat.PngFormat)
+    encodeImage(img, PngFormat)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -411,6 +412,51 @@ proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: 
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
+
+  return Tcl.OK
+
+proc toBinary*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Convert an [img] object to binary.
+  #
+  # object - [img] or [ctx] object.
+  # format - string (png, qoi, bmp, ppm) (optional:png).
+  #
+  # Returns: A string in binary format.
+  if objc notin [2, 3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img> ?format:optional")
+    return Tcl.ERROR
+
+  let arg1= $Tcl.GetString(objv[1])
+
+  let img = if pixTables.hasContext(arg1):
+    pixTables.getContext(arg1).image
+  elif pixTables.hasImage(arg1):
+    pixTables.getImage(arg1)
+  else:
+    return pixUtils.errorMSG(interp,
+    "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+    )
+
+  var fileformat: FileFormat = PngFormat
+
+  if objc == 3:
+    let format = $Tcl.GetString(objv[2])
+    fileFormat = case format.toLowerAscii():
+      of "png": PngFormat
+      of "bmp": BmpFormat
+      of "qoi": QoiFormat
+      of "ppm": PpmFormat
+      else:
+        return pixUtils.errorMSG(interp,
+        "pix(error): format not supported '" & format & "'."
+        )
+
+  let data = try:
+    encodeImage(img, fileformat)
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewByteArrayObj(data.cstring, Tcl.Size(data.len)))
 
   return Tcl.OK
 
