@@ -331,7 +331,8 @@ foreach {file_name var} {
 } {
     set ex [parseExample [file join $dirpix examples $file_name]]
     source [file join $dirpix examples $file_name]
-    set b64 [pix::toB64 [set $var]]
+    set bin [pix::toBinary [set $var]]
+    set b64 [binary encode base64 -maxlen 80 $bin]
     puts $fp "#### $file_name"
     puts $fp "```"
     puts -nonewline $fp "[join $ex \n]"
