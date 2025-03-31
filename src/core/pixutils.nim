@@ -208,35 +208,37 @@ proc getColor*(obj: Tcl.PObj): Color =
   #
   # obj - The color to check.
   #
+  # Check if the string or object is :
+  #
+  # in 'rgba' format (e.g. rgba(x,x,x,x))
+  # in 'hexHtml' format (e.g. #F8D1DD)
+  # in 'rgb' format (e.g. rgb(x,x,x))
+  # in 'hexalpha' format (e.g. FF0000FF)
+  # in 'hex' format (e.g. FF0000)
+  # in 'rgbx' format (e.g. rgbx(x,x,x,x))
+  # in 'hsl' format (e.g. hsl(x,x,x))
+  # a simple color format (e.g. {0.0 0.0 0.0 0.0})
+  # a simple string html color name (e.g. red)
+  #
   # Returns: A `Color` object.
 
   let scolor = strip($Tcl.GetString(obj))
   var color: Color
 
-  # Check if the string or object is :
-  #
-  # in 'rgba' format (e.g. rgba(x,x,x,x))
   if scolor.isRGBAFormat():
     return parseHtmlRgba(scolor)
-  # in 'hexHtml' format (e.g. #F8D1DD)
   elif scolor.isHexHtmlFormat():
     return parseHtmlHex(scolor)
-  # in 'rgb' format (e.g. rgb(x,x,x))
   elif scolor.isRGBFormat():
     return parseHtmlRgb(scolor)
-  # in 'hexalpha' format (e.g. FF0000FF)
   elif scolor.isHexAlphaFormat():
     return parseHexAlpha(scolor)
-  # in 'hex' format (e.g. FF0000)
   elif scolor.isHexFormat():
     return parseHex(scolor)
-  # in 'rgbx' format (e.g. rgbx(x,x,x,x))
   elif scolor.isRGBXFormat():
     return parseColorRGBX(scolor).color
-   # in 'hsl' format (e.g. hsl(x,x,x))
   elif scolor.isHSLFormat():
     return parseColorHSL(scolor).color
-  # a simple color format (e.g. {0.0 0.0 0.0 0.0})
   elif isColorSimpleFormat(obj, color): 
     return color
   else:
