@@ -4,8 +4,7 @@
 import pixie
 import ./pixutils as pixUtils
 import std/strutils
-
-from ../bindings/tcl/binding as Tcl import nil
+import ../bindings/tcl/binding as Tcl
 
 type
   RenderOptions* = object

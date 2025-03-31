@@ -2,10 +2,9 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie
-import std/[strutils, tables]
-import ../core/pixtables as pixTables
-
-from ../bindings/tcl/binding as Tcl import nil
+import ./pixtables as pixTables
+import std/strutils
+import ../bindings/tcl/binding as Tcl
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
