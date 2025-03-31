@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie
-import std/[strutils, tables, base64]
+import std/[strutils, tables]
 import ../core/pixtables as pixTables
 
 from ../bindings/tcl/binding as Tcl import nil
@@ -377,41 +377,6 @@ proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   pixTables.addPath(p, parse)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
-
-  return Tcl.OK
-
-proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Convert an [img] object to base 64.
-  #
-  # object - [img] or [ctx] object.
-  #
-  # Returns: A string in `base64` format.
-  if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
-    return Tcl.ERROR
-
-  let arg1= $Tcl.GetString(objv[1])
-
-  let img = if pixTables.hasContext(arg1):
-    pixTables.getContext(arg1).image
-  elif pixTables.hasImage(arg1):
-    pixTables.getImage(arg1)
-  else:
-    return pixUtils.errorMSG(interp,
-    "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
-    )
-
-  let data = try:
-    encodeImage(img, PngFormat)
-  except PixieError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  let b64 = try:
-    encode(data)
-  except Exception as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
 
   return Tcl.OK
 
