@@ -1,7 +1,11 @@
 pix - 2D graphics library
 ================
 Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in 👑 [Nim](https://nim-lang.org).
-![Photo gallery](examples/pix.png)
+
+<p align="center">
+  <img src="examples/data/pix-dark.png#gh-dark-mode-only">
+  <img src="examples/data/pix.png#gh-light-mode-only">
+</p>
 
 Compatibility :
 -------------------------
@@ -13,7 +17,12 @@ Platforms :
 - Windows x64
 - Linux x64
 
-Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases).
+Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases) for the platforms mentioned
+above.
+
+> [!NOTE]  
+> I have mainly tested this package on Windows and MacOs x64 with version 8.6.14 and 9.0.1 of Tcl/Tk, it should work on Linux and
+MacOS arm (I hope so !)
 
 Example :
 -------------------------
