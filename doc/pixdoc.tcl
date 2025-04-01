@@ -55,7 +55,11 @@ namespace eval ::pix {
         * Windows x64
         * Linux x64
 
-        Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases).
+        Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases) for the platforms mentioned
+        above.
+
+        **Note**: I have mainly tested this package on Windows and MacOs x64 with version *8.6.14* and *9.0.1* of Tcl/Tk, it should work on Linux and
+        MacOS arm (I hope so!)
 
         #### Example
         ```
@@ -332,7 +336,7 @@ foreach {file_name var} {
     set ex [parseExample [file join $dirpix examples $file_name]]
     source [file join $dirpix examples $file_name]
     set bin [pix::toBinary [set $var]]
-    set b64 [binary encode base64 -maxlen 80 $bin]
+    set b64 [binary encode base64 $bin]
     puts $fp "#### $file_name"
     puts $fp "```"
     puts -nonewline $fp "[join $ex \n]"
