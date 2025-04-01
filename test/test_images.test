@@ -176,4 +176,37 @@ if {![isEqual [pix::toBinary $trimmedImage] $data_image_test18]} {
     error "data test 18 doesn't match with 'data_image_test18'"
 }
 
+# Test 19
+set a [pix::img::new {100 100}]
+set b [pix::img::new {99 99}]
+pix::img::fill $a "rgba(255, 255, 255, 255)"
+pix::img::fill $b "rgbx(0, 0, 0, 255)"
+pix::img::draw $a $b [pix::transMatrix {0.5 0.5}]
+
+if {![isEqual [pix::toBinary $a] $data_image_test19]} {
+    error "data test 19 doesn't match with 'data_image_test19'"
+}
+
+# Test 20
+set a [pix::img::new {100 100}]
+set b [pix::img::new {50 50}]
+pix::img::fill $a "rgba(255, 255, 255, 255)"
+pix::img::fill $b "rgbx(0, 0, 0, 255)"
+pix::img::draw $a $b [pix::mulMatrix [pix::transMatrix {0 50}] [pix::rotMatrix 0.785398]]
+
+if {![isEqual [pix::toBinary $a] $data_image_test20]} {
+    error "data test 20 doesn't match with 'data_image_test20'"
+}
+
+# Test 21
+set a [pix::img::new {100 100}]
+set b [pix::img::readImage [file join [file dirname [info script]] images turtle@10x.png]]
+pix::img::fill $a "rgba(255, 255, 255, 255)"
+set m [pix::mulMatrix [pix::transMatrix {50 50}] [pix::rotMatrix 0.523599] [pix::scaleMatrix {0.1 0.1}]]
+pix::img::draw $a $b $m
+
+if {![isEqual [pix::toBinary $a] $data_image_test21]} {
+    error "data test 21 doesn't match with 'data_image_test21'"
+}
+
 exit 0
