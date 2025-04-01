@@ -3,7 +3,7 @@
 
 import pixie
 import ./pixtables as pixTables
-import std/strutils
+import std/[strutils, sequtils]
 import ../bindings/tcl/binding as Tcl
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
@@ -427,33 +427,178 @@ proc toBinary*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   return Tcl.OK
 
 proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
-  # Adds a rotation to the matrix.
+  # Create rotation matrix.
   #
   # angle   - double value (radian)
-  # matrix  - list (9 values matrix3x3)
+  # matrix  - list (9 values) (optional:mat3())
   #
   # Returns: The matrix rotation as a list.
-  var
-    matrix3: vmath.Mat3
-    angle: cdouble
-
-  let listobj = Tcl.NewListObj(0, nil)
-
-  if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "angle 'list (9 values matrix3x3)'")
+  if objc notin [2 ,3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "angle ?matrix:optional")
     return Tcl.ERROR
+
+  var 
+    angle: cdouble
+    matrix3: vmath.Mat3
 
   if Tcl.GetDoubleFromObj(interp, objv[1], angle) != Tcl.OK:
     return Tcl.ERROR
 
-  if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
-    return Tcl.ERROR
+  if objc == 3:
+    if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+  else:
+    matrix3 = vmath.mat3()
 
-  matrix3 = matrix3 * vmath.rotate(-angle.float32)
+  matrix3 = matrix3 * vmath.rotate(angle.float32)
+
+  let listobj = Tcl.NewListObj(0, nil)
 
   for i in 0..2:
     for j in 0..2:
-      discard Tcl.ListObjAppendElement(interp, listobj, Tcl.NewDoubleObj(matrix3[i][j]))
+      discard Tcl.ListObjAppendElement(
+        interp,
+        listobj, 
+        Tcl.NewDoubleObj(matrix3[i][j])
+      )
+
+  Tcl.SetObjResult(interp, listobj)
+
+  return Tcl.OK
+  
+
+proc scaleMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Create scale matrix.
+  #
+  # scale   - list x,y
+  # matrix  - list (9 values) (optional:mat3())
+  #
+  # Returns: The matrix scale as a list.
+  if objc notin [2 ,3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
+    return Tcl.ERROR
+    
+  var
+    x, y: cdouble
+    matrix3: vmath.Mat3
+    count: Tcl.Size
+    elements: Tcl.PPObj
+
+  if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'scale' should be 'x' 'y'"
+    )
+
+  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: 
+    return Tcl.ERROR
+
+  if objc == 3:
+    if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+  else:
+    matrix3 = vmath.mat3()
+
+  matrix3 = matrix3 * vmath.scale(vec2(x, y))
+
+  let listobj = Tcl.NewListObj(0, nil)
+
+  for i in 0..2:
+    for j in 0..2:
+      discard Tcl.ListObjAppendElement(
+        interp,
+        listobj, 
+        Tcl.NewDoubleObj(matrix3[i][j])
+      )
+
+  Tcl.SetObjResult(interp, listobj)
+
+  return Tcl.OK
+  
+proc transMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Create translation matrix.
+  #
+  # trans   - list x,y
+  # matrix  - list (9 values) (optional:mat3())
+  #
+  # Returns: The matrix scale as a list.
+  if objc notin [2 ,3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
+    return Tcl.ERROR
+    
+  var
+    x, y: cdouble
+    matrix3: vmath.Mat3
+    count: Tcl.Size
+    elements: Tcl.PPObj
+
+  if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp,
+    "wrong # args: 'trans' should be 'x' 'y'"
+    )
+
+  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: 
+    return Tcl.ERROR
+
+  if objc == 3:
+    if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+  else:
+    matrix3 = vmath.mat3()
+
+  matrix3 = matrix3 * vmath.translate(vec2(x, y))
+
+  let listobj = Tcl.NewListObj(0, nil)
+
+  for i in 0..2:
+    for j in 0..2:
+      discard Tcl.ListObjAppendElement(
+        interp,
+        listobj, 
+        Tcl.NewDoubleObj(matrix3[i][j])
+      )
+
+  Tcl.SetObjResult(interp, listobj)
+
+  return Tcl.OK
+  
+proc mulMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Multiplies matrices.
+  #
+  # args - matrix (9 values) 
+  #
+  # Returns: The multiplied matrix.
+  if objc < 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 matrix...")
+    return Tcl.ERROR
+    
+  var
+    m: vmath.Mat3
+    lm: seq[vmath.Mat3]
+
+  for c in 1..objc-1:
+    if matrix3x3(interp, objv[c], m) != Tcl.OK:
+      return Tcl.ERROR
+    lm.add(m)
+
+  let 
+    matrix3 = lm.foldl(a * b)
+    listobj = Tcl.NewListObj(0, nil)
+
+  for i in 0..2:
+    for j in 0..2:
+      discard Tcl.ListObjAppendElement(
+        interp,
+        listobj, 
+        Tcl.NewDoubleObj(matrix3[i][j])
+      )
 
   Tcl.SetObjResult(interp, listobj)
 

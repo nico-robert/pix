@@ -230,6 +230,9 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::svgStyleToPathObj" : pixUtils.svgStyleToPathObj,
     "pix::toBinary"          : pixUtils.toBinary,
     "pix::rotMatrix"         : pixUtils.rotMatrix,
+    "pix::scaleMatrix"       : pixUtils.scaleMatrix,
+    "pix::transMatrix"       : pixUtils.transMatrix,
+    "pix::mulMatrix"         : pixUtils.mulMatrix,
     # ...
   }.toTable
 
