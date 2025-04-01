@@ -10,23 +10,18 @@ package ifneeded pix 0.4 [list apply {dir {
         [package vsatisfies [package provide Tcl] 9.0-] ? 9 : 8
     }]
 
-    set os [platform::generic]
+    set os  [platform::generic]
     set ext [info sharedlibextension]
     set pixv 0.4
 
     switch -exact $os {
         macosx-x86_64 - 
         macosx-arm    - 
-        linux-x86_64 {
-            set lib [format {lib%spix%s%s} $version $pixv $ext]
-        }
-        win32-x86_64 {
-            set lib [format {pix%s-%s%s} $version $pixv $ext]
-        }
-        default {
-            error "'$os' not supported for 'pix' package."
-        }
+        linux-x86_64 {set lib [format {lib%spix%s%s} $version $pixv $ext]}
+        win32-x86_64 {set lib [format {pix%s-%s%s} $version $pixv $ext]}
+        default      {error "'$os' not supported for 'pix' package."}
     }
     # Load library.
     load [file join $dir $os $lib] Pix
+
 }} $dir]
