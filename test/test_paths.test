@@ -126,16 +126,16 @@ if {![isEqual $image $data_path_test9]} {
 
 # Test 10
 set image [pix::img::new {60 120}]
-pix::img::fill $image "rgba(255,255,255,1)"
+pix::img::fill $image "rgba(255,255,255,255)"
 
 set path {M 0 0 L 50 0}
 
-pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 5 1}   strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin"}
-pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 25 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin"}
-pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 45 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin"}
-pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 65 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin"}
-pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 85 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1}}
-pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 105 1} strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1 2 3 4 5 6 7 8 9}}
+pix::img::strokePath $image $path "rgba(0,0,0,255)" {transform {1 0 0 0 1 0 5 5 1}   strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin"}
+pix::img::strokePath $image $path "rgba(0,0,0,255)" {transform {1 0 0 0 1 0 5 25 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {2 2}}
+pix::img::strokePath $image $path "rgba(0,0,0,255)" {transform {1 0 0 0 1 0 5 45 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {4 4}}
+pix::img::strokePath $image $path "rgba(0,0,0,255)" {transform {1 0 0 0 1 0 5 65 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {2 4 6 2}}
+pix::img::strokePath $image $path "rgba(0,0,0,255)" {transform {1 0 0 0 1 0 5 85 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1}}
+pix::img::strokePath $image $path "rgba(0,0,0,255)" {transform {1 0 0 0 1 0 5 105 1} strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1 2 3 4 5 6 7 8 9}}
 
 if {![isEqual $image $data_path_test10]} {
     error "data test 10 doesn't match with 'data_path_test10'"
