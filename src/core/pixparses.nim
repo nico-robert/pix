@@ -20,10 +20,10 @@ type
     wrap*: bool = true
 
   RenderShadow* = object
-    blur*: cdouble = 1.0
+    blur*: cdouble   = 1.0
     spread*: cdouble = 1.0
-    offset*: Vec2 = vec2(0, 0)
-    color*: Color = color(0, 0, 0, 0)
+    offset*: Vec2    = vec2(0, 0)
+    color*: Color    = color(0, 0, 0, 0)
 
 proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var int, errorMsg: string): cint =
   # Parse a list of two integers from a Tcl object.
@@ -116,16 +116,14 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'offset' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
-
         opts.offset = vec2(x, y)
       of "color":
         try:
           opts.color = pixUtils.getColor(value)
         except InvalidColor as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       else:
         raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
-
 
 proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) =
   # Parse the options from the Tcl dict and set the fields of the 'RenderOptions' object.
@@ -164,7 +162,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
         try:
           opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "miterLimit":
         if Tcl.GetDoubleFromObj(interp, value, opts.miterLimit) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
@@ -172,7 +170,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
         try:
           opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
@@ -225,22 +223,22 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
         try:
           opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "vAlign":
         try:
           opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "lineCap":
         try:
           opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "lineJoin":
         try:
           opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
           raise newException(ValueError, $Tcl.GetStringResult(interp))
@@ -295,12 +293,12 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
         try:
           opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "vAlign":
         try:
           opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
         except ValueError as e:
-          raise newException(ValueError, e.msg)
+          raise newException(ValueError, move(e.msg))
       of "bounds":
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
