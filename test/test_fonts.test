@@ -29,7 +29,7 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "fill"
 
-if {![isEqual [pix::toBinary $image] $data_font_test3]} {
+if {![isEqual $image $data_font_test3]} {
     error "data test 3 doesn't match with 'data_font_test3'"
 }
 
@@ -40,7 +40,7 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::strokeText $image $font "stroke"
 
-if {![isEqual [pix::toBinary $image] $data_font_test4]} {
+if {![isEqual $image $data_font_test4]} {
     error "data test 4 doesn't match with 'data_font_test4'"
 }
 
@@ -50,7 +50,7 @@ pix::font::configure $font {size 48}
 set image [pix::img::new {200 100}]
 pix::img::fillText $image $font "Changa"
 
-if {![isEqual [pix::toBinary $image] $data_font_test5]} {
+if {![isEqual $image $data_font_test5]} {
     error "data test 5 doesn't match with 'data_font_test5'"
 }
 
@@ -61,7 +61,7 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "Line height"
 
-if {![isEqual [pix::toBinary $image] $data_font_test6]} {
+if {![isEqual $image $data_font_test6]} {
     error "data test 6 doesn't match with 'data_font_test6'"
 }
 
@@ -74,7 +74,7 @@ pix::img::fillText $image $font "First line"
 set defaultLH [pix::font::defaultLineHeight $font]
 pix::img::fillText $image $font "Second line" [list transform [list 1 0 0 0 1 0 0 $defaultLH 1]]
 
-if {![isEqual [pix::toBinary $image] $data_font_test7]} {
+if {![isEqual $image $data_font_test7]} {
     error "data test 7 doesn't match with 'data_font_test7'"
 }
 
@@ -85,7 +85,7 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "Wrapping text to new line" {bounds {200 0}}
 
-if {![isEqual [pix::toBinary $image] $data_font_test8]} {
+if {![isEqual $image $data_font_test8]} {
     error "data test 8 doesn't match with 'data_font_test8'"
 }
 
@@ -97,7 +97,7 @@ set image [pix::img::new {200 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "a b c d e f g h i j k l m n o p" {bounds {200 0} hAlign "RightAlign"}
 
-if {![isEqual [pix::toBinary $image] $data_font_test9]} {
+if {![isEqual $image $data_font_test9]} {
     error "data test 9 doesn't match with 'data_font_test9'"
 }
 
@@ -109,7 +109,7 @@ set image [pix::img::new {1000 150}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font $paragraph {bounds {1000 150}}
 
-if {![isEqual [pix::toBinary $image] $data_font_test10]} {
+if {![isEqual $image $data_font_test10]} {
     error "data test 10 doesn't match with 'data_font_test10'"
 }
 
@@ -127,7 +127,7 @@ Sixth line
 Seventh line
 } {bounds {200 150}}
 
-if {![isEqual [pix::toBinary $image] $data_font_test11]} {
+if {![isEqual $image $data_font_test11]} {
     error "data test 11 doesn't match with 'data_font_test11'"
 }
 
@@ -146,7 +146,7 @@ pix::img::fillText $image $font "BottomLeft"    {bounds {800 800} hAlign "LeftAl
 pix::img::fillText $image $font "BottomCenter"  {bounds {800 800} hAlign "CenterAlign" vAlign "BottomAlign"}
 pix::img::fillText $image $font "BottomRight"   {bounds {800 800} hAlign "RightAlign" vAlign "BottomAlign"}
 
-if {![isEqual [pix::toBinary $image] $data_font_test12]} {
+if {![isEqual $image $data_font_test12]} {
     error "data test 12 doesn't match with 'data_font_test12'"
 }
 
@@ -164,7 +164,7 @@ set image [pix::img::new {100 100}]
 pix::img::fill $image "rgba(255, 255, 255, 255)"
 pix::img::fillText $image $font "Text"
 
-if {![isEqual [pix::toBinary $image] $data_font_test13]} {
+if {![isEqual $image $data_font_test13]} {
     error "data test 13 doesn't match with 'data_font_test13'"
 }
 
@@ -199,7 +199,7 @@ foreach {index arrangement} [pix::font::selectionRects $arr] {
     pix::ctx::fillRect $ctx [list $x $y] [list $w $h]
 }
 
-if {![isEqual [pix::toBinary $ctx] $data_font_test14]} {
+if {![isEqual $ctx $data_font_test14]} {
     error "data test 14 doesn't match with 'data_font_test14'"
 }
 
@@ -226,7 +226,7 @@ foreach {index arrangement} [pix::font::selectionRects $arr] {
     pix::ctx::fillRect $ctx [list $x $y] [list $w $h]
 }
 
-if {![isEqual [pix::toBinary $ctx] $data_font_test15]} {
+if {![isEqual $ctx $data_font_test15]} {
     error "data test 15 doesn't match with 'data_font_test15'"
 }
 
@@ -239,7 +239,7 @@ pix::img::fill $image "rgba(255, 255, 255, 255)"
 
 pix::img::strokeText $image $font "Wrapping text to new line" {bounds {200 0}}
 
-if {![isEqual [pix::toBinary $image] $data_font_test16]} {
+if {![isEqual $image $data_font_test16]} {
     error "data test 16 doesn't match with 'data_font_test16'"
 }
 
@@ -252,7 +252,7 @@ pix::img::fill $image "rgba(255, 255, 255, 255)"
 
 pix::img::fillText $image $font "Wrapping text to new line" {bounds {200 0}}
 
-if {![isEqual [pix::toBinary $image] $data_font_test17]} {
+if {![isEqual $image $data_font_test17]} {
     error "data test 17 doesn't match with 'data_font_test18'"
 }
 
@@ -273,7 +273,7 @@ pix::img::fill $image "rgba(255, 255, 255, 255)"
 
 pix::img::fillText $image $font "Multiple fills" {bounds {200 0}}
 
-if {![isEqual [pix::toBinary $image] $data_font_test18]} {
+if {![isEqual $image $data_font_test18]} {
     error "data test 18 doesn't match with 'data_font_test18'"
 }
 
@@ -301,7 +301,7 @@ pix::img::fillText $image $font {
 }
 
 if {[package vsatisfies [package provide Tcl] 9.0-]} {
-    if {![isEqual [pix::toBinary $image] $data_font_test20]} {
+    if {![isEqual $image $data_font_test20]} {
         error "data test 20 doesn't match with 'data_font_test20'"
     }
 }

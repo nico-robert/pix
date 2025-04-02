@@ -46,7 +46,7 @@ pix::img::draw $a $b
 pix::img::flipVertical $a
 pix::img::flipHorizontal $a
 
-if {![isEqual [pix::toBinary $a] $data_image_test4]} {
+if {![isEqual $a $data_image_test4]} {
     error "data test 4 doesn't match with 'data_image_test4'"
 }
 
@@ -54,7 +54,7 @@ if {![isEqual [pix::toBinary $a] $data_image_test4]} {
 set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
 set b [pix::img::superImage $a {-10 0} {20 20}]
 
-if {![isEqual [pix::toBinary $b] $data_image_test5]} {
+if {![isEqual $b $data_image_test5]} {
     error "data test 5 doesn't match with 'data_image_test5'"
 }
 
@@ -62,7 +62,7 @@ if {![isEqual [pix::toBinary $b] $data_image_test5]} {
 set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
 set b [pix::img::minifyBy2 $a]
 
-if {![isEqual [pix::toBinary $b] $data_image_test6]} {
+if {![isEqual $b $data_image_test6]} {
     error "data test 6 doesn't match with 'data_image_test6'"
 }
 
@@ -70,7 +70,7 @@ if {![isEqual [pix::toBinary $b] $data_image_test6]} {
 set a [pix::img::readImage [file join [file dirname [info script]] images flipped1.png]]
 set b [pix::img::magnifyBy2 $a]
 
-if {![isEqual [pix::toBinary $b] $data_image_test7]} {
+if {![isEqual $b $data_image_test7]} {
     error "data test 7 doesn't match with 'data_image_test7'"
 }
 
@@ -92,7 +92,7 @@ pix::img::fill $img "rgba(0, 0, 0, 255)"
 pix::ctx::fillRect $ctx {25 25} {50 50}
 pix::img::blur $img 20
 
-if {![isEqual [pix::toBinary $img] $data_image_test9]} {
+if {![isEqual $img $data_image_test9]} {
     error "data test 9 doesn't match with 'data_image_test9'"
 }
 
@@ -104,7 +104,7 @@ pix::img::fill $img "rgba(0, 0, 0, 255)"
 pix::ctx::fillRect $ctx {25 25} {50 50}
 pix::img::blur $img 20 "rgba(0, 0, 0, 255)"
 
-if {![isEqual [pix::toBinary $img] $data_image_test10]} {
+if {![isEqual $img $data_image_test10]} {
     error "data test 10 doesn't match with 'data_image_test10'"
 }
 
@@ -172,7 +172,7 @@ scan $w %d wtoInt
 scan $h %d htoInt
 set trimmedImage [pix::img::subImage $image [list $xtoInt $ytoInt] [list $wtoInt $htoInt]]
 
-if {![isEqual [pix::toBinary $trimmedImage] $data_image_test18]} {
+if {![isEqual $trimmedImage $data_image_test18]} {
     error "data test 18 doesn't match with 'data_image_test18'"
 }
 
@@ -183,7 +183,7 @@ pix::img::fill $a "rgba(255, 255, 255, 255)"
 pix::img::fill $b "rgbx(0, 0, 0, 255)"
 pix::img::draw $a $b [pix::transMatrix {0.5 0.5}]
 
-if {![isEqual [pix::toBinary $a] $data_image_test19]} {
+if {![isEqual $a $data_image_test19]} {
     error "data test 19 doesn't match with 'data_image_test19'"
 }
 
@@ -194,7 +194,7 @@ pix::img::fill $a "rgba(255, 255, 255, 255)"
 pix::img::fill $b "rgbx(0, 0, 0, 255)"
 pix::img::draw $a $b [pix::mulMatrix [pix::transMatrix {0 50}] [pix::rotMatrix 0.785398]]
 
-if {![isEqual [pix::toBinary $a] $data_image_test20]} {
+if {![isEqual $a $data_image_test20]} {
     error "data test 20 doesn't match with 'data_image_test20'"
 }
 
@@ -205,7 +205,7 @@ pix::img::fill $a "rgba(255, 255, 255, 255)"
 set m [pix::mulMatrix [pix::transMatrix {50 50}] [pix::rotMatrix 0.523599] [pix::scaleMatrix {0.1 0.1}]]
 pix::img::draw $a $b $m
 
-if {![isEqual [pix::toBinary $a] $data_image_test21]} {
+if {![isEqual $a $data_image_test21]} {
     error "data test 21 doesn't match with 'data_image_test21'"
 }
 

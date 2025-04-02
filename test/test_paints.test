@@ -24,7 +24,7 @@ pix::paint::configure $paint [list \
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test1]} {
+if {![isEqual $image $data_paint_test1]} {
     error "data test 1 doesn't match with 'data_paint_test1'"
 }
 
@@ -39,7 +39,7 @@ pix::paint::configure $paint [list \
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test2]} {
+if {![isEqual $image $data_paint_test2]} {
     error "data test 2 doesn't match with 'data_paint_test2'"
 }
 
@@ -53,7 +53,7 @@ pix::paint::configure $paint [list \
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test3]} {
+if {![isEqual $image $data_paint_test3]} {
     error "data test 3 doesn't match with 'data_paint_test3'"
 }
 
@@ -67,7 +67,7 @@ pix::paint::configure $paint {
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test4]} {
+if {![isEqual $image $data_paint_test4]} {
     error "data test 4 doesn't match with 'data_paint_test4'"
 }
 
@@ -81,7 +81,7 @@ pix::paint::configure $paint {
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test5]} {
+if {![isEqual $image $data_paint_test5]} {
     error "data test 5 doesn't match with 'data_paint_test5'"
 }
 
@@ -95,7 +95,7 @@ pix::paint::configure $paint {
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $heartShape $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test6]} {
+if {![isEqual $image $data_paint_test6]} {
     error "data test 6 doesn't match with 'data_paint_test6'"
 }
 
@@ -110,7 +110,7 @@ pix::paint::configure $paint [list \
 set image [pix::img::new {100 100}]
 pix::img::fill $image $paint
 
-if {![isEqual [pix::toBinary $image] $data_paint_test7]} {
+if {![isEqual $image $data_paint_test7]} {
     error "data test 7 doesn't match with 'data_paint_test7'"
 }
 

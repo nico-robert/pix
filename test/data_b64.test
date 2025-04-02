@@ -1,12 +1,51 @@
 # Data file test.
 # nim to tcl.
 # pixie == 5.0.7
-proc trimData data  {return [string trim $data]}
-proc getbase64 data {return [binary encode base64 -maxlen 80 $data]}
-proc isEqual {data1 data2} {
-    return [expr {
-        [binary encode base64 -maxlen 80 $data1] eq [trimData $data2]
-    }]
+proc getbase64 data {
+    return [binary encode base64 -maxlen 80 $data]
+}
+
+proc isEqual {obj b64} {
+    global env
+
+    if {[string match *ctx* $obj]} {
+        set ctxinfo [pix::ctx::get $obj]
+        set img [dict get $ctxinfo image addr]
+    } elseif {[string match *img* $obj]} {
+        set img $obj
+    } else {
+        error "object should be ctx or image instead of $obj"
+    }
+
+    set tmpdir ""
+    foreach tmp {TMP TEMP TMPDIR} {
+        if {[info exists env($tmp)]} {
+            set tmpdir $env($tmp)
+            break
+        }
+    }
+    # Temp directory not found, writes file 
+    # according to script directory.
+    if {$tmpdir eq ""} {set tmpdir [info script]}
+    
+    set p [image create photo -data $b64]
+    set myfile [file join $tmpdir test_[clock click].png]
+    $p write $myfile
+    
+    set imgtest   [pix::img::readImage $myfile]
+    set diffimage [pix::img::diff $img $imgtest]
+    set mydiffimg [dict get $diffimage img]
+    set score     [dict get $diffimage score]
+    
+    catch {file delete $myfile}
+
+    if {$score > 0.01} {
+        pix::img::writeFile \
+            $mydiffimg \
+            [file join $tmpdir testdiff_[clock click].png]
+        return 0
+    }
+    return 1
 }
 
 # Context data

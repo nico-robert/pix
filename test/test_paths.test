@@ -19,7 +19,7 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::strokePath $image $pathStr $color {strokeWidth 10}
 
-if {![isEqual [pix::toBinary $image] $data_path_test1]} {
+if {![isEqual $image $data_path_test1]} {
     error "data test 1 doesn't match with 'data_path_test1'"
 }
 
@@ -30,7 +30,7 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::strokePath $image $pathStr $color {strokeWidth 10}
 
-if {![isEqual [pix::toBinary $image] $data_path_test2]} {
+if {![isEqual $image $data_path_test2]} {
     error "data test 2 doesn't match with 'data_path_test2'"
 }
 
@@ -41,7 +41,7 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::strokePath $image $pathStr $color {strokeWidth 10}
 
-if {![isEqual [pix::toBinary $image] $data_path_test3]} {
+if {![isEqual $image $data_path_test3]} {
     error "data test 3 doesn't match with 'data_path_test3'"
 }
 
@@ -52,7 +52,7 @@ set color "rgba(0, 0, 0, 1)"
 
 pix::img::fillPath $image $pathStr $color
 
-if {![isEqual [pix::toBinary $image] $data_path_test4]} {
+if {![isEqual $image $data_path_test4]} {
     error "data test 4 doesn't match with 'data_path_test4'"
 }
 # Test 5
@@ -62,7 +62,7 @@ set color "rgba(0, 0, 0, 1)"
 
 pix::img::fillPath $image $pathStr $color
 
-if {![isEqual [pix::toBinary $image] $data_path_test5]} {
+if {![isEqual $image $data_path_test5]} {
     error "data test 5 doesn't match with 'data_path_test5'"
 }
 
@@ -79,7 +79,7 @@ set color "rgba(255, 0, 0, 1)"
 
 pix::img::fillPath $image $path $color
 
-if {![isEqual [pix::toBinary $image] $data_path_test6]} {
+if {![isEqual $image $data_path_test6]} {
     error "data test 6 doesn't match with 'data_path_test6'"
 }
 
@@ -95,7 +95,7 @@ set path {
 
 pix::img::fillPath $image $path "#FC427B"
 
-if {![isEqual [pix::toBinary $image] $data_path_test7]} {
+if {![isEqual $image $data_path_test7]} {
     error "data test 7 doesn't match with 'data_path_test7'"
 }
 
@@ -108,7 +108,7 @@ set path [pix::svgStyleToPathObj "M1 0.5C1 0.776142 0.776142 1 0.5 1C0.223858 1 
 pix::img::fillPath   $image [pix::pathObjToString $path] "rgba(255,0,0,1)" {200 0 0 0 200 0 0 0 1}
 pix::img::strokePath $image [pix::pathObjToString $path] "rgba(0,255,0,1)" {transform {200 0 0 0 200 0 0 0 1} strokeWidth 0.01}
 
-if {![isEqual [pix::toBinary $image] $data_path_test8]} {
+if {![isEqual $image $data_path_test8]} {
     error "data test 8 doesn't match with 'data_path_test8'"
 }
 
@@ -120,7 +120,7 @@ set path {M 3 3 L 20 3 L 20 20 L 3 20 Z}
 
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 10 10 1} strokeWidth 10 lineCap "RoundCap" lineJoin "RoundJoin"}
 
-if {![isEqual [pix::toBinary $image] $data_path_test9]} {
+if {![isEqual $image $data_path_test9]} {
     error "data test 9 doesn't match with 'data_path_test9'"
 }
 
@@ -137,7 +137,7 @@ pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 65 1
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 85 1}  strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1}}
 pix::img::strokePath $image $path "rgba(0,0,0,1)" {transform {1 0 0 0 1 0 5 105 1} strokeWidth 10 lineCap "ButtCap" lineJoin "BevelJoin" dashes {1 2 3 4 5 6 7 8 9}}
 
-if {![isEqual [pix::toBinary $image] $data_path_test10]} {
+if {![isEqual $image $data_path_test10]} {
     error "data test 10 doesn't match with 'data_path_test10'"
 }
 
@@ -225,7 +225,7 @@ pix::paint::configure $paint {color "rgba(255,0,255,128)" opacity 0.5}
 set image [pix::img::new {100 100}]
 pix::img::fillPath $image $path $paint
 
-if {![isEqual [pix::toBinary $image] $data_path_test15]} {
+if {![isEqual $image $data_path_test15]} {
     error "data test 15 doesn't match with 'data_path_test15'"
 }
 
