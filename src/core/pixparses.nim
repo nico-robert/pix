@@ -129,7 +129,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
   # Parse the options from the Tcl dict and set the fields of the 'RenderOptions' object.
   #
   #  interp - interpreter.
-  #  objv   - object options .
+  #  objv   - object options.
   #  opts   - RenderOptions object to populate.
   #
   # Returns: Nothing or an exception if an error is found.
@@ -180,6 +180,13 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
             raise newException(ValueError, $Tcl.GetStringResult(interp))
           opts.dashes.add(dashes)
 
+        # To get around pixie's problem when my list is not even, 
+        # because pixie uses 'dashes.add(dashes)' which is not allowed.
+        # With -d:useMalloc enabled, I have an error in particular on MacOs.
+        if opts.dashes.len mod 2 != 0:
+          var copyOfDashes = opts.dashes
+          opts.dashes.add(copyOfDashes)
+
       else:
         raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
 
@@ -187,7 +194,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
   # Parse the options from the Tcl dict and set the fields of the 'RenderOptions' object.
   #
   #  interp - interpreter.
-  #  objv   - object options .
+  #  objv   - object options.
   #  opts   - RenderOptions object to populate.
   #
   # Returns: Nothing or an exception if an error is found.
@@ -248,6 +255,13 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
             raise newException(ValueError, $Tcl.GetStringResult(interp))
           opts.dashes.add(dashes)
 
+        # To get around pixie's problem when my list is not even, 
+        # because pixie uses 'dashes.add(dashes)' which is not allowed.
+        # With -d:useMalloc enabled, I have an error in particular on MacOs.
+        if opts.dashes.len mod 2 != 0:
+          var copyOfDashes = opts.dashes
+          opts.dashes.add(copyOfDashes)
+
       of "bounds":
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
@@ -261,7 +275,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
   # Parse the options from the Tcl dict and set the fields of the 'RenderOptions' object.
   #
   #  interp - interpreter.
-  #  objv   - object options .
+  #  objv   - object options.
   #  opts   - RenderOptions object to populate.
   #
   # Returns: Nothing or an exception if an error is found.
