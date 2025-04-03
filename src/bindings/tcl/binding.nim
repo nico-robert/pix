@@ -120,5 +120,3 @@ proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl
   when not defined(tcl9):
     NewIntObj          = cast[TNewIntObj](tclStubsPtr.tcl_NewIntObj)
     NewBooleanObj      = cast[TNewBooleanObj](tclStubsPtr.tcl_NewBooleanObj)
-
-  return result

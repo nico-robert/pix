@@ -120,5 +120,3 @@ proc InitTkStubs*(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {
       GetImageModelData  = cast[TGetImageModelData](tkStubsPtr.tk_GetImageModelData)
     else:
       GetImageMasterData = cast[TGetImageModelData](tkStubsPtr.tk_GetImageMasterData)
-
-  return result
