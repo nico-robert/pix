@@ -228,6 +228,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::colorHTMLtoRGBA"   : pixUtils.colorHTMLtoRGBA,
     "pix::pathObjToString"   : pixUtils.pathObjToString,
     "pix::svgStyleToPathObj" : pixUtils.svgStyleToPathObj,
+    "pix::getKeys"           : pixUtils.getKeys,
     "pix::toB64"             : pixUtils.toB64,
     "pix::toBinary"          : pixUtils.toBinary,
     "pix::rotMatrix"         : pixUtils.rotMatrix,

@@ -3,7 +3,7 @@
 
 import pixie
 import ./pixtables as pixTables
-import std/[strutils, sequtils, base64]
+import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
@@ -381,6 +381,36 @@ proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   return Tcl.OK
 
+proc getKeys*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+  # Get all objects from the context and the image.
+  #
+  # Returns: A Tcl dictionary with two keys:
+  # `ctx` a Tcl list of all [ctx] keys and
+  # `img` a Tcl list of all [img] keys.
+  let 
+    dictObj    = Tcl.NewDictObj()
+    newListctx = Tcl.NewListObj(0, nil)
+    newListimg = Tcl.NewListObj(0, nil)
+  
+  for key in ctxTable.keys:
+    discard Tcl.ListObjAppendElement(
+    interp, newListctx, 
+    Tcl.NewStringObj(key.cstring, -1)
+    )
+
+  for key in imgTable.keys:
+    discard Tcl.ListObjAppendElement(
+    interp, newListimg, 
+    Tcl.NewStringObj(key.cstring, -1)
+    )
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("ctx", 3), newListctx)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), newListimg)
+  
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
+
 proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Convert an [img] object to base 64.
   #
@@ -504,7 +534,6 @@ proc rotMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   Tcl.SetObjResult(interp, listobj)
 
   return Tcl.OK
-  
 
 proc scaleMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Create scale matrix.
@@ -512,7 +541,7 @@ proc scaleMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # scale   - list x,y
   # matrix  - list (9 values) (optional:mat3())
   #
-  # Returns: The matrix scale as a list.
+  # Returns: The matrix scaled as a list.
   if objc notin [2 ,3]:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
     return Tcl.ERROR
@@ -563,7 +592,7 @@ proc transMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
   # trans   - list x,y
   # matrix  - list (9 values) (optional:mat3())
   #
-  # Returns: The matrix scale as a list.
+  # Returns: The matrix translated as a list.
   if objc notin [2 ,3]:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
     return Tcl.ERROR
@@ -613,7 +642,7 @@ proc mulMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   #
   # args - matrix (9 values) 
   #
-  # Returns: The multiplied matrix.
+  # Returns: The multiplied matrix as a list.
   if objc < 3:
     Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 matrix...")
     return Tcl.ERROR
