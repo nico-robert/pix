@@ -288,7 +288,7 @@ foreach dirName {
                     set a [string map {# "" " " ""} $a]
 
                     if {[string match "*optional*" $com]} {
-                        if {[regexp {optional:([a-zA-Z0-9]+)} $com -> match]} {
+                        if {[regexp {optional:([a-zA-Z0-9]+)|optional:([a-zA-Z0-9]+\(\))} $com -> match]} {
                             set a "$a {$match}"
                         } else {
                             set a "$a {}"
@@ -304,7 +304,7 @@ foreach dirName {
             puts $fp "proc $tclproc {$myarg} {"
             foreach com $coms {
                 if {[string match "*(optional*" $com]} {
-                    regsub {\(optional:[a-zA-Z0-9]+\)|\(optional\)} $com {} com 
+                    regsub {\(optional:[a-zA-Z0-9]+\)|\(optional\)|\(optional:[a-zA-Z0-9]+\(\)\)} $com {} com 
                 }
                 puts $fp $com
             }
