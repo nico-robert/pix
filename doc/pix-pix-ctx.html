@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.4: Reference Manual</title>
+<title>pix 0.5: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.5: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -18,7 +18,23 @@
 <h4 class='ruff'><a name='::pix::ctx-Note'></a>Note<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>This namespace provides a 2D API commonly used on the web. For more info, see: <a href="https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D" >https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D</a></p>
-<h4 class='ruff'><a name='::pix::ctx-Enum BaselineAlignment.'></a>Enum BaselineAlignment.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
+<h4 class='ruff'><a name='::pix::ctx-Struct Context:'></a>Struct Context:<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<table class='ruff_deflist'>
+<tr><td><nobr>image</nobr></td><td><a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a></td></tr>
+<tr><td><nobr>fillStyle</nobr></td><td><a href="pix-pix-paint.html#::pix::paint" title="paint" class='ruff_cmd'>paint</a></td></tr>
+<tr><td><nobr>strokeStyle</nobr></td><td><a href="pix-pix-paint.html#::pix::paint" title="paint" class='ruff_cmd'>paint</a></td></tr>
+<tr><td><nobr>globalAlpha</nobr></td><td>double</td></tr>
+<tr><td><nobr>lineWidth</nobr></td><td>double</td></tr>
+<tr><td><nobr>miterLimit</nobr></td><td>double</td></tr>
+<tr><td><nobr>lineCap</nobr></td><td>Enum LineCap</td></tr>
+<tr><td><nobr>lineJoin</nobr></td><td>Enum LineJoin</td></tr>
+<tr><td><nobr>font</nobr></td><td>string ## File path to a .ttf or .otf file.</td></tr>
+<tr><td><nobr>fontSize</nobr></td><td>double</td></tr>
+<tr><td><nobr>textAlign</nobr></td><td>Enum HorizontalAlignment</td></tr>
+<tr><td><nobr>textBaseline</nobr></td><td>Enum BaselineAlignment</td></tr>
+</table>
+<h4 class='ruff'><a name='::pix::ctx-Enum BaselineAlignment:'></a>Enum BaselineAlignment:<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
 <tr><td><nobr>BaselineAlignment</nobr></td><td>enum</td></tr>
@@ -36,653 +52,744 @@
 <p class='ruff'>Adds a circular arc to the current sub-path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>arc</span> <span class='ruff_arg'>context coordinates radius angleStart angleEnd ?ccw?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>angleStart</code></nobr></td><td>double value (radian)</td></tr>
 <tr><td><nobr><code>angleEnd</code></nobr></td><td>double value (radian)</td></tr>
 <tr><td><nobr><code>ccw</code></nobr></td><td>boolean value Optional, default <code>false</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::arcTo'>arcTo</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a circular arc using the given control points and radius.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>arcTo</span> <span class='ruff_arg'>context coordinates1 coordinates2 radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates1</code></nobr></td><td>list x1,y1</td></tr>
 <tr><td><nobr><code>coordinates2</code></nobr></td><td>list x2,y2</td></tr>
 <tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::beginPath'>beginPath</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Starts a new path by emptying the list of sub-paths.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>beginPath</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Begin a new path by clearing any existing sub-paths in the context. This is typically used to start drawing a new shape or path.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::bezierCurveTo'>bezierCurveTo</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a cubic Bézier curve to the current sub-path. It requires three points: the first two are control points and the third one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the Bézier curve.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>context coordinates1 coordinates2 coordinates3</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>coordinates1</code></nobr></td><td>list cx1,cy1</td></tr>
-<tr><td><nobr><code>coordinates2</code></nobr></td><td>list cx2,cy2</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>coordinates1</code></nobr></td><td>list cp1x,cp1y</td></tr>
+<tr><td><nobr><code>coordinates2</code></nobr></td><td>list cp2x,cp2y</td></tr>
 <tr><td><nobr><code>coordinates3</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::circle'>circle</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a circle to the current path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>circle</span> <span class='ruff_arg'>context coordinates radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list cx,cy</td></tr>
 <tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::clearRect'>clearRect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Erases the pixels in a rectangular area.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>clearRect</span> <span class='ruff_arg'>context coordinates size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::clip'>clip</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Turns the path into the current clipping region. The previous clipping region, if any, is intersected with the current or given path to create the new clipping region.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>clip</span> <span class='ruff_arg'>context ?path? ?WindingRule?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>clip</span> <span class='ruff_arg'>context ?path? ?windingRule?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>path</code></nobr></td><td>object Optional, default <code>&quot;&quot;</code>.</td></tr>
-<tr><td><nobr><code>WindingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>windingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::closePath'>closePath</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Attempts to add a straight line from the current point to the start of the current sub-path. If the shape has already been closed or has only one point, this function does nothing.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>closePath</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::destroy'>destroy</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Destroy current context or all contexts if special word <code>all</code> is specified.</p>
+<p class='ruff'>Destroy current <a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> or all contexts if special word <code>all</code> is specified.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>value</code></nobr></td><td>context object or string</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> or string value.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::drawImage'>drawImage</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a source image onto the destination image.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>drawImage</span> <span class='ruff_arg'>context image ?args?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>drawImage</span> <span class='ruff_arg'>context image options</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>image</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>args</code></nobr></td><td>options described below:</td></tr>
-<tr><td><nobr><code>destination</code></nobr></td><td>list destination coordinates dx,dy <br></td></tr>
-<tr><td><nobr><code>destinationXY+destinationWH</code></nobr></td><td>list destination coordinates dx,dy <br> list destination size dw,dh <br></td></tr>
-<tr><td><nobr><code>source+sourceWH+destinationXY+destinationWH</code></nobr></td><td>list source coordinates sx,sy <br> list source size sW,SH <br> list destination coordinates dx,dy <br> list destination size dw,dh</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>image</code></nobr></td><td><a href="pix-pix-img.html#::pix::img::new" title="img::new" class='ruff_cmd'>img::new</a></td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>See description below:</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>There are 3 ways to use this proc:</p>
+<p class='ruff'>1. With simple destination:<br> 
+<table class='ruff_deflist'>
+<tr>
+<td><strong>destinationXY</strong> </td>
+<td>A list destination coordinates dx,dy.</td>
+</tr>
+</table>
+<p class='ruff'>2. With destination + size destination:<br> 
+<table class='ruff_deflist'>
+<tr>
+<td><strong>destinationXY</strong> </td>
+<td>A list destination coordinates dx,dy.</td>
+</tr>
+<tr>
+<td><strong>destinationWH</strong> </td>
+<td>A list destination size dw,dh.</td>
+</tr>
+</table>
+<p class='ruff'>3. With source + size source + destination + size destination:<br> 
+<table class='ruff_deflist'>
+<tr>
+<td><strong>source</strong>         </td>
+<td>A list source coordinates sx,sy.</td>
+</tr>
+<tr>
+<td><strong>sourceWH</strong>       </td>
+<td>A list source size sW,SH.</td>
+</tr>
+<tr>
+<td><strong>destinationXY</strong>  </td>
+<td>A list destination coordinates dx,dy.</td>
+</tr>
+<tr>
+<td><strong>destinationWH</strong>  </td>
+<td>A list destination size dw,dh.</td>
+</tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::ellipse'>ellipse</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds an ellipse to the current sub-path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ellipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>radiusx</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>radiusy</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fill'>fill</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Fills the path with the current fillStyle.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>fill</span> <span class='ruff_arg'>context ?path? ?WindingRule?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>fill</span> <span class='ruff_arg'>context ?path? ?windingRule?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>path</code></nobr></td><td>object Optional, default <code>&quot;&quot;</code>.</td></tr>
-<tr><td><nobr><code>WindingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>windingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>If no path is specified, then call 'pix::ctx::fill <code>$ctx</code>' with no arguments. This will fill the current path with the current fillStyle. If no fillStyle has been set, it will default to Color(0.0, 0.0, 0.0, 1.0). If no path has been set, it will default to an empty path. If no winding rule has been set, it will default to NonZero.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>If no path is specified, then call <em>pix::ctx::fill <code>$ctx</code></em> with no arguments. This will fill the current path with the current fillStyle.<br> If no fillStyle has been set, it will default to <em>Color(0.0, 0.0, 0.0, 1.0)</em>. If no path has been set, it will default to an empty path. If no winding rule has been set, it will default to NonZero.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillCircle'>fillCircle</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a circle that is filled according to the current fillStyle</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillCircle</span> <span class='ruff_arg'>context coordinates radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list cx,cy</td></tr>
 <tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillEllipse'>fillEllipse</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws an ellipse that is filled according to the current fillStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillEllipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>radiusx</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>radiusy</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillPath'>fillPath</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>See <a href="pix-pix-img.html#::pix::img::fillPath" title="img::fillPath" class='ruff_cmd'>img::fillPath</a> procedure.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillPath</span> </div>
 <h3 class='ruffproc'><a name='::pix::ctx::fillPolygon'>fillPolygon</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Draws an n-sided regular polygon at (x, y) of size that is filled according to the current fillStyle.</p>
+<p class='ruff'>Draws an n-sided regular polygon at <em>(x, y)</em> of size that is filled according to the current fillStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillPolygon</span> <span class='ruff_arg'>context coordinates size sides</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>sides</code></nobr></td><td>integer value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillRect'>fillRect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a rectangle that is filled according to the current fillStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillRect</span> <span class='ruff_arg'>context coordinates size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillRoundedRect'>fillRoundedRect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a rounded rectangle that is filled according to the current fillStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillRoundedRect</span> <span class='ruff_arg'>context coordinates size radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
-<tr><td><nobr><code>radius</code></nobr></td><td>double value or list radius (nw, ne, se, sw)</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>double value or list radius {nw ne se sw}</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillStyle'>fillStyle</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Fills current style.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillStyle</span> <span class='ruff_arg'>context value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>value</code></nobr></td><td>paint object or string color</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td><a href="pix-pix-paint.html#::pix::paint::new" title="paint::new" class='ruff_cmd'>paint::new</a> or string <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fillText'>fillText</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a text string at the specified coordinates, filling the string's characters with the current fillStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fillText</span> <span class='ruff_arg'>context text coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>text</code></nobr></td><td>string</td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::font'>font</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets font for current context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>font</span> <span class='ruff_arg'>context filepath</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>filepath</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::fontSize'>fontSize</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets font size for current context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fontSize</span> <span class='ruff_arg'>context size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::get'>get</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Gets information about context.</p>
+<p class='ruff'>Retrieves detailed information about the current context and returns it as a Tcl dictionary.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>get</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict value.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The dictionary includes:</p>
+<ul class='ruff'>
+<li><strong>image</strong>       : A nested Tcl dictionary with the following keys: 
+<table class='ruff_deflist'>
+<tr>
+<td><strong>addr</strong>         </td>
+<td> A pointer to the raw image data.</td>
+</tr>
+<tr>
+<td><strong>width</strong>        </td>
+<td> An integer representing the width of the image in pixels.</td>
+</tr>
+<tr>
+<td><strong>height</strong>       </td>
+<td> An integer representing the height of the image in pixels.</td>
+</tr>
+</table>
+<li><strong>globalAlpha</strong> : A double value indicating the global alpha (transparency) level of the context. This affects the transparency of all drawing operations performed on the context.</li>
+<li><strong>lineWidth</strong>   : A double value specifying the current line width used for stroking operations. This determines the thickness of lines drawn in the context.</li>
+<li><strong>lineCap</strong>     : An enum value describing the style of the end caps for lines. Possible values include 'ButtCap', 'RoundCap', and 'SquareCap', which define how the end points of lines are rendered.</li>
+<li><strong>lineJoin</strong>    : An enum value that indicates the style of the join between two lines. Options include 'MiterJoin', 'RoundJoin', and 'BevelJoin', each affecting the appearance of corners where lines meet.</li>
+<li><strong>miterLimit</strong>  : A double value that sets the miter limit. This is relevant when 'lineJoin' is set to 'MiterJoin' and controls the maximum length of the miter. If the miter limit is exceeded, a bevel join is used instead.</li>
+<li><strong>font</strong>        : A string representing the font settings for text rendering in the context. This includes font family, size, weight, and style, and dictates how text appears when drawn onto the context.</li>
+</ul>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dictionary object that contains various properties (see above) of the context, which can be useful for introspection or debugging.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::getLineDash'>getLineDash</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets line dash for current context.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>getLineDash</span> <span class='ruff_arg'>context values</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>getLineDash</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>values</code></nobr></td><td>list</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns list values.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A list with current values.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::getTransform'>getTransform</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets matrix for current context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>getTransform</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The matrix is represented as a sequence of 3 sequences of floats, where each inner sequence represents a row of the matrix.</p>
 <p class='ruff'>The first element of the first row represents the x component of the transformation, the second element represents the y component of the transformation, and the third element represents the z component of the transformation.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns list values.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A matrix as Tcl list.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::globalAlpha'>globalAlpha</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets color alpha.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>globalAlpha</span> <span class='ruff_arg'>context alpha</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>alpha</code></nobr></td><td>double value</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>This determines the transparency level of the drawing operations. The alpha value must be a floating-point number between 0.0 (completely transparent) and 1.0 (completely opaque).</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::isPointInPath'>isPointInPath</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks whether or not the specified point is contained in the current path.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>isPointInPath</span> <span class='ruff_arg'>context coordinates ?path? ?WindingRule?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>isPointInPath</span> <span class='ruff_arg'>context coordinates ?path? ?windingRule?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
-<tr><td><nobr><code>path</code></nobr></td><td>object Optional, default <code>&quot;&quot;</code>.</td></tr>
-<tr><td><nobr><code>WindingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>windingRule</code></nobr></td><td>Enum value Optional, default <code>NonZero</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns true, false otherwise.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl boolean value.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::isPointInStroke'>isPointInStroke</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks whether or not the specified point is inside the area contained by the stroking of a path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>isPointInStroke</span> <span class='ruff_arg'>context coordinates ?path?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
-<tr><td><nobr><code>path</code></nobr></td><td>object Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns true, false otherwise.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl boolean value.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::lineJoin'>lineJoin</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Parse the string as an enum value of type LineJoin and assign it to the lineJoin property of the context.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>lineJoin</span> <span class='ruff_arg'>context LineJoin</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>lineJoin</span> <span class='ruff_arg'>context lineJoin</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>LineJoin</code></nobr></td><td>Enum value</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>lineJoin</code></nobr></td><td>Enum value</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>This is the same as ctx.lineJoin = LineJoin.arg2 in the C++ API.</p>
-<p class='ruff'>The parseEnum function will raise an exception if the string is not a valid enum value.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The parseEnum function will raise an exception if the string is not a valid enum value.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::lineTo'>lineTo</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Adds a straight line to the current sub-path by connecting the sub-path's last point to the specified (x, y) coordinates.</p>
+<p class='ruff'>Adds a straight line to the current sub-path by connecting the sub-path's last point to the specified <em>(x, y)</em> coordinates.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>lineTo</span> <span class='ruff_arg'>context coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The lineTo method can be called multiple times to draw multiple lines. Each call to lineTo adds a line to the current path, and the stroke method will draw all of the lines in the path.</p>
 <p class='ruff'>For example, to draw a square with the top-left corner at (10, 10) and the bottom-right corner at (20, 20), you can use the following code:</p>
-<p class='ruff'>pix::ctx::moveTo <code>$ctx</code> {10 10} pix::ctx::lineTo <code>$ctx</code> {20 10} pix::ctx::lineTo <code>$ctx</code> {20 20} pix::ctx::lineTo <code>$ctx</code> {10 20} pix::ctx::stroke <code>$ctx</code></p>
-<p class='ruff'>This code will draw a square with the top-left corner at (10, 10) and the bottom-right corner at (20, 20).</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>
+pix::ctx::moveTo <span style="color: rgb(233, 98, 98);">$ctx</span> {10 10}
+pix::ctx::lineTo <span style="color: rgb(233, 98, 98);">$ctx</span> {20 10}
+pix::ctx::lineTo <span style="color: rgb(233, 98, 98);">$ctx</span> {20 20}
+pix::ctx::lineTo <span style="color: rgb(233, 98, 98);">$ctx</span> {10 20}
+pix::ctx::stroke <span style="color: rgb(233, 98, 98);">$ctx</span>
+</pre>
+
+</figure><p class='ruff'>This code will draw a square with the top-left corner at (10, 10) and the bottom-right corner at (20, 20).</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::lineWidth'>lineWidth</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets line width for current context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>lineWidth</span> <span class='ruff_arg'>context width</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>width</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::measureText'>measureText</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Information about the measured text.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>measureText</span> <span class='ruff_arg'>context text</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>text</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a TextMetrics object that contains information about the measured text (such as its width, for example).</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dict that contains information about the measured text (such as its width, for example).</p>
 <h3 class='ruffproc'><a name='::pix::ctx::moveTo'>moveTo</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Begins a new sub-path at the point (x, y).</p>
+<p class='ruff'>Begins a new sub-path at the point <em>(x, y)</em>.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>moveTo</span> <span class='ruff_arg'>context coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>This is a fundamental operation, it clears the current path and starts a new path at the point given. The subsequent path operations are all relative to this point. The point is the starting point of the new path that is being built. The point is used as the first point of the path that is being built. The point is used as the reference point for all of the relative path operations, such as lineTo, curveTo, and arc. The point is used as the starting point for the built path. The point should be the first point that is used in the path.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>This is a fundamental operation, it clears the current path and starts a new path at the point given.<br> The subsequent path operations are all relative to this point.</p>
+<ul class='ruff'>
+<li>The point is the starting point of the new path that is being built.</li>
+<li>The point is used as the first point of the path that is being built.</li>
+<li>The point is used as the reference point for all of the relative path operations, such as lineTo, curveTo, and arc.</li>
+<li>The point is used as the starting point for the built path.</li>
+<li>The point should be the first point that is used in the path.</li>
+</ul>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::new'>new</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Sets a new context.</p>
+<p class='ruff'>Sets a <em>new</em> context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>new</span> <span class='ruff_arg'>size ?value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
-<tr><td><nobr><code>value</code></nobr></td><td>string color or image object Optional, default <code>none</code>.</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td>string <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> or <a href="pix-pix-img.html#::pix::img::new" title="img::new" class='ruff_cmd'>img::new</a> Optional, default <code>none</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' context object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> object.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::polygon'>polygon</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Adds an n-sided regular polygon at (x, y) of size to the current path.</p>
+<p class='ruff'>Adds an n-sided regular polygon at <em>(x, y)</em> of size to the current path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>polygon</span> <span class='ruff_arg'>context coordinates size sides</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>sides</code></nobr></td><td>integer value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::quadraticCurveTo'>quadraticCurveTo</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a quadratic Bézier curve to the current sub-path. It requires two points: the first one is a control point and the second one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the quadratic Bézier curve.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>context coordinates1 coordinates2</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates1</code></nobr></td><td>list cpx,cpy</td></tr>
 <tr><td><nobr><code>coordinates2</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::rect'>rect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a rectangle to the current path.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>rect</span> <span class='ruff_arg'>context coordinates size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::resetTransform'>resetTransform</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Resets the current transform to the identity matrix.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>resetTransform</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::restore'>restore</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Restores the most recently saved context state by popping the top entry in the drawing state stack. If there is no saved state, this method does nothing.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>restore</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::rotate'>rotate</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a rotation to the transformation matrix.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>rotate</span> <span class='ruff_arg'>context angle</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>angle</code></nobr></td><td>double value (radian)</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The rotation is around the origin (0,0). The rotation is counterclockwise. The angle is in radians.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::roundedRect'>roundedRect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a rectangle with rounded corners that is filled according to the current fillStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>roundedRect</span> <span class='ruff_arg'>context coordinates size radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
-<tr><td><nobr><code>size</code></nobr></td><td>list</td></tr>
-<tr><td><nobr><code>radius</code></nobr></td><td>list (nw, ne, se, sw)</td></tr>
+<tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>list {nw ne se sw}</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::save'>save</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Saves the entire state of the context by pushing the current state onto a stack.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>save</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The save() procedure adds the current context state to the stack, and the restore() procedure pops the top context state from the stack and restores the context state to the top state.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The <em>pix::ctx::save</em> procedure adds the current context state to the stack, and the restore() procedure pops the top context state from the stack and restores the context state to the top state.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::saveLayer'>saveLayer</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Saves the entire state of the context by pushing the current state onto a stack and allocates a new image layer for subsequent drawing. Calling restore blends the current layer image onto the prior layer or root image.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>saveLayer</span> <span class='ruff_arg'>context</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::scale'>scale</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a scaling transformation to the context units horizontally and/or vertically.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>scale</span> <span class='ruff_arg'>context coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::setLineDash'>setLineDash</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets line dash for current context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>setLineDash</span> <span class='ruff_arg'>context dashes</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>dashes</code></nobr></td><td>list</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::setTransform'>setTransform</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Overrides the transform matrix being applied to the context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>setTransform</span> <span class='ruff_arg'>context matrix3x3</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>matrix3x3</code></nobr></td><td>list</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>If you want to save the current transform matrix, you can get it by calling <code>pix::ctx::getTransform</code> and later restore it using <code>pix::ct::setTransform</code>. If you want to add a new transform to the current transform matrix, use <code>pix::ctx::transform</code> instead.</p>
-<p class='ruff'>The matrix is a list of 9 values representing a 3x3 matrix. The values are in row-major order:<br> a b c<br> d e f<br> g h i<br></p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>If you want to save the current transform matrix, you can get it by calling <em>pix::ctx::getTransform</em> and later restore it using <em>pix::ct::setTransform</em>. If you want to add a new transform to the current transform matrix, use <em>pix::ctx::transform</em> instead.</p>
+<p class='ruff'>The matrix is a list of 9 values representing a 3x3 matrix. The values are in row-major order:<br></p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>
+<span style="color: hsl(206, 98.02%, 29.04%);font-weight: 550;">set</span> matrix {
+  a b c
+  d e f
+  g h i
+}
+</pre>
+
+</figure><h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::stroke'>stroke</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Strokes (outlines) the current or given path with the current strokeStyle.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>stroke</span> <span class='ruff_arg'>context ?path?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>path</code></nobr></td><td>object Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeCircle'>strokeCircle</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a circle that is stroked (outlined) according to the current strokeStyle and other context settings.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeCircle</span> <span class='ruff_arg'>context coordinates radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list cx,cy</td></tr>
 <tr><td><nobr><code>radius</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeEllipse'>strokeEllipse</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws an ellipse that is stroked (outlined) according to the current strokeStyle and other context settings.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeEllipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>radiusx</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>radiusy</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokePath'>strokePath</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>See <a href="pix-pix-img.html#::pix::img::strokePath" title="img::strokePath" class='ruff_cmd'>img::strokePath</a> procedure.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokePath</span> </div>
 <h3 class='ruffproc'><a name='::pix::ctx::strokePolygon'>strokePolygon</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Draws an n-sided regular polygon at (x, y) of size that is stroked (outlined) according to the current strokeStyle and other context settings.</p>
+<p class='ruff'>Draws an n-sided regular polygon at <em>(x, y)</em> of size that is stroked (outlined) according to the current strokeStyle and other context settings.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokePolygon</span> <span class='ruff_arg'>context coordinates size sides</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>double value</td></tr>
 <tr><td><nobr><code>sides</code></nobr></td><td>integer value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeRect'>strokeRect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a rectangle that is stroked (outlined) according to the current strokeStyle and other context settings.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeRect</span> <span class='ruff_arg'>context coordinates size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeRoundedRect'>strokeRoundedRect</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws a rounded rectangle that is stroked (outlined) according to the current strokeStyle and other context settings.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeRoundedRect</span> <span class='ruff_arg'>context coordinates size radius</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height</td></tr>
-<tr><td><nobr><code>radius</code></nobr></td><td>double value or list radius (nw, ne, se, sw)</td></tr>
+<tr><td><nobr><code>radius</code></nobr></td><td>double value or list radius {nw ne se sw}</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeSegment'>strokeSegment</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Strokes a segment (draws a line from ax, ay to bx, by) according to the current strokeStyle and other context settings.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeSegment</span> <span class='ruff_arg'>context coordinates1 coordinates2</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates1</code></nobr></td><td>list x,y</td></tr>
 <tr><td><nobr><code>coordinates2</code></nobr></td><td>list x1,y1</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>Create a segment using the start and stop vectors 'start' is the beginning point of the segment (x, y) 'stop' is the end point of the segment (x1, y1) The segment represents a line that will be drawn from start to stop</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>Create a segment using the start and stop vectors 'start' is the beginning point of the segment <em>(x, y)</em> 'stop' is the end point of the segment (x1, y1) The segment represents a line that will be drawn from start to stop</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeStyle'>strokeStyle</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets color style current context.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeStyle</span> <span class='ruff_arg'>context color</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>color</code></nobr></td><td>string</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>color</code></nobr></td><td><a href="pix-pix-paint.html#::pix::paint::new" title="paint::new" class='ruff_cmd'>paint::new</a> or string <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The color is set from the string argument provided. The string should be in the format of a HTML color (i.e. &quot;#rrggbb&quot; or &quot;rgb(r,g,b)&quot; or &quot;rgba(r,g,b,a)&quot;) where 'r', 'g', 'b' are the red, green and blue color values and 'a' is the alpha value (for transparency).</p>
-<p class='ruff'>If the string is not in the correct format, an error will be generated.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>If the string is not in the correct format, an error will be generated.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::strokeText'>strokeText</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Draws the outlines of the characters of a text string at the specified coordinates.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>strokeText</span> <span class='ruff_arg'>context text coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>text</code></nobr></td><td>string</td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::textAlign'>textAlign</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets text alignment.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>textAlign</span> <span class='ruff_arg'>context HorizontalAlignment</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>textAlign</span> <span class='ruff_arg'>context horizontalAlignment</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>HorizontalAlignment</code></nobr></td><td>Enum value</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>horizontalAlignment</code></nobr></td><td>Enum value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::textBaseline'>textBaseline</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Set the base line alignment for the current context.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>textBaseline</span> <span class='ruff_arg'>context BaselineAlignment</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>textBaseline</span> <span class='ruff_arg'>context baselineAlignment</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>BaselineAlignment</code></nobr></td><td>Enum value</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
+<tr><td><nobr><code>baselineAlignment</code></nobr></td><td>Enum value</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>Parse the second argument as an enum value of type BaselineAlignment. This value tells us how to align the text baseline.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>Parse the second argument as an enum value of type <code>BaselineAlignment</code>. This value tells us how to align the text baseline.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::transform'>transform</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Multiplies the current transform with the matrix described by the arguments of this method.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>transform</span> <span class='ruff_arg'>context matrix3x3</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>matrix3x3</code></nobr></td><td>list</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>This is useful if you want to add a new transform to the current transform matrix without replacing the current transform matrix.</p>
-<p class='ruff'>For example, if you have set a transform matrix using <code>pix::ctx::setTransform</code> and later want to add a rotation to the current transform matrix, you can use <code>pix::ctx::transform</code> to add the rotation to the current transform matrix.</p>
-<p class='ruff'>Another example is if you want to add a scale to the current transform matrix, you can use <code>pix::ctx::transform</code> to add the scale to the current transform matrix.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<p class='ruff'>For example, if you have set a transform matrix using <em>pix::ctx::setTransform</em> and later want to add a rotation to the current transform matrix, you can use <em>pix::ctx::transform</em> to add the rotation to the current transform matrix.</p>
+<p class='ruff'>Another example is if you want to add a scale to the current transform matrix, you can use <em>pix::ctx::transform</em> to add the scale to the current transform matrix.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::translate'>translate</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds a translation transformation to the current matrix.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>translate</span> <span class='ruff_arg'>context coordinates</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>coordinates</code></nobr></td><td>list x,y</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The translation is by the given (x, y) vector in the current coordinate system.</p>
-<p class='ruff'>This is the same as ctx.transform = ctx.transform.translate(vec2(x, y)) or ctx.transform = ctx.transform * Mat3.translation(vec2(x, y))</p>
-<p class='ruff'>This is the same as ctx.translate(x, y) in the C++ API.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The translation is by the given <em>(x, y)</em> vector in the current coordinate system.</p>
+<p class='ruff'>This is the same:</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>
+ctx.transform = ctx.transform.translate(vec2(x, y))
+Or:
+ctx.transform = ctx.transform * Mat3.translation(vec2(x, y))
+</pre>
+
+</figure><h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::ctx::writeFile'>writeFile</a><span class='ns_scope'> [<a href="pix-pix-ctx.html#::pix::ctx" title="::pix::ctx" class='ruff_cmd'>::pix::ctx</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Save context to image file.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>writeFile</span> <span class='ruff_arg'>context filePath</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>context</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>context</code></nobr></td><td><a href="pix-pix-ctx.html#::pix::ctx::new" title="ctx::new" class='ruff_cmd'>ctx::new</a></td></tr>
 <tr><td><nobr><code>filePath</code></nobr></td><td>string (*.png|*.bmp|*.qoi|*.ppm)</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The context is rendered into an image which is then saved to the file specified by <code>filePath</code>.</p>
-<p class='ruff'>Therefore, it's generally safer to specify the format separately from the file name, like so:</p>
-<p class='ruff'>pix::ctx::writeFile <code>$ctx</code> &quot;image.png&quot;</p>
-<p class='ruff'>This ensures that the image is saved in the correct format regardless of the current format of the context.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The context is rendered into an image which is then saved to the file specified by <code>$filePath</code>.<br> Therefore, it's generally safer to specify the format separately from the file name, like so:</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>
+pix::ctx::writeFile <span style="color: rgb(233, 98, 98);">$ctx</span> 'image.png'
+</pre>
+
+</figure><p class='ruff'>This ensures that the image is saved in the correct format regardless of the current format of the context.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
+<li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix-ctx.html'>pix::ctx</a></li>
 <li class='ruff-toc1'><a href='pix-pix-font.html'>pix::font</a></li>
 <li class='ruff-toc1'><a href='pix-pix-img.html'>pix::img</a></li>
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<hr><li class='ruff-toc4'><a href='#::pix::ctx-Note'>Note</a></li><li class='ruff-toc4'><a href='#::pix::ctx-Enum BaselineAlignment.'>Enum BaselineAlignment.</a></li><li class='ruff-toc2'><a href='#::pix::ctx-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::arc'>arc</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>arc</span> <span class='ruff_arg'>context coordinates radius angleStart angleEnd ?ccw?</span></pre>Adds a circular arc to the current sub-path.
+<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
+<hr><li class='ruff-toc4'><a href='#::pix::ctx-Note'>Note</a></li><li class='ruff-toc4'><a href='#::pix::ctx-Struct Context:'>Struct Context:</a></li><li class='ruff-toc4'><a href='#::pix::ctx-Enum BaselineAlignment:'>Enum BaselineAlignment:</a></li><li class='ruff-toc2'><a href='#::pix::ctx-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::arc'>arc</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>arc</span> <span class='ruff_arg'>context coordinates radius angleStart angleEnd ?ccw?</span></pre>Adds a circular arc to the current sub-path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::arcTo'>arcTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>arcTo</span> <span class='ruff_arg'>context coordinates1 coordinates2 radius</span></pre>Adds a circular arc using the given control points and radius.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::beginPath'>beginPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>beginPath</span> <span class='ruff_arg'>context</span></pre>Starts a new path by emptying the list of sub-paths.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::bezierCurveTo'>bezierCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>context coordinates1 coordinates2 coordinates3</span></pre>Adds a cubic Bézier curve to the current sub-path. It requires three points: the first two are control points and the third one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the Bézier curve.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::circle'>circle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>circle</span> <span class='ruff_arg'>context coordinates radius</span></pre>Adds a circle to the current path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::clearRect'>clearRect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>clearRect</span> <span class='ruff_arg'>context coordinates size</span></pre>Erases the pixels in a rectangular area.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::clip'>clip</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>clip</span> <span class='ruff_arg'>context ?path? ?WindingRule?</span></pre>Turns the path into the current clipping region. The previous clipping region, if any, is intersected with the current or given path to create the new clipping region.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::clip'>clip</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>clip</span> <span class='ruff_arg'>context ?path? ?windingRule?</span></pre>Turns the path into the current clipping region. The previous clipping region, if any, is intersected with the current or given path to create the new clipping region.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::closePath'>closePath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>closePath</span> <span class='ruff_arg'>context</span></pre>Attempts to add a straight line from the current point to the start of the current sub-path. If the shape has already been closed or has only one point, this function does nothing.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::destroy'>destroy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></pre>Destroy current context or all contexts if special word <code>all</code> is specified.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::drawImage'>drawImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>drawImage</span> <span class='ruff_arg'>context image ?args?</span></pre>Draws a source image onto the destination image.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::destroy'>destroy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></pre>Destroy current <a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> or all contexts if special word <code>all</code> is specified.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::drawImage'>drawImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>drawImage</span> <span class='ruff_arg'>context image options</span></pre>Draws a source image onto the destination image.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::ellipse'>ellipse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>ellipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></pre>Adds an ellipse to the current sub-path.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fill'>fill</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fill</span> <span class='ruff_arg'>context ?path? ?WindingRule?</span></pre>Fills the path with the current fillStyle.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fill'>fill</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fill</span> <span class='ruff_arg'>context ?path? ?windingRule?</span></pre>Fills the path with the current fillStyle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillCircle'>fillCircle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillCircle</span> <span class='ruff_arg'>context coordinates radius</span></pre>Draws a circle that is filled according to the current fillStyle
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillEllipse'>fillEllipse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillEllipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></pre>Draws an ellipse that is filled according to the current fillStyle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillPath'>fillPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillPath</span> </pre>See <a href="pix-pix-img.html#::pix::img::fillPath" title="img::fillPath" class='ruff_cmd'>img::fillPath</a> procedure.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillPolygon'>fillPolygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillPolygon</span> <span class='ruff_arg'>context coordinates size sides</span></pre>Draws an n-sided regular polygon at (x, y) of size that is filled according to the current fillStyle.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillPolygon'>fillPolygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillPolygon</span> <span class='ruff_arg'>context coordinates size sides</span></pre>Draws an n-sided regular polygon at <em>(x, y)</em> of size that is filled according to the current fillStyle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillRect'>fillRect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillRect</span> <span class='ruff_arg'>context coordinates size</span></pre>Draws a rectangle that is filled according to the current fillStyle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillRoundedRect'>fillRoundedRect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillRoundedRect</span> <span class='ruff_arg'>context coordinates size radius</span></pre>Draws a rounded rectangle that is filled according to the current fillStyle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillStyle'>fillStyle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillStyle</span> <span class='ruff_arg'>context value</span></pre>Fills current style.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fillText'>fillText</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fillText</span> <span class='ruff_arg'>context text coordinates</span></pre>Draws a text string at the specified coordinates, filling the string's characters with the current fillStyle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::font'>font</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>font</span> <span class='ruff_arg'>context filepath</span></pre>Sets font for current context.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::fontSize'>fontSize</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>fontSize</span> <span class='ruff_arg'>context size</span></pre>Sets font size for current context.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::get'>get</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>get</span> <span class='ruff_arg'>context</span></pre>Gets information about context.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::getLineDash'>getLineDash</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getLineDash</span> <span class='ruff_arg'>context values</span></pre>Gets line dash for current context.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::get'>get</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>get</span> <span class='ruff_arg'>context</span></pre>Retrieves detailed information about the current context and returns it as a Tcl dictionary.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::getLineDash'>getLineDash</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getLineDash</span> <span class='ruff_arg'>context</span></pre>Gets line dash for current context.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::getTransform'>getTransform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getTransform</span> <span class='ruff_arg'>context</span></pre>Gets matrix for current context.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::globalAlpha'>globalAlpha</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>globalAlpha</span> <span class='ruff_arg'>context alpha</span></pre>Sets color alpha.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::isPointInPath'>isPointInPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isPointInPath</span> <span class='ruff_arg'>context coordinates ?path? ?WindingRule?</span></pre>Checks whether or not the specified point is contained in the current path.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::isPointInPath'>isPointInPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isPointInPath</span> <span class='ruff_arg'>context coordinates ?path? ?windingRule?</span></pre>Checks whether or not the specified point is contained in the current path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::isPointInStroke'>isPointInStroke</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isPointInStroke</span> <span class='ruff_arg'>context coordinates ?path?</span></pre>Checks whether or not the specified point is inside the area contained by the stroking of a path.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::lineJoin'>lineJoin</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineJoin</span> <span class='ruff_arg'>context LineJoin</span></pre>Parse the string as an enum value of type LineJoin and assign it to the lineJoin property of the context.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::lineTo'>lineTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineTo</span> <span class='ruff_arg'>context coordinates</span></pre>Adds a straight line to the current sub-path by connecting the sub-path's last point to the specified (x, y) coordinates.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::lineJoin'>lineJoin</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineJoin</span> <span class='ruff_arg'>context lineJoin</span></pre>Parse the string as an enum value of type LineJoin and assign it to the lineJoin property of the context.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::lineTo'>lineTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineTo</span> <span class='ruff_arg'>context coordinates</span></pre>Adds a straight line to the current sub-path by connecting the sub-path's last point to the specified <em>(x, y)</em> coordinates.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::lineWidth'>lineWidth</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineWidth</span> <span class='ruff_arg'>context width</span></pre>Sets line width for current context.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::measureText'>measureText</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>measureText</span> <span class='ruff_arg'>context text</span></pre>Information about the measured text.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::moveTo'>moveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>moveTo</span> <span class='ruff_arg'>context coordinates</span></pre>Begins a new sub-path at the point (x, y).
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::new'>new</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>new</span> <span class='ruff_arg'>size ?value?</span></pre>Sets a new context.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::polygon'>polygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>polygon</span> <span class='ruff_arg'>context coordinates size sides</span></pre>Adds an n-sided regular polygon at (x, y) of size to the current path.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::moveTo'>moveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>moveTo</span> <span class='ruff_arg'>context coordinates</span></pre>Begins a new sub-path at the point <em>(x, y)</em>.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::new'>new</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>new</span> <span class='ruff_arg'>size ?value?</span></pre>Sets a <em>new</em> context.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::polygon'>polygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>polygon</span> <span class='ruff_arg'>context coordinates size sides</span></pre>Adds an n-sided regular polygon at <em>(x, y)</em> of size to the current path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::quadraticCurveTo'>quadraticCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>quadraticCurveTo</span> <span class='ruff_arg'>context coordinates1 coordinates2</span></pre>Adds a quadratic Bézier curve to the current sub-path. It requires two points: the first one is a control point and the second one is the end point. The starting point is the latest point in the current path, which can be changed using moveTo() before creating the quadratic Bézier curve.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::rect'>rect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rect</span> <span class='ruff_arg'>context coordinates size</span></pre>Adds a rectangle to the current path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::resetTransform'>resetTransform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>resetTransform</span> <span class='ruff_arg'>context</span></pre>Resets the current transform to the identity matrix.
@@ -698,16 +805,17 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeCircle'>strokeCircle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeCircle</span> <span class='ruff_arg'>context coordinates radius</span></pre>Draws a circle that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeEllipse'>strokeEllipse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeEllipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></pre>Draws an ellipse that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokePath'>strokePath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokePath</span> </pre>See <a href="pix-pix-img.html#::pix::img::strokePath" title="img::strokePath" class='ruff_cmd'>img::strokePath</a> procedure.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokePolygon'>strokePolygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokePolygon</span> <span class='ruff_arg'>context coordinates size sides</span></pre>Draws an n-sided regular polygon at (x, y) of size that is stroked (outlined) according to the current strokeStyle and other context settings.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokePolygon'>strokePolygon</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokePolygon</span> <span class='ruff_arg'>context coordinates size sides</span></pre>Draws an n-sided regular polygon at <em>(x, y)</em> of size that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeRect'>strokeRect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeRect</span> <span class='ruff_arg'>context coordinates size</span></pre>Draws a rectangle that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeRoundedRect'>strokeRoundedRect</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeRoundedRect</span> <span class='ruff_arg'>context coordinates size radius</span></pre>Draws a rounded rectangle that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeSegment'>strokeSegment</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeSegment</span> <span class='ruff_arg'>context coordinates1 coordinates2</span></pre>Strokes a segment (draws a line from ax, ay to bx, by) according to the current strokeStyle and other context settings.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeStyle'>strokeStyle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeStyle</span> <span class='ruff_arg'>context color</span></pre>Sets color style current context.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeText'>strokeText</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeText</span> <span class='ruff_arg'>context text coordinates</span></pre>Draws the outlines of the characters of a text string at the specified coordinates.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::textAlign'>textAlign</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>textAlign</span> <span class='ruff_arg'>context HorizontalAlignment</span></pre>Sets text alignment.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::textBaseline'>textBaseline</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>textBaseline</span> <span class='ruff_arg'>context BaselineAlignment</span></pre>Set the base line alignment for the current context.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::textAlign'>textAlign</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>textAlign</span> <span class='ruff_arg'>context horizontalAlignment</span></pre>Sets text alignment.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::textBaseline'>textBaseline</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>textBaseline</span> <span class='ruff_arg'>context baselineAlignment</span></pre>Set the base line alignment for the current context.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::transform'>transform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>transform</span> <span class='ruff_arg'>context matrix3x3</span></pre>Multiplies the current transform with the matrix described by the arguments of this method.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::translate'>translate</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>translate</span> <span class='ruff_arg'>context coordinates</span></pre>Adds a translation transformation to the current matrix.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::writeFile'>writeFile</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>writeFile</span> <span class='ruff_arg'>context filePath</span></pre>Save context to image file.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>
+

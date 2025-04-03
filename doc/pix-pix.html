@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.4: Reference Manual</title>
+<title>pix 0.5: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.5: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -20,60 +20,108 @@
 <div style='clear:both;'></div>
 <h3 class='ruffproc'><a name='::pix::colorHTMLtoRGBA'>colorHTMLtoRGBA</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Converts an HTML color to an RGBA.</p>
+<p class='ruff'>Converts an HTML color into an RGBA value and returns it as a Tcl list.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>colorHTMLtoRGBA</span> <span class='ruff_arg'>HTMLcolor</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>HTMLcolor</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a tcl list.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl list.</p>
+<h3 class='ruffproc'><a name='::pix::getKeys'>getKeys</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Get all objects from the context and the image.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>getKeys</span> </div>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dictionary with two keys: <code>ctx</code> a Tcl list of all <a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> keys and <code>img</code> a Tcl list of all <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> keys.</p>
+<h3 class='ruffproc'><a name='::pix::mulMatrix'>mulMatrix</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Multiplies matrices.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>mulMatrix</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>args</code></nobr></td><td>matrix (9 values)</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The multiplied matrix as a list.</p>
 <h3 class='ruffproc'><a name='::pix::pathObjToString'>pathObjToString</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Parse path object.</p>
+<p class='ruff'>Parse <a href="pix-pix-path.html#::pix::path" title="path" class='ruff_cmd'>path</a> object.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>pathObjToString</span> <span class='ruff_arg'>path</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>path</code></nobr></td><td>path object</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns the parsed path to SVG style path (string).</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The parsed <a href="pix-pix-path.html#::pix::path" title="path" class='ruff_cmd'>path</a> to SVG style path (string).</p>
 <h3 class='ruffproc'><a name='::pix::rotMatrix'>rotMatrix</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Adds a rotation to the matrix.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>rotMatrix</span> <span class='ruff_arg'>angle matrix</span></div>
+<p class='ruff'>Create rotation matrix.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>rotMatrix</span> <span class='ruff_arg'>angle ?matrix?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>angle</code></nobr></td><td>double value (radian)</td></tr>
-<tr><td><nobr><code>matrix</code></nobr></td><td>list (matrix3x3: 9 values)</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list (9 values) Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns the matrix rotation as a list.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The matrix rotation as a list.</p>
+<h3 class='ruffproc'><a name='::pix::scaleMatrix'>scaleMatrix</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create scale matrix.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>scaleMatrix</span> <span class='ruff_arg'>scale ?matrix?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>scale</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list (9 values) Optional, default <code>&quot;&quot;</code>.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The matrix scaled as a list.</p>
 <h3 class='ruffproc'><a name='::pix::svgStyleToPathObj'>svgStyleToPathObj</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Transforms a SVG style path (string) to a <code>path</code> object.</p>
+<p class='ruff'>Transforms a SVG style path (string) to a <a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> object.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>svgStyleToPathObj</span> <span class='ruff_arg'>path</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>path</code></nobr></td><td>string SVG style</td></tr>
+<tr><td><nobr><code>path</code></nobr></td><td>a string in SVG style.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' path object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-path.html#::pix::path" title="path" class='ruff_cmd'>path</a> object.</p>
 <h3 class='ruffproc'><a name='::pix::toB64'>toB64</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Convert an <code>image</code> object to base 64.</p>
+<p class='ruff'>Convert an <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object to base 64.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>toB64</span> <span class='ruff_arg'>object</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>object</code></nobr></td><td><code>image</code> or <code>context</code> object</td></tr>
+<tr><td><nobr><code>object</code></nobr></td><td><a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> or <a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> object.</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>On the Nim side, <code>base64</code> module is considered <strong>unstable</strong>, so use the <a href="pix-pix.html#::pix::toBinary" title="toBinary" class='ruff_cmd'>toBinary</a> command instead and then Tcl's binary encode base64 command.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns string.</p>
+<h3 class='ruffproc'><a name='::pix::toBinary'>toBinary</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Convert an <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object to binary.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>toBinary</span> <span class='ruff_arg'>object ?format?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>object</code></nobr></td><td><a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> or <a href="pix-pix-ctx.html#::pix::ctx" title="ctx" class='ruff_cmd'>ctx</a> object.</td></tr>
+<tr><td><nobr><code>format</code></nobr></td><td>string (png, qoi, bmp, ppm) . Optional, default <code>png</code>.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A string in binary format.</p>
+<h3 class='ruffproc'><a name='::pix::transMatrix'>transMatrix</a><span class='ns_scope'> [<a href="pix-pix.html#::pix" title="::pix" class='ruff_cmd'>::pix</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create translation matrix.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>transMatrix</span> <span class='ruff_arg'>trans ?matrix?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>trans</code></nobr></td><td>list x,y</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list (9 values) Optional, default <code>&quot;&quot;</code>.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The matrix translated as a list.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix.html'>pix</a></li>
+<li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
 <li class='ruff-toc1'><a href='pix-pix-ctx.html'>pix::ctx</a></li>
 <li class='ruff-toc1'><a href='pix-pix-font.html'>pix::font</a></li>
 <li class='ruff-toc1'><a href='pix-pix-img.html'>pix::img</a></li>
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<hr><li class='ruff-toc2'><a href='#::pix-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::colorHTMLtoRGBA'>colorHTMLtoRGBA</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>colorHTMLtoRGBA</span> <span class='ruff_arg'>HTMLcolor</span></pre>Converts an HTML color to an RGBA.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::pathObjToString'>pathObjToString</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>pathObjToString</span> <span class='ruff_arg'>path</span></pre>Parse path object.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::rotMatrix'>rotMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rotMatrix</span> <span class='ruff_arg'>angle matrix</span></pre>Adds a rotation to the matrix.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::svgStyleToPathObj'>svgStyleToPathObj</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>svgStyleToPathObj</span> <span class='ruff_arg'>path</span></pre>Transforms a SVG style path (string) to a <code>path</code> object.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::toB64'>toB64</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toB64</span> <span class='ruff_arg'>object</span></pre>Convert an <code>image</code> object to base 64.
+<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
+<hr><li class='ruff-toc2'><a href='#::pix-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::colorHTMLtoRGBA'>colorHTMLtoRGBA</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>colorHTMLtoRGBA</span> <span class='ruff_arg'>HTMLcolor</span></pre>Converts an HTML color into an RGBA value and returns it as a Tcl list.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::getKeys'>getKeys</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getKeys</span> </pre>Get all objects from the context and the image.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::mulMatrix'>mulMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>mulMatrix</span> <span class='ruff_arg'>?args?</span></pre>Multiplies matrices.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::pathObjToString'>pathObjToString</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>pathObjToString</span> <span class='ruff_arg'>path</span></pre>Parse <a href="pix-pix-path.html#::pix::path" title="path" class='ruff_cmd'>path</a> object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::rotMatrix'>rotMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rotMatrix</span> <span class='ruff_arg'>angle ?matrix?</span></pre>Create rotation matrix.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::scaleMatrix'>scaleMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>scaleMatrix</span> <span class='ruff_arg'>scale ?matrix?</span></pre>Create scale matrix.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::svgStyleToPathObj'>svgStyleToPathObj</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>svgStyleToPathObj</span> <span class='ruff_arg'>path</span></pre>Transforms a SVG style path (string) to a <a href="pix-pix-path.html#::pix::path::new" title="path::new" class='ruff_cmd'>path::new</a> object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::toB64'>toB64</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toB64</span> <span class='ruff_arg'>object</span></pre>Convert an <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object to base 64.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::toBinary'>toBinary</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toBinary</span> <span class='ruff_arg'>object ?format?</span></pre>Convert an <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object to binary.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix.html#::pix::transMatrix'>transMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>transMatrix</span> <span class='ruff_arg'>trans ?matrix?</span></pre>Create translation matrix.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>

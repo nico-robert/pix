@@ -3,7 +3,7 @@ namespace eval ::pix {
             namespace eval paint {
                 # Ruff documentation
                 variable _ruff_preamble {
-            #### Enum PaintKind.
+            #### Enum PaintKind:
             PaintKind             - enum
             SolidPaint            - &nbsp;
             ImagePaint            - &nbsp;
@@ -14,47 +14,50 @@ namespace eval ::pix {
         }
             }
         }
-proc pix::paint::new {PaintKind} {
+proc pix::paint::new {paintKind} {
   # Sets a new paint.
   #
-  # PaintKind - Enum value
+  # paintKind - Enum value
   #
-  # Returns a 'new' paint object.
+  # Returns: A *new* [paint] object.
 }
-proc pix::paint::configure {paint args} {
+proc pix::paint::configure {paint options} {
   # Configure paint object parameters.
   #
-  # paint - object
-  # args  - dict options described below:
-  #   image                   - object
-  #   imageMat                - list matrix
-  #   color                   - string color
-  #   blendMode               - Enum value
-  #   opacity                 - double value
-  #   gradientHandlePositions - list positions
-  #   gradientStops           - list color + positions
+  # paint   - [paint]
+  # options - A Tcl dict (options described below)
   #
-  # Returns nothing.
+  # #Begintable
+  #  **image**                   : A object [img].
+  #  **imageMat**                : A list matrix.
+  #  **color**                   : A string [color].
+  #  **blendMode**               : A Enum value.
+  #  **opacity**                 : A double value.
+  #  **gradientHandlePositions** : A list positions {{x y} {x y}}.
+  #  **gradientStops**           : A list [color] + color position (double value).
+  # #EndTable
+  #
+  # Returns: Nothing.
 }
 proc pix::paint::copy {paint} {
   # Create a new Paint with the same properties.
   #
-  # paint - object
+  # paint - [paint::new]
   #
-  # Returns a 'new' paint object.
+  # Returns: A *new* [paint] object.
 }
 proc pix::paint::fillGradient {paint image} {
   # Fills with the Paint gradient.
   #
-  # paint - object
-  # image - object
+  # paint - [paint::new]
+  # image - [img::new]
   #
-  # Returns nothing.
+  # Returns: Nothing.
 }
 proc pix::paint::destroy {value} {
-  # Destroy current paint or all paints if special word `all` is specified.
+  # Destroy current [paint] or all paints if special word `all` is specified.
   #
-  # value - paint object or string
+  # value - [paint::new] object or string.
   #
-  # Returns nothing.
+  # Returns: Nothing.
 }

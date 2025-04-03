@@ -3,38 +3,80 @@ namespace eval ::pix {
             variable _ruff_preamble "Help procedures."
         }
 proc pix::colorHTMLtoRGBA {HTMLcolor} {
-  # Converts an HTML color to an RGBA.
+  # Converts an HTML color into an RGBA value and returns it as a Tcl list.
   #
-  # HTMLcolor  - string
+  # HTMLcolor - string
   #
-  # Returns a tcl list.
+  # Returns: A Tcl list.
 }
 proc pix::pathObjToString {path} {
-  # Parse path object.
+  # Parse [path] object.
   #
-  # path  - path object
+  # path - [path::new]
   #
-  # Returns the parsed path to SVG style path (string).
+  # Returns: The parsed [path] to SVG style path (string).
 }
 proc pix::svgStyleToPathObj {path} {
-  # Transforms a SVG style path (string) to a `path` object.
+  # Transforms a SVG style path (string) to a [path::new] object.
   #
-  # path  - string SVG style
+  # path - a string in SVG style.
   #
-  # Returns a 'new' path object.
+  # Returns: A *new* [path] object.
+}
+proc pix::getKeys {} {
+  # Get all objects from the context and the image.
+  #
+  # Returns: A Tcl dictionary with two keys:
+  # `ctx` a Tcl list of all [ctx] keys and
+  # `img` a Tcl list of all [img] keys.
 }
 proc pix::toB64 {object} {
-  # Convert an `image` object to base 64.
+  # Convert an [img] object to base 64.
   #
-  # object - `image` or `context` object
+  # object - [img] or [ctx] object.
+  # 
+  # On the Nim side, `base64` module is considered **unstable**, 
+  # so use the [toBinary] command instead 
+  # and then Tcl's binary encode base64 command.
   #
   # Returns string.
 }
-proc pix::rotMatrix {angle matrix} {
-  # Adds a rotation to the matrix.
+proc pix::toBinary {object {format {png}}} {
+  # Convert an [img] object to binary.
+  #
+  # object - [img] or [ctx] object.
+  # format - string (png, qoi, bmp, ppm) .
+  #
+  # Returns: A string in binary format.
+}
+proc pix::rotMatrix {angle {matrix {}}} {
+  # Create rotation matrix.
   #
   # angle   - double value (radian)
-  # matrix  - list (matrix3x3: 9 values)
+  # matrix  - list (9 values) 
   #
-  # Returns the matrix rotation as a list.
+  # Returns: The matrix rotation as a list.
+}
+proc pix::scaleMatrix {scale {matrix {}}} {
+  # Create scale matrix.
+  #
+  # scale   - list x,y
+  # matrix  - list (9 values) 
+  #
+  # Returns: The matrix scaled as a list.
+}
+proc pix::transMatrix {trans {matrix {}}} {
+  # Create translation matrix.
+  #
+  # trans   - list x,y
+  # matrix  - list (9 values) 
+  #
+  # Returns: The matrix translated as a list.
+}
+proc pix::mulMatrix {args} {
+  # Multiplies matrices.
+  #
+  # args - matrix (9 values) 
+  #
+  # Returns: The multiplied matrix as a list.
 }

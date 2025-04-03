@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.4: Reference Manual</title>
+<title>pix 0.5: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.5: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -15,7 +15,7 @@
             </div>
         </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='::pix::font'></a>::pix::font<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
-<h4 class='ruff'><a name='::pix::font-Enum HorizontalAlignment.'></a>Enum HorizontalAlignment.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
+<h4 class='ruff'><a name='::pix::font-Enum HorizontalAlignment:'></a>Enum HorizontalAlignment:<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
 <tr><td><nobr>HorizontalAlignment</nobr></td><td>enum</td></tr>
@@ -23,7 +23,7 @@
 <tr><td><nobr>CenterAlign</nobr></td><td>&nbsp;</td></tr>
 <tr><td><nobr>RightAlign</nobr></td><td>&nbsp;</td></tr>
 </table>
-<h4 class='ruff'><a name='::pix::font-Enum VerticalAlignment.'></a>Enum VerticalAlignment.<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
+<h4 class='ruff'><a name='::pix::font-Enum VerticalAlignment:'></a>Enum VerticalAlignment:<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <table class='ruff_deflist'>
 <tr><td><nobr>VerticalAlignment</nobr></td><td>enum</td></tr>
@@ -38,188 +38,216 @@
 <p class='ruff'>The font ascender value in font units.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ascent</span> <span class='ruff_arg'>typeface</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The ascender is the distance from the baseline to the highest point of any glyph in the font. This value is used to position text in the y-direction. The value is in the font's coordinate system. The value is in pixels but can be a floating point value. The value is positive.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl double value.</p>
 <h3 class='ruffproc'><a name='::pix::font::color'>color</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets font color (Same as pix::font::configure procedure).</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>color</span> <span class='ruff_arg'>font color</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>color</code></nobr></td><td>string color</td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::newFont" title="font::newFont" class='ruff_cmd'>font::newFont</a></td></tr>
+<tr><td><nobr><code>color</code></nobr></td><td>string <a href="pix-pix-font.html#::pix::font::color" title="color" class='ruff_cmd'>color</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::font::computeBounds'>computeBounds</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Bounds Arrangement object.</p>
+<p class='ruff'>Computes the bounds of an <code>arrangement</code> object.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>arrangement ?transform?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>arrangement</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>arrangement</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::typeset" title="font::typeset" class='ruff_cmd'>font::typeset</a></td></tr>
 <tr><td><nobr><code>transform</code></nobr></td><td>matrix list Optional, default <code>mat3</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict value {x y w h}.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The bounds is the axis-aligned bounding box of all the glyphs in the arrangement. The bounds is computed in the arrangement's coordinate system. The bounds does not include the outline of the glyphs, only the filled region.</p>
+<p class='ruff'>If the transform argument is provided, the bounds is computed after applying the transformation matrix to the arrangement. The transformation matrix is a 3x3 matrix as a list of 9 elements.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dict value where:<br> <strong>x</strong> : is the x offset of the top-left corner of the bounds.<br> <strong>y</strong> : is the y offset of the top-left corner of the bounds.<br> <strong>w</strong> : is the width of the bounds.<br> <strong>h</strong> : is the height of the bounds.<br></p>
 <h3 class='ruffproc'><a name='::pix::font::configure'>configure</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Configure <font> parameters.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>configure</span> <span class='ruff_arg'>font ?args?</span></div>
+<p class='ruff'>Configure <a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a> parameters.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>configure</span> <span class='ruff_arg'>font options</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>args</code></nobr></td><td>dict options described below: <br></td></tr>
-<tr><td><nobr><code>color</code></nobr></td><td>Simple color <br></td></tr>
-<tr><td><nobr><code>lineHeight</code></nobr></td><td>double value <br></td></tr>
-<tr><td><nobr><code>noKerningAdjustments</code></nobr></td><td>boolean value <br></td></tr>
-<tr><td><nobr><code>paint</code></nobr></td><td>Html color <br></td></tr>
-<tr><td><nobr><code>size</code></nobr></td><td>double value <br></td></tr>
-<tr><td><nobr><code>strikethrough</code></nobr></td><td>boolean value <br></td></tr>
-<tr><td><nobr><code>underline</code></nobr></td><td>boolean value <br></td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a></td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>A Tcl dict, see description below.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>
+<table class='ruff_deflist'>
+<tr>
+<td><strong>noKerningAdjustments</strong> </td>
+<td> A boolean value.</td>
+</tr>
+<tr>
+<td><strong>underline</strong>            </td>
+<td> A boolean value.</td>
+</tr>
+<tr>
+<td><strong>strikethrough</strong>        </td>
+<td> A boolean value.</td>
+</tr>
+<tr>
+<td><strong>size</strong>                 </td>
+<td> A double value.</td>
+</tr>
+<tr>
+<td><strong>lineHeight</strong>           </td>
+<td> A double value.</td>
+</tr>
+<tr>
+<td><strong>paint</strong>                </td>
+<td> A list of <a href="pix-pix-font.html#::pix::font::paint" title="paint" class='ruff_cmd'>paint</a> objects.</td>
+</tr>
+<tr>
+<td><strong>color</strong>                </td>
+<td> A string <a href="pix-pix-font.html#::pix::font::color" title="color" class='ruff_cmd'>color</a>.</td>
+</tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::font::copy'>copy</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Copy font.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>font</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' font object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-font.html#::pix::font" title="font" class='ruff_cmd'>font</a> object.</p>
 <h3 class='ruffproc'><a name='::pix::font::defaultLineHeight'>defaultLineHeight</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>The default line height in pixels for the current font size.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>defaultLineHeight</span> <span class='ruff_arg'>font</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>This proc calculates and returns the default line height of the font in pixels, based on its current size and other internal properties.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>This proc calculates and returns the default line height of the font in pixels, based on its current size and other internal properties. The line height is used to determine the vertical distance between the baselines of two lines of text.</p>
+<p class='ruff'>For example, if the line height is 15.0, then the baseline of the second line of text will be 15.0 pixels below the baseline of the first line of text.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The line height is in pixels.</p>
 <h3 class='ruffproc'><a name='::pix::font::descent'>descent</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>The font descender value in font units.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>descent</span> <span class='ruff_arg'>typeface</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The descent is the distance from the baseline to the lowest point of any glyph in the font. This value is used to position text in the y-direction. The value is in the font's coordinate system. The value is in pixels but can be a floating point value. The value is negative.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The descent is the distance from the baseline to the lowest point of any glyph in the font. This value is used to position text in the y-direction. The value is negative.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A value is in pixels but can be a floating point value.</p>
 <h3 class='ruffproc'><a name='::pix::font::destroy'>destroy</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Destroy current font or all fonts if special word <code>all</code> is specified.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>value</code></nobr></td><td>font object or string</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a> or string</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::font::fallbackTypeface'>fallbackTypeface</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Looks through fallback typefaces to find one that has the glyph.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>fallbackTypeface</span> <span class='ruff_arg'>typeface char</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>char</code></nobr></td><td>string 'char'</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
+<tr><td><nobr><code>char</code></nobr></td><td>char</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' Tcl typeFace or the arg typeFace if typeface has glyph.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> Tcl <code>TypeFace</code> or the arg <code>TypeFace</code> if typeface has glyph.</p>
 <h3 class='ruffproc'><a name='::pix::font::getAdvance'>getAdvance</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Try to get the advance width for the given rune in pixels. If the rune is not supported by the typeface, this will raise an exception.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>getAdvance</span> <span class='ruff_arg'>typeface char</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>char</code></nobr></td><td>'char'</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
+<tr><td><nobr><code>char</code></nobr></td><td>char</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A value is in pixels</p>
 <h3 class='ruffproc'><a name='::pix::font::getGlyphPath'>getGlyphPath</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>The glyph path for the rune.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>getGlyphPath</span> <span class='ruff_arg'>typeface char</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>char</code></nobr></td><td>'char'</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
+<tr><td><nobr><code>char</code></nobr></td><td>char</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' path object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-path.html#::pix::path" title="path" class='ruff_cmd'>path</a>.</p>
 <h3 class='ruffproc'><a name='::pix::font::getKerningAdjustment'>getKerningAdjustment</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Retrieve the kerning adjustment for the pair of characters (c1, c2) from the typeface.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>getKerningAdjustment</span> <span class='ruff_arg'>typeface char1 char2</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>char1</code></nobr></td><td>'char'</td></tr>
-<tr><td><nobr><code>char2</code></nobr></td><td>'char'</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
+<tr><td><nobr><code>char1</code></nobr></td><td>char</td></tr>
+<tr><td><nobr><code>char2</code></nobr></td><td>char</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Kerning is the process of adjusting the space between characters in a proportional font. The kerning adjustment is measured in pixels and is specific to the pair of characters. This allows for more visually pleasing and readable text by reducing or increasing space between specific pairs of characters, depending on the typeface design.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl double value.</p>
 <h3 class='ruffproc'><a name='::pix::font::hasGlyph'>hasGlyph</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Returns if there is a glyph for this rune. Returns true, otherwise false.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>hasGlyph</span> <span class='ruff_arg'>typeface char1</span></div>
+<p class='ruff'>Guess if the glyph exists for this rune.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hasGlyph</span> <span class='ruff_arg'>typeface char</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>char1</code></nobr></td><td>'char'</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
+<tr><td><nobr><code>char</code></nobr></td><td>char</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns if there is a glyph for this rune. Returns true, otherwise false.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl boolean value.</p>
 <h3 class='ruffproc'><a name='::pix::font::layoutBounds'>layoutBounds</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Computes the width and height of the arrangement in pixels. Computes the width and height of the text in pixels. Computes the width and height of the spans in pixels.</p>
+<p class='ruff'>Computes the width and height in pixels.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>layoutBounds</span> <span class='ruff_arg'>object text</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>object</code></nobr></td><td>arrangement, font or span object</td></tr>
-<tr><td><nobr><code>text</code></nobr></td><td>string (if font object)</td></tr>
+<tr><td><nobr><code>object</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::typeset" title="font::typeset" class='ruff_cmd'>font::typeset</a>, <a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a> or <a href="pix-pix-font.html#::pix::font::newSpan" title="font::newSpan" class='ruff_cmd'>font::newSpan</a></td></tr>
+<tr><td><nobr><code>text</code></nobr></td><td>string (if <a href="pix-pix-font.html#::pix::font" title="font" class='ruff_cmd'>font</a> object is present)</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict value {x y}.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The bounds does not include the outline of the glyphs, only the filled region.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dict value {x y} where the x is the width of the bounds in pixels, and the y is the height of the bounds in pixels.</p>
 <h3 class='ruffproc'><a name='::pix::font::lineGap'>lineGap</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets the font line gap value in font units.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>lineGap</span> <span class='ruff_arg'>typeface</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The line gap is the distance in font units between the baseline of one line of text and the baseline of the next. The line gap is used to determine the spacing between lines of text.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns the line gap value in font units.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The line gap value in font units.</p>
 <h3 class='ruffproc'><a name='::pix::font::lineHeight'>lineHeight</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>The default line height in font units.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>lineHeight</span> <span class='ruff_arg'>typeface</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The line height is the height of a line of text in the font, which is typically slightly larger than the ascent of the font (the height above the baseline) plus the descent of the font (the height below the baseline).</p>
 <p class='ruff'>The line height is typically used to determine the vertical distance between the baselines of two lines of text.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl double value.</p>
 <h3 class='ruffproc'><a name='::pix::font::name'>name</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Returns the name of the font.</p>
+<p class='ruff'>This procedure retrieves the name of a given typeface object.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>name</span> <span class='ruff_arg'>typeface</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns the name of the font.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>The name of the font.</p>
 <h3 class='ruffproc'><a name='::pix::font::newFont'>newFont</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Create a new pixie.Font from the given TypeFace object. The <code>pixie.Font</code> object is initialized with the given TypeFace object.</p>
+<p class='ruff'>Create a new pixie.Font from the given <em>TypeFace</em> object.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>newFont</span> <span class='ruff_arg'>typeface</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>typeface</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>typeface</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The size of the font is set to 0 (which is the default value). The paint object is initialized with a default Color (black). The text buffer is initialized with a default string (&quot;&quot;). The flags are initialized with a default value of 0.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' font object.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The size of the font is set to 0 (which is the default value). The <a href="pix-pix-font.html#::pix::font::paint" title="paint" class='ruff_cmd'>paint</a> object is initialized with a default <em>Color (black)</em>. The text buffer is initialized with a default string (&quot;&quot;). The flags are initialized with a default value of 0.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-font.html#::pix::font" title="font" class='ruff_cmd'>font</a>.</p>
 <h3 class='ruffproc'><a name='::pix::font::newSpan'>newSpan</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets new Span.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>newSpan</span> <span class='ruff_arg'>font text</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::newFont" title="font::newFont" class='ruff_cmd'>font::newFont</a></td></tr>
 <tr><td><nobr><code>text</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' span object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> span object.</p>
 <h3 class='ruffproc'><a name='::pix::font::paint'>paint</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets font Paint if paint optional argument is set, otherwise gets the font paint.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>paint</span> <span class='ruff_arg'>font ?paint?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
-<tr><td><nobr><code>paint</code></nobr></td><td>object Optional, default <code>&quot;&quot;</code>.</td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::newFont" title="font::newFont" class='ruff_cmd'>font::newFont</a></td></tr>
+<tr><td><nobr><code>paint</code></nobr></td><td><a href="pix-pix-paint.html#::pix::paint::new" title="paint::new" class='ruff_cmd'>paint::new</a> Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' paint object if no paint optional argument is set, otherwise set the font paint.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-font.html#::pix::font::paint" title="paint" class='ruff_cmd'>paint</a> if no paint optional argument is set, otherwise set the font paint.</p>
 <h3 class='ruffproc'><a name='::pix::font::parseOtf'>parseOtf</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Parse Otf string.</p>
@@ -227,8 +255,8 @@
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>buffer</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The goal is to take a string buffer containing an Otf (Open Type Font) and parse it into a TypeFace object.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' typeFace object.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The goal is to take a string buffer containing an Otf <em>(Open Type Font)</em> and parse it into a TypeFace object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> TypeFace object.</p>
 <h3 class='ruffproc'><a name='::pix::font::parseSvgFont'>parseSvgFont</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Parse Svg Font string.</p>
@@ -236,8 +264,8 @@
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>buffer</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The <code>parseSvgFont</code> function is used to interpret the string as an SVG font and convert it into a <code>TypeFace</code> object.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' typeFace object.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The <em>pix::font::parseSvgFont</em> function is used to interpret the string as an SVG font and convert it into a <code>TypeFace</code> object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> TypeFace object.</p>
 <h3 class='ruffproc'><a name='::pix::font::parseTtf'>parseTtf</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Parse Ttf string.</p>
@@ -245,8 +273,8 @@
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>buffer</code></nobr></td><td>string</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The <code>parseTtf</code> function is used to interpret the string as a Ttf (TrueType Font) and convert it into a <code>TypeFace</code> object.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' typeFace object.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The <em>pix::font::parseTtf</em> function is used to interpret the string as a Ttf (TrueType Font) and convert it into a <code>TypeFace</code> object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> TypeFace object.</p>
 <h3 class='ruffproc'><a name='::pix::font::readFont'>readFont</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Try to read the font from the file located at the given path.</p>
@@ -254,9 +282,8 @@
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>filePath</code></nobr></td><td>file font</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>Pixie will take care of the rest (loading the font, verifying it, etc.).</p>
-<p class='ruff'>If there is an error (like the file not existing), an exception will be raised which we will catch and return the error message.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' font object.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>Pixie will take care of the rest (loading the font, verifying it, etc.).<br> If there is an error (like the file not existing), an exception will be raised which we will catch and return the error message.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-font.html#::pix::font" title="font" class='ruff_cmd'>font</a> object.</p>
 <h3 class='ruffproc'><a name='::pix::font::readTypeface'>readTypeface</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Loads a typeface from a file.</p>
@@ -264,7 +291,8 @@
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>filePath</code></nobr></td><td>file font</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' typeface object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> Typeface object.</p>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="pix-pix-font.html#::pix::font::parseTtf" title="font::parseTtf" class='ruff_cmd'>font::parseTtf</a>, <a href="pix-pix-font.html#::pix::font::parseOtf" title="font::parseOtf" class='ruff_cmd'>font::parseOtf</a>, <a href="pix-pix-font.html#::pix::font::parseSvgFont" title="font::parseSvgFont" class='ruff_cmd'>font::parseSvgFont</a></p>
 <h3 class='ruffproc'><a name='::pix::font::readTypefaces'>readTypefaces</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Loads a OpenType Collection (.ttc).</p>
@@ -272,60 +300,79 @@
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>filePath</code></nobr></td><td>file font</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl list <typeface> object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl list with <code>Typeface</code> objects.</p>
 <h3 class='ruffproc'><a name='::pix::font::scale'>scale</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>The scale factor to transform font units into pixels.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>scale</span> <span class='ruff_arg'>object</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>object</code></nobr></td><td>font or typeFace object</td></tr>
+<tr><td><nobr><code>object</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a> or <a href="pix-pix-font.html#::pix::font::readTypeface" title="font::readTypeface" class='ruff_cmd'>font::readTypeface</a> object.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl double value.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl double value.</p>
 <h3 class='ruffproc'><a name='::pix::font::selectionRects'>selectionRects</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
-<p class='ruff'>Gets coordinates rectangle for 'arrangement' object.</p>
+<p class='ruff'>Gets coordinates rectangle for <a href="pix-pix-font.html#::pix::font::typeset" title="font::typeset" class='ruff_cmd'>font::typeset</a>.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>selectionRects</span> <span class='ruff_arg'>arrangement</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>arrangement</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>arrangement</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::typeset" title="font::typeset" class='ruff_cmd'>font::typeset</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns Tcl dict value (x, y, w, h).</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The selectionRects method returns a seq of vec4 that represents the coordinates of the rectangles that are used to render the text for the given arrangement object.</p>
+<p class='ruff'>The coordinates are in the format <em>(x, y, w, h)</em> where: x and y are the top-left corner of the rectangle w and h are the width and height of the rectangle</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dictionary with keys that contains the coordinates of the rectangle in the format <em>(x, y, w, h)</em>.</p>
 <h3 class='ruffproc'><a name='::pix::font::size'>size</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets font Size (Same as pix::font::configure procedure).</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>size</span> <span class='ruff_arg'>font size</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>font</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>font</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::newFont" title="font::newFont" class='ruff_cmd'>font::newFont</a></td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>double value</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::font::typeset'>typeset</a><span class='ns_scope'> [<a href="pix-pix-font.html#::pix::font" title="::pix::font" class='ruff_cmd'>::pix::font</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Lays out the character glyphs and returns the arrangement.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>typeset</span> <span class='ruff_arg'>object ?args? bounds hAlign vAlign wrap</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>typeset</span> <span class='ruff_arg'>object ?options?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>object</code></nobr></td><td>font or span object</td></tr>
-<tr><td><nobr><code>args</code></nobr></td><td>dict options described below: <br> Optional, default <code>&quot;&quot;</code>.</td></tr>
-<tr><td><nobr><code>bounds</code></nobr></td><td>list coordinates<br></td></tr>
-<tr><td><nobr><code>hAlign</code></nobr></td><td>Enum value<br></td></tr>
-<tr><td><nobr><code>vAlign</code></nobr></td><td>Enum value<br></td></tr>
-<tr><td><nobr><code>wrap</code></nobr></td><td>boolean value<br></td></tr>
+<tr><td><nobr><code>object</code></nobr></td><td><a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a> or <a href="pix-pix-font.html#::pix::font::newSpan" title="font::newSpan" class='ruff_cmd'>font::newSpan</a></td></tr>
+<tr><td><nobr><code>options</code></nobr></td><td>A Tcl dict, see description below. Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' arrangement object.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>
+<table class='ruff_deflist'>
+<tr>
+<td><strong>bounds</strong> </td>
+<td> A list coordinates.</td>
+</tr>
+<tr>
+<td><strong>hAlign</strong> </td>
+<td> A Enum value.</td>
+</tr>
+<tr>
+<td><strong>vAlign</strong> </td>
+<td> A Enum value.</td>
+</tr>
+<tr>
+<td><strong>wrap</strong>   </td>
+<td> A boolean value.</td>
+</tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> arrangement object.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
+<li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
 <li class='ruff-toc1'><a href='pix-pix-ctx.html'>pix::ctx</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix-font.html'>pix::font</a></li>
 <li class='ruff-toc1'><a href='pix-pix-img.html'>pix::img</a></li>
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<hr><li class='ruff-toc4'><a href='#::pix::font-Enum HorizontalAlignment.'>Enum HorizontalAlignment.</a></li><li class='ruff-toc4'><a href='#::pix::font-Enum VerticalAlignment.'>Enum VerticalAlignment.</a></li><li class='ruff-toc2'><a href='#::pix::font-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::ascent'>ascent</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>ascent</span> <span class='ruff_arg'>typeface</span></pre>The font ascender value in font units.
+<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
+<hr><li class='ruff-toc4'><a href='#::pix::font-Enum HorizontalAlignment:'>Enum HorizontalAlignment:</a></li><li class='ruff-toc4'><a href='#::pix::font-Enum VerticalAlignment:'>Enum VerticalAlignment:</a></li><li class='ruff-toc2'><a href='#::pix::font-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::ascent'>ascent</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>ascent</span> <span class='ruff_arg'>typeface</span></pre>The font ascender value in font units.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::color'>color</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>color</span> <span class='ruff_arg'>font color</span></pre>Sets font color (Same as pix::font::configure procedure).
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::computeBounds'>computeBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>arrangement ?transform?</span></pre>Bounds Arrangement object.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::configure'>configure</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>configure</span> <span class='ruff_arg'>font ?args?</span></pre>Configure <font> parameters.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::computeBounds'>computeBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>arrangement ?transform?</span></pre>Computes the bounds of an <code>arrangement</code> object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::configure'>configure</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>configure</span> <span class='ruff_arg'>font options</span></pre>Configure <a href="pix-pix-font.html#::pix::font::readFont" title="font::readFont" class='ruff_cmd'>font::readFont</a> parameters.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::copy'>copy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>font</span></pre>Copy font.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::defaultLineHeight'>defaultLineHeight</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>defaultLineHeight</span> <span class='ruff_arg'>font</span></pre>The default line height in pixels for the current font size.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::descent'>descent</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>descent</span> <span class='ruff_arg'>typeface</span></pre>The font descender value in font units.
@@ -334,12 +381,12 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::getAdvance'>getAdvance</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getAdvance</span> <span class='ruff_arg'>typeface char</span></pre>Try to get the advance width for the given rune in pixels. If the rune is not supported by the typeface, this will raise an exception.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::getGlyphPath'>getGlyphPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getGlyphPath</span> <span class='ruff_arg'>typeface char</span></pre>The glyph path for the rune.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::getKerningAdjustment'>getKerningAdjustment</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>getKerningAdjustment</span> <span class='ruff_arg'>typeface char1 char2</span></pre>Retrieve the kerning adjustment for the pair of characters (c1, c2) from the typeface.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::hasGlyph'>hasGlyph</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hasGlyph</span> <span class='ruff_arg'>typeface char1</span></pre>Returns if there is a glyph for this rune. Returns true, otherwise false.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::layoutBounds'>layoutBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>layoutBounds</span> <span class='ruff_arg'>object text</span></pre>Computes the width and height of the arrangement in pixels. Computes the width and height of the text in pixels. Computes the width and height of the spans in pixels.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::hasGlyph'>hasGlyph</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hasGlyph</span> <span class='ruff_arg'>typeface char</span></pre>Guess if the glyph exists for this rune.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::layoutBounds'>layoutBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>layoutBounds</span> <span class='ruff_arg'>object text</span></pre>Computes the width and height in pixels.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::lineGap'>lineGap</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineGap</span> <span class='ruff_arg'>typeface</span></pre>Gets the font line gap value in font units.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::lineHeight'>lineHeight</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lineHeight</span> <span class='ruff_arg'>typeface</span></pre>The default line height in font units.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::name'>name</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>name</span> <span class='ruff_arg'>typeface</span></pre>Returns the name of the font.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::newFont'>newFont</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>newFont</span> <span class='ruff_arg'>typeface</span></pre>Create a new pixie.Font from the given TypeFace object. The <code>pixie.Font</code> object is initialized with the given TypeFace object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::name'>name</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>name</span> <span class='ruff_arg'>typeface</span></pre>This procedure retrieves the name of a given typeface object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::newFont'>newFont</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>newFont</span> <span class='ruff_arg'>typeface</span></pre>Create a new pixie.Font from the given <em>TypeFace</em> object.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::newSpan'>newSpan</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>newSpan</span> <span class='ruff_arg'>font text</span></pre>Sets new Span.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::paint'>paint</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>paint</span> <span class='ruff_arg'>font ?paint?</span></pre>Sets font Paint if paint optional argument is set, otherwise gets the font paint.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::parseOtf'>parseOtf</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parseOtf</span> <span class='ruff_arg'>buffer</span></pre>Parse Otf string.
@@ -349,8 +396,9 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::readTypeface'>readTypeface</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>readTypeface</span> <span class='ruff_arg'>filePath</span></pre>Loads a typeface from a file.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::readTypefaces'>readTypefaces</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>readTypefaces</span> <span class='ruff_arg'>filePath</span></pre>Loads a OpenType Collection (.ttc).
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::scale'>scale</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>scale</span> <span class='ruff_arg'>object</span></pre>The scale factor to transform font units into pixels.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::selectionRects'>selectionRects</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>selectionRects</span> <span class='ruff_arg'>arrangement</span></pre>Gets coordinates rectangle for 'arrangement' object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::selectionRects'>selectionRects</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>selectionRects</span> <span class='ruff_arg'>arrangement</span></pre>Gets coordinates rectangle for <a href="pix-pix-font.html#::pix::font::typeset" title="font::typeset" class='ruff_cmd'>font::typeset</a>.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::size'>size</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>size</span> <span class='ruff_arg'>font size</span></pre>Sets font Size (Same as pix::font::configure procedure).
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::typeset'>typeset</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>typeset</span> <span class='ruff_arg'>object ?args? bounds hAlign vAlign wrap</span></pre>Lays out the character glyphs and returns the arrangement.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-font.html#::pix::font::typeset'>typeset</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>typeset</span> <span class='ruff_arg'>object ?options?</span></pre>Lays out the character glyphs and returns the arrangement.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>
+

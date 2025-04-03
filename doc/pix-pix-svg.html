@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.4: Reference Manual</title>
+<title>pix 0.5: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.4: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.5: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -15,7 +15,7 @@
             </div>
         </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='::pix::svg'></a>::pix::svg<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
-<p class='ruff'>Load SVG files.</p>
+<p class='ruff'>Load, parse, render SVG.</p>
 <h2 class='ruff'><a name='::pix::svg-Commands'></a>Commands<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h2>
 <div style='clear:both;'></div>
 <h3 class='ruffproc'><a name='::pix::svg::destroy'>destroy</a><span class='ns_scope'> [<a href="pix-pix-svg.html#::pix::svg" title="::pix::svg" class='ruff_cmd'>::pix::svg</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -23,17 +23,17 @@
 <p class='ruff'>Destroy current svg or all svgs if special word <code>all</code> is specified.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>value</code></nobr></td><td>svg object or string</td></tr>
+<tr><td><nobr><code>value</code></nobr></td><td><a href="pix-pix-svg.html#::pix::svg::parse" title="svg::parse" class='ruff_cmd'>svg::parse</a> or string.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns nothing.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Nothing.</p>
 <h3 class='ruffproc'><a name='::pix::svg::newImage'>newImage</a><span class='ns_scope'> [<a href="pix-pix-svg.html#::pix::svg" title="::pix::svg" class='ruff_cmd'>::pix::svg</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Render SVG and return the image.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>newImage</span> <span class='ruff_arg'>svg</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code>svg</code></nobr></td><td>object</td></tr>
+<tr><td><nobr><code>svg</code></nobr></td><td><a href="pix-pix-svg.html#::pix::svg::parse" title="svg::parse" class='ruff_cmd'>svg::parse</a></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' img object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object.</p>
 <h3 class='ruffproc'><a name='::pix::svg::parse'>parse</a><span class='ns_scope'> [<a href="pix-pix-svg.html#::pix::svg" title="::pix::svg" class='ruff_cmd'>::pix::svg</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Parse SVG XML. Defaults to the SVG's view box size.</p>
@@ -42,18 +42,20 @@
 <tr><td><nobr><code>svg</code></nobr></td><td>string data</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height Optional, default <code>SVGviewbox</code>.</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a 'new' svg object.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-svg.html#::pix::svg" title="svg" class='ruff_cmd'>svg</a> object.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
+<li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
 <li class='ruff-toc1'><a href='pix-pix-ctx.html'>pix::ctx</a></li>
 <li class='ruff-toc1'><a href='pix-pix-font.html'>pix::font</a></li>
 <li class='ruff-toc1'><a href='pix-pix-img.html'>pix::img</a></li>
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix-svg.html'>pix::svg</a></li>
+<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
 <hr><li class='ruff-toc2'><a href='#::pix::svg-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::destroy'>destroy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></pre>Destroy current svg or all svgs if special word <code>all</code> is specified.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::newImage'>newImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>newImage</span> <span class='ruff_arg'>svg</span></pre>Render SVG and return the image.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::parse'>parse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size?</span></pre>Parse SVG XML. Defaults to the SVG's view box size.

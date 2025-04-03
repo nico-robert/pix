@@ -3,7 +3,7 @@
 namespace eval ::pix {
     variable _intro {
         # pix - 2D graphics library
-        Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in Nim.
+        Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in 👑 [Nim](https://nim-lang.org).
 
         #### Compatibility
         Tcl/Tk 8.6 & 9.0
@@ -13,7 +13,11 @@ namespace eval ::pix {
         * Windows x64
         * Linux x64
 
-        Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases).
+        Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases) for the platforms mentioned
+        above.
+
+        **Note**: I have mainly tested this package on Windows and MacOs x64 with version *8.6.14* and *9.0.1* of Tcl/Tk, it should work on Linux and
+        MacOS arm (I hope so!)
 
         #### Example
         ```
@@ -60,35 +64,6 @@ namespace eval ::pix {
     }
 }
 
-append pix::_intro {
-#### Release
-*  **03-Jun-2024** : 0.1<br>
-    - Initial release.<br>
-*  **25-Jun-2024** : 0.2<br>
-    - Add `font` namespace + test file.<br>
-    - Add `image` namespace + test file.<br>
-    - Add `paint` namespace + test file.<br>
-    - Add `path` namespace + test file.<br>
-    - Rename `pix::ctx::getSize` by `pix::ctx::get` <br>
-    - Rename `pix::img::read` by `pix::img::readImage`<br>
-    - Rename `pix::font::read` by `pix::font::readFont`<br>
-    - Add documentation based on Pixie API reference.<br>
-    - Add binary for Linux.<br>
-    - Code refactoring.<br>
-*  **06-Oct-2024** : 0.3<br>
-    - Doc : Jpeg format is not supported for pix::ctx::writeFile.<br>
-    - Rename `pix::parsePath` to `pix::pathObjToString`<br>
-    - Add `pix::svgStyleToPathObj` proc (convert SVG path string to path object)<br>
-    - Add `pix::rotMatrix` proc (matrix rotation)<br>
-    - Fix bug `pix::path::fillOverlaps` bad arguments, used.<br>
-    - Code refactoring.<br>
-*  **03-Mar-2025** : 0.4<br>
-    - Support for `Tcl/Tk9`.<br>
-    - Adds binary for MacOS `arm64`.<br>
-    - Adds `X11` for purpose testing.<br>
-    - Code refactoring ++.<br>
-<br>
-}
 append pix::_intro {
 #### License
 ```

@@ -1,0 +1,43 @@
+namespace eval ::Release {
+    # Ruff documentation
+    variable _ruff_preamble {
+#### Release
+*  **03-Jun-2024** : 0.1<br>
+    - Initial release.<br>
+*  **25-Jun-2024** : 0.2<br>
+    - Add `font` namespace + test file.<br>
+    - Add `image` namespace + test file.<br>
+    - Add `paint` namespace + test file.<br>
+    - Add `path` namespace + test file.<br>
+    - Rename `pix::ctx::getSize` by `pix::ctx::get` <br>
+    - Rename `pix::img::read` by `pix::img::readImage`<br>
+    - Rename `pix::font::read` by `pix::font::readFont`<br>
+    - Add documentation based on Pixie API reference.<br>
+    - Add binary for Linux.<br>
+    - Code refactoring.<br>
+*  **06-Oct-2024** : 0.3<br>
+    - Doc : Jpeg format is not supported for pix::ctx::writeFile.<br>
+    - Rename `pix::parsePath` to `pix::pathObjToString`<br>
+    - Add `pix::svgStyleToPathObj` proc (convert SVG path string to path object)<br>
+    - Add `pix::rotMatrix` proc (matrix rotation)<br>
+    - Fix bug `pix::path::fillOverlaps` bad arguments, used.<br>
+    - Code refactoring.<br>
+*  **02-Mar-2025** : 0.4<br>
+    - Support for `Tcl/Tk9`.<br>
+    - Adds binary for MacOS `arm64`.<br>
+    - Adds `X11` for purpose testing.<br>
+    - Code refactoring ++.<br>
+*  **03-Apr-2025** : 0.5<br>
+    - Try to improve the comments for the documentation.<br>
+    - Fixes bug for `pix::ctx::clip` + `pix::ctx::isPointInPath`<br>
+    - procedures when args count was equal to 2.<br>
+    - Adds `pix::toBinary` procedure.<br>
+    - Adds `pix::getKeys` procedure for image & context, useful for debugging.<br>
+    - Adds procedures for working with `matrices` (translate, scale, multiply).<br>
+    - Adds `useMalloc` flag for `nim c` command.<br>
+    - Adds another test for fonts (works only with Tcl9)<br>
+    - Reworks tests files (Compare the result with `pix::img::diff` proc).<br>
+    - Simplification of some procedures + cosmetic changes.<br>
+<br>
+}
+}
