@@ -36,7 +36,7 @@ license     = "MIT"
 srcDir      = "src"
 
 # Dependencies
-requires "nim == 2.0.6"
+requires "nim >= 2.0.6"
 requires "pixie == 5.0.7"
 
 # Task definition for generating the pix Tcl/Tk library
