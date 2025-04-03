@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-package ifneeded pix 0.4 [list apply {dir {
+package ifneeded pix 0.5 [list apply {dir {
     # REMINDER ME : Change the 2 values for the version.
     package require platform
     
@@ -12,7 +12,7 @@ package ifneeded pix 0.4 [list apply {dir {
 
     set os  [platform::generic]
     set ext [info sharedlibextension]
-    set pixv 0.4
+    set pixv 0.5
 
     switch -exact $os {
         macosx-x86_64 - 

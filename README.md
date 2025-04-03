@@ -21,7 +21,7 @@ Source distributions and binary packages can be downloaded [here](https://github
 above.
 
 > [!NOTE]  
-> I have mainly tested this package on Windows and MacOs x64 with version 8.6.14 and 9.0.1 of Tcl/Tk, it should work on Linux and
+> I have mainly tested this package on Windows and MacOs x64 with version **8.6.14** and **9.0.1** of Tcl/Tk, it should work on Linux and
 MacOS arm (I hope so !)
 
 Example :
@@ -101,3 +101,14 @@ Release :
     - Adds binary for MacOS `arm64`.
     - Adds `X11` for purpose testing.
     - Code refactoring ++.
+*  **03-Apr-2025** : 0.5
+    - Try to improve the comments for the documentation.
+    - Fixes bug for `pix::ctx::clip` + `pix::ctx::isPointInPath`
+    - procedures when args count was equal to 2.
+    - Adds `pix::toBinary` procedure.
+    - Adds `pix::getKeys` procedure for image & context, useful for debugging.
+    - Adds procedures for working with `matrices` (translate, scale, multiply).
+    - Adds `useMalloc` flag for `nim c` command.
+    - Adds another test for fonts (works only with Tcl9)
+    - Reworks tests files (Compare the result with `pix::img::diff` proc).
+    - Simplification of some procedures + cosmetic changes.
