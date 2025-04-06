@@ -737,12 +737,12 @@ proc pix_ctx_setTransform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   # *pix::ctx::transform* instead.
   #
   # The matrix is a list of 9 values representing a 3x3 matrix.
-  # The values are in row-major order:<br>
+  # The values are in column order:<br>
   #```
   # set matrix {
-  #   a b c
-  #   d e f
-  #   g h i
+  #   a d g
+  #   b e h
+  #   c f i
   # }
   #```
   #
