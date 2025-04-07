@@ -111,6 +111,20 @@ proc isHSLFormat*(s: string): bool =
       inc count
 
   return count == 3
+
+proc isHSVFormat*(s: string): bool =
+  # Checks if the color is a color in the hsv
+  # format (e.g. hsv(x,x,x)).
+
+  if (s.len < 3) or (s[0..2] != "hsv"):
+    return false
+
+  var count = 1
+  for c in s[4..^2]:
+    if c == ',':
+      inc count
+
+  return count == 3
   
 proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   # Checks if the obj is a color.
@@ -144,7 +158,6 @@ proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
 
   return true
 
-  
 proc parseColorHSL*(s: string): ColorHSL =
   # This procedure attempts to parse a color from a string input.
   #
@@ -172,6 +185,34 @@ proc parseColorHSL*(s: string): ColorHSL =
     start = endPos + 1
 
   return hsl(color[0], color[1], color[2])
+
+proc parseColorHSV*(s: string): ColorHSV =
+  # This procedure attempts to parse a color from a string input.
+  #
+  # s - The color to check.
+  #
+  # Returns: A color in ColorHSV format.
+  var
+    color: array[3, float32]
+    start = 4  # Position after "hsv("
+    endPos = 0
+
+  for i in 0..2:
+    while start < s.len and s[start] == ' ':
+      inc start
+
+    endPos = start
+    while (endPos < s.len) and (s[endPos] != ',') and (s[endPos] != ')'):
+      inc endPos
+
+    try:
+      color[i] = parseFloat(s[start..<endPos])
+    except ValueError as e:
+      raise newException(InvalidColor, "invalid color format: " & e.msg)
+
+    start = endPos + 1
+
+  return hsv(color[0], color[1], color[2])
 
 proc parseColorRGBX*(s: string): ColorRGBX =
   # This procedure attempts to parse a color from a string input.
@@ -217,6 +258,7 @@ proc getColor*(obj: Tcl.PObj): Color =
   # in 'hex' format (e.g. FF0000)
   # in 'rgbx' format (e.g. rgbx(x,x,x,x))
   # in 'hsl' format (e.g. hsl(x,x,x))
+  # in 'hsv' format (e.g. hsv(x,x,x))
   # a simple color format (e.g. {0.0 0.0 0.0 0.0})
   # a simple string html color name (e.g. red)
   #
@@ -239,6 +281,8 @@ proc getColor*(obj: Tcl.PObj): Color =
     return parseColorRGBX(scolor).color
   elif scolor.isHSLFormat():
     return parseColorHSL(scolor).color
+  elif scolor.isHSVFormat():
+    return parseColorHSV(scolor).color
   elif isColorSimpleFormat(obj, color): 
     return color
   else:
