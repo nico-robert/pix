@@ -57,20 +57,20 @@ task pixTclTkBindings, "Generate pix Tcl library.":
   proc compile(libName: string, flags= "") =
     exec "nim c " & flags & " -d:strip -d:useMalloc -d:release --out:" & libName & " src/pix.nim"
 
-  proc getArchFolder(): tuple[folder: string, prefix: string, ext: string] =
+  proc getArchFolder(): tuple[folder: string, suffix: string, ext: string] =
     when defined(arm64):
-      result.prefix = "arm"
+      result.suffix = "arm"
     else:
-      result.prefix = "x86_64"
+      result.suffix = "x86_64"
 
     when defined(windows):
-      result.folder = "win32-" & result.prefix
+      result.folder = "win32-" & result.suffix
       result.ext    = ".dll"
     elif defined(macosx):
-      result.folder = "macosx-" & result.prefix
+      result.folder = "macosx-" & result.suffix
       result.ext    = ".dylib"
     elif defined(linux):
-      result.folder = "linux-" & result.prefix
+      result.folder = "linux-" & result.suffix
       result.ext    = ".so"
 
   let arch = getArchFolder()
