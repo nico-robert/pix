@@ -10,7 +10,8 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "enum:PaintKind")
     return Tcl.ERROR
-
+  
+  let ptable = cast[PixTable](clientData)
   var paint: pixie.Paint
 
   try:
@@ -20,7 +21,7 @@ proc pix_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(paint)
-  pixTables.addPaint(p, paint)
+  ptable.addPaint(p, paint)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -56,7 +57,8 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     matrix3: vmath.Mat3
 
   # Paint
-  let paint = pixTables.loadPaint(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let paint = ptable.loadPaint(interp, objv[1])
   if paint.isNil: return Tcl.ERROR
 
   # Dict
@@ -82,7 +84,7 @@ proc pix_paint_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
         of "blendMode":
           paint.blendMode = parseEnum[BlendMode]($Tcl.GetString(value))
         of "image":
-          paint.image = pixTables.getImage($Tcl.GetString(value))
+          paint.image = ptable.getImage($Tcl.GetString(value))
         of "imageMat":
           # Matrix 3x3 check
           if pixUtils.matrix3x3(interp, value, matrix3) != Tcl.OK: return Tcl.ERROR
@@ -140,13 +142,14 @@ proc pix_paint_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Paint
-  let paint = pixTables.loadPaint(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let paint = ptable.loadPaint(interp, objv[1])
   if paint.isNil: return Tcl.ERROR
 
   let copy = paint.copy()
 
   let p = toHexPtr(copy)
-  pixTables.addPaint(p, copy)
+  ptable.addPaint(p, copy)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -163,12 +166,14 @@ proc pix_paint_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     Tcl.WrongNumArgs(interp, 1, objv, "<paint> <img>")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Paint
-  let paint = pixTables.loadPaint(interp, objv[1])
+  let paint = ptable.loadPaint(interp, objv[1])
   if paint.isNil: return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[2])
+  let img = ptable.loadImage(interp, objv[2])
   if img.isNil: return Tcl.ERROR
 
   try:
@@ -188,11 +193,13 @@ proc pix_paint_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "<paint>|string('all')")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
   let key = $Tcl.GetString(objv[1])
+
   # Paint
   if key == "all":
-    pixTables.clearPaint()
+    ptable.clearPaint()
   else:
-    pixTables.delKeyPaint(key)
+    ptable.delKeyPaint(key)
 
   return Tcl.OK
