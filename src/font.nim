@@ -15,6 +15,8 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "filePath")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Font
   let font = try:
     readFont($Tcl.GetString(objv[1]))
@@ -22,7 +24,7 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(font)
-  pixTables.addFont(p, font)
+  ptable.addFont(p, font)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -40,7 +42,8 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   # Font size.
@@ -65,7 +68,8 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   try:
@@ -92,14 +96,15 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Create a new pixie.Font from the given TypeFace object.
   let font = newFont(tface)
 
   let p = toHexPtr(font)
-  pixTables.addFont(p, font)
+  ptable.addFont(p, font)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -117,14 +122,15 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   # Create a new span object.
   let span = newSpan($Tcl.GetString(objv[2]), font)
 
   let p = toHexPtr(span)
-  pixTables.addSpan(p, span)
+  ptable.addSpan(p, span)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -143,12 +149,13 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   if objc == 3:
     # Paint
-    let paint = pixTables.loadPaint(interp, objv[2])
+    let paint = ptable.loadPaint(interp, objv[2])
     if paint.isNil: return Tcl.ERROR
 
     font.paint = paint
@@ -156,7 +163,7 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     # No Paint object gets the font paint.
     let paint = font.paint
     let p = toHexPtr(paint)
-    pixTables.addPaint(p, paint)
+    ptable.addPaint(p, paint)
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -174,6 +181,8 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     Tcl.WrongNumArgs(interp, 1, objv, "filePath")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Typeface
   let typeface = try:
     readTypeface($Tcl.GetString(objv[1]))
@@ -181,7 +190,7 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
-  pixTables.addTface(p, typeface)
+  ptable.addTface(p, typeface)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -197,13 +206,14 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     Tcl.WrongNumArgs(interp, 1, objv, "filePath")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
   let newListobj = Tcl.NewListObj(0, nil)
 
   try:
     # Typeface
     for _, typeface in readTypefaces($Tcl.GetString(objv[1])):
       let p = toHexPtr(typeface)
-      pixTables.addTface(p, typeface)
+      ptable.addTface(p, typeface)
       discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewStringObj(p.cstring, -1))
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
@@ -229,7 +239,8 @@ proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Gets the font ascender value in font units.
@@ -268,7 +279,8 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     rect: Rect
 
   # Arrangement
-  let arr = pixTables.loadArr(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let arr = ptable.loadArr(interp, objv[1])
   if arr.isNil: return Tcl.ERROR
 
   if objc == 3:
@@ -307,12 +319,13 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   let newfont = font.copy()
   let p = toHexPtr(newfont)
-  pixTables.addFont(p, newfont)
+  ptable.addFont(p, newfont)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -339,7 +352,8 @@ proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   let defaultLineHeight = font.defaultLineHeight()
@@ -363,7 +377,8 @@ proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Gets the font descender value in font units.
@@ -385,7 +400,8 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Rune
@@ -410,7 +426,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
       )
 
     let p = toHexPtr(newtface)
-    pixTables.addTface(p, newtface)
+    ptable.addTface(p, newtface)
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -430,7 +446,8 @@ proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Rune
@@ -460,7 +477,8 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Rune
@@ -484,7 +502,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     )
 
   let p = toHexPtr(path)
-  pixTables.addPath(p, path)
+  ptable.addPath(p, path)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -508,7 +526,8 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Rune
@@ -544,7 +563,8 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   # Rune
@@ -582,16 +602,17 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     elements: Tcl.PPObj
     bounds: vmath.Vec2
 
+  let ptable = cast[PixTable](clientData)
   let arg1 = $Tcl.GetString(objv[1])
 
-  if pixTables.hasArr(arg1):
+  if ptable.hasArr(arg1):
     # Arrangement
-    let arr = pixTables.getArr(arg1)
+    let arr = ptable.getArr(arg1)
     bounds = arr.layoutBounds()
 
-  elif pixTables.hasFont(arg1):
+  elif ptable.hasFont(arg1):
     # Font + text
-    let font = pixTables.getFont(arg1)
+    let font = ptable.getFont(arg1)
     if objc != 3:
       return pixUtils.errorMSG(interp,
       "pix(error): If <font> is present, a 'text' must be associated."
@@ -610,7 +631,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
     var spans = newSeq[Span]()
     for i in 0..count-1:
-      spans.add(pixTables.getSpan($Tcl.GetString(elements[i])))
+      spans.add(ptable.getSpan($Tcl.GetString(elements[i])))
 
     bounds = spans.layoutBounds()
 
@@ -639,7 +660,8 @@ proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   let lineGap = tface.lineGap()
@@ -667,7 +689,8 @@ proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   let lineHeight = tface.lineHeight()
@@ -687,7 +710,8 @@ proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # TypeFace
-  let tface = pixTables.loadTFace(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
   let name = tface.name()
@@ -709,6 +733,8 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Buffer
   let typeface = try:
     parseOtf($Tcl.GetString(objv[1]))
@@ -716,7 +742,7 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
-  pixTables.addTface(p, typeface)
+  ptable.addTface(p, typeface)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -735,6 +761,8 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Buffer
   let typeface = try:
     parseSvgFont($Tcl.GetString(objv[1]))
@@ -742,7 +770,7 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
-  pixTables.addTface(p, typeface)
+  ptable.addTface(p, typeface)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -761,6 +789,8 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Buffer
   let typeface = try:
     parseTtf($Tcl.GetString(objv[1]))
@@ -768,7 +798,7 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(typeface)
-  pixTables.addTface(p, typeface)
+  ptable.addTface(p, typeface)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -784,16 +814,17 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     Tcl.WrongNumArgs(interp, 1, objv, "<font>|<TypeFace>")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
   let arg1 = $Tcl.GetString(objv[1])
 
   let scale =
-    if pixTables.hasFont(arg1):
+    if ptable.hasFont(arg1):
       # Font
-      let font = pixTables.getFont(arg1)
+      let font = ptable.getFont(arg1)
       font.scale()
-    elif pixTables.hasTFace(arg1):
+    elif ptable.hasTFace(arg1):
       # TypeFace
-      let typeface = pixTables.getTFace(arg1)
+      let typeface = ptable.getTFace(arg1)
       typeface.scale()
     else:
       return pixUtils.errorMSG(interp,
@@ -834,11 +865,12 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     hasFont: bool = true
     jj = 3
 
+  let ptable = cast[PixTable](clientData)
   let arg1 = $Tcl.GetString(objv[1])
 
-  if pixTables.hasFont(arg1):
+  if ptable.hasFont(arg1):
     # Font
-    font = pixTables.getFont(arg1)
+    font = ptable.getFont(arg1)
     if objc < 3:
       return pixUtils.errorMSG(interp,
       "pix(error): If <font> is present, a 'text' must be associated."
@@ -854,7 +886,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
     hasFont = false
     for j in 0..count-1:
-      spans.add(pixTables.getSpan($Tcl.GetString(elements[j])))
+      spans.add(ptable.getSpan($Tcl.GetString(elements[j])))
 
   if (objc == 4 and hasFont) or (objc == 3 and not hasFont):
     if hasFont == false: jj = 2
@@ -883,7 +915,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     arr = if hasFont: typeset(font, text) else: typeset(spans)
 
   let p = toHexPtr(arr)
-  pixTables.addArr(p, arr)
+  ptable.addArr(p, arr)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -913,7 +945,8 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Font
-  let font = pixTables.loadFont(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
   var
@@ -971,7 +1004,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         if countP != 0:
           var paints = newSeq[pixie.Paint]()
           for ps in 0..countP-1:
-            let paint = pixTables.loadPaint(interp, elementsP[ps])
+            let paint = ptable.loadPaint(interp, elementsP[ps])
             if paint.isNil: return Tcl.ERROR
             paints.add(paint)
 
@@ -1003,7 +1036,8 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     return Tcl.ERROR
 
   # Arrangement
-  let arr = pixTables.loadArr(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let arr = ptable.loadArr(interp, objv[1])
   if arr.isNil: return Tcl.ERROR
 
   let dictGlobobj = Tcl.NewDictObj()
@@ -1030,11 +1064,13 @@ proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     Tcl.WrongNumArgs(interp, 1, objv, "<font>|string('all')")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
   let key = $Tcl.GetString(objv[1])
+
   # Font
   if key == "all":
-    pixTables.clearFont()
+    ptable.clearFont()
   else:
-    pixTables.delKeyFont(key)
+    ptable.delKeyFont(key)
 
   return Tcl.OK
