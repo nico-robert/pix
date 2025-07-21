@@ -11,14 +11,15 @@ proc pix_draw_surface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>|<ctx> 'Tk photo'")
     return Tcl.ERROR
-
+  
+  let ptable = cast[PixTable](clientData)
   let arg1 = $Tcl.GetString(objv[1])
   var img: pixie.Image
 
-  if pixTables.hasContext(arg1):
-    img = pixTables.getContext(arg1).image
-  elif pixTables.hasImage(arg1):
-    img = pixTables.getImage(arg1)
+  if ptable.hasContext(arg1):
+    img = ptable.getContext(arg1).image
+  elif ptable.hasImage(arg1):
+    img = ptable.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
     "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
