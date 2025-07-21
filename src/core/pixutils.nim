@@ -2,9 +2,10 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie
-import ./pixtables as pixTables
+import ./pixtables
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
+import times
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
@@ -393,7 +394,8 @@ proc pathObjToString*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring($path), -1))
@@ -411,6 +413,7 @@ proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Path
+  let ptable = cast[PixTable](clientData)
   let arg1 = $Tcl.GetString(objv[1])
 
   let parse = try:
@@ -419,7 +422,7 @@ proc svgStyleToPathObj*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(parse)
-  pixTables.addPath(p, parse)
+  ptable.addPath(p, parse)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -435,17 +438,18 @@ proc getKeys*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv
     dictObj    = Tcl.NewDictObj()
     newListctx = Tcl.NewListObj(0, nil)
     newListimg = Tcl.NewListObj(0, nil)
+    ptable     = cast[PixTable](clientData)
   
-  for key in ctxTable.keys:
+  for key in ptable.ctxTable.keys:
     discard Tcl.ListObjAppendElement(
-    interp, newListctx, 
-    Tcl.NewStringObj(key.cstring, -1)
+      interp, newListctx, 
+      Tcl.NewStringObj(key.cstring, -1)
     )
 
-  for key in imgTable.keys:
+  for key in ptable.imgTable.keys:
     discard Tcl.ListObjAppendElement(
-    interp, newListimg, 
-    Tcl.NewStringObj(key.cstring, -1)
+      interp, newListimg, 
+      Tcl.NewStringObj(key.cstring, -1)
     )
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("ctx", 3), newListctx)
@@ -468,13 +472,14 @@ proc toB64*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: 
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
     return Tcl.ERROR
-
+  
+  let ptable = cast[PixTable](clientData)
   let arg1= $Tcl.GetString(objv[1])
 
-  let img = if pixTables.hasContext(arg1):
-    pixTables.getContext(arg1).image
-  elif pixTables.hasImage(arg1):
-    pixTables.getImage(arg1)
+  let img = if ptable.hasContext(arg1):
+    ptable.getContext(arg1).image
+  elif ptable.hasImage(arg1):
+    ptable.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
     "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
@@ -504,13 +509,14 @@ proc toBinary*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img> ?format:optional")
     return Tcl.ERROR
-
+  
+  let ptable = cast[PixTable](clientData)
   let arg1= $Tcl.GetString(objv[1])
 
-  let img = if pixTables.hasContext(arg1):
-    pixTables.getContext(arg1).image
-  elif pixTables.hasImage(arg1):
-    pixTables.getImage(arg1)
+  let img = if ptable.hasContext(arg1):
+    ptable.getContext(arg1).image
+  elif ptable.hasImage(arg1):
+    ptable.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
     "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
@@ -715,3 +721,17 @@ proc mulMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   Tcl.SetObjResult(interp, listobj)
 
   return Tcl.OK
+
+when defined(debug):
+  template timeBody(name: string, body: untyped): untyped =
+    # Measures the time taken to execute a block of code.
+    #
+    # name - The name of the block.
+    # body - The block of code to execute.
+    #
+    # Returns: The time taken to execute the block in milliseconds.
+
+    let start = cpuTime()
+    body
+    let elapsed = cpuTime() - start
+    echo name, ": ", elapsed * 1000, "ms"
