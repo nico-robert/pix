@@ -14,6 +14,8 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     )
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Svg string
   let arg1 = $Tcl.GetString(objv[1])
   var svg: Svg
@@ -37,7 +39,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(svg)
-  pixTables.addSVG(p, svg)
+  ptable.addSVG(p, svg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -54,7 +56,8 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Svg
-  let svg = pixTables.loadSVG(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let svg = ptable.loadSVG(interp, objv[1])
   if svg.isNil: return Tcl.ERROR
 
   let img = try:
@@ -63,7 +66,7 @@ proc pix_svg_newImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(img)
-  pixTables.addImage(p, img)
+  ptable.addImage(p, img)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -79,11 +82,13 @@ proc pix_svg_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     Tcl.WrongNumArgs(interp, 1, objv, "<svg>|string('all')")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
   let key = $Tcl.GetString(objv[1])
+
   # Svg
   if key == "all":
-    pixTables.clearSVG()
+    ptable.clearSVG()
   else:
-    pixTables.delKeySVG(key)
+    ptable.delKeySVG(key)
 
   return Tcl.OK
