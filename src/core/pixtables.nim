@@ -4,275 +4,303 @@
 import pixie, pixie/fileformats/svg
 import std/tables
 
-from ../bindings/tk/binding  as Tk import ImageMaster
-from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj
+from ../bindings/tk/binding as Tk import ImageMaster
+from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj, GetString
 
-var 
-  ctxTable*    = initTable[string, pixie.Context]()
-  imgTable*    = initTable[string, pixie.Image]()
-  pathTable*   = initTable[string, pixie.Path]()
-  paintTable*  = initTable[string, pixie.Paint]()
-  fontTable*   = initTable[string, pixie.Font]()
-  tFaceTable*  = initTable[string, pixie.Typeface]()
-  arrTable*    = initTable[string, pixie.Arrangement]()
-  svgTable*    = initTable[string, Svg]()
-  spanTable*   = initTable[string, pixie.Span]()
-  masterTable* = initTable[string, Tk.ImageMaster]()
+type
+  PixTable* = ref object
+    ctxTable*    : Table[string, pixie.Context]
+    imgTable*    : Table[string, pixie.Image]
+    pathTable*   : Table[string, pixie.Path]
+    paintTable*  : Table[string, pixie.Paint]
+    fontTable*   : Table[string, pixie.Font]
+    tFaceTable*  : Table[string, pixie.Typeface]
+    arrTable*    : Table[string, pixie.Arrangement]
+    svgTable*    : Table[string, Svg]
+    spanTable*   : Table[string, pixie.Span]
+    masterTable* : Table[string, Tk.ImageMaster]
 
-# getXXX = Returns the object associated with the given key.
-# hasXXX = Returns true if the table has the given key false otherwise.
-# addXXX = Adds the given object to the table with the given key.
+proc createPixTable*(): PixTable =
+  result = PixTable()
+  result.ctxTable     = initTable[string, pixie.Context]()
+  result.imgTable     = initTable[string, pixie.Image]()
+  result.pathTable    = initTable[string, pixie.Path]()
+  result.paintTable   = initTable[string, pixie.Paint]()
+  result.fontTable    = initTable[string, pixie.Font]()
+  result.tFaceTable   = initTable[string, pixie.Typeface]()
+  result.arrTable     = initTable[string, pixie.Arrangement]()
+  result.svgTable     = initTable[string, Svg]()
+  result.spanTable    = initTable[string, pixie.Span]()
+  result.masterTable  = initTable[string, Tk.ImageMaster]()
 
-proc getContext*(key: string): pixie.Context = 
-  result = ctxTable[key]
+# Context functions
+proc getContext*(pTable: PixTable, key: string): pixie.Context = 
+  result = pTable.ctxTable[key]
 
-proc hasContext*(key: string): bool = 
-  result = ctxTable.hasKey(key)
+proc hasContext*(pTable: PixTable, key: string): bool = 
+  result = pTable.ctxTable.hasKey(key)
 
-proc addContext*(key: string, value: pixie.Context): void = 
-  ctxTable[key] = value
+proc addContext*(pTable: PixTable, key: string, value: pixie.Context): void = 
+  pTable.ctxTable[key] = value
 
-proc clearContext*(): void = 
-  ctxTable.clear()
+proc clearContext*(pTable: PixTable): void = 
+  pTable.ctxTable.clear()
 
-proc delKeyContext*(key: string): void = 
-  ctxTable.del(key)
+proc delKeyContext*(pTable: PixTable, key: string): void = 
+  pTable.ctxTable.del(key)
 
-proc loadContext*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Context =
+proc loadContext*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Context =
 # Searches the pixie.Context table for a key that matches the given obj.
 #
 # Returns:
 # If found, it returns the associated pixie.Context object.
 # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasContext(key):
+  if not pTable.hasContext(key):
     let msg = cstring("pix(error): unknown <ctx> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getContext(key)
+  return pTable.getContext(key)
 
-proc getImage*(key: string): pixie.Image = 
-  result = imgTable[key]
+# Image functions
+proc getImage*(pTable: PixTable, key: string): pixie.Image = 
+  result = pTable.imgTable[key]
 
-proc hasImage*(key: string): bool = 
-  result = imgTable.hasKey(key)
+proc hasImage*(pTable: PixTable, key: string): bool = 
+  result = pTable.imgTable.hasKey(key)
 
-proc addImage*(key: string, value: pixie.Image): void = 
-  imgTable[key] = value
+proc addImage*(pTable: PixTable, key: string, value: pixie.Image): void = 
+  pTable.imgTable[key] = value
 
-proc clearImage*(): void = 
-  imgTable.clear()
+proc clearImage*(pTable: PixTable): void = 
+  pTable.imgTable.clear()
 
-proc delKeyImage*(key: string): void = 
-  imgTable.del(key)
+proc delKeyImage*(pTable: PixTable, key: string): void = 
+  pTable.imgTable.del(key)
 
-proc loadImage*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Image =
-# Searches the pixie.Image table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated pixie.Image object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadImage*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Image =
+  # Searches the pixie.Image table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated pixie.Image object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasImage(key):
+  if not pTable.hasImage(key):
     let msg = cstring("pix(error): unknown <img> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getImage(key)
+  return pTable.getImage(key)
 
-proc getFont*(key: string): pixie.Font = 
-  result = fontTable[key]
+# Font functions
+proc getFont*(pTable: PixTable, key: string): pixie.Font = 
+  result = pTable.fontTable[key]
 
-proc hasFont*(key: string): bool = 
-  result = fontTable.hasKey(key)
+proc hasFont*(pTable: PixTable, key: string): bool = 
+  result = pTable.fontTable.hasKey(key)
 
-proc addFont*(key: string, value: pixie.Font): void = 
-  fontTable[key] = value
+proc addFont*(pTable: PixTable, key: string, value: pixie.Font): void = 
+  pTable.fontTable[key] = value
 
-proc clearFont*(): void = 
-  fontTable.clear()
+proc clearFont*(pTable: PixTable): void = 
+  pTable.fontTable.clear()
 
-proc delKeyFont*(key: string): void = 
-  fontTable.del(key)
+proc delKeyFont*(pTable: PixTable, key: string): void = 
+  pTable.fontTable.del(key)
 
-proc loadFont*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Font =
-# Searches the pixie.Font table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated pixie.Font object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadFont*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Font =
+  # Searches the pixie.Font table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated pixie.Font object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasFont(key):
+  if not pTable.hasFont(key):
     let msg = cstring("pix(error): unknown <font> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getFont(key)
+  return pTable.getFont(key)
 
-proc getPaint*(key: string): pixie.Paint = 
-  result = paintTable[key]
+# Paint functions
+proc getPaint*(pTable: PixTable, key: string): pixie.Paint = 
+  result = pTable.paintTable[key]
 
-proc hasPaint*(key: string): bool = 
-  result = paintTable.hasKey(key)
+proc hasPaint*(pTable: PixTable, key: string): bool = 
+  result = pTable.paintTable.hasKey(key)
 
-proc addPaint*(key: string, value: pixie.Paint): void = 
-  paintTable[key] = value
+proc addPaint*(pTable: PixTable, key: string, value: pixie.Paint): void = 
+  pTable.paintTable[key] = value
 
-proc clearPaint*(): void = 
-  paintTable.clear()
+proc clearPaint*(pTable: PixTable): void = 
+  pTable.paintTable.clear()
 
-proc delKeyPaint*(key: string): void = 
-  paintTable.del(key)
+proc delKeyPaint*(pTable: PixTable, key: string): void = 
+  pTable.paintTable.del(key)
 
-proc loadPaint*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Paint =
-# Searches the pixie.Paint table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated pixie.Paint object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadPaint*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Paint =
+  # Searches the pixie.Paint table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated pixie.Paint object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasPaint(key):
+  if not pTable.hasPaint(key):
     let msg = cstring("pix(error): unknown <paint> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getPaint(key)
+  return pTable.getPaint(key)
 
-proc getPath*(key: string): pixie.Path = 
-  result = pathTable[key]
+# Path functions
+proc getPath*(pTable: PixTable, key: string): pixie.Path = 
+  result = pTable.pathTable[key]
 
-proc hasPath*(key: string): bool = 
-  result = pathTable.hasKey(key)
+proc hasPath*(pTable: PixTable, key: string): bool = 
+  result = pTable.pathTable.hasKey(key)
 
-proc addPath*(key: string, value: pixie.Path): void = 
-  pathTable[key] = value
+proc addPath*(pTable: PixTable, key: string, value: pixie.Path): void = 
+  pTable.pathTable[key] = value
 
-proc clearPath*(): void = 
-  pathTable.clear()
+proc clearPath*(pTable: PixTable): void = 
+  pTable.pathTable.clear()
 
-proc delKeyPath*(key: string): void = 
-  pathTable.del(key)
+proc delKeyPath*(pTable: PixTable, key: string): void = 
+  pTable.pathTable.del(key)
 
-proc loadPath*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Path =
-# Searches the pixie.Path table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated pixie.Path object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadPath*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Path =
+  # Searches the pixie.Path table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated pixie.Path object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasPath(key):
+  if not pTable.hasPath(key):
     let msg = cstring("pix(error): unknown <path> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getPath(key)
+  return pTable.getPath(key)
 
-proc getTFace*(key: string): pixie.Typeface = 
-  result = tFaceTable[key]
+# Typeface functions
+proc getTFace*(pTable: PixTable, key: string): pixie.Typeface = 
+  result = pTable.tFaceTable[key]
 
-proc hasTFace*(key: string): bool = 
-  result = tFaceTable.hasKey(key)
+proc hasTFace*(pTable: PixTable, key: string): bool = 
+  result = pTable.tFaceTable.hasKey(key)
 
-proc addTFace*(key: string, value: pixie.Typeface): void = 
-  tFaceTable[key]= value
+proc addTFace*(pTable: PixTable, key: string, value: pixie.Typeface): void = 
+  pTable.tFaceTable[key] = value
 
-proc loadTFace*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Typeface =
-# Searches the pixie.Typeface table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated pixie.Typeface object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadTFace*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Typeface =
+  # Searches the pixie.Typeface table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated pixie.Typeface object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasTFace(key):
+  if not pTable.hasTFace(key):
     let msg = cstring("pix(error): unknown <TypeFace> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getTFace(key)
+  return pTable.getTFace(key)
 
-proc getArr*(key: string): pixie.Arrangement = 
-  result = arrTable[key]
+# Arrangement functions
+proc getArr*(pTable: PixTable, key: string): pixie.Arrangement = 
+  result = pTable.arrTable[key]
 
-proc hasArr*(key: string): bool = 
-  result = arrTable.hasKey(key)
+proc hasArr*(pTable: PixTable, key: string): bool = 
+  result = pTable.arrTable.hasKey(key)
 
-proc addArr*(key: string, value: pixie.Arrangement): void = 
-  arrTable[key] = value
+proc addArr*(pTable: PixTable, key: string, value: pixie.Arrangement): void = 
+  pTable.arrTable[key] = value
 
-proc loadArr*(interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Arrangement =
-# Searches the pixie.Arrangement table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated pixie.Arrangement object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadArr*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Arrangement =
+  # Searches the pixie.Arrangement table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated pixie.Arrangement object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasArr(key):
+  if not pTable.hasArr(key):
     let msg = cstring("pix(error): unknown <Arrangement> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getArr(key)
+  return pTable.getArr(key)
 
-proc getSVG*(key: string): Svg = 
-  result = svgTable[key]
+# SVG functions
+proc getSVG*(pTable: PixTable, key: string): Svg = 
+  result = pTable.svgTable[key]
 
-proc hasSVG*(key: string): bool = 
-  result = svgTable.hasKey(key)
+proc hasSVG*(pTable: PixTable, key: string): bool = 
+  result = pTable.svgTable.hasKey(key)
 
-proc addSVG*(key: string, value: Svg): void = 
-  svgTable[key] = value
+proc addSVG*(pTable: PixTable, key: string, value: Svg): void = 
+  pTable.svgTable[key] = value
 
-proc clearSVG*(): void = 
-  svgTable.clear()
+proc clearSVG*(pTable: PixTable): void = 
+  pTable.svgTable.clear()
 
-proc delKeySVG*(key: string): void = 
-  svgTable.del(key)
+proc delKeySVG*(pTable: PixTable, key: string): void = 
+  pTable.svgTable.del(key)
 
-proc loadSVG*(interp: Tcl.PInterp, obj: Tcl.PObj): Svg =
-# Searches the Svg table for a key that matches the given obj.
-#
-# Returns:
-# If found, it returns the associated Svg object.
-# If not found, it sets an error message on the given interp and returns nil.
+proc loadSVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Svg =
+  # Searches the Svg table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated Svg object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
   let key = $Tcl.GetString(obj)
 
-  if not hasSVG(key):
+  if not pTable.hasSVG(key):
     let msg = cstring("pix(error): unknown <svg> key object found: '" & key & "'.")
     Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
-  return getSVG(key)
+  return pTable.getSVG(key)
 
-proc getMasterTable*(key: string): Tk.ImageMaster = 
-  result = masterTable[key]
+# Master table functions
+proc getMasterTable*(pTable: PixTable, key: string): Tk.ImageMaster = 
+  result = pTable.masterTable[key]
 
-proc hasMasterTable*(key: string): bool = 
-  result = masterTable.hasKey(key)
-  
-proc addMasterTable*(key: string, value: Tk.ImageMaster): void = 
-  masterTable[key] = value
+proc hasMasterTable*(pTable: PixTable, key: string): bool = 
+  result = pTable.masterTable.hasKey(key)
 
-proc getSpan*(key: string): pixie.Span = 
-  result = spanTable[key]
+proc addMasterTable*(pTable: PixTable, key: string, value: Tk.ImageMaster): void = 
+  pTable.masterTable[key] = value
 
-proc hasSpan*(key: string): bool = 
-  result = spanTable.hasKey(key)
+# Span functions
+proc getSpan*(pTable: PixTable, key: string): pixie.Span = 
+  result = pTable.spanTable[key]
 
-proc addSpan*(key: string, value: pixie.Span): void = 
-  spanTable[key] = value
+proc hasSpan*(pTable: PixTable, key: string): bool = 
+  result = pTable.spanTable.hasKey(key)
+
+proc addSpan*(pTable: PixTable, key: string, value: pixie.Span): void = 
+  pTable.spanTable[key] = value
