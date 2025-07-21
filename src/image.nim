@@ -12,6 +12,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     return Tcl.ERROR
 
   var width, height: int
+  let ptable = cast[PixTable](clientData)
 
   # Size
   if pixParses.getListInt(interp, objv[1], width, height, 
@@ -25,7 +26,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(img)
-  pixTables.addImage(p, img)
+  ptable.addImage(p, img)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -43,14 +44,15 @@ proc pix_image_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Attempt to create a copy of the image object
   let copyimg = img.copy()
 
   let p = toHexPtr(copyimg)
-  pixTables.addImage(p, copyimg)
+  ptable.addImage(p, copyimg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -74,13 +76,15 @@ proc pix_image_draw(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
   var
     count: Tcl.Size
     matrix3: vmath.Mat3
+  
+  let ptable = cast[PixTable](clientData)
 
   # Get destination image
-  let img1 = pixTables.loadImage(interp, objv[1])
+  let img1 = ptable.loadImage(interp, objv[1])
   if img1.isNil: return Tcl.ERROR
 
   # Get source image
-  let img2 = pixTables.loadImage(interp, objv[2])
+  let img2 = ptable.loadImage(interp, objv[2])
   if img2.isNil: return Tcl.ERROR
 
   try:
@@ -138,15 +142,16 @@ proc pix_image_fill(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Get fill value argument
   let fillArg = $Tcl.GetString(objv[2])
 
   # Handle paint object or color value
-  if pixTables.hasPaint(fillArg):
-    img.fill(pixTables.getPaint(fillArg))
+  if ptable.hasPaint(fillArg):
+    img.fill(ptable.getPaint(fillArg))
   else:
     try:
       # Fall back to color parsing.
@@ -170,6 +175,7 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   let file = $Tcl.GetString(objv[1])
+  let ptable = cast[PixTable](clientData)
 
   # Read the image from the file
   # Note: This will throw an exception if the file does not exist,
@@ -180,7 +186,7 @@ proc pix_image_readImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(img)
-  pixTables.addImage(p, img)
+  ptable.addImage(p, img)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -214,14 +220,16 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     matrix3: vmath.Mat3
     hasMatrix: bool = false
 
+  let ptable = cast[PixTable](clientData)
+
   if $Tcl.GetString(objv[0]) == "pix::ctx::fillPath":
     # Context
-    let ctx = pixTables.loadContext(interp, objv[1])
+    let ctx = ptable.loadContext(interp, objv[1])
     if ctx.isNil: return Tcl.ERROR
     img = ctx.image
   else:
     # Image
-    img = pixTables.loadImage(interp, objv[1])
+    img = ptable.loadImage(interp, objv[1])
     if img.isNil: return Tcl.ERROR
 
   # Get path and paint/color arguments
@@ -237,11 +245,11 @@ proc pix_image_fillpath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   try:
     # Get path object or use string path
-    let path = if pixTables.hasPath(pathArg): pixTables.getPath(pathArg)
+    let path = if ptable.hasPath(pathArg): ptable.getPath(pathArg)
                else: parsePath(pathArg)
 
     # Get paint/color object
-    let paint = if pixTables.hasPaint(paintArg): pixTables.getPaint(paintArg)
+    let paint = if ptable.hasPaint(paintArg): ptable.getPaint(paintArg)
                 else: pixUtils.getColor(objv[3]).SomePaint
 
     # Apply fill with or without matrix
@@ -285,15 +293,16 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   var img: pixie.Image
+  let ptable = cast[PixTable](clientData)
 
   if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
     # Context
-    let ctx = pixTables.loadContext(interp, objv[1])
+    let ctx = ptable.loadContext(interp, objv[1])
     if ctx.isNil: return Tcl.ERROR
     img = ctx.image
   else:
     # Image
-    img = pixTables.loadImage(interp, objv[1])
+    img = ptable.loadImage(interp, objv[1])
     if img.isNil: return Tcl.ERROR
 
   let
@@ -308,13 +317,13 @@ proc pix_image_strokePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     pixParses.dictOptions(interp, objv[4], opts)
 
     let path = 
-      if pixTables.hasPath(somepath):
-        pixTables.getPath(somepath)
+      if ptable.hasPath(somepath):
+        ptable.getPath(somepath)
       else: 
         parsePath(somepath)
     let paint = 
-      if pixTables.hasPaint(somepaint): 
-        pixTables.getPaint(somepaint) 
+      if ptable.hasPaint(somepaint): 
+        ptable.getPaint(somepaint) 
       else:
         SomePaint(pixUtils.getColor(objv[3]))
 
@@ -350,7 +359,8 @@ proc pix_image_blur(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Radius
@@ -390,7 +400,8 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   var shadow: pixie.Image
@@ -413,7 +424,7 @@ proc pix_image_shadow(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(shadow)
-  pixTables.addImage(p, shadow)
+  ptable.addImage(p, shadow)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -456,7 +467,8 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Font or arrangement.
@@ -464,9 +476,9 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   var matrix3: vmath.Mat3
 
-  if pixTables.hasArr(arg2):
+  if ptable.hasArr(arg2):
     # Arrangement
-    let arrangement = pixTables.getArr(arg2)
+    let arrangement = ptable.getArr(arg2)
     if objc == 4:
       if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
         return Tcl.ERROR
@@ -486,7 +498,7 @@ proc pix_image_fillText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Font
-    let font = pixTables.loadFont(interp, objv[2])
+    let font = ptable.loadFont(interp, objv[2])
     if font.isNil: return Tcl.ERROR
 
     if objc < 4:
@@ -531,7 +543,8 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Gets size.
@@ -551,7 +564,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
-  pixTables.addImage(p, newimg)
+  ptable.addImage(p, newimg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -569,7 +582,8 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   let dictObj = Tcl.NewDictObj()
@@ -594,7 +608,8 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
@@ -630,7 +645,8 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
@@ -664,7 +680,8 @@ proc pix_image_applyOpacity(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Gets opacity.
@@ -693,7 +710,8 @@ proc pix_image_ceil(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   img.ceil()
@@ -725,12 +743,14 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     Tcl.WrongNumArgs(interp, 1, objv, "<masterimg> <img>")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
+
   # Image master
-  let masterimg = pixTables.loadImage(interp, objv[1])
+  let masterimg = ptable.loadImage(interp, objv[1])
   if masterimg.isNil: return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[2])
+  let img = ptable.loadImage(interp, objv[2])
   if img.isNil: return Tcl.ERROR
 
   let (score, newimg) = try:
@@ -739,7 +759,7 @@ proc pix_image_diff(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
-  pixTables.addImage(p, newimg)
+  ptable.addImage(p, newimg)
 
   let dictObj = Tcl.NewDictObj()
 
@@ -763,7 +783,8 @@ proc pix_image_flipHorizontal(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   img.flipHorizontal()
@@ -784,7 +805,8 @@ proc pix_image_flipVertical(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   img.flipVertical()
@@ -804,7 +826,8 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
@@ -839,7 +862,8 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
@@ -876,7 +900,8 @@ proc pix_image_invert(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Invert the image.
@@ -895,7 +920,8 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   let value = if img.isOneColor(): 1 else: 0
@@ -915,7 +941,8 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   let value = if img.isOpaque(): 1 else: 0
@@ -935,7 +962,8 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   let value = if img.isTransparent(): 1 else: 0
@@ -959,7 +987,8 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   var
@@ -981,7 +1010,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
-  pixTables.addImage(p, newimg)
+  ptable.addImage(p, newimg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -1003,7 +1032,8 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   var
@@ -1024,7 +1054,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(newimg)
-  pixTables.addImage(p, newimg)
+  ptable.addImage(p, newimg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -1046,7 +1076,8 @@ proc pix_image_opaqueBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   let
@@ -1073,7 +1104,8 @@ proc pix_image_rotate90(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   try:
@@ -1099,7 +1131,8 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1122,7 +1155,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(subimage)
-  pixTables.addImage(p, subimage)
+  ptable.addImage(p, subimage)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -1151,7 +1184,8 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1172,7 +1206,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(subimage)
-  pixTables.addImage(p, subimage)
+  ptable.addImage(p, subimage)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -1190,11 +1224,12 @@ proc pix_image_fillGradient(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Paint
-  let paint = pixTables.loadPaint(interp, objv[2])
+  let paint = ptable.loadPaint(interp, objv[2])
   if paint.isNil: return Tcl.ERROR
 
   try:
@@ -1239,15 +1274,16 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   # Font or Arrangement.
   let arg2 = $Tcl.GetString(objv[2])
 
   # Arrangement
-  if pixTables.hasArr(arg2):
-    let arrangement = pixTables.getArr(arg2)
+  if ptable.hasArr(arg2):
+    let arrangement = ptable.getArr(arg2)
     var opts = pixParses.RenderOptions()
 
     try:
@@ -1271,7 +1307,7 @@ proc pix_image_strokeText(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Font
-    let font = pixTables.loadFont(interp, objv[2])
+    let font = ptable.loadFont(interp, objv[2])
     if font.isNil: return Tcl.ERROR
 
     if objc < 4:
@@ -1320,7 +1356,8 @@ proc pix_image_writeFile(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   # Image
-  let img = pixTables.loadImage(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
   try:
@@ -1341,12 +1378,14 @@ proc pix_image_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<img>|string('all')")
     return Tcl.ERROR
-
+  
+  let ptable = cast[PixTable](clientData)
   let key = $Tcl.GetString(objv[1])
+
   # Image
   if key == "all":
-    pixTables.clearImage()
+    ptable.clearImage()
   else:
-    pixTables.delKeyImage(key)
+    ptable.delKeyImage(key)
 
   return Tcl.OK
