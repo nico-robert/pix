@@ -37,6 +37,7 @@ else:
 
 # X11 types declarations first
 type
+  XPointer* = ptr char
   Color*{.importc: "XColor", header: "X11/Xlib.h".} = object
     pixel*  : culong
     red*    : cushort
@@ -71,7 +72,7 @@ type
     dashes*             : cchar
 
   GC* = ptr XGCValues
-  Display* = object
+  Display*{.final.} = object
 
 # Remaining X11 types
 type
@@ -127,7 +128,7 @@ type
     add_pixel*      : proc(ximage: ImagePtr, value: clong): cint {.cdecl.}
 
   ImagePtr* = ptr XImage
-  XImage*{.final.} = object
+  XImage*{.importc: "XImage", header: "X11/Xlib.h".} = object
     width*           : cint
     height*          : cint
     xoffset*         : cint
@@ -143,7 +144,7 @@ type
     red_mask*        : culong
     green_mask*      : culong
     blue_mask*       : culong
-    obdata*          : pointer
+    obdata*          : XPointer
     f*               : XImageFuncs
 
 type
