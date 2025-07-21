@@ -3,7 +3,7 @@
 
 include "private/tcltypes.inc"
 
-when not defined(tcl9):
+when defined(tcl8):
   type TNewIntObj        = proc(intValue: int): PObj {.cdecl.}
   type TNewBooleanObj    = proc(intValue: int): PObj {.cdecl.}
 
@@ -29,6 +29,11 @@ type
   TWrongNumArgs         = proc(interp: PInterp, objc: Size, objv: PPObj, message: cstring) {.cdecl.}
   TGetObjResult         = proc(interp: PInterp): PObj {.cdecl.}
   TNewByteArrayObj      = proc(bytes: cstring, length: Size): PObj {.cdecl.}
+  TEvalObjv             = proc(interp: PInterp, objc: Size, objv: PPObj, flags: cint): cint {.cdecl.}
+
+when defined(tcl9):
+  type TIncrRefCount  = proc(objPtr: PObj) {.cdecl.}
+  type TDecrRefCount  = proc(objPtr: PObj) {.cdecl.}
 
 var
   PkgProvideEx*        : TPkgProvideEx
@@ -52,10 +57,15 @@ var
   WrongNumArgs*        : TWrongNumArgs
   GetObjResult*        : TGetObjResult
   NewByteArrayObj*     : TNewByteArrayObj
+  EvalObjv*            : TEvalObjv
 
-when not defined(tcl9):
-  var NewIntObj*        : TNewIntObj
-  var NewBooleanObj*    : TNewBooleanObj
+when defined(tcl9):
+  var IncrRefCount*    : TIncrRefCount
+  var DecrRefCount*    : TDecrRefCount
+
+when defined(tcl8):
+  var NewIntObj*       : TNewIntObj
+  var NewBooleanObj*   : TNewBooleanObj
 
 type TclStubs = object
   tcl_PkgProvideEx         : TPkgProvideEx
@@ -79,7 +89,11 @@ type TclStubs = object
   tcl_WrongNumArgs         : TWrongNumArgs
   tcl_GetObjResult         : TGetObjResult
   tcl_NewByteArrayObj      : TNewByteArrayObj
-  when not defined(tcl9):
+  tcl_EvalObjv             : TEvalObjv
+  when defined(tcl9):
+    tcl_IncrRefCount       : TIncrRefCount
+    tcl_DecrRefCount       : TDecrRefCount
+  when defined(tcl8):
     tcl_NewIntObj          : TNewIntObj
     tcl_NewBooleanObj      : TNewBooleanObj
 
@@ -92,6 +106,10 @@ proc GetStringResult*(interp: PInterp): cstring {.cdecl.} =
 
 var tclStubsPtr* {.importc: "tclStubsPtr", header: "tclDecls.h".} : ptr TclStubs
 proc tclInitStubs(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl, importc: "Tcl_InitStubs", header: "tcl.h".}
+
+when defined(tcl8):
+  proc IncrRefCount*(objPtr: PObj) {.cdecl, importc: "Tcl_IncrRefCount", header: "tcl.h".}
+  proc DecrRefCount*(objPtr: PObj) {.cdecl, importc: "Tcl_DecrRefCount", header: "tcl.h".}
 
 proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl.} =
   result = tclInitStubs(interp, version, exact)
@@ -117,6 +135,10 @@ proc InitStubs*(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl
   WrongNumArgs         = cast[TWrongNumArgs](tclStubsPtr.tcl_WrongNumArgs)
   GetObjResult         = cast[TGetObjResult](tclStubsPtr.tcl_GetObjResult)
   NewByteArrayObj      = cast[TNewByteArrayObj](tclStubsPtr.tcl_NewByteArrayObj)
-  when not defined(tcl9):
+  EvalObjv             = cast[TEvalObjv](tclStubsPtr.tcl_EvalObjv)
+  when defined(tcl9):
+    IncrRefCount       = cast[TIncrRefCount](tclStubsPtr.tcl_IncrRefCount)
+    DecrRefCount       = cast[TDecrRefCount](tclStubsPtr.tcl_DecrRefCount)
+  when defined(tcl8):
     NewIntObj          = cast[TNewIntObj](tclStubsPtr.tcl_NewIntObj)
     NewBooleanObj      = cast[TNewBooleanObj](tclStubsPtr.tcl_NewBooleanObj)
