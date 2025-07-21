@@ -5,10 +5,11 @@ proc pix_path(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv
   # Sets a new path.
   #
   # Returns: A *new* [path] object.
+  let ptable = cast[PixTable](clientData)
   let path = newPath()
 
   let p = toHexPtr(path)
-  pixTables.addPath(p, path)
+  ptable.addPath(p, path)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -26,11 +27,12 @@ proc pix_path_addPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Path2
-  let path2 = pixTables.loadPath(interp, objv[2])
+  let path2 = ptable.loadPath(interp, objv[2])
   if path2.isNil: return Tcl.ERROR
 
   path.addPath(path2)
@@ -102,7 +104,8 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
     ccw: bool = false
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -144,7 +147,8 @@ proc pix_path_arcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates1
@@ -191,7 +195,8 @@ proc pix_path_bezierCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates1
@@ -227,7 +232,8 @@ proc pix_path_moveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -254,7 +260,8 @@ proc pix_path_lineTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -281,7 +288,8 @@ proc pix_path_closePath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   path.closePath()
@@ -303,7 +311,8 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   var
@@ -346,7 +355,8 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   var
@@ -386,7 +396,8 @@ proc pix_path_circle(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -426,7 +437,8 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -472,7 +484,8 @@ proc pix_path_transform(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Matrix 3x3 check
@@ -497,7 +510,8 @@ proc pix_path_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Matrix 3x3 check
@@ -533,13 +547,14 @@ proc pix_path_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   let pathcopy = path.copy()
 
   let p = toHexPtr(pathcopy)
-  pixTables.addPath(p, pathcopy)
+  ptable.addPath(p, pathcopy)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
@@ -559,7 +574,8 @@ proc pix_path_ellipse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -597,7 +613,8 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   var
@@ -640,7 +657,8 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.PClientData, interp: Tcl.PInterp,
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   # Coordinates1
@@ -677,7 +695,8 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   var
@@ -749,7 +768,8 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     return Tcl.ERROR
 
   # Path
-  let path = pixTables.loadPath(interp, objv[1])
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
   var value: int = 0
@@ -795,11 +815,13 @@ proc pix_path_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
     Tcl.WrongNumArgs(interp, 1, objv, "<path>|string('all')")
     return Tcl.ERROR
 
+  let ptable = cast[PixTable](clientData)
   let key = $Tcl.GetString(objv[1])
+
   # Path
   if key == "all":
-    pixTables.clearPath()
+    ptable.clearPath()
   else:
-    pixTables.delKeyPath(key)
+    ptable.delKeyPath(key)
 
   return Tcl.OK
