@@ -47,6 +47,10 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   if Tcl.PkgProvideEx(interp, "pix", pixVersion.cstring, nil) != Tcl.OK:
     return Tcl.ERROR
 
+  # Table of pix objects.
+  let ptable = createPixTable()
+  GC_ref(ptable)
+
   var commands = {
     # Context commands :
     "pix::ctx::new"               : pix_context,
@@ -240,10 +244,13 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
 
   when defined(x11):
     commands["pix::surfXUpdate"] = X.surfXUpdate
+    commands["pix::xInfo"] = X.xInfo
 
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
-    if Tcl.CreateObjCommand(interp, cmdName.cstring, cmdProc, nil, nil) == nil:
+    if Tcl.CreateObjCommand(interp, cmdName.cstring, cmdProc, 
+        cast[Tcl.PClientData](ptable), nil
+      ) == nil:
       return Tcl.ERROR
 
   return Tcl.OK
