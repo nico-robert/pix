@@ -5,7 +5,6 @@ import pixie
 import ./pixtables
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
-import times
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
@@ -721,17 +720,3 @@ proc mulMatrix*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, ob
   Tcl.SetObjResult(interp, listobj)
 
   return Tcl.OK
-
-when defined(debug):
-  template timeBody(name: string, body: untyped): untyped =
-    # Measures the time taken to execute a block of code.
-    #
-    # name - The name of the block.
-    # body - The block of code to execute.
-    #
-    # Returns: The time taken to execute the block in milliseconds.
-
-    let start = cpuTime()
-    body
-    let elapsed = cpuTime() - start
-    echo name, ": ", elapsed * 1000, "ms"
