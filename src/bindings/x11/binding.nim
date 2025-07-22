@@ -8,6 +8,19 @@ import ../tk/binding as Tk
 import ../../core/pixtables
 import ../../core/pixutils as pixUtils
 import ../../core/pixparses as pixParses
+import times
+
+template timeBody(name: string, body: untyped): untyped =
+  # Measures the time taken to execute a block of code.
+  #
+  # name - The name of the block.
+  # body - The block of code to execute.
+  #
+  # Returns: The time taken to execute the block in milliseconds.
+  let start = cpuTime()
+  body
+  let elapsed = cpuTime() - start
+  echo name, ": ", elapsed * 1000, "ms"
 
 # Instance types that depend on previous definitions
 type
@@ -286,11 +299,12 @@ proc createImgType*(interp: Tcl.PInterp): Tk.ImageType =
           return
 
         instance.dirty = false
-
-      discard XCopyArea(display, instance.pixmap, drawable, instance.gc,
-        imageX, imageY, width.cuint, height.cuint,
-        drawableX, drawableY
-      )
+      timeBody("XCopyArea"):
+        # Copy the pixmap to the drawable
+        discard XCopyArea(display, instance.pixmap, drawable, instance.gc,
+          imageX, imageY, width.cuint, height.cuint,
+          drawableX, drawableY
+        )
 
       discard XFlush(display)
     ,
