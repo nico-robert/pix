@@ -9,7 +9,7 @@ when defined(tcl8):
 
 type
   TPkgProvideEx         = proc(interp: PInterp, name: cstring, version: cstring, clientData: TClientData): cint {.cdecl.}
-  TGetBooleanFromObj    = proc(interp: PInterp, objPtr: PObj, boolPtr: var int): cint {.cdecl.}
+  TGetBooleanFromObj    = proc(interp: PInterp, objPtr: PObj, boolPtr: var cint): cint {.cdecl.}
   TGetDoubleFromObj     = proc(interp: PInterp, objPtr: PObj, doublePtr: var cdouble): cint {.cdecl.}
   TGetIntFromObj        = proc(interp: PInterp, objPtr: PObj, intPtr: var cint): cint {.cdecl.}
   TGetString            = proc(objPtr: PObj): cstring {.cdecl.}

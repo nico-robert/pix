@@ -100,7 +100,7 @@ proc pix_path_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, 
 
   var
     x, y, r, a0, a1: cdouble
-    clockcw: int
+    clockcw: cint
     ccw: bool = false
 
   # Path
@@ -361,7 +361,7 @@ proc pix_path_rect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
   var
     x, y, width, height: cdouble
-    clockcw: int
+    clockcw: cint
     ccw: bool = true
 
   # Coordinates
@@ -619,7 +619,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.PClientData, interp: Tcl.PInterp, 
 
   var
     x, y, rx, ry, xAxisRotation: cdouble
-    largeA, sweepF: int
+    largeA, sweepF: cint
 
   # Coordinates radius
   if pixParses.getListDouble(interp, objv[2], rx, ry, 
@@ -702,7 +702,7 @@ proc pix_path_roundedRect(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   var
     x, y, width, height, nw, ne, se, sw: cdouble
     count: Tcl.Size
-    clockcw: int
+    clockcw: cint
     ccw: bool = true
     elements: Tcl.PPObj
 

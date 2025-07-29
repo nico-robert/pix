@@ -952,7 +952,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   var
     fsize, flineHeight: cdouble
     count, countP: Tcl.Size
-    myBool: int = 0
+    myBool: cint = 0
     elements, elementsP: Tcl.PPObj
 
   if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:

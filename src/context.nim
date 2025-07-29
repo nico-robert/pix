@@ -339,7 +339,7 @@ proc pix_ctx_arc(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
   # Coordinates
   var
     x, y, r, a0, a1: cdouble
-    clockcw: int
+    clockcw: cint
     ccw: bool = false
 
   if pixParses.getListDouble(interp, objv[2], x, y, 

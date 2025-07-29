@@ -283,7 +283,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
     count: Tcl.Size
     elements: Tcl.PPObj
     x, y: cdouble
-    wrapB: int
+    wrapB: cint
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
