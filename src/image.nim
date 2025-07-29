@@ -11,7 +11,7 @@ proc pix_image(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, obj
     Tcl.WrongNumArgs(interp, 1, objv, "{width height}")
     return Tcl.ERROR
 
-  var width, height: int
+  var width, height: cint
   let ptable = cast[PixTable](clientData)
 
   # Size
@@ -548,7 +548,7 @@ proc pix_image_resize(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if img.isNil: return Tcl.ERROR
 
   # Gets size.
-  var width, height: int
+  var width, height: cint
 
   if pixParses.getListInt(interp, objv[2], width, height, 
     "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
@@ -613,7 +613,7 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: int
+  var x, y: cint
 
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
@@ -650,7 +650,7 @@ proc pix_image_setPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: int
+  var x, y: cint
 
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
@@ -831,7 +831,7 @@ proc pix_image_getColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: int
+  var x, y: cint
 
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
@@ -867,7 +867,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: int
+  var x, y: cint
 
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
@@ -992,7 +992,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   if img.isNil: return Tcl.ERROR
 
   var
-    power: int = 1
+    power: cint = 1
     newimg: pixie.Image
 
   if objc == 3:
@@ -1037,7 +1037,7 @@ proc pix_image_minifyBy2(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
   if img.isNil: return Tcl.ERROR
 
   var
-    power: int = 1
+    power: cint = 1
     newimg: pixie.Image
 
   if objc == 3:
@@ -1136,7 +1136,7 @@ proc pix_image_subImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Coordinates
-  var x, y, width, height: int
+  var x, y, width, height: cint
 
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
@@ -1189,7 +1189,7 @@ proc pix_image_superImage(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
   if img.isNil: return Tcl.ERROR
 
   # Coordinates
-  var x, y, width, height: int
+  var x, y, width, height: cint
 
   if pixParses.getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:

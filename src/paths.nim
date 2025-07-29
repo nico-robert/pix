@@ -317,7 +317,7 @@ proc pix_path_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   var
     x, y, size: cdouble
-    sides: int
+    sides: cint
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 

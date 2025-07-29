@@ -15,7 +15,7 @@ proc pix_context(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     return Tcl.ERROR
 
   var 
-    width, height: int
+    width, height: cint
     img: pixie.Image
 
   # Table
@@ -1897,7 +1897,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   var
     x, y, size: cdouble
-    sides: int
+    sides: cint
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1938,7 +1938,7 @@ proc pix_ctx_polygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
   var
     x, y, size: cdouble
-    sides: int
+    sides: cint
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1980,7 +1980,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   var
     x, y, size: cdouble
-    sides: int
+    sides: cint
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 

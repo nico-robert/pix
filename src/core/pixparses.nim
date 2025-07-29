@@ -25,7 +25,7 @@ type
     offset*: Vec2    = vec2(0, 0)
     color*: Color    = color(0, 0, 0, 0)
 
-proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var int, errorMsg: string): cint =
+proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cint, errorMsg: string): cint =
   # Parse a list of two integers from a Tcl object.
   #
   # interp    - The Tcl interpreter.

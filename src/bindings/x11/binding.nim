@@ -97,7 +97,7 @@ proc createImgType*(interp: Tcl.PInterp): Tk.ImageType =
       clientDataPtr : Tcl.PClientData
     ): int {.cdecl.} =
       #  Image creation logic
-      var width, height: int
+      var width, height: cint
       
       if objc != 2:
         Tcl.WrongNumArgs(interp, 1, objv, "image create pix ?name -data (<img>|<ctx>)")

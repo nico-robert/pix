@@ -21,7 +21,7 @@ proc pix_svg_parse(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
   var svg: Svg
 
   if objc == 3:
-    var width, height: int
+    var width, height: cint
 
     # Size
     if pixParses.getListInt(interp, objv[2], width, height, 

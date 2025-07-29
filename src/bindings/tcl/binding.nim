@@ -11,7 +11,7 @@ type
   TPkgProvideEx         = proc(interp: PInterp, name: cstring, version: cstring, clientData: TClientData): cint {.cdecl.}
   TGetBooleanFromObj    = proc(interp: PInterp, objPtr: PObj, boolPtr: var int): cint {.cdecl.}
   TGetDoubleFromObj     = proc(interp: PInterp, objPtr: PObj, doublePtr: var cdouble): cint {.cdecl.}
-  TGetIntFromObj        = proc(interp: PInterp, objPtr: PObj, intPtr: var int): cint {.cdecl.}
+  TGetIntFromObj        = proc(interp: PInterp, objPtr: PObj, intPtr: var cint): cint {.cdecl.}
   TGetString            = proc(objPtr: PObj): cstring {.cdecl.}
   TListObjAppendElement = proc(interp: PInterp, listPtr: PObj, objPtr: PObj): cint {.cdecl.}
   TListObjGetElements   = proc(interp: PInterp, listPtr: PObj, lengthPtr: var Size, objvPtr: var PPObj): cint {.cdecl.}
