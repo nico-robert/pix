@@ -1,37 +1,58 @@
 const
   OK*    = 0
   ERROR* = 1
-  
+
 when defined(tcl9):
-  const VERSION* = "9.0"
-  type Size* = int
+  type Size* = clong
 else:
-  const VERSION* = "8.6"
-  type Size* = int32 
+  type Size* = cint 
 
 type
+  TInterp*{.incompleteStruct.} = object
   PInterp* = ptr TInterp
-  TInterp*{.final.} = object
-  TClientData* = pointer
-  PNamespaceDeleteProc = pointer
-  TNamespaceDeleteProc* = proc (clientData: TClientData){.cdecl.}
+
+  TNamespace*{.incompleteStruct.} = object
   PNamespace* = ptr TNamespace
 
-  TNamespace*{.final.} = object 
-    name*: cstring
-    fullName*: cstring
-    clientData*: TClientData
-    deleteProc*: TNamespaceDeleteProc
-    parentPtr*: PNamespace
+  TClientData* = pointer
+  PClientData* = ptr TClientData
+
+  PNamespaceDeleteProc = pointer
+  TNamespaceDeleteProc* = proc(clientData: TClientData) {.cdecl.}
   
-  PObj* = ptr TObj
+  Command*{.incompleteStruct.} = object
+
+  TObjType* {.incompleteStruct.} = object
+
+  TwoPtrValue* = object
+    ptr1*: pointer
+    ptr2*: pointer
+
+  PtrAndLongRep* = object
+    ptr1*: pointer
+    value*: culong
+
+  TObjInternalRep* {.union.} = object
+    longValue*: clong
+    doubleValue*: cdouble
+    otherValuePtr*: pointer
+    wideValue*: clonglong
+    twoPtrValue*: TwoPtrValue
+    ptrAndLongRep*: PtrAndLongRep
+
+  TObj* = object
+    refCount*   : Size
+    bytes*      : cstring
+    length*     : Size
+    typePtr*    : ptr TObjType
+    internalRep*: TObjInternalRep 
+
+  PObj*  = ptr TObj
   PPObj* = ptr UncheckedArray[PObj]
 
-  TObj*{.final.} = object
-    refCount*: int
-
-  WideInt*         = clonglong
-  Command*         = pointer
-  PObjCmdProc*     = pointer
-  PCmdDeleteProc*  = pointer
-  PClientData*     = ptr TClientData
+  WideInt*        = clonglong
+  PCmdDeleteProc* = proc(clientData: TClientData) {.cdecl.}
+  PObjCmdProc*    = proc(clientData: TClientData,
+                        interp: PInterp,
+                        objc: Size,
+                        objv: PPObj): cint {.cdecl.}
