@@ -17,7 +17,7 @@ type
     tcl_NewWideIntObj*        : proc(wideValue: WideInt): PObj {.cdecl.}
     tcl_NewListObj*           : proc(objc: Size, objv: PPObj): PObj {.cdecl.}
     tcl_NewStringObj*         : proc(bytes: cstring, length: Size): PObj {.cdecl.}
-    tcl_CreateObjCommand*     : proc(interp: PInterp, cmdName: cstring, callback: PObjCmdProc, clientData: TClientData, deleteProc: PCmdDeleteProc): Command {.cdecl.}
+    tcl_CreateObjCommand*     : proc(interp: PInterp, cmdName: cstring, callback: PObjCmdProc, clientData: TClientData, deleteProc: PCmdDeleteProc): PCommand {.cdecl.}
     tcl_SetObjResult*         : proc(interp: PInterp, resultObjPtr: PObj) {.cdecl.}
     tcl_DictObjPut*           : proc(interp: PInterp, dictPtr: PObj, keyPtr: PObj, valuePtr: PObj): cint {.cdecl.}
     tcl_NewDictObj*           : proc(): PObj {.cdecl.}
@@ -72,7 +72,7 @@ proc NewListObj*(objc: Size, objv: PPObj): PObj =
 proc NewStringObj*(bytes: cstring, length: Size): PObj =
   return tclStubsPtr.tcl_NewStringObj(bytes, length)
 
-proc CreateObjCommand*(interp: PInterp, cmdName: cstring, callback: PObjCmdProc, clientData: TClientData, deleteProc: PCmdDeleteProc): Command =
+proc CreateObjCommand*(interp: PInterp, cmdName: cstring, callback: PObjCmdProc, clientData: TClientData, deleteProc: PCmdDeleteProc): PCommand =
   return tclStubsPtr.tcl_CreateObjCommand(interp, cmdName, callback, clientData, deleteProc)
 
 proc SetObjResult*(interp: PInterp, resultObjPtr: PObj) =

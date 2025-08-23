@@ -20,7 +20,8 @@ type
   PNamespaceDeleteProc = pointer
   TNamespaceDeleteProc* = proc(clientData: TClientData) {.cdecl.}
   
-  Command*{.incompleteStruct.} = object
+  TCommand*{.incompleteStruct.} = object
+  PCommand* = ptr TCommand
 
   TObjType* {.incompleteStruct.} = object
 
