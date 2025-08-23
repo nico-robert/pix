@@ -26,10 +26,10 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   # Package initialization entry point.
   #
   # Returns 0 on success, 1 on failure.
-  if Tcl.InitStubs(interp, Tcl.VERSION,  0) == nil:
+  if Tcl.InitStubs(interp, "8.6-",  0) == nil:
     return Tcl.ERROR
 
-  if Tk.InitTkStubs(interp, Tcl.VERSION, 0) == nil:
+  if Tk.InitTkStubs(interp, "8.6-", 0) == nil:
     return Tcl.ERROR
 
   when defined(x11):
