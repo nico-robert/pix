@@ -18,7 +18,9 @@ type
   PClientData* = ptr TClientData
 
   PNamespaceDeleteProc = pointer
-  TNamespaceDeleteProc* = proc(clientData: TClientData) {.cdecl.}
+  TNamespaceDeleteProc* {.importc: "Tcl_NamespaceDeleteProc", header: "tcl.h".} = proc(
+    clientData: TClientData
+    ) {.cdecl.}
   
   TCommand*{.incompleteStruct.} = object
   PCommand* = ptr TCommand
@@ -52,8 +54,12 @@ type
   PPObj* = ptr UncheckedArray[PObj]
 
   WideInt*        = clonglong
-  PCmdDeleteProc* = proc(clientData: TClientData) {.cdecl.}
-  PObjCmdProc*    = proc(clientData: TClientData,
-                        interp: PInterp,
-                        objc: Size,
-                        objv: PPObj): cint {.cdecl.}
+  PCmdDeleteProc* {.importc: "Tcl_CmdDeleteProc", header: "tcl.h".} = proc(
+                  clientData: TClientData
+                  ) {.cdecl.}
+  PObjCmdProc*    {.importc: "Tcl_ObjCmdProc", header: "tcl.h".} = proc(
+                  clientData: TClientData,
+                  interp: PInterp,
+                  objc: Size,
+                  objv: PPObj
+                  ): cint {.cdecl.}
