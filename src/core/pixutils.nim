@@ -373,10 +373,10 @@ proc colorHTMLtoRGBA*(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   let newobj = Tcl.NewListObj(0, nil)
 
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.r.int))
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.g.int))
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.b.int))
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.a.int))
+  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.r.cint))
+  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.g.cint))
+  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.b.cint))
+  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.a.cint))
 
   Tcl.SetObjResult(interp, newobj)
 

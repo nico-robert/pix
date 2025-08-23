@@ -1435,7 +1435,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
@@ -1508,7 +1508,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
@@ -2143,8 +2143,8 @@ proc pix_ctx_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, o
     img           = ctxKey.replace("^ctx", "^img")
 
   discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4), Tcl.NewStringObj(img.cstring, -1))
-  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width))
-  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height))
+  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width.cint))
+  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height.cint))
 
   let mat = ctx.getTransform()
   for x in 0..2:

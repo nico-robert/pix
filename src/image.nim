@@ -588,8 +588,8 @@ proc pix_image_get(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
   let dictObj = Tcl.NewDictObj()
 
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width.cint))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height.cint))
 
   Tcl.SetObjResult(interp, dictObj)
 
@@ -623,10 +623,10 @@ proc pix_image_getPixel(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
     data = img[x, y]
     dictObj = Tcl.NewDictObj()
 
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.int))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.int))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(data.b.int))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(data.a.int))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.cint))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.cint))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(data.b.cint))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(data.a.cint))
 
   Tcl.SetObjResult(interp, dictObj)
 
@@ -875,7 +875,7 @@ proc pix_image_inside(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   let value = if img.inside(x, y): 1 else: 0
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
@@ -926,7 +926,7 @@ proc pix_image_isOneColor(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc
 
   let value = if img.isOneColor(): 1 else: 0
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
@@ -947,7 +947,7 @@ proc pix_image_isOpaque(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   let value = if img.isOpaque(): 1 else: 0
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
@@ -968,7 +968,7 @@ proc pix_image_isTransparent(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   let value = if img.isTransparent(): 1 else: 0
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 

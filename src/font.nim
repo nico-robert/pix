@@ -577,7 +577,7 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
   let c = str.runeAt(0)
   let hasglyph = if tface.hasGlyph(c): 1 else: 0
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(hasglyph))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(hasglyph.cint))
 
   return Tcl.OK
 
@@ -1048,7 +1048,7 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
     discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
     discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
     discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
-    discard Tcl.DictObjPut(nil, dictGlobobj, Tcl.NewIntObj(index), dictObj)
+    discard Tcl.DictObjPut(nil, dictGlobobj, Tcl.NewIntObj(index.cint), dictObj)
 
   Tcl.SetObjResult(interp, dictGlobobj)
 

@@ -468,7 +468,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
@@ -801,7 +801,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
 
   return Tcl.OK
 
