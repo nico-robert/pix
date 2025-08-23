@@ -47,7 +47,7 @@ type
     interp    : Tcl.PInterp
     tkMaster  : Tk.ImageMaster
 
-proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Try to get [ctx] or [img] from `key`
   #
   # context or image - [ctx::new] or [img::new]
@@ -81,7 +81,7 @@ proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: 
 
   return Tcl.OK
 
-proc imgCmd (clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint = return Tcl.Ok
+proc imgCmd (clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} = return Tcl.Ok
 
 proc createImgType*(interp: Tcl.PInterp): Tk.ImageType =
 
@@ -337,7 +337,7 @@ proc createImgType*(interp: Tcl.PInterp): Tk.ImageType =
     reserved: nil
   )
 
-proc surfXUpdate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc surfXUpdate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
 
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "pix:image")

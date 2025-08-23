@@ -355,7 +355,7 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
 
   return Tcl.OK
 
-proc colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts an HTML color into an RGBA value and returns it as a Tcl list.
   #
   # HTMLcolor - string
@@ -382,7 +382,7 @@ proc colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Parse [path] object.
   #
   # path - [path::new]
@@ -401,7 +401,7 @@ proc pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Transforms a SVG style path (string) to a [path::new] object.
   #
   # path - a string in SVG style.
@@ -427,7 +427,7 @@ proc svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   return Tcl.OK
 
-proc getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Get all objects from the context and the image.
   #
   # Returns: A Tcl dictionary with two keys:
@@ -458,7 +458,7 @@ proc getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
 
   return Tcl.OK
 
-proc toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Convert an [img] object to base 64.
   #
   # object - [img] or [ctx] object.
@@ -498,7 +498,7 @@ proc toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: 
 
   return Tcl.OK
 
-proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Convert an [img] object to binary.
   #
   # object - [img] or [ctx] object.
@@ -544,7 +544,7 @@ proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
 
   return Tcl.OK
 
-proc rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create rotation matrix.
   #
   # angle   - double value (radian)
@@ -584,7 +584,7 @@ proc rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
 
   return Tcl.OK
 
-proc scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create scale matrix.
   #
   # scale   - list x,y
@@ -635,7 +635,7 @@ proc scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   return Tcl.OK
   
-proc transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create translation matrix.
   #
   # trans   - list x,y
@@ -686,7 +686,7 @@ proc transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   return Tcl.OK
   
-proc mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Multiplies matrices.
   #
   # args - matrix (9 values) 

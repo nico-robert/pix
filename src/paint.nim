@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets a new paint.
   #
   # paintKind - Enum value
@@ -27,7 +27,7 @@ proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
 
   return Tcl.OK
 
-proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Configure paint object parameters.
   #
   # paint   - [paint]
@@ -131,7 +131,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   return Tcl.OK
 
-proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create a new Paint with the same properties.
   #
   # paint - [paint::new]
@@ -155,7 +155,7 @@ proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
-proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills with the Paint gradient.
   #
   # paint - [paint::new]
@@ -183,7 +183,7 @@ proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 
   return Tcl.OK
 
-proc pix_paint_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_paint_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy current [paint] or all paints if special word `all` is specified.
   #
   # value - [paint::new] object or string.
