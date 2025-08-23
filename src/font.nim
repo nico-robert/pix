@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_readFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Try to read the font from the file located at the given path.
   #
   # filePath - file font
@@ -30,7 +30,7 @@ proc pix_font_readFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   return Tcl.OK
 
-proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_size(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font Size (Same as pix::font::configure procedure).
   #
   # font  - [font::newFont]
@@ -56,7 +56,7 @@ proc pix_font_size(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
   return Tcl.OK
 
-proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_color(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font color (Same as pix::font::configure procedure).
   #
   # font  - [font::newFont]
@@ -80,7 +80,7 @@ proc pix_font_color(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
-proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_newFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Create a new pixie.Font from the given *TypeFace* object.
   #
   # typeface - [font::readTypeface]
@@ -110,7 +110,7 @@ proc pix_font_newFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_newSpan(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets new Span.
   #
   # font - [font::newFont]
@@ -136,7 +136,7 @@ proc pix_font_newSpan(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Sets font Paint if paint optional argument is set, otherwise gets the font paint.
   #
   # font  - [font::newFont]
@@ -169,7 +169,7 @@ proc pix_font_paint(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
-proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_readTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Loads a typeface from a file.
   #
   # filePath - file font
@@ -196,7 +196,7 @@ proc pix_font_readTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   return Tcl.OK
 
-proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_readTypefaces(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Loads a OpenType Collection (.ttc).
   #
   # filePath - file font
@@ -222,7 +222,7 @@ proc pix_font_readTypefaces(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
   return Tcl.OK
 
-proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_ascent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # The font ascender value in font units.
   #
   # typeface - [font::readTypeface]
@@ -250,7 +250,7 @@ proc pix_font_ascent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cin
 
   return Tcl.OK
 
-proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Computes the bounds of an `arrangement` object.
   #
   # arrangement - [font::typeset]
@@ -308,7 +308,7 @@ proc pix_font_computeBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, ob
 
   return Tcl.OK
 
-proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Copy font.
   #
   # font - [font::readFont]
@@ -331,7 +331,7 @@ proc pix_font_copy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
   return Tcl.OK
 
-proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_defaultLineHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # The default line height in pixels for the current font size.
   #
   # font - [font::readFont]
@@ -362,7 +362,7 @@ proc pix_font_defaultLineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp
 
   return Tcl.OK
 
-proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_descent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # The font descender value in font units.
   #
   # typeface - [font::readTypeface]
@@ -388,7 +388,7 @@ proc pix_font_descent(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_fallbackTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Looks through fallback typefaces to find one that has the glyph.
   #
   # typeface - [font::readTypeface]
@@ -432,7 +432,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.PClientData, interp: Tcl.PInterp,
 
   return Tcl.OK
 
-proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_getAdvance(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Try to get the advance width for the given rune in pixels.
   # If the rune is not supported by the typeface, this will raise an
   # exception.
@@ -465,7 +465,7 @@ proc pix_font_getAdvance(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   return Tcl.OK
 
-proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_getGlyphPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # The glyph path for the rune.
   #
   # typeface - [font::readTypeface]
@@ -508,7 +508,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   return Tcl.OK
 
-proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_getKerningAdjustment(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Retrieve the kerning adjustment for the pair of characters (c1, c2) from the typeface.
   #
   # typeface - [font::readTypeface]
@@ -551,7 +551,7 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.PClientData, interp: Tcl.PInt
 
   return Tcl.OK
 
-proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_hasGlyph(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Guess if the glyph exists for this rune.
   #
   # typeface - [font::readTypeface]
@@ -581,7 +581,7 @@ proc pix_font_hasGlyph(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   return Tcl.OK
 
-proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Computes the width and height in pixels.
   #
   # object - [font::typeset], [font::readFont] or [font::newSpan]
@@ -644,7 +644,7 @@ proc pix_font_layoutBounds(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   return Tcl.OK
 
-proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_lineGap(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets the font line gap value in font units.
   #
   # typeface - [font::readTypeface]
@@ -670,7 +670,7 @@ proc pix_font_lineGap(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_lineHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # The default line height in font units.
   #
   # typeface - [font::readTypeface]
@@ -699,7 +699,7 @@ proc pix_font_lineHeight(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc:
 
   return Tcl.OK
 
-proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_name(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # This procedure retrieves the name of a given typeface object.
   #
   # typeface - [font::readTypeface]
@@ -720,7 +720,7 @@ proc pix_font_name(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint,
 
   return Tcl.OK
 
-proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_parseOtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Parse Otf string.
   #
   # buffer - string
@@ -748,7 +748,7 @@ proc pix_font_parseOtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   return Tcl.OK
 
-proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_parseSvgFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Parse Svg Font string.
   #
   # buffer - string
@@ -776,7 +776,7 @@ proc pix_font_parseSvgFont(clientData: Tcl.PClientData, interp: Tcl.PInterp, obj
 
   return Tcl.OK
 
-proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_parseTtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Parse Ttf string.
   #
   # buffer - string
@@ -804,7 +804,7 @@ proc pix_font_parseTtf(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: c
 
   return Tcl.OK
 
-proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_scale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # The scale factor to transform font units into pixels.
   #
   # object - [font::readFont] or [font::readTypeface] object.
@@ -835,7 +835,7 @@ proc pix_font_scale(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
-proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Lays out the character glyphs and returns the arrangement.
   #
   # object  - [font::readFont] or [font::newSpan]
@@ -921,7 +921,7 @@ proc pix_font_typeset(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Configure [font::readFont] parameters.
   #
   # font    - [font::readFont]
@@ -1016,7 +1016,7 @@ proc pix_font_configure(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: 
 
   return Tcl.OK
 
-proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_selectionRects(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Gets coordinates rectangle for [font::typeset].
   #
   # arrangement - [font::typeset]
@@ -1054,7 +1054,7 @@ proc pix_font_selectionRects(clientData: Tcl.PClientData, interp: Tcl.PInterp, o
 
   return Tcl.OK
 
-proc pix_font_destroy(clientData: Tcl.PClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
+proc pix_font_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint =
   # Destroy current font or all fonts if special word `all` is specified.
   #
   # value - [font::readFont] or string

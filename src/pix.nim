@@ -249,7 +249,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
     if Tcl.CreateObjCommand(interp, cmdName.cstring, cmdProc, 
-        cast[Tcl.PClientData](ptable), nil
+        cast[Tcl.TClientData](ptable), nil
       ) == nil:
       return Tcl.ERROR
 
