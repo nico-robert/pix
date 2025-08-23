@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws object to Tk photo.
   # 
   # object - [img] or [ctx] object.
