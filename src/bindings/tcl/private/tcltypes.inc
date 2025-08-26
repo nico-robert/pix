@@ -3,9 +3,9 @@ const
   ERROR* = 1
 
 when defined(tcl9):
-  type Size* = clong
+  type Size* {.importc: "Tcl_Size", header: "tcl.h".} = clong
 else:
-  type Size* = cint 
+  type Size* = cint
 
 type
   TInterp*{.incompleteStruct.} = object
