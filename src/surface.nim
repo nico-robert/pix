@@ -49,10 +49,10 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tc
   {.pop.}
 
   pblock.pixelPtr  = imgData
-  pblock.width     = int32(img.width)
-  pblock.height    = int32(img.height)
-  pblock.pitch     = int32(img.width * 4)
-  pblock.pixelSize = int32(4)
+  pblock.width     = img.width.cint
+  pblock.height    = img.height.cint
+  pblock.pitch     = img.width.cint * 4
+  pblock.pixelSize = 4
   pblock.offset    = [0, 1, 2, 3]
 
   if Tk.PhotoSetSize(interp, source, pblock.width, pblock.height) != Tcl.OK:
