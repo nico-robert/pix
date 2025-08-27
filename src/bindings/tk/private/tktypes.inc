@@ -10,22 +10,10 @@ type
   PhotoHandle*     = pointer
   PhotoImageBlock* = TBlock
 
-  TBlock*{.final.} = object 
+  TBlock* = object
     pixelPtr* : ptr UncheckedArray[uint8]
     width*    : cint
     height*   : cint
     pitch*    : cint
     pixelSize*: cint
     offset*   : array[4, cint]
-
-  # Image types.
-  ImageType*{.final.} = object
-    name*           : cstring
-    createProc*     : pointer
-    getProc*        : pointer
-    displayProc*    : pointer
-    freeProc*       : pointer
-    deleteProc*     : pointer
-    postscriptProc* : pointer
-    nextPtr*        : pointer
-    reserved*       : cstring
