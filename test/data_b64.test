@@ -26,7 +26,7 @@ proc isEqual {obj b64} {
     }
     # Temp directory not found, writes file 
     # according to script directory.
-    if {$tmpdir eq ""} {set tmpdir [info script]}
+    if {$tmpdir eq ""} {set tmpdir [file dirname [info script]]}
     
     set p [image create photo -data $b64]
     set myfile [file join $tmpdir test_[clock click].png]
