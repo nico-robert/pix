@@ -2198,6 +2198,12 @@ proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
       return Tcl.ERROR
     pattern.add(v)
 
+  # To get around pixie's problem when my list is not even.
+  # See pixparses.nim file for more details.
+  if pattern.len mod 2 != 0:
+    let dashesCopy = pattern
+    pattern.add(dashesCopy)
+
   ctx.setLineDash(pattern)
 
   return Tcl.OK
