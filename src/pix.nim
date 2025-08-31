@@ -6,7 +6,7 @@ import std/[strutils, parsecfg, streams, tables, unicode]
 import core/[pixtables, pixparses, pixutils]
 
 when defined(x11):
-  import bindings/x11/binding as X
+  import bindings/x11/binding as X11
 
 import bindings/tcl/binding as Tcl
 import bindings/tk/binding  as Tk
@@ -33,8 +33,10 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     return Tcl.ERROR
 
   when defined(x11):
-    if Tk.InitImageType(interp) == Tcl.OK:
-      Tk.CreateImageType(X.createImgType(interp))
+    let imageType = X11.createPixImgType(interp)
+    if imageType.isNil:
+      return Tcl.ERROR
+    Tk.CreateImageType(imageType)
 
   # Namespace
   var ns = Tcl.CreateNamespace(interp, "pix", nil, nil)
@@ -243,14 +245,15 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   }.toTable
 
   when defined(x11):
-    commands["pix::surfXUpdate"] = X.surfXUpdate
-    commands["pix::xInfo"] = X.xInfo
+    commands["pix::surfXUpdate"] = X11.surfXUpdate
+    commands["pix::xInfo"] = X11.xInfo
 
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
-    if Tcl.CreateObjCommand(interp, cmdName.cstring, cmdProc, 
-        cast[Tcl.TClientData](ptable), nil
-      ) == nil:
+    if Tcl.CreateObjCommand(
+      interp, cmdName.cstring, cmdProc, 
+      cast[Tcl.TClientData](ptable), nil
+    ) == nil:
       return Tcl.ERROR
 
   return Tcl.OK
