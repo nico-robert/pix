@@ -146,6 +146,6 @@ when defined(x11):
 
 proc TkInitStubs(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl, importc: "Tk_InitStubs", header: "tk.h".}
 
-proc InitTkStubs*(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl.} =
+proc InitStubs*(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl.} =
   return TkInitStubs(interp, version, exact)
   

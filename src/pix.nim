@@ -29,7 +29,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   if Tcl.InitStubs(interp, "8.6-",  0) == nil:
     return Tcl.ERROR
 
-  if Tk.InitTkStubs(interp, "8.6-", 0) == nil:
+  if Tk.InitStubs(interp, "8.6-", 0) == nil:
     return Tcl.ERROR
 
   when defined(x11):
