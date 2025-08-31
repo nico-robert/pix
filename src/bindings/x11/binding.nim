@@ -47,7 +47,7 @@ type
     interp    : Tcl.PInterp
     tkMaster  : Tk.ImageMaster
 
-proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Try to get [ctx] or [img] from `key`
   #
   # context or image - [ctx::new] or [img::new]
@@ -336,7 +336,7 @@ proc createPixImgType*(interp: Tcl.PInterp): ptr Tk.ImageType =
 
   return imageType
 
-proc surfXUpdate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc surfXUpdate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
 
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "pix:image")

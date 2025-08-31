@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-proc pix_path(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets a new path.
   #
   # Returns: A *new* [path] object.
@@ -15,7 +15,7 @@ proc pix_path(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, 
 
   return Tcl.OK
 
-proc pix_path_addPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_addPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a path to the current path.
   # 
   # path1 - [path]
@@ -39,7 +39,7 @@ proc pix_path_addPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tc
 
   return Tcl.OK
 
-proc pix_path_angleToMiterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_angleToMiterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts miter-limit-angle to miter-limit-ratio.
   # 
   # angle - double value (radian)
@@ -60,7 +60,7 @@ proc pix_path_angleToMiterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp
 
   return Tcl.OK
 
-proc pix_path_miterLimitToAngle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_miterLimitToAngle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts miter-limit-ratio to miter-limit-angle.
   # 
   # angle - double value (radian)
@@ -81,7 +81,7 @@ proc pix_path_miterLimitToAngle(clientData: Tcl.TClientData, interp: Tcl.PInterp
 
   return Tcl.OK
 
-proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circular arc to the current sub-path.
   # 
   # path         - [path::new]
@@ -130,7 +130,7 @@ proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Si
 
   return Tcl.OK
 
-proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circular arc using the given control points and radius.
   # Commonly used for making rounded corners.
   # 
@@ -174,7 +174,7 @@ proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.
 
   return Tcl.OK
 
-proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a cubic Bézier curve to the current sub-path.
   # 
   # path          - [path::new]
@@ -220,7 +220,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 
   return Tcl.OK
 
-proc pix_path_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Begins a new sub-path at the point (x, y).
   # 
   # path         - [path]
@@ -247,7 +247,7 @@ proc pix_path_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl
 
   return Tcl.OK
 
-proc pix_path_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a straight line to the current sub-path by connecting
   # the sub-path's last point to the specified (x, y) coordinates.
   # 
@@ -275,7 +275,7 @@ proc pix_path_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl
 
   return Tcl.OK
 
-proc pix_path_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Attempts to add a straight line from the current point to the start
   # of the current sub-path. If the shape has already been closed or
   # has only one point, this function does nothing.
@@ -296,7 +296,7 @@ proc pix_path_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   return Tcl.OK
     
-proc pix_path_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds an n-sided regular polygon at (x, y) with the parameter size.
   # Polygons "face" north.
   # 
@@ -338,7 +338,7 @@ proc pix_path_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tc
 
   return Tcl.OK
 
-proc pix_path_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a rectangle. Clockwise parameter can be used to subtract
   # a rect from a path when using even-odd winding rule.
   # 
@@ -383,7 +383,7 @@ proc pix_path_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.S
 
   return Tcl.OK
 
-proc pix_path_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circle.
   # 
   # path          - [path]
@@ -415,7 +415,7 @@ proc pix_path_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl
 
   return Tcl.OK
 
-proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Returns whether or not the specified point is contained in the current path.
   # 
   # path          - [path]
@@ -472,7 +472,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   return Tcl.OK
 
-proc pix_path_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Apply a matrix transform to a path.
   # 
   # path    - [path]
@@ -498,7 +498,7 @@ proc pix_path_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   return Tcl.OK
   
-proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Compute the bounds of the path.
   # 
   # path    - [path]
@@ -536,7 +536,7 @@ proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 
   return Tcl.OK
 
-proc pix_path_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Copy path.
   #
   # path - [path]
@@ -560,7 +560,7 @@ proc pix_path_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.S
 
   return Tcl.OK
 
-proc pix_path_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a ellipse.
   # 
   # path         - [path]
@@ -594,7 +594,7 @@ proc pix_path_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tc
 
   return Tcl.OK
 
-proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds an elliptical arc to the current sub-path, 
   # using the given radius ratios, sweep flags, and end position. 
   # 
@@ -641,7 +641,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
 
   return Tcl.OK
 
-proc pix_path_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a quadratic Bézier curve to the current sub-path. It requires two points:
   # the first one is a control point and the second one is the end point.
   # The starting point is the latest point in the current path, which can be changed
@@ -677,7 +677,7 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
   return Tcl.OK
 
-proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a rectangle. Clockwise parameter can be used to subtract a 
   # rect from a path when using even-odd winding rule. 
   # 
@@ -740,7 +740,7 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   return Tcl.OK
 
-proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks if a point is inside the stroking of a path.
   #
   # path         - The [path] object to check.
@@ -805,7 +805,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 
   return Tcl.OK
 
-proc pix_path_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_path_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy current path or all paths if special word `all` is specified.
   # 
   # value - [path] object or string.
