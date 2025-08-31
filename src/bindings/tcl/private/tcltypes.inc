@@ -60,6 +60,6 @@ type
   PObjCmdProc*    {.importc: "Tcl_ObjCmdProc", header: "tcl.h".} = proc(
                   clientData: TClientData,
                   interp: PInterp,
-                  objc: Size,
+                  objc: cint,
                   objv: PPObj
                   ): cint {.cdecl.}
