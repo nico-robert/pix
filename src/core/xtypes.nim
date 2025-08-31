@@ -46,7 +46,7 @@ type
     flags*  : cchar
     pad*    : cchar
 
-  XGCValues*{.importc: "XGCValues", header: "X11/Xlib.h".} = object
+  GCValues*{.importc: "XGCValues", header: "X11/Xlib.h".} = object
     function*           : cint
     plane_mask*         : culong
     foreground*         : culong
@@ -71,7 +71,7 @@ type
     dash_offset*        : cint
     dashes*             : cchar
 
-  GC* = ptr XGCValues
+  GC* = ptr GCValues
   Display*{.final.} = object
 
 # Remaining X11 types
@@ -147,43 +147,5 @@ type
     obdata*          : XPointer
     f*               : XImageFuncs
 
-type
-  TXCreateImage*         = proc(display: ptr Display, v: ptr Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): ImagePtr {.cdecl.}
-  TXCreateGC*            = proc(display: ptr Display, d: Drawable, valueMask: culong, valuePtr: var XGCValues): GC {.cdecl.}
-  TXPutImage*            = proc(display: ptr Display, dr: Drawable, gc: GC, im: ImagePtr, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint {.cdecl.}
-  TPutImage*             = proc(colors: ptr culong, ncolors: cint, display: ptr Display, d: Drawable, gc: GC, image: ptr XImage, src_x: cint, src_y: cint, dest_x: cint, dest_y: cint, width: cuint, height: cuint): cint {.cdecl.}
-  TXFlush*               = proc(display: ptr Display): cint {.cdecl.}
-  TXSetBackground*       = proc(display: ptr Display, gc: GC, bg: culong): cint {.cdecl.}
-  TXSetForeground*       = proc(display: ptr Display, gc: GC, fg: culong): cint {.cdecl.}
-  TXSetClipMask*         = proc(display: ptr Display, gc: GC, pixmap: Pixmap): cint {.cdecl.}
-  TXGetWindowAttributes* = proc(display: ptr Display, w: culong, x: var XWindowAttributes): cint {.cdecl.}
-  TXFillRectangle*       = proc(display: ptr Display, dr: Drawable, gc: GC, x: cint, y: cint, width: cuint, height: cuint): cint {.cdecl.}
-  TXCopyArea*            = proc(display: ptr Display, dr1: Drawable, dr2: Drawable, gc: GC, i1: cint, i2: cint, ui1: cuint, ui2: cuint, i3: cint, i4: cint): cint {.cdecl.}
-
-var
-  XCreateImage*          : TXCreateImage
-  XCreateGC*             : TXCreateGC
-  XPutImage*             : TXPutImage
-  XFillRectangle*        : TXFillRectangle
-  XFlush*                : TXFlush
-  XSetBackground*        : TXSetBackground
-  XSetForeground*        : TXSetForeground
-  XSetClipMask*          : TXSetClipMask
-  XCopyArea*             : TXCopyArea
-  XGetWindowAttributes*  : TXGetWindowAttributes
-  TkPutImage*            : TPutImage
-
-type TkIntXlibStubs* = object
-  xCreateImage*          : TXCreateImage
-  xCreateGC*             : TXCreateGC
-  xPutImage*             : TXPutImage
-  xFlush*                : TXFlush
-  xSetBackground*        : TXSetBackground
-  xSetForeground*        : TXSetForeground
-  xCopyArea*             : TXCopyArea
-  xFillRectangle*        : TXFillRectangle
-  xSetClipMask*          : TXSetClipMask
-  tkPutImage*            : TPutImage
-
-proc XDestroyImage*(ximage: ImagePtr): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
+proc DestroyImage*(ximage: ImagePtr): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
   return ximage.f.destroy_image(ximage)
