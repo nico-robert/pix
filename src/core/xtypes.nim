@@ -74,9 +74,16 @@ type
   GC* = ptr GCValues
   Display*{.final.} = object
 
-# Remaining X11 types
-type
+  PXExtData* = ptr XExtData
+  XExtData*{.final.} = object
+    number*      : cint
+    next*        : PXExtData
+    free_private*: proc (extension: PXExtData): cint {.cdecl.}
+    private_data*: XPointer
+
+  PVisual* = ptr Visual
   Visual*{.final.} = object
+    ext_data*     : PXExtData
     visualid*     : culong
     class*        : cint
     red_mask*     : culong
@@ -87,9 +94,6 @@ type
 
   Uid* = cstring
 
-type
-  XVisual = object  # Forward declaration 
-  
   Screen* = object
     white_pixel*: culong    # Value white pixel
     black_pixel*: culong    # Value black pixel
@@ -99,7 +103,7 @@ type
     width*, height*        : cint
     border_width*          : cint
     depth*                 : cint
-    visual*                : ptr XVisual
+    visual*                : PVisual
     root*                  : culong
     class*                 : cint
     bit_gravity*           : cint
@@ -118,16 +122,16 @@ type
     screen*                : ptr Screen
 
   XImageFuncs* = object
-    create_image*   : proc(display: ptr Display, visual: ptr Visual, depth: cuint,
+    create_image*   : proc(display: ptr Display, visual: PVisual, depth: cuint,
                           format: cint, offset: cint, data: cstring, width: cuint,
-                          height: cuint, bitmap_pad: cint, bytes_per_line: cint): ImagePtr {.cdecl.}
-    destroy_image*  : proc(ximage: ImagePtr): cint {.cdecl.}
-    get_pixel*      : proc(ximage: ImagePtr, x, y: cint): culong {.cdecl.}
-    put_pixel*      : proc(ximage: ImagePtr, x, y: cint, pixel: culong): cint {.cdecl.}
-    sub_image*      : proc(ximage: ImagePtr, x, y: cint, width, height: cuint): ImagePtr {.cdecl.}
-    add_pixel*      : proc(ximage: ImagePtr, value: clong): cint {.cdecl.}
+                          height: cuint, bitmap_pad: cint, bytes_per_line: cint): PXImage {.cdecl.}
+    destroy_image*  : proc(ximage: PXImage): cint {.cdecl.}
+    get_pixel*      : proc(ximage: PXImage, x, y: cint): culong {.cdecl.}
+    put_pixel*      : proc(ximage: PXImage, x, y: cint, pixel: culong): cint {.cdecl.}
+    sub_image*      : proc(ximage: PXImage, x, y: cint, width, height: cuint): PXImage {.cdecl.}
+    add_pixel*      : proc(ximage: PXImage, value: clong): cint {.cdecl.}
 
-  ImagePtr* = ptr XImage
+  PXImage* = ptr XImage
   XImage*{.importc: "XImage", header: "X11/Xlib.h".} = object
     width*           : cint
     height*          : cint
@@ -147,5 +151,5 @@ type
     obdata*          : XPointer
     f*               : XImageFuncs
 
-proc DestroyImage*(ximage: ImagePtr): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
+proc DestroyImage*(ximage: PXImage): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
   return ximage.f.destroy_image(ximage)
