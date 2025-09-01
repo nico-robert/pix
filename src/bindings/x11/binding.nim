@@ -30,7 +30,7 @@ type
     width    : cint
     height   : cint
     gc       : X.GC
-    ximage   : X.ImagePtr
+    ximage   : X.PXImage
     pixmap   : X.Pixmap
     dr       : X.Drawable
     refCount : cint

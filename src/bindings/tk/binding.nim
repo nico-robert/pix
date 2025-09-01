@@ -61,9 +61,9 @@ proc Parent*  (tkwin: Window): Window {.cdecl, importc: "Tk_Parent", header: "tk
 when defined(x11):
 
   type TkIntXlibStubs {.importc.} = object
-    xCreateImage    : proc(display: ptr X.Display, v: ptr X.Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): X.ImagePtr {.cdecl.}
+    xCreateImage    : proc(display: ptr X.Display, v: ptr X.Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): X.PXImage {.cdecl.}
     xCreateGC       : proc(display: ptr X.Display, d: X.Drawable, valueMask: culong, valuePtr: var X.GCValues): X.GC {.cdecl.}
-    xPutImage       : proc(display: ptr X.Display, dr: X.Drawable, gc: X.GC, im: X.ImagePtr, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint {.cdecl.}
+    xPutImage       : proc(display: ptr X.Display, dr: X.Drawable, gc: X.GC, im: X.PXImage, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint {.cdecl.}
     xFlush          : proc(display: ptr X.Display): cint {.cdecl.}
     xSetBackground  : proc(display: ptr X.Display, gc: X.GC, bg: culong): cint {.cdecl.}
     xSetForeground  : proc(display: ptr X.Display, gc: X.GC, fg: culong): cint {.cdecl.}
@@ -74,13 +74,13 @@ when defined(x11):
 
   var tkIntXlibStubsPtr {.importc: "tkIntXlibStubsPtr", header: "tkIntXlibDecls.h".}: ptr TkIntXlibStubs
 
-  proc XCreateImage*(display: ptr X.Display, v: ptr X.Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): X.ImagePtr =
+  proc XCreateImage*(display: ptr X.Display, v: ptr X.Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): X.PXImage =
     return tkIntXlibStubsPtr.xCreateImage(display, v, ui1, i1, i2, cp, ui2, ui3, i3, i4)
 
   proc XCreateGC*(display: ptr X.Display, d: X.Drawable, valueMask: culong, valuePtr: var X.GCValues): X.GC =
     return tkIntXlibStubsPtr.xCreateGC(display, d, valueMask, valuePtr)
 
-  proc XPutImage*(display: ptr X.Display, dr: X.Drawable, gc: X.GC, im: X.ImagePtr, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint =
+  proc XPutImage*(display: ptr X.Display, dr: X.Drawable, gc: X.GC, im: X.PXImage, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint =
     return tkIntXlibStubsPtr.xPutImage(display, dr, gc, im, sx, sy, dx, dy, w, h)
 
   proc XFlush*(display: ptr X.Display): cint =
