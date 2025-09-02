@@ -113,10 +113,7 @@ proc pix_createProc(
   if Tcl.EvalObjv(interp, 2, cmdPtr, 0) != Tcl.OK:
     Tcl.DecrRefCount(cmd[0])
     Tcl.DecrRefCount(cmd[1])
-    Tcl.SetObjResult(
-      interp, Tcl.NewStringObj(Tcl.GetStringResult(interp), -1)
-    )
-    return Tcl.ERROR
+    return pixUtils.errorMSG(interp, $Tcl.GetStringResult(interp))
   
   Tcl.DecrRefCount(cmd[0])
   Tcl.DecrRefCount(cmd[1])
