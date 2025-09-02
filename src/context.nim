@@ -52,15 +52,15 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let
-    ctx = newContext(img) 
-    pc = toHexPtr(ctx)
-    pi = pc.replace("^ctx", "^img")
+    ctx = newContext(img)
+    ctxKey = toHexPtr(ctx)
+    imgKey = ctxKey.replace("^ctx", "^img")
 
   # Adds img + ctx.
-  ptable.addContext(pc, ctx)
-  ptable.addImage(pi, img)
+  ptable.addContext(ctxKey, ctx)
+  ptable.addImage(imgKey, img)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(pc.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(ctxKey.cstring, -1))
 
   return Tcl.OK
 
