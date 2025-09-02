@@ -25,10 +25,10 @@ proc pix_image(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(img)
-  ptable.addImage(p, img)
+  let imgKey = toHexPtr(img)
+  ptable.addImage(imgKey, img)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -51,10 +51,10 @@ proc pix_image_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # Attempt to create a copy of the image object
   let copyimg = img.copy()
 
-  let p = toHexPtr(copyimg)
-  ptable.addImage(p, copyimg)
+  let imgKey = toHexPtr(copyimg)
+  ptable.addImage(imgKey, copyimg)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -185,10 +185,10 @@ proc pix_image_readImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(img)
-  ptable.addImage(p, img)
+  let imgKey = toHexPtr(img)
+  ptable.addImage(imgKey, img)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -423,10 +423,10 @@ proc pix_image_shadow(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(shadow)
-  ptable.addImage(p, shadow)
+  let imgKey = toHexPtr(shadow)
+  ptable.addImage(imgKey, shadow)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -563,10 +563,10 @@ proc pix_image_resize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(newimg)
-  ptable.addImage(p, newimg)
+  let imgKey = toHexPtr(newimg)
+  ptable.addImage(imgKey, newimg)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -1009,10 +1009,10 @@ proc pix_image_magnifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(newimg)
-  ptable.addImage(p, newimg)
+  let imgKey = toHexPtr(newimg)
+  ptable.addImage(imgKey, newimg)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -1053,10 +1053,10 @@ proc pix_image_minifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(newimg)
-  ptable.addImage(p, newimg)
+  let imgKey = toHexPtr(newimg)
+  ptable.addImage(imgKey, newimg)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -1154,10 +1154,10 @@ proc pix_image_subImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(subimage)
-  ptable.addImage(p, subimage)
+  let imgKey = toHexPtr(subimage)
+  ptable.addImage(imgKey, subimage)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -1205,10 +1205,10 @@ proc pix_image_superImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(subimage)
-  ptable.addImage(p, subimage)
+  let imgKey = toHexPtr(subimage)
+  ptable.addImage(imgKey, subimage)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
