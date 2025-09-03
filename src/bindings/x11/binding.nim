@@ -147,8 +147,7 @@ proc pix_getProc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData
   let master = cast[ptr PixImageMaster](masterData)
 
   if master == nil:
-    echo "pix(error): masterData is nil"
-    return nil
+    Tcl.Panic("pix(error): masterData is nil")
     
   var gcValues: X.GCValues
   gcValues.graphics_exposures = false
@@ -157,8 +156,7 @@ proc pix_getProc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData
   var instance = cast[ptr PixImageInstance](alloc0(sizeof(PixImageInstance)))
 
   if instance == nil:
-    echo "pix(error): allocation error for PixImageInstance object."
-    return nil
+    Tcl.Panic("pix(error): allocation error for PixImageInstance object.")
 
   instance.master = master
   instance.tkwin  = tkwin
@@ -212,8 +210,7 @@ proc pix_displayProc(
     # Allocate image buffer
     let imageBuffer = cast[ptr UncheckedArray[uint8]](alloc0(bufferSize))
     if imageBuffer == nil:
-      echo "pix(error): allocation error for image buffer"
-      return
+      Tcl.Panic("pix(error): allocation error for image buffer")
   
     let
       srcPixels = cast[ptr UncheckedArray[uint32]](instance.master.image.data[0].addr)
@@ -281,8 +278,7 @@ proc pix_displayProc(
     dealloc(imageBuffer)
   
     if putResult != 0:
-      echo "pix(error): Tk.XPutImage failed with code: ", putResult
-      return
+      Tcl.Panic("pix(error): Tk.XPutImage failed with code: %i", putResult)
   
     instance.dirty = false
   timeBody("XCopyArea"):
