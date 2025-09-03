@@ -27,6 +27,7 @@ type
     tcl_GetObjResult         : proc(interp: PInterp): PObj {.cdecl.}
     tcl_NewByteArrayObj      : proc(bytes: cstring, length: Size): PObj {.cdecl.}
     tcl_EvalObjv             : proc(interp: PInterp, objc: Size, objv: PPObj, flags: cint): cint {.cdecl.}
+    tcl_Panic                : proc(format: cstring) {.cdecl.} 
     when defined(tcl9):
       tcl_IncrRefCount       : proc(objPtr: PObj) {.cdecl.}
       tcl_DecrRefCount       : proc(objPtr: PObj) {.cdecl.}
@@ -101,6 +102,9 @@ proc NewByteArrayObj*(bytes: cstring, length: Size): PObj =
 
 proc EvalObjv*(interp: PInterp, objc: Size, objv: PPObj, flags: cint): cint =
   return tclStubsPtr.tcl_EvalObjv(interp, objc, objv, flags)
+
+proc Panic*(format: cstring) {.varargs, noreturn.} =
+  tclStubsPtr.tcl_Panic(format)
 
 when defined(tcl8):
   proc NewIntObj*(intValue: cint): PObj =
