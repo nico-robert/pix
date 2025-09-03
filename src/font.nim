@@ -23,10 +23,10 @@ proc pix_font_readFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(font)
-  ptable.addFont(p, font)
+  let fontKey = toHexPtr(font)
+  ptable.addFont(fontKey, font)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(fontKey.cstring, -1))
 
   return Tcl.OK
 
@@ -103,10 +103,10 @@ proc pix_font_newFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Create a new pixie.Font from the given TypeFace object.
   let font = newFont(tface)
 
-  let p = toHexPtr(font)
-  ptable.addFont(p, font)
+  let fontKey = toHexPtr(font)
+  ptable.addFont(fontKey, font)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(fontKey.cstring, -1))
 
   return Tcl.OK
 
@@ -129,10 +129,10 @@ proc pix_font_newSpan(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Create a new span object.
   let span = newSpan($Tcl.GetString(objv[2]), font)
 
-  let p = toHexPtr(span)
-  ptable.addSpan(p, span)
+  let spanKey = toHexPtr(span)
+  ptable.addSpan(spanKey, span)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(spanKey.cstring, -1))
 
   return Tcl.OK
 
@@ -189,10 +189,10 @@ proc pix_font_readTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(typeface)
-  ptable.addTface(p, typeface)
+  let tFKey = toHexPtr(typeface)
+  ptable.addTface(tFKey, typeface)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(tFKey.cstring, -1))
 
   return Tcl.OK
 
@@ -212,9 +212,9 @@ proc pix_font_readTypefaces(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   try:
     # Typeface
     for _, typeface in readTypefaces($Tcl.GetString(objv[1])):
-      let p = toHexPtr(typeface)
-      ptable.addTface(p, typeface)
-      discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewStringObj(p.cstring, -1))
+      let tFKey = toHexPtr(typeface)
+      ptable.addTface(tFKey, typeface)
+      discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewStringObj(tFKey.cstring, -1))
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -324,10 +324,10 @@ proc pix_font_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   if font.isNil: return Tcl.ERROR
 
   let newfont = font.copy()
-  let p = toHexPtr(newfont)
-  ptable.addFont(p, newfont)
+  let fontKey = toHexPtr(newfont)
+  ptable.addFont(fontKey, newfont)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(fontKey.cstring, -1))
 
   return Tcl.OK
 
@@ -501,10 +501,10 @@ proc pix_font_getGlyphPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     "pix(error): the '<path>' return object is 'null'."
     )
 
-  let p = toHexPtr(path)
-  ptable.addPath(p, path)
+  let pathKey = toHexPtr(path)
+  ptable.addPath(pathKey, path)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(pathKey.cstring, -1))
 
   return Tcl.OK
 
@@ -741,10 +741,10 @@ proc pix_font_parseOtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(typeface)
-  ptable.addTface(p, typeface)
+  let tFKey = toHexPtr(typeface)
+  ptable.addTface(tFKey, typeface)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(tFKey.cstring, -1))
 
   return Tcl.OK
 
@@ -769,10 +769,10 @@ proc pix_font_parseSvgFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(typeface)
-  ptable.addTface(p, typeface)
+  let tFKey = toHexPtr(typeface)
+  ptable.addTface(tFKey, typeface)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(tFKey.cstring, -1))
 
   return Tcl.OK
 
@@ -797,10 +797,10 @@ proc pix_font_parseTtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(typeface)
-  ptable.addTface(p, typeface)
+  let tFKey = toHexPtr(typeface)
+  ptable.addTface(tFKey, typeface)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(tFKey.cstring, -1))
 
   return Tcl.OK
 
