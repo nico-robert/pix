@@ -8,10 +8,10 @@ proc pix_path(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
   let ptable = cast[PixTable](clientData)
   let path = newPath()
 
-  let p = toHexPtr(path)
-  ptable.addPath(p, path)
+  let pathKey = toHexPtr(path)
+  ptable.addPath(pathKey, path)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(pathKey.cstring, -1))
 
   return Tcl.OK
 
@@ -553,10 +553,10 @@ proc pix_path_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
   let pathcopy = path.copy()
 
-  let p = toHexPtr(pathcopy)
-  ptable.addPath(p, pathcopy)
+  let pathKey = toHexPtr(pathcopy)
+  ptable.addPath(pathKey, pathcopy)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(pathKey.cstring, -1))
 
   return Tcl.OK
 
