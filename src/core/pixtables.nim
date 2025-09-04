@@ -59,8 +59,8 @@ proc loadContext*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.C
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasContext(key):
-    let msg = cstring("pix(error): unknown <ctx> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <ctx> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -92,8 +92,8 @@ proc loadImage*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Ima
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasImage(key):
-    let msg = cstring("pix(error): unknown <img> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <img> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -125,8 +125,8 @@ proc loadFont*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Font
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasFont(key):
-    let msg = cstring("pix(error): unknown <font> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <font> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -158,8 +158,8 @@ proc loadPaint*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Pai
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasPaint(key):
-    let msg = cstring("pix(error): unknown <paint> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <paint> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -191,8 +191,8 @@ proc loadPath*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Path
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasPath(key):
-    let msg = cstring("pix(error): unknown <path> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <path> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -218,8 +218,8 @@ proc loadTFace*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Typ
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasTFace(key):
-    let msg = cstring("pix(error): unknown <TypeFace> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <TypeFace> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -245,8 +245,8 @@ proc loadArr*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Arran
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasArr(key):
-    let msg = cstring("pix(error): unknown <Arrangement> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <Arrangement> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
@@ -278,8 +278,8 @@ proc loadSVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Svg =
   let key = $Tcl.GetString(obj)
 
   if not pTable.hasSVG(key):
-    let msg = cstring("pix(error): unknown <svg> key object found: '" & key & "'.")
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg, -1))
+    let msg = "pix(error): unknown <svg> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
     # We return nil to indicate that an error occurred.
     return nil
 
