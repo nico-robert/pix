@@ -60,6 +60,11 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   ptable.addContext(ctxKey, ctx)
   ptable.addImage(imgKey, img)
 
+  when defined(x11):
+    let cmd = "image create pix " & ctxKey & " -data " & ctxKey
+    if Tcl.Eval(interp, cmd.cstring) != Tcl.OK:
+      return Tcl.ERROR
+
   Tcl.SetObjResult(interp, Tcl.NewStringObj(ctxKey.cstring, -1))
 
   return Tcl.OK
@@ -239,6 +244,10 @@ proc pix_ctx_strokeSegment(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     ctx.strokeSegment(segment(start, stop))
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  when defined(x11):
+    if X11.surfXFlush(interp, objv[1], ctx) != Tcl.OK:
+      return Tcl.ERROR
 
   return Tcl.OK
 
@@ -1053,6 +1062,10 @@ proc pix_ctx_fillRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
+  when defined(x11):
+    if X11.surfXFlush(interp, objv[1], ctx) != Tcl.OK:
+      return Tcl.ERROR
+
   return Tcl.OK
 
 proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
@@ -1315,6 +1328,10 @@ proc pix_ctx_fillStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
         pixUtils.getColor(objv[2]) # Color
       except InvalidColor as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  when defined(x11):
+    if X11.surfXFlush(interp, objv[1], ctx) != Tcl.OK:
+      return Tcl.ERROR
 
   return Tcl.OK
 
