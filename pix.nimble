@@ -38,8 +38,15 @@
                # Adds another test for fonts (works only with Tcl9)
                # Reworks tests files (Compare the result with pix::img::diff proc).
                # Simplification of some procedures + cosmetic changes.
+# 07-Sep-2025 : v0.6
+               # Fix doc : Matrix values are in column order.
+               # Adds HSL color.
+               # Redefining Tcl/Tk procedures for transition to Nim version `2.2.4`.
+               # Fixes `setLineDash` command to get around pixie's problem when Tcl list is not even.
+               # Try to improve the `X11` binding.
+               # Cosmetic changes.
 
-version     = "0.5"
+version     = "0.6"
 author      = "Nicolas ROBERT"
 description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), " &
               "a full-featured 2D graphics library written in Nim."
