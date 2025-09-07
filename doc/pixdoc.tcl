@@ -425,7 +425,7 @@ foreach line $readme {
 }
 
 if {$release ne ""} {
-    puts $fp "#### Release\n[join $release \n]"
+    puts $fp "#### Release :\n[join $release \n]"
 }
 
 puts $fp "}"

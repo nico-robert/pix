@@ -1,7 +1,7 @@
 namespace eval ::Release {
     # Ruff documentation
     variable _ruff_preamble {
-#### Release
+#### Release :
 *  **03-Jun-2024** : 0.1<br>
     - Initial release.<br>
 *  **25-Jun-2024** : 0.2<br>
@@ -29,8 +29,8 @@ namespace eval ::Release {
     - Code refactoring ++.<br>
 *  **03-Apr-2025** : 0.5<br>
     - Try to improve the comments for the documentation.<br>
-    - Fixes bug for `pix::ctx::clip` + `pix::ctx::isPointInPath`<br>
-    - procedures when args count was equal to 2.<br>
+    - Fixes bug for `pix::ctx::clip` + `pix::ctx::isPointInPath`   <br>
+      procedures when args count was equal to 2.<br>
     - Adds `pix::toBinary` procedure.<br>
     - Adds `pix::getKeys` procedure for image & context, useful for debugging.<br>
     - Adds procedures for working with `matrices` (translate, scale, multiply).<br>
@@ -38,6 +38,13 @@ namespace eval ::Release {
     - Adds another test for fonts (works only with Tcl9)<br>
     - Reworks tests files (Compare the result with `pix::img::diff` proc).<br>
     - Simplification of some procedures + cosmetic changes.<br>
+*  **07-Sep-2025** : 0.6<br>
+    - Fix doc : Matrix values are in column order.<br>
+    - Adds HSL color.<br>
+    - Redefining Tcl/Tk procedures for transition to Nim version `2.2.4`.<br>
+    - Fixes `setLineDash` command to get around pixie's problem when Tcl list is not even.<br>
+    - Try to improve the `X11` binding.<br>
+    - Cosmetic changes.<br>
 <br>
 }
 }

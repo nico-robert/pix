@@ -30,5 +30,13 @@ floating point numbers between **0.0** and **1.0**. The numbers are the
 *red*, *green*, *blue*, and *alpha* components of the color.
 string color  - e.g : *white*<br>
 HTML color as a name.
+hsv          - e.g : *hsv(h,s,v)*<br>
+This format takes three arguments, for the *hue*, *saturation*, and
+*value* components of the color. The arguments are all floating point
+hue 0 to 360, saturation 0 to 100, and value 0 to 100.
+hsl          - e.g : *hsl(h,s,l)*<br>
+This format takes three arguments, for the *hue*, *saturation*, and
+*lightness* components of the color. The arguments are all floating point
+hue 0 to 360, saturation 0 to 100, and lightness 0 to 100.
 }
 }
