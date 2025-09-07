@@ -10,7 +10,7 @@ import ../../core/pixutils as pixUtils
 import ../../core/pixparses as pixParses
 import times
 
-template timeBody(name: string, body: untyped): untyped =
+template timeBody*(name: string, body: untyped): untyped =
   # Measures the time taken to execute a block of code.
   #
   # name - The name of the block.
@@ -281,12 +281,12 @@ proc pix_displayProc(
       Tcl.Panic("pix(error): Tk.XPutImage failed with code: %i", putResult)
   
     instance.dirty = false
-  timeBody("XCopyArea"):
-    # Copy the pixmap to the drawable
-    discard XCopyArea(display, instance.pixmap, drawable, instance.gc,
-      imageX, imageY, width.cuint, height.cuint,
-      drawableX, drawableY
-    )
+
+  # Copy the pixmap to the drawable
+  discard XCopyArea(display, instance.pixmap, drawable, instance.gc,
+    imageX, imageY, width.cuint, height.cuint,
+    drawableX, drawableY
+  )
   
   discard XFlush(display)
   
@@ -357,6 +357,39 @@ proc surfXUpdate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   else:
     let errormsg = "pix(error): unknown <image> or <ctx> key object found '" & masterKey & "'"
     return pixUtils.errorMSG(interp, errormsg)
+
+  # Update image + size
+  master.image  = img
+  master.width  = img.width.cint
+  master.height = img.height.cint
+
+  if master.instances != nil:
+    master.instances.dirty = true
+    master.instances.width = master.width
+    master.instances.height = master.height
+  
+  Tk.ImageChanged(
+    master.tkMaster, 
+    0, 0, master.width, master.height, 
+    master.width, master.height
+  )
+
+  return Tcl.OK
+
+proc surfXFlush*(interp: Tcl.PInterp, obj: Tcl.PObj, ctx: pixie.Context): cint =
+
+  let pixImgName = Tcl.GetString(obj)
+  var imageType: Tk.ImageType
+
+  let instanceData = Tk.GetImageMasterData(interp, pixImgName, imageType)
+
+  let master = cast[ptr PixImageMaster](instanceData)
+  if master == nil:
+    let errormsg = "pix(error): cannot get master data for '" & $pixImgName & "'"
+    return pixUtils.errorMSG(interp, errormsg)
+
+  # Image
+  let img = ctx.image 
 
   # Update image + size
   master.image  = img
