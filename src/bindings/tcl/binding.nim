@@ -27,13 +27,16 @@ type
     tcl_GetObjResult         : proc(interp: PInterp): PObj {.cdecl.}
     tcl_NewByteArrayObj      : proc(bytes: cstring, length: Size): PObj {.cdecl.}
     tcl_EvalObjv             : proc(interp: PInterp, objc: Size, objv: PPObj, flags: cint): cint {.cdecl.}
-    tcl_Panic                : proc(format: cstring) {.cdecl.} 
+    tcl_Panic                : proc(format: cstring) {.cdecl.}
+    tcl_VarEval              : proc(interp: PInterp): cint {.cdecl.}
+    tcl_EvalEx               : proc(interp: PInterp, script: cstring, numBytes: Size, flags: cint): cint {.cdecl.}
     when defined(tcl9):
       tcl_IncrRefCount       : proc(objPtr: PObj) {.cdecl.}
       tcl_DecrRefCount       : proc(objPtr: PObj) {.cdecl.}
     when defined(tcl8):
       tcl_NewIntObj          : proc(intValue: cint): PObj {.cdecl.}
       tcl_NewBooleanObj      : proc(intValue: cint): PObj {.cdecl.}
+      tcl_Eval               : proc(interp: PInterp, script: cstring): cint {.cdecl.}
 
 var tclStubsPtr {.importc: "tclStubsPtr", header: "tclDecls.h".} : ptr TclStubs
 
@@ -106,12 +109,21 @@ proc EvalObjv*(interp: PInterp, objc: Size, objv: PPObj, flags: cint): cint =
 proc Panic*(format: cstring) {.varargs, noreturn.} =
   tclStubsPtr.tcl_Panic(format)
 
+proc VarEval*(interp: PInterp): cint {.varargs.} =
+  return tclStubsPtr.tcl_VarEval(interp)
+
+proc EvalEx*(interp: PInterp, script: cstring, numBytes: Size, flags: cint): cint =
+  tclStubsPtr.tcl_EvalEx(interp, script, numBytes, flags)
+
 when defined(tcl8):
   proc NewIntObj*(intValue: cint): PObj =
     return tclStubsPtr.tcl_NewIntObj(intValue)
 
   proc NewBooleanObj*(intValue: cint): PObj =
     return tclStubsPtr.tcl_NewBooleanObj(intValue)
+
+  proc Eval*(interp: PInterp, script: cstring): cint =
+    return tclStubsPtr.tcl_Eval(interp, script)
 
   proc IncrRefCount*(objPtr: PObj) {.cdecl, importc: "Tcl_IncrRefCount", header: "tcl.h".}
   proc DecrRefCount*(objPtr: PObj) {.cdecl, importc: "Tcl_DecrRefCount", header: "tcl.h".}
@@ -122,6 +134,9 @@ when defined(tcl9):
 
   proc DecrRefCount*(objPtr: PObj) =
     tclStubsPtr.tcl_DecrRefCount(objPtr)
+
+  proc Eval*(interp: PInterp, script: cstring): cint =
+    return EvalEx(interp, script, TCL_INDEX_NONE, 0)
 
   template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(WideInt(value))
   template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(WideInt(if intValue != 0: 1 else: 0))
