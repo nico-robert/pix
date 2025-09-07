@@ -1,6 +1,7 @@
 const
   OK*    = 0
   ERROR* = 1
+  TCL_INDEX_NONE* = -1
 
 when defined(tcl9):
   type Size* {.importc: "Tcl_Size", header: "tcl.h".} = clong
