@@ -5,7 +5,7 @@ import pixie, pixie/fileformats/svg
 import std/tables
 
 from ../bindings/tk/binding as Tk import ImageMaster
-from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj, GetString
+from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj, GetString, `$`
 
 type
   PixTable* = ref object
@@ -56,7 +56,7 @@ proc loadContext*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.C
 # If found, it returns the associated pixie.Context object.
 # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasContext(key):
     let msg = "pix(error): unknown <ctx> key object found: '" & key & "'."
@@ -89,7 +89,7 @@ proc loadImage*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Ima
   # If found, it returns the associated pixie.Image object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasImage(key):
     let msg = "pix(error): unknown <img> key object found: '" & key & "'."
@@ -122,7 +122,7 @@ proc loadFont*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Font
   # If found, it returns the associated pixie.Font object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasFont(key):
     let msg = "pix(error): unknown <font> key object found: '" & key & "'."
@@ -155,7 +155,7 @@ proc loadPaint*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Pai
   # If found, it returns the associated pixie.Paint object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasPaint(key):
     let msg = "pix(error): unknown <paint> key object found: '" & key & "'."
@@ -188,7 +188,7 @@ proc loadPath*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Path
   # If found, it returns the associated pixie.Path object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasPath(key):
     let msg = "pix(error): unknown <path> key object found: '" & key & "'."
@@ -215,7 +215,7 @@ proc loadTFace*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Typ
   # If found, it returns the associated pixie.Typeface object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasTFace(key):
     let msg = "pix(error): unknown <TypeFace> key object found: '" & key & "'."
@@ -242,7 +242,7 @@ proc loadArr*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): pixie.Arran
   # If found, it returns the associated pixie.Arrangement object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasArr(key):
     let msg = "pix(error): unknown <Arrangement> key object found: '" & key & "'."
@@ -275,7 +275,7 @@ proc loadSVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Svg =
   # If found, it returns the associated Svg object.
   # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $Tcl.GetString(obj)
+  let key = $obj
 
   if not pTable.hasSVG(key):
     let msg = "pix(error): unknown <svg> key object found: '" & key & "'."
