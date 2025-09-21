@@ -15,7 +15,7 @@ proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   var paint: pixie.Paint
 
   try:
-    let myEnum = parseEnum[PaintKind]($Tcl.GetString(objv[1]))
+    let myEnum = parseEnum[PaintKind]($objv[1])
     paint = newPaint(myEnum)
   except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
@@ -73,7 +73,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   try:
     for i in countup(0, count - 1, 2):
       let
-        mkey = $Tcl.GetString(elements[i])
+        mkey = $elements[i]
         value = elements[i+1]
       case mkey:
         of "color":
@@ -82,9 +82,9 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
           if Tcl.GetDoubleFromObj(interp, value, opacity) != Tcl.OK: return Tcl.ERROR
           paint.opacity = opacity
         of "blendMode":
-          paint.blendMode = parseEnum[BlendMode]($Tcl.GetString(value))
+          paint.blendMode = parseEnum[BlendMode]($value)
         of "image":
-          paint.image = ptable.getImage($Tcl.GetString(value))
+          paint.image = ptable.getImage($value)
         of "imageMat":
           # Matrix 3x3 check
           if pixUtils.matrix3x3(interp, value, matrix3) != Tcl.OK: return Tcl.ERROR
@@ -194,7 +194,7 @@ proc pix_paint_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
 
   # Paint
   if key == "all":
