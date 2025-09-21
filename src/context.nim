@@ -23,7 +23,7 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 
   if objc == 2:
     # Image or size coordinates.
-    let arg1 = $Tcl.GetString(objv[1])
+    let arg1 = $objv[1]
     if ptable.hasImage(arg1):
       img = ptable.getImage(arg1)
     else:
@@ -89,7 +89,7 @@ proc pix_ctx_strokeStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   if ctx.isNil: return Tcl.ERROR
 
   # Paint or string [color].
-  let arg2 = $Tcl.GetString(objv[2])
+  let arg2 = $objv[2]
 
   ctx.strokeStyle =
     if ptable.hasPaint(arg2):
@@ -147,7 +147,7 @@ proc pix_ctx_textBaseline(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if ctx.isNil: return Tcl.ERROR
 
   let baseline = try:
-    parseEnum[BaselineAlignment]($Tcl.GetString(objv[2]))
+    parseEnum[BaselineAlignment]($objv[2])
   except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -507,7 +507,7 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   try:
     if objc == 3:
       # Path
-      let arg2 = $Tcl.GetString(objv[2])
+      let arg2 = $objv[2]
       if ptable.hasPath(arg2):
         let path = ptable.getPath(arg2)
         ctx.clip(path)
@@ -517,9 +517,9 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
         ctx.clip(myEnum)
     elif objc == 4:
       # Path
-      let 
-        path = ptable.getPath($Tcl.GetString(objv[2]))
-        myEnum = parseEnum[WindingRule]($Tcl.GetString(objv[3]))
+      let
+        path = ptable.getPath($objv[2])
+        myEnum = parseEnum[WindingRule]($objv[3])
       ctx.clip(path, myEnum)
     else:
       ctx.clip()
@@ -549,7 +549,7 @@ proc pix_ctx_measureText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Text
   let metrics = try:
-    ctx.measureText($Tcl.GetString(objv[2]))
+    ctx.measureText($objv[2])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -928,7 +928,7 @@ proc pix_ctx_lineJoin(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   try:
     # Enum
-    ctx.lineJoin = parseEnum[LineJoin]($Tcl.GetString(objv[2]))
+    ctx.lineJoin = parseEnum[LineJoin]($objv[2])
   except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -961,7 +961,7 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   if objc == 3:
     # Path
-    let arg2 = $Tcl.GetString(objv[2])
+    let arg2 = $objv[2]
     if ptable.hasPath(arg2):
       let path = ptable.getPath(arg2)
       try:
@@ -981,7 +981,7 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
     let path = ptable.loadPath(interp, objv[2])
     if path.isNil: return Tcl.ERROR
     try:
-      ctx.fill(path, parseEnum[WindingRule]($Tcl.GetString(objv[3])))
+      ctx.fill(path, parseEnum[WindingRule]($objv[3]))
     except ValueError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     except PixieError as e:
@@ -1318,7 +1318,7 @@ proc pix_ctx_fillStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   if ctx.isNil: return Tcl.ERROR
 
   # Paint or string [color].
-  let arg2 = $Tcl.GetString(objv[2])
+  let arg2 = $objv[2]
 
   ctx.fillStyle =
     if ptable.hasPaint(arg2):
@@ -1488,7 +1488,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   if objc == 4:
     # Path
-    let arg3 = $Tcl.GetString(objv[3])
+    let arg3 = $objv[3]
     if ptable.hasPath(arg3):
       try:
         if ctx.isPointInPath(ptable.getPath(arg3), x, y): value = 1
@@ -1513,7 +1513,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
       if ctx.isPointInPath(
         path,
         x, y,
-        windingRule = parseEnum[WindingRule]($Tcl.GetString(objv[4]))
+        windingRule = parseEnum[WindingRule]($objv[4])
       ): value = 1
     except ValueError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
@@ -1665,7 +1665,7 @@ proc pix_ctx_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   try:
     # File
-    ctx.image.writeFile($Tcl.GetString(objv[2]))
+    ctx.image.writeFile($objv[2])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -1756,7 +1756,7 @@ proc pix_ctx_font(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  ctx.font = $Tcl.GetString(objv[2])
+  ctx.font = $objv[2]
 
   return Tcl.OK
 
@@ -1812,7 +1812,7 @@ proc pix_ctx_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   try:
-    ctx.fillText($Tcl.GetString(objv[2]), x, y)
+    ctx.fillText($objv[2], x, y)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -2084,7 +2084,7 @@ proc pix_ctx_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   try:
-    ctx.strokeText($Tcl.GetString(objv[2]), x, y)
+    ctx.strokeText($objv[2], x, y)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -2108,7 +2108,7 @@ proc pix_ctx_textAlign(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   try:
     # Enum
-    ctx.textAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(objv[2]))
+    ctx.textAlign = parseEnum[HorizontalAlignment]($objv[2])
   except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -2156,7 +2156,7 @@ proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
     dictObj       = Tcl.NewDictObj()
     dictImgObj    = Tcl.NewDictObj()
     newListMatobj = Tcl.NewListObj(0, nil)
-    ctxKey        = $Tcl.GetString(objv[1])
+    ctxKey        = $objv[1]
     img           = ctxKey.replace("^ctx", "^img")
 
   discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4), Tcl.NewStringObj(img.cstring, -1))
@@ -2321,7 +2321,7 @@ proc pix_ctx_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
 
   # Context
   if key == "all":
