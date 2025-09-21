@@ -98,7 +98,7 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
         return Tcl.ERROR
       if count == 1:
         # Blend mode
-        let myEnum = parseEnum[BlendMode]($Tcl.GetString(objv[3]))
+        let myEnum = parseEnum[BlendMode]($objv[3])
         img1.draw(img2, blendMode = myEnum)
       else:
         # Matrix specified as a list
@@ -113,7 +113,7 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
         return Tcl.ERROR
 
       # Blend mode
-      let myEnum = parseEnum[BlendMode]($Tcl.GetString(objv[5]))
+      let myEnum = parseEnum[BlendMode]($objv[5])
 
       img1.draw(img2, transform = matrix3, blendMode = myEnum)
   except ValueError as e:
@@ -147,7 +147,7 @@ proc pix_image_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   if img.isNil: return Tcl.ERROR
 
   # Get fill value argument
-  let fillArg = $Tcl.GetString(objv[2])
+  let fillArg = $objv[2]
 
   # Handle paint object or color value
   if ptable.hasPaint(fillArg):
@@ -174,7 +174,7 @@ proc pix_image_readImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
     Tcl.WrongNumArgs(interp, 1, objv, "full pathfile")
     return Tcl.ERROR
 
-  let file = $Tcl.GetString(objv[1])
+  let file = $objv[1]
   let ptable = cast[PixTable](clientData)
 
   # Read the image from the file
@@ -222,7 +222,7 @@ proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   let ptable = cast[PixTable](clientData)
 
-  if $Tcl.GetString(objv[0]) == "pix::ctx::fillPath":
+  if $objv[0] == "pix::ctx::fillPath":
     # Context
     let ctx = ptable.loadContext(interp, objv[1])
     if ctx.isNil: return Tcl.ERROR
@@ -234,8 +234,8 @@ proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Get path and paint/color arguments
   let
-    pathArg = $Tcl.GetString(objv[2])
-    paintArg = $Tcl.GetString(objv[3])
+    pathArg = $objv[2]
+    paintArg = $objv[3]
 
   # Handle optional matrix
   if objc == 5:
@@ -295,7 +295,7 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   var img: pixie.Image
   let ptable = cast[PixTable](clientData)
 
-  if $Tcl.GetString(objv[0]) == "pix::ctx::strokePath":
+  if $objv[0] == "pix::ctx::strokePath":
     # Context
     let ctx = ptable.loadContext(interp, objv[1])
     if ctx.isNil: return Tcl.ERROR
@@ -306,8 +306,8 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
     if img.isNil: return Tcl.ERROR
 
   let
-    somepath = $Tcl.GetString(objv[2])
-    somepaint = $Tcl.GetString(objv[3])
+    somepath = $objv[2]
+    somepaint = $objv[3]
 
   # Parse the options from the Tcl dict and set the fields of 
   # the 'RenderOptions' object.
@@ -472,7 +472,7 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Font or arrangement.
-  let arg2 = $Tcl.GetString(objv[2])
+  let arg2 = $objv[2]
 
   var matrix3: vmath.Mat3
 
@@ -506,7 +506,7 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
       "pix(error): If <font> is present, a 'text' must be associated."
       )
 
-    let text = $Tcl.GetString(objv[3])
+    let text = $objv[3]
     # Create a new RenderOptions object to store font rendering options.
     var opts = pixParses.RenderOptions()
 
@@ -1279,7 +1279,7 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if img.isNil: return Tcl.ERROR
 
   # Font or Arrangement.
-  let arg2 = $Tcl.GetString(objv[2])
+  let arg2 = $objv[2]
 
   # Arrangement
   if ptable.hasArr(arg2):
@@ -1315,7 +1315,7 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
       "pix(error): If <font> is present, a 'text' must be associated."
       )
 
-    let text = $Tcl.GetString(objv[3])
+    let text = $objv[3]
     var opts = pixParses.RenderOptions()
 
     try:
@@ -1363,7 +1363,7 @@ proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   try:
     # Call the writeFile method of the image to save the image to the
     # file specified by filePath.
-    img.writeFile($Tcl.GetString(objv[2]))
+    img.writeFile($objv[2])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -1380,7 +1380,7 @@ proc pix_image_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
   
   let ptable = cast[PixTable](clientData)
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
 
   # Image
   if key == "all":
