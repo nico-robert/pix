@@ -115,6 +115,15 @@ proc VarEval*(interp: PInterp): cint {.varargs.} =
 proc EvalEx*(interp: PInterp, script: cstring, numBytes: Size, flags: cint): cint =
   tclStubsPtr.tcl_EvalEx(interp, script, numBytes, flags)
 
+proc GetStringResult*(interp: PInterp): cstring {.cdecl.} =
+  return GetString(GetObjResult(interp))
+
+proc `$`*(obj: PObj): string =
+  let s = GetString(obj)
+  if s.isNil:
+    return ""
+  return $s
+
 when defined(tcl8):
   proc NewIntObj*(intValue: cint): PObj =
     return tclStubsPtr.tcl_NewIntObj(intValue)
@@ -140,9 +149,6 @@ when defined(tcl9):
 
   template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(WideInt(value))
   template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(WideInt(if intValue != 0: 1 else: 0))
-
-proc GetStringResult*(interp: PInterp): cstring {.cdecl.} =
-  return GetString(GetObjResult(interp))
 
 proc tclInitStubs(interp: PInterp, version: cstring, exact: cint): cstring {.cdecl, importc: "Tcl_InitStubs", header: "tcl.h".}
 
