@@ -17,7 +17,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   let ptable = cast[PixTable](clientData)
 
   # Svg string
-  let arg1 = $Tcl.GetString(objv[1])
+  let arg1 = $objv[1]
   var svg: Svg
 
   if objc == 3:
@@ -83,7 +83,7 @@ proc pix_svg_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
 
   # Svg
   if key == "all":
