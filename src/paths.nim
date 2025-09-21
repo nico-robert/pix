@@ -451,7 +451,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   let windingRule = 
     if objc == 5:
       try:
-        parseEnum[WindingRule]($Tcl.GetString(objv[4]))
+        parseEnum[WindingRule]($objv[4])
       except ValueError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else: 
@@ -816,7 +816,7 @@ proc pix_path_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
 
   # Path
   if key == "all":
