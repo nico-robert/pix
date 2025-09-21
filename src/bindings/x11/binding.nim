@@ -61,7 +61,7 @@ proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: 
 
   # Context
   var img: pixie.Image
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
   let newListobj = Tcl.NewListObj(0, nil)
 
   if ptable.hasContext(key): 
@@ -97,7 +97,7 @@ proc pix_createProc(
     Tcl.WrongNumArgs(interp, 1, objv, "image create pix ?name -data (<img>|<ctx>)")
     return Tcl.ERROR
   
-  if $Tcl.GetString(objv[0]) != "-data":
+  if $objv[0] != "-data":
     let errormsg = "wrong # args: '-data' should present in a image create pix command."
     return pixUtils.errorMSG(interp, errormsg)
   
@@ -128,7 +128,7 @@ proc pix_createProc(
     let errormsg = "pix(error): allocation error for PixImageMaster object."
     return pixUtils.errorMSG(interp, errormsg)
   
-  master.imageKey = $Tcl.GetString(objv[1])
+  master.imageKey = $objv[1]
   master.image    = nil
   master.width    = width
   master.height   = height
