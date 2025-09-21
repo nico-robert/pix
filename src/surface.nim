@@ -13,7 +13,7 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
   
   let ptable = cast[PixTable](clientData)
-  let arg1 = $Tcl.GetString(objv[1])
+  let arg1 = $objv[1]
   var img: pixie.Image
 
   if ptable.hasContext(arg1):
