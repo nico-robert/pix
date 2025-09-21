@@ -264,7 +264,7 @@ proc getColor*(obj: Tcl.PObj): Color =
   #
   # Returns: A `Color` object.
 
-  let scolor = strip($Tcl.GetString(obj))
+  let scolor = strip($obj)
   var color: Color
 
   if scolor.isRGBAFormat():
@@ -413,7 +413,7 @@ proc svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Path
   let ptable = cast[PixTable](clientData)
-  let arg1 = $Tcl.GetString(objv[1])
+  let arg1 = $objv[1]
 
   let parse = try:
     parsePath(arg1)
@@ -473,7 +473,7 @@ proc toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: 
     return Tcl.ERROR
   
   let ptable = cast[PixTable](clientData)
-  let arg1= $Tcl.GetString(objv[1])
+  let arg1= $objv[1]
 
   let img = if ptable.hasContext(arg1):
     ptable.getContext(arg1).image
@@ -510,7 +510,7 @@ proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
     return Tcl.ERROR
   
   let ptable = cast[PixTable](clientData)
-  let arg1= $Tcl.GetString(objv[1])
+  let arg1= $objv[1]
 
   let img = if ptable.hasContext(arg1):
     ptable.getContext(arg1).image
@@ -524,7 +524,7 @@ proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   var fileformat: FileFormat = PngFormat
 
   if objc == 3:
-    let format = $Tcl.GetString(objv[2])
+    let format = $objv[2]
     fileFormat = case format.toLowerAscii():
       of "png": PngFormat
       of "bmp": BmpFormat
