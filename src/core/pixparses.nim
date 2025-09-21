@@ -103,7 +103,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
   for i in countup(0, count - 1, 2):
     let 
-      key = $Tcl.GetString(elements[i])
+      key = $elements[i]
       value = elements[i+1]
     case key:
       of "blur":
@@ -149,7 +149,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   for i in countup(0, count - 1, 2):
     let 
-      key = $Tcl.GetString(elements[i])
+      key = $elements[i]
       value = elements[i+1]
     case key:
       of "strokeWidth":
@@ -160,7 +160,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "lineCap":
         try:
-          opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
+          opts.lineCap = parseEnum[LineCap]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "miterLimit":
@@ -168,7 +168,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "lineJoin":
         try:
-          opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
+          opts.lineJoin = parseEnum[LineJoin]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "dashes":
@@ -214,7 +214,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   for i in countup(0, count - 1, 2):
     let 
-      key = $Tcl.GetString(elements[i])
+      key = $elements[i]
       value = elements[i+1]
     case key:
       of "strokeWidth":
@@ -228,22 +228,22 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           raise newException(ValueError, $Tcl.GetStringResult(interp))
       of "hAlign":
         try:
-          opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
+          opts.hAlign = parseEnum[HorizontalAlignment]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "vAlign":
         try:
-          opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
+          opts.vAlign = parseEnum[VerticalAlignment]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "lineCap":
         try:
-          opts.lineCap = parseEnum[LineCap]($Tcl.GetString(value))
+          opts.lineCap = parseEnum[LineCap]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "lineJoin":
         try:
-          opts.lineJoin = parseEnum[LineJoin]($Tcl.GetString(value))
+          opts.lineJoin = parseEnum[LineJoin]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "dashes":
@@ -296,7 +296,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
 
   for i in countup(0, count - 1, 2):
     let
-      key = $Tcl.GetString(elements[i])
+      key = $elements[i]
       value = elements[i+1]
     case key:
       of "wrap":
@@ -305,12 +305,12 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
         opts.wrap = wrapB.bool
       of "hAlign":
         try:
-          opts.hAlign = parseEnum[HorizontalAlignment]($Tcl.GetString(value))
+          opts.hAlign = parseEnum[HorizontalAlignment]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "vAlign":
         try:
-          opts.vAlign = parseEnum[VerticalAlignment]($Tcl.GetString(value))
+          opts.vAlign = parseEnum[VerticalAlignment]($value)
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "bounds":
