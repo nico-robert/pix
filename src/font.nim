@@ -19,7 +19,7 @@ proc pix_font_readFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Font
   let font = try:
-    readFont($Tcl.GetString(objv[1]))
+    readFont($objv[1])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -127,7 +127,7 @@ proc pix_font_newSpan(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if font.isNil: return Tcl.ERROR
 
   # Create a new span object.
-  let span = newSpan($Tcl.GetString(objv[2]), font)
+  let span = newSpan($objv[2], font)
 
   let spanKey = toHexPtr(span)
   ptable.addSpan(spanKey, span)
@@ -185,7 +185,7 @@ proc pix_font_readTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   # Typeface
   let typeface = try:
-    readTypeface($Tcl.GetString(objv[1]))
+    readTypeface($objv[1])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -211,7 +211,7 @@ proc pix_font_readTypefaces(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 
   try:
     # Typeface
-    for _, typeface in readTypefaces($Tcl.GetString(objv[1])):
+    for _, typeface in readTypefaces($objv[1]):
       let tFKey = toHexPtr(typeface)
       ptable.addTface(tFKey, typeface)
       discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewStringObj(tFKey.cstring, -1))
@@ -405,7 +405,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let str = $Tcl.GetString(objv[2])
+  let str = $objv[2]
 
   if str.len == 0:
     return pixUtils.errorMSG(interp, 
@@ -451,7 +451,7 @@ proc pix_font_getAdvance(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let str = $Tcl.GetString(objv[2])
+  let str = $objv[2]
 
   if str.len == 0:
     Tcl.SetObjResult(interp, Tcl.NewDoubleObj(0))
@@ -482,7 +482,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let str = $Tcl.GetString(objv[2])
+  let str = $objv[2]
 
   if str.len == 0:
     return pixUtils.errorMSG(
@@ -532,8 +532,8 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.TClientData, interp: Tcl.PInt
 
   # Rune
   let 
-    str1 = $Tcl.GetString(objv[2])
-    str2 = $Tcl.GetString(objv[3])
+    str1 = $objv[2]
+    str2 = $objv[3]
 
   let c1 = try:
     str1.runeAt(0)
@@ -568,7 +568,7 @@ proc pix_font_hasGlyph(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   if tface.isNil: return Tcl.ERROR
 
   # Rune
-  let str = $Tcl.GetString(objv[2])
+  let str = $objv[2]
 
   if str.len == 0:
     Tcl.SetObjResult(interp, Tcl.NewIntObj(0))
@@ -603,7 +603,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     bounds: vmath.Vec2
 
   let ptable = cast[PixTable](clientData)
-  let arg1 = $Tcl.GetString(objv[1])
+  let arg1 = $objv[1]
 
   if ptable.hasArr(arg1):
     # Arrangement
@@ -618,7 +618,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
       "pix(error): If <font> is present, a 'text' must be associated."
       )
 
-    bounds = font.layoutBounds($Tcl.GetString(objv[2]))
+    bounds = font.layoutBounds($objv[2])
   else:
     # Span
     if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
@@ -631,7 +631,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
     var spans = newSeq[Span]()
     for i in 0..count-1:
-      spans.add(ptable.getSpan($Tcl.GetString(elements[i])))
+      spans.add(ptable.getSpan($elements[i]))
 
     bounds = spans.layoutBounds()
 
@@ -737,7 +737,7 @@ proc pix_font_parseOtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Buffer
   let typeface = try:
-    parseOtf($Tcl.GetString(objv[1]))
+    parseOtf($objv[1])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -765,7 +765,7 @@ proc pix_font_parseSvgFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   # Buffer
   let typeface = try:
-    parseSvgFont($Tcl.GetString(objv[1]))
+    parseSvgFont($objv[1])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -793,7 +793,7 @@ proc pix_font_parseTtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Buffer
   let typeface = try:
-    parseTtf($Tcl.GetString(objv[1]))
+    parseTtf($objv[1])
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -815,7 +815,7 @@ proc pix_font_scale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let arg1 = $Tcl.GetString(objv[1])
+  let arg1 = $objv[1]
 
   let scale =
     if ptable.hasFont(arg1):
@@ -866,7 +866,7 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     jj = 3
 
   let ptable = cast[PixTable](clientData)
-  let arg1 = $Tcl.GetString(objv[1])
+  let arg1 = $objv[1]
 
   if ptable.hasFont(arg1):
     # Font
@@ -875,7 +875,7 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
       return pixUtils.errorMSG(interp,
       "pix(error): If <font> is present, a 'text' must be associated."
       )
-    text = $Tcl.GetString(objv[2])
+    text = $objv[2]
   else:
     # Spans
     if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
@@ -886,7 +886,7 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
     hasFont = false
     for j in 0..count-1:
-      spans.add(ptable.getSpan($Tcl.GetString(elements[j])))
+      spans.add(ptable.getSpan($elements[j]))
 
   if (objc == 4 and hasFont) or (objc == 3 and not hasFont):
     if hasFont == false: jj = 2
@@ -965,7 +965,7 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   for i in countup(0, count - 1, 2):
     let 
-      mkey = $Tcl.GetString(elements[i])
+      mkey = $elements[i]
       value = elements[i+1]
     case mkey:
       of "noKerningAdjustments":
@@ -1065,7 +1065,7 @@ proc pix_font_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let key = $Tcl.GetString(objv[1])
+  let key = $objv[1]
 
   # Font
   if key == "all":
