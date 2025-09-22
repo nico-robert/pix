@@ -268,15 +268,15 @@ proc getColor*(obj: Tcl.PObj): Color =
   var color: Color
 
   if scolor.isRGBAFormat():
-    return parseHtmlRgba(scolor)
+    return chroma.parseHtmlRgba(scolor)
   elif scolor.isHexHtmlFormat():
-    return parseHtmlHex(scolor)
+    return chroma.parseHtmlHex(scolor)
   elif scolor.isRGBFormat():
-    return parseHtmlRgb(scolor)
+    return chroma.parseHtmlRgb(scolor)
   elif scolor.isHexAlphaFormat():
-    return parseHexAlpha(scolor)
+    return chroma.parseHexAlpha(scolor)
   elif scolor.isHexFormat():
-    return parseHex(scolor)
+    return chroma.parseHex(scolor)
   elif scolor.isRGBXFormat():
     return parseColorRGBX(scolor).color
   elif scolor.isHSLFormat():
