@@ -231,16 +231,16 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
 
     # General pix commands
     "pix::drawSurface"       : pix_draw_surface,
-    "pix::colorHTMLtoRGBA"   : pixUtils.colorHTMLtoRGBA,
-    "pix::pathObjToString"   : pixUtils.pathObjToString,
-    "pix::svgStyleToPathObj" : pixUtils.svgStyleToPathObj,
-    "pix::getKeys"           : pixUtils.getKeys,
-    "pix::toB64"             : pixUtils.toB64,
-    "pix::toBinary"          : pixUtils.toBinary,
-    "pix::rotMatrix"         : pixUtils.rotMatrix,
-    "pix::scaleMatrix"       : pixUtils.scaleMatrix,
-    "pix::transMatrix"       : pixUtils.transMatrix,
-    "pix::mulMatrix"         : pixUtils.mulMatrix,
+    "pix::colorHTMLtoRGBA"   : pixutils.colorHTMLtoRGBA,
+    "pix::pathObjToString"   : pixutils.pathObjToString,
+    "pix::svgStyleToPathObj" : pixutils.svgStyleToPathObj,
+    "pix::getKeys"           : pixutils.getKeys,
+    "pix::toB64"             : pixutils.toB64,
+    "pix::toBinary"          : pixutils.toBinary,
+    "pix::rotMatrix"         : pixutils.rotMatrix,
+    "pix::scaleMatrix"       : pixutils.scaleMatrix,
+    "pix::transMatrix"       : pixutils.transMatrix,
+    "pix::mulMatrix"         : pixutils.mulMatrix,
     # ...
   }.toTable
 
