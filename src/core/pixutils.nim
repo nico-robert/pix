@@ -18,21 +18,16 @@ proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   return Tcl.ERROR
 
 proc isHexDigit(c: char): bool =
-  # Checks whether a character is a hexadecimal digit (0-9, A-F)
+  # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).
   return (c >= '0' and c <= '9') or
-         (c >= 'A' and c <= 'F')
+         (c >= 'A' and c <= 'F') or
+         (c >= 'a' and c <= 'f') 
          
 proc isValidHex(s: string): bool =
   # Checks whether a string is a valid hex format.
-  if s.len == 0:
-    return false
 
   for c in s:
     if not isHexDigit(c):
-      return false
-
-    # Only uppercase hex characters are accepted.
-    if c >= 'a' and c <= 'f':
       return false
 
   return true
@@ -56,11 +51,20 @@ proc isHexHtmlFormat*(s: string): bool =
 
   return (s.len == 7) and (s[0] == '#')
 
-proc isRGBXFormat*(s: string): bool =
-  # Checks if the color is a color in the rgbx 
-  # format (e.g. rgbx(x,x,x,x)).
+proc isTinyHexHtmlFormat*(s: string): bool =
+  # Checks whether a string is in ‘TinyhexHtml’ format (e.g. #FF6)
 
-  if (s.len < 4) or (s[0..3] != "rgbx"):
+  return (s.len == 4) and (s[0] == '#')
+
+proc isColorXRGBAFormat*(s: string, colorType: string): bool =
+  # Checks if the color is a color in the rgba  
+  # or rgbx format.
+  # e.g.: rgba(x,x,x,x), rgbx(x,x,x,x).
+
+  if s.len < 9:
+    return false
+
+  if s[0..3] != colorType:
     return false
 
   var count = 1
@@ -70,60 +74,25 @@ proc isRGBXFormat*(s: string): bool =
 
   return count == 4
 
-proc isRGBAFormat*(s: string): bool =
-  # Checks if the color is a color in the rgba 
-  # format (e.g. rgba(x,x,x,x)).
-
-  if (s.len < 4) or (s[0..3] != "rgba"):
+proc isColorFormat*(s: string, colorType: string): bool =
+  # Checks if the color is a color in the rgb, hsl  
+  # or hsv format.
+  # e.g.: rgb(x,x,x), hsl(x,x,x), hsv(x,x,x)
+  
+  if s.len < 7:
     return false
 
-  var count = 1
-  for c in s[5..^2]:
-    if c == ',':
-      inc count
+  if s[0..2] != colorType:
+    return false
 
-  return count == 4
-
-proc isRGBFormat*(s: string): bool =
-  # Checks if the color is a color in the rgb 
-  # format (e.g. rgb(x,x,x)).
-
-  if (s.len < 3) or (s[0..2] != "rgb"):
+  if s[3] != '(' or s[^1] != ')':
     return false
 
   var count = 1
   for c in s[4..^2]:
     if c == ',':
       inc count
-
-  return count == 3
-
-proc isHSLFormat*(s: string): bool =
-  # Checks if the color is a color in the hsl 
-  # format (e.g. hsl(x,x,x)).
-
-  if (s.len < 3) or (s[0..2] != "hsl"):
-    return false
-
-  var count = 1
-  for c in s[4..^2]:
-    if c == ',':
-      inc count
-
-  return count == 3
-
-proc isHSVFormat*(s: string): bool =
-  # Checks if the color is a color in the hsv
-  # format (e.g. hsv(x,x,x)).
-
-  if (s.len < 3) or (s[0..2] != "hsv"):
-    return false
-
-  var count = 1
-  for c in s[4..^2]:
-    if c == ',':
-      inc count
-
+  
   return count == 3
   
 proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
@@ -265,24 +234,30 @@ proc getColor*(obj: Tcl.PObj): Color =
   # Returns: A `Color` object.
 
   let scolor = strip($obj)
+
+  if scolor.len == 0:
+    raise newException(InvalidColor, "Empty color string")
+  
   var color: Color
 
-  if scolor.isRGBAFormat():
+  if scolor.isColorXRGBAFormat("rgba"):
     return chroma.parseHtmlRgba(scolor)
   elif scolor.isHexHtmlFormat():
     return chroma.parseHtmlHex(scolor)
-  elif scolor.isRGBFormat():
+  elif scolor.isColorFormat("rgb"):
     return chroma.parseHtmlRgb(scolor)
   elif scolor.isHexAlphaFormat():
     return chroma.parseHexAlpha(scolor)
   elif scolor.isHexFormat():
     return chroma.parseHex(scolor)
-  elif scolor.isRGBXFormat():
+  elif scolor.isColorXRGBAFormat("rgbx"):
     return parseColorRGBX(scolor).color
-  elif scolor.isHSLFormat():
+  elif scolor.isColorFormat("hsl"):
     return parseColorHSL(scolor).color
-  elif scolor.isHSVFormat():
+  elif scolor.isColorFormat("hsv"):
     return parseColorHSV(scolor).color
+  elif scolor.isTinyHexHtmlFormat():
+    return chroma.parseHtmlHexTiny(scolor)
   elif isColorSimpleFormat(obj, color): 
     return color
   else:
