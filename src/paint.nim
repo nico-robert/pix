@@ -67,7 +67,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   if count mod 2 != 0:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'dict options' should be key value ?key1 ?value1"
+      "wrong # args: 'dict options' should be key value ?key1 ?value1..."
     )
 
   try:
@@ -112,7 +112,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
                 return Tcl.ERROR
               if len != 2:
                 return pixUtils.errorMSG(interp,
-                "wrong # args: 'items' should be 'color' 'position'"
+                  "wrong # args: 'items' should be 'color' 'position'"
                 )
 
               if Tcl.GetDoubleFromObj(interp, stop[1], p) != Tcl.OK: 
@@ -122,7 +122,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
             paint.gradientStops = colorstops
         else:
           return pixUtils.errorMSG(interp,
-          "wrong # args: Key '" & mkey & "' not supported."
+            "wrong # args: Key '" & mkey & "' not supported."
           )
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)

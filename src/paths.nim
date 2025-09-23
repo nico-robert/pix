@@ -94,7 +94,7 @@ proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # Returns: Nothing.
   if objc notin [6, 7]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x y} r a0 a1 ?ccw:optional"
+      "<path> {x y} r a0 a1 ?ccw:optional"
     )
     return Tcl.ERROR
 
@@ -142,7 +142,7 @@ proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x1 y1} {x2 y2} radius"
+      "<path> {x1 y1} {x2 y2} radius"
     )
     return Tcl.ERROR
 
@@ -190,7 +190,7 @@ proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x1 y1} {x2 y2} {x3 y3}"
+      "<path> {x1 y1} {x2 y2} {x3 y3}"
     )
     return Tcl.ERROR
 
@@ -350,7 +350,7 @@ proc pix_path_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   # Returns: Nothing.
   if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x y} {width height} ?ccw:optional"
+      "<path> {x y} {width height} ?ccw:optional"
     )
     return Tcl.ERROR
 
@@ -432,7 +432,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # the default value 'NonZero' is used.
   if objc notin (3..5):
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x y} or <path> {x y} 'matrix' or <path> {x y} 'matrix' enum:windingRule"
+      "<path> {x y} or <path> {x y} 'matrix' or <path> {x y} 'matrix' enum:windingRule"
     )
     return Tcl.ERROR
 
@@ -608,7 +608,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
   # Returns: Nothing.
   if objc != 7:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}"
+      "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}"
     )
     return Tcl.ERROR
 
@@ -690,7 +690,7 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # Returns: Nothing.
   if objc notin [5, 6]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x y} {width height} {nw ne se sw} ?ccw:optional"
+      "<path> {x y} {width height} {nw ne se sw} ?ccw:optional"
     )
     return Tcl.ERROR
 
@@ -722,7 +722,7 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   if count != 4:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'"
+      "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'"
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
@@ -763,7 +763,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   # holes.
   if objc notin [3, 4]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<path> {x y} ?{key value key value ...}:optional"
+      "<path> {x y} ?{key value key value ...}:optional"
     )
     return Tcl.ERROR
 

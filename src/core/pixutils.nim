@@ -312,7 +312,7 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
 
   if count != 9:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'matrix' should be 'Matrix 3x3'"
+      "wrong # args: 'matrix' should be 'Matrix 3x3'"
     )
 
   value.setlen(count)
@@ -456,7 +456,7 @@ proc toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: 
     ptable.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
-    "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
     )
 
   let data = try:
@@ -493,7 +493,7 @@ proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
     ptable.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
-    "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
     )
 
   var fileformat: FileFormat = PngFormat
@@ -507,7 +507,7 @@ proc toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
       of "ppm": PpmFormat
       else:
         return pixUtils.errorMSG(interp,
-        "pix(error): format not supported '" & format & "'."
+          "pix(error): format not supported '" & format & "'."
         )
 
   let data = try:
@@ -581,7 +581,7 @@ proc scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   if count != 2:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'scale' should be 'x' 'y'"
+      "wrong # args: 'scale' should be 'x' 'y'"
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
@@ -632,7 +632,7 @@ proc transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   if count != 2:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'trans' should be 'x' 'y'"
+      "wrong # args: 'trans' should be 'x' 'y'"
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or

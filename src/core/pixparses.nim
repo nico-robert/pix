@@ -98,7 +98,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
   if count mod 2 != 0:
     raise newException(ValueError,
-    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'dict options' should be :key value ?key1 ?value1..."
     )
 
   for i in countup(0, count - 1, 2):
@@ -123,7 +123,9 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
         except InvalidColor as e:
           raise newException(ValueError, move(e.msg))
       else:
-        raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
+        raise newException(ValueError, 
+          "wrong # args: Key '" & key & "' not supported."
+        )
 
 proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) =
   # Parse the options from the Tcl dict and set the fields of the 'RenderOptions' object.
@@ -144,7 +146,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   if count mod 2 != 0:
     raise newException(ValueError,
-    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'dict options' should be :key value ?key1 ?value1..."
     )
 
   for i in countup(0, count - 1, 2):
@@ -209,7 +211,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   if count mod 2 != 0:
     raise newException(ValueError,
-    "wrong # args: 'font options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'font options' should be :key value ?key1 ?value1..."
     )
 
   for i in countup(0, count - 1, 2):
@@ -269,7 +271,9 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
         opts.bounds = vec2(x, y)
       else:
-        raise newException(ValueError, "wrong # args: Key '" & key & "' not supported.")
+        raise newException(ValueError, 
+          "wrong # args: Key '" & key & "' not supported."
+        )
 
 proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) =
   # Parse the options from the Tcl dict and set the fields of the 'RenderOptions' object.
@@ -291,7 +295,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
 
   if count mod 2 != 0:
     raise newException(ValueError,
-    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
     )
 
   for i in countup(0, count - 1, 2):
@@ -321,5 +325,5 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
         opts.bounds = vec2(x, y)
       else:
         raise newException(ValueError,
-        "wrong # args: Key '" & key & "' not supported."
+          "wrong # args: Key '" & key & "' not supported."
         )

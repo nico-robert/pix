@@ -69,7 +69,7 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # Returns: Nothing.
   if objc notin (3..5):
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<img1> <img2> ?matrix3:optional ?blendMode:optional"
+      "<img1> <img2> ?matrix3:optional ?blendMode:optional"
     )
     return Tcl.ERROR
 
@@ -211,7 +211,7 @@ proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # Returns: Nothing.
   if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional"
+      "<img> '<path>|stringPath' 'color|<paint>' ?matrix:optional"
     )
     return Tcl.ERROR
 
@@ -288,7 +288,7 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<img> 'pathstring' 'color|<paint>' {?strokeWidth ?value ?transform ?value ...}"
+      "<img> 'pathstring' 'color|<paint>' {?strokeWidth ?value ?transform ?value ...}"
     )
     return Tcl.ERROR
 
@@ -395,7 +395,7 @@ proc pix_image_shadow(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<img> {offset? ?value spread? ?value blur? ?value color? ?value}"
+      "<img> {offset? ?value spread? ?value blur? ?value color? ?value}"
     )
     return Tcl.ERROR
 
@@ -503,7 +503,7 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
     if objc < 4:
       return pixUtils.errorMSG(interp,
-      "pix(error): If <font> is present, a 'text' must be associated."
+        "pix(error): If <font> is present, a 'text' must be associated."
       )
 
     let text = $objv[3]
@@ -1312,7 +1312,7 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
     if objc < 4:
       return pixUtils.errorMSG(interp,
-      "pix(error): If <font> is present, a 'text' must be associated."
+        "pix(error): If <font> is present, a 'text' must be associated."
       )
 
     let text = $objv[3]

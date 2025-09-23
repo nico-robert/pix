@@ -22,7 +22,7 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     img = ptable.getImage(arg1)
   else:
     return pixUtils.errorMSG(interp,
-    "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
     ) 
 
   let 

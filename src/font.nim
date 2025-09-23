@@ -409,7 +409,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
   if str.len == 0:
     return pixUtils.errorMSG(interp, 
-    "pix(error): the len of 'char' is 0."
+      "pix(error): The len of 'char' is 0."
     )
 
   let c = str.runeAt(0)
@@ -422,7 +422,7 @@ proc pix_font_fallbackTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
     if newtface == nil:
       return pixUtils.errorMSG(interp,
-      "pix(error): the '<TypeFace>' return object is 'null'."
+        "pix(error): The '<TypeFace>' return object is 'null'."
       )
 
     let p = toHexPtr(newtface)
@@ -486,7 +486,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   if str.len == 0:
     return pixUtils.errorMSG(
-      interp, "pix(error): the len of 'char' is 0."
+      interp, "pix(error): The len of 'char' is 0."
     )
 
   let c = str.runeAt(0)
@@ -498,7 +498,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   if path == nil:
     return pixUtils.errorMSG(interp,
-    "pix(error): the '<path>' return object is 'null'."
+      "pix(error): The '<path>' return object is 'null'."
     )
 
   let pathKey = toHexPtr(path)
@@ -593,7 +593,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # and the y is the height of the bounds in pixels.
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<Arrangement> or <font> + 'text' or <span>"
+      "<Arrangement> or <font> + 'text' or <span>"
     )
     return Tcl.ERROR
 
@@ -615,7 +615,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     let font = ptable.getFont(arg1)
     if objc != 3:
       return pixUtils.errorMSG(interp,
-      "pix(error): If <font> is present, a 'text' must be associated."
+        "pix(error): If <font> is present, a 'text' must be associated."
       )
 
     bounds = font.layoutBounds($objv[2])
@@ -626,7 +626,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
     if count == 0:
       return pixUtils.errorMSG(interp, 
-      "pix(error): list <span> object is empty."
+        "pix(error): The list <span> object is empty."
       )
 
     var spans = newSeq[Span]()
@@ -828,7 +828,7 @@ proc pix_font_scale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       typeface.scale()
     else:
       return pixUtils.errorMSG(interp,
-      "pix(error): unknown <font> or <TypeFace> key object found '" & arg1 & "'"
+        "pix(error): unknown <font> or <TypeFace> key object found '" & arg1 & "'"
       ) 
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(scale))
@@ -873,7 +873,7 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     font = ptable.getFont(arg1)
     if objc < 3:
       return pixUtils.errorMSG(interp,
-      "pix(error): If <font> is present, a 'text' must be associated."
+        "pix(error): If <font> is present, a 'text' must be associated."
       )
     text = $objv[2]
   else:
@@ -940,7 +940,7 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # Returns: Nothing.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}"
+      "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}"
     )
     return Tcl.ERROR
 
@@ -960,7 +960,7 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   if count mod 2 != 0:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
     )
 
   for i in countup(0, count - 1, 2):
@@ -1011,7 +1011,7 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
           font.paints = paints
       else:
         return pixUtils.errorMSG(interp, 
-        "wrong # args: Key '" & mkey & "' not supported."
+          "wrong # args: Key '" & mkey & "' not supported."
         )
 
   return Tcl.OK

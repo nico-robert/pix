@@ -10,7 +10,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   # Returns: A *new* [svg] object.
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "'svg string' ?{width height}:optional"
+      "'svg string' ?{width height}:optional"
     )
     return Tcl.ERROR
 

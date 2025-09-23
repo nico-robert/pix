@@ -10,7 +10,7 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   # Returns: A *new* [ctx] object.
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "'{width height} ?color:optional' or <image>"
+      "'{width height} ?color:optional' or <image>"
     )
     return Tcl.ERROR
 
@@ -336,7 +336,7 @@ proc pix_ctx_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   # Returns: Nothing.
   if objc notin [6, 7]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> {x y} r angleStart angleEnd ?ccw:optional"
+      "<ctx> {x y} r angleStart angleEnd ?ccw:optional"
     )
     return Tcl.ERROR
 
@@ -495,7 +495,7 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # Returns: Nothing.
   if objc notin (2..4):
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> ?<path>:optional ?enum=WindingRule:optional"
+      "<ctx> ?<path>:optional ?enum=WindingRule:optional"
     )
     return Tcl.ERROR
 
@@ -950,7 +950,7 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # Returns: Nothing.
   if objc notin (2..4):
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> ?<path>:optional ?enum=WindingRule:optional"
+      "<ctx> ?<path>:optional ?enum=WindingRule:optional"
     )
     return Tcl.ERROR
 
@@ -1079,7 +1079,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> {x y} {width height} {nw ne se sw}"
+      "<ctx> {x y} {width height} {nw ne se sw}"
     )
     return Tcl.ERROR
 
@@ -1109,7 +1109,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   if count != 4:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'radius' should be {nw ne se sw}"
+      "wrong # args: 'radius' should be {nw ne se sw}"
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
@@ -1133,7 +1133,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> {x y} {width height} radius|{nw ne se sw}"
+      "<ctx> {x y} {width height} radius|{nw ne se sw}"
     )
     return Tcl.ERROR
 
@@ -1188,7 +1188,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 
   else:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'radius' should be a list {nw ne se sw}, or simple value."
+      "wrong # args: 'radius' should be a list {nw ne se sw}, or a single value."
     )
 
   return Tcl.OK
@@ -1205,7 +1205,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> {x y} {width height} radius|{nw ne se sw}"
+      "<ctx> {x y} {width height} radius|{nw ne se sw}"
     )
     return Tcl.ERROR
 
@@ -1260,7 +1260,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
   else:
     return pixUtils.errorMSG(interp,
-    "wrong # args: 'radius' should be a list {nw ne se sw}, or simple value."
+      "wrong # args: 'radius' should be a list {nw ne se sw}, or a single value."
     )
 
   return Tcl.OK
@@ -1363,7 +1363,7 @@ proc pix_ctx_globalAlpha(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   if alpha < 0.0 or alpha > 1.0:
     return pixUtils.errorMSG(interp,
-    "pix(error): the global alpha should be in the range 0 to 1."
+      "pix(error): The global alpha context should be in the range 0 to 1."
     )
 
   # Set the global alpha value for the context.
@@ -1467,7 +1467,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # Returns: A Tcl boolean value.
   if objc notin (3..5):
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> {x y} ?<path>:optional ?enum=WindingRule:optional"
+      "<ctx> {x y} ?<path>:optional ?enum=WindingRule:optional"
     )
     return Tcl.ERROR
   
@@ -1846,7 +1846,9 @@ proc pix_ctx_fillCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
     return Tcl.ERROR
 
   if radius <= 0.0:
-    return pixUtils.errorMSG(interp, "The radius must be greater than 0")
+    return pixUtils.errorMSG(interp, 
+      "pix(error): The radius must be greater than '0'."
+    )
 
   let circle = Circle(pos: vec2(cx, cy), radius: radius)
 
@@ -2046,9 +2048,9 @@ proc pix_ctx_strokeCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if Tcl.GetDoubleFromObj(interp, objv[3], radius) != Tcl.OK:
     return Tcl.ERROR
 
-  if radius <= 0:
+  if radius <= 0.0:
     return pixUtils.errorMSG(interp,
-    "pix(error): the radius must be greater than 0."
+      "pix(error): The radius must be greater than '0'."
     )
 
   try:
@@ -2292,7 +2294,7 @@ proc pix_ctx_fillPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # See [img::fillPath] procedure.
   if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> <path>|stringPath 'color|<paint>' ?matrix:optional"
+      "<ctx> <path>|stringPath 'color|<paint>' ?matrix:optional"
     )
     return Tcl.ERROR
 
@@ -2303,7 +2305,7 @@ proc pix_ctx_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # See [img::strokePath] procedure.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-    "<ctx> <path>|stringPath 'color|<paint>' {key value key value ...}"
+      "<ctx> <path>|stringPath 'color|<paint>' {key value key1 value1...}"
     )
     return Tcl.ERROR
 
