@@ -230,18 +230,19 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     # Undocumented svg commands
     "pix::svg::destroy"  : pix_svg_destroy,
 
-    # General pix commands
+    # Surface commands
     "pix::drawSurface"       : pix_draw_surface,
-    "pix::colorHTMLtoRGBA"   : pixutils.colorHTMLtoRGBA,
-    "pix::pathObjToString"   : pixutils.pathObjToString,
-    "pix::svgStyleToPathObj" : pixutils.svgStyleToPathObj,
-    "pix::getKeys"           : pixutils.getKeys,
-    "pix::toB64"             : pixutils.toB64,
-    "pix::toBinary"          : pixutils.toBinary,
-    "pix::rotMatrix"         : pixutils.rotMatrix,
-    "pix::scaleMatrix"       : pixutils.scaleMatrix,
-    "pix::transMatrix"       : pixutils.transMatrix,
-    "pix::mulMatrix"         : pixutils.mulMatrix,
+    # Pix utils commands
+    "pix::colorHTMLtoRGBA"   : pix_colorHTMLtoRGBA,
+    "pix::pathObjToString"   : pix_pathObjToString,
+    "pix::svgStyleToPathObj" : pix_svgStyleToPathObj,
+    "pix::getKeys"           : pix_getKeys,
+    "pix::toB64"             : pix_toB64,
+    "pix::toBinary"          : pix_toBinary,
+    "pix::rotMatrix"         : pix_rotMatrix,
+    "pix::scaleMatrix"       : pix_scaleMatrix,
+    "pix::transMatrix"       : pix_transMatrix,
+    "pix::mulMatrix"         : pix_mulMatrix,
     # ...
   }.toTable
 
