@@ -356,7 +356,7 @@ proc pix_font_defaultLineHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp
   let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
-  let defaultLineHeight = font.defaultLineHeight()
+  let defaultLineHeight = font.defaultLineHeight
 
   Tcl.SetObjResult(interp, Tcl.NewDoubleObj(defaultLineHeight))
 
@@ -381,10 +381,29 @@ proc pix_font_descent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
-  # Gets the font descender value in font units.
-  let descentValue = tface.descent
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(tface.descent))
 
-  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(descentValue))
+  return Tcl.OK
+
+proc pix_font_capHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # The font cap height value in font units.
+  #
+  # typeface - [font::readTypeface]
+  #
+  # The cap height is the distance from the baseline to the highest point of any glyph in the font.
+  # This value is used to position text in the y-direction.
+  #
+  # Returns: A value is in pixels but can be a floating point value.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace>")
+    return Tcl.ERROR
+
+  # TypeFace
+  let ptable = cast[PixTable](clientData)
+  let tface = ptable.loadTFace(interp, objv[1])
+  if tface.isNil: return Tcl.ERROR
+
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(tface.capHeight))
 
   return Tcl.OK
 
