@@ -216,6 +216,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::font::readTypefaces"        : pix_font_readTypefaces,
     "pix::font::scale"                : pix_font_scale,
     "pix::font::typeset"              : pix_font_typeset,
+    "pix::font::capHeight"            : pix_font_capHeight,
     # Undocumented font commands
     "pix::font::configure"            : pix_font_configure,
     "pix::font::selectionRects"       : pix_font_selectionRects,
