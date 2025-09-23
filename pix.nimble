@@ -55,7 +55,7 @@ srcDir      = "src"
 
 # Dependencies
 requires "nim >= 2.0.6"
-requires "pixie == 5.0.7"
+requires "pixie >= 5.0.7"
 
 # Task definition for generating the pix Tcl/Tk library
 # Compile bindings for 2 versions of Tcl/Tk.
