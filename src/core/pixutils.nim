@@ -5,6 +5,7 @@ import pixie
 import ./pixtables
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
+import macros
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
@@ -16,6 +17,17 @@ proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
 
   return Tcl.ERROR
+
+macro pixAssert*(condition: bool, errormsg: string = ""): untyped =
+  # Checks a condition and returns an error message if the condition is false.
+  #
+  # condition - The condition to check.
+  # errormsg  - The error message to return if the condition is false.
+  let ipIdent = ident("interp")
+  
+  result = quote do:
+    if not `condition`:
+      return errorMSG(`ipIdent`, `errormsg`)
 
 proc isHexDigit(c: char): bool =
   # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).
