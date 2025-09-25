@@ -24,6 +24,10 @@ above.
 > I have mainly tested this package on Windows and MacOs x64 with version **8.6.14** and **9.0.1** of Tcl/Tk, it should work on Linux and
 MacOS arm (I hope so !)
 
+Build :
+-------------------------
+If you want to build `pix` from source, please refer to [BUILDING.md](BUILDING.md) for detailed compilation instructions.
+
 Example :
 -------------------------
 ```tcl
