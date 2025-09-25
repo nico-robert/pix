@@ -9,7 +9,7 @@
                # Add `image` namespace + test file.
                # Add `paint` namespace + test file.
                # Add `path` namespace + test file.
-               # Rename `pix::ctx::getSize` by `pix::ctx::get` 
+               # Rename `pix::ctx::getSize` by `pix::ctx::get`
                # Rename `pix::img::read` by `pix::img::readImage`
                # Rename `pix::font::read` by `pix::font::readFont`
                # Add documentation based on Pixie API reference.
@@ -61,6 +61,34 @@ requires "pixie >= 5.0.7"
 # Compile bindings for 2 versions of Tcl/Tk.
 task pixTclTkBindings, "Generate pix Tcl library.":
 
+  proc extractPixVersionFromNimble(): string =
+    let nimbleContent = readFile("pix.nimble")
+
+    for line in nimbleContent.splitLines():
+      let trimmedLine = line.strip()
+      if trimmedLine.startsWith("version"):
+        let parts = trimmedLine.split("=")
+        if parts.len >= 2:
+          result = parts[1].strip().replace("\"", "")
+          return result
+
+    quit("pix(error): Unable to extract version from 'pix.nimble' file.")
+
+  proc generatePixPkgIndexFile(version: string) =
+    let templatePath = "src/pkgIndex.tcl.in"
+    if not fileExists(templatePath):
+      quit("pix(error): Unable to find template file: " & templatePath)
+
+    let templateContent = readFile(templatePath)
+    let finalContent = templateContent.replace("@PACKAGE_VERSION@", version)
+
+    # Write the final content to the output file
+    let outputPath = "pkgIndex.tcl"
+    try:
+      writeFile(outputPath, finalContent)
+    except IOError as e:
+      quit("pix(error): Unable to write to file: " & outputPath)
+
   proc compile(libName: string, flags= "") =
     exec "nim c " & flags & " -d:strip -d:useMalloc -d:release --out:" & libName & " src/pix.nim"
 
@@ -82,15 +110,17 @@ task pixTclTkBindings, "Generate pix Tcl library.":
 
   let arch = getArchFolder()
 
+  # Generate pix Tcl/Tk library:
   for vtcl in ["8", "9"]:
     let tclFlags = "-d:tcl" & vtcl
 
     when defined(windows):
       compile "./" & arch.folder & "/pix" & vtcl & "-" & version & arch.ext, tclFlags
-
     elif defined(macosx) or defined(linux):
       compile "./" & arch.folder & "/lib" & vtcl & "pix" & version & arch.ext, tclFlags
-      
     else:
-      echo "pix(error): Unsupported operating system!"
-      quit(1)
+      quit("pix(error): Unsupported operating system!")
+
+  # Generate pkgIndex.tcl:
+  let currentVersion = extractPixVersionFromNimble()
+  generatePixPkgIndexFile(currentVersion)
