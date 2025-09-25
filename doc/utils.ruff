@@ -34,9 +34,9 @@ proc pix::toB64 {object} {
   # Convert an [img] object to base 64.
   #
   # object - [img] or [ctx] object.
-  # 
-  # On the Nim side, `base64` module is considered **unstable**, 
-  # so use the [toBinary] command instead 
+  #
+  # On the Nim side, `base64` module is considered **unstable**,
+  # so use the [toBinary] command instead
   # and then Tcl's binary encode base64 command.
   #
   # Returns string.
@@ -76,7 +76,7 @@ proc pix::transMatrix {trans {matrix {}}} {
 proc pix::mulMatrix {args} {
   # Multiplies matrices.
   #
-  # args - matrix (9 values) 
+  # args - matrix (9 values)
   #
   # Returns: The multiplied matrix as a list.
 }

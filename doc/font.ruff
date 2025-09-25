@@ -159,6 +159,16 @@ proc pix::font::descent {typeface} {
   #
   # Returns: A value is in pixels but can be a floating point value.
 }
+proc pix::font::capHeight {typeface} {
+  # The font cap height value in font units (pixie >= 5.1.0).
+  #
+  # typeface - [font::readTypeface]
+  #
+  # The cap height is the distance from the baseline to the highest point of any glyph in the font.
+  # This value is used to position text in the y-direction.
+  #
+  # Returns: A value is in pixels but can be a floating point value.
+}
 proc pix::font::fallbackTypeface {typeface char} {
   # Looks through fallback typefaces to find one that has the glyph.
   #

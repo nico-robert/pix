@@ -569,13 +569,13 @@ pix::ctx::stroke <span style="color: rgb(233, 98, 98);">$ctx</span>
 <tr><td><nobr><code>matrix3x3</code></nobr></td><td>list</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If you want to save the current transform matrix, you can get it by calling <em>pix::ctx::getTransform</em> and later restore it using <em>pix::ct::setTransform</em>. If you want to add a new transform to the current transform matrix, use <em>pix::ctx::transform</em> instead.</p>
-<p class='ruff'>The matrix is a list of 9 values representing a 3x3 matrix. The values are in column order:<br></p>
+<p class='ruff'>The matrix is a list of 9 values representing a 3x3 matrix. The values are in row order:<br></p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>
 <span style="color: hsl(206, 98.02%, 29.04%);font-weight: 550;">set</span> matrix {
-  a d g
-  b e h
-  c f i
+  a b c
+  d e f
+  g h i
 }
 </pre>
 
