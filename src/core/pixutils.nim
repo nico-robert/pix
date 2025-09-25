@@ -24,7 +24,7 @@ macro pixAssert*(condition: bool, errormsg: string = ""): untyped =
   # condition - The condition to check.
   # errormsg  - The error message to return if the condition is false.
   let ipIdent = ident("interp")
-  
+
   result = quote do:
     if not `condition`:
       return errorMSG(`ipIdent`, `errormsg`)
@@ -33,8 +33,8 @@ proc isHexDigit(c: char): bool =
   # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).
   return (c >= '0' and c <= '9') or
          (c >= 'A' and c <= 'F') or
-         (c >= 'a' and c <= 'f') 
-         
+         (c >= 'a' and c <= 'f')
+
 proc isValidHex(s: string): bool =
   # Checks whether a string is a valid hex format.
 
@@ -43,7 +43,7 @@ proc isValidHex(s: string): bool =
       return false
 
   return true
-  
+
 proc isHexFormat*(s: string): bool =
   # Checks whether a string is in ‘hex’ format (e.g. FF0000)
   # - Only uppercase hexadecimal characters
@@ -69,7 +69,7 @@ proc isTinyHexHtmlFormat*(s: string): bool =
   return (s.len == 4) and (s[0] == '#')
 
 proc isColorXRGBAFormat*(s: string, colorType: string): bool =
-  # Checks if the color is a color in the rgba  
+  # Checks if the color is a color in the rgba
   # or rgbx format.
   # e.g.: rgba(x,x,x,x), rgbx(x,x,x,x).
 
@@ -87,10 +87,10 @@ proc isColorXRGBAFormat*(s: string, colorType: string): bool =
   return count == 4
 
 proc isColorFormat*(s: string, colorType: string): bool =
-  # Checks if the color is a color in the rgb, hsl  
+  # Checks if the color is a color in the rgb, hsl
   # or hsv format.
   # e.g.: rgb(x,x,x), hsl(x,x,x), hsv(x,x,x)
-  
+
   if s.len < 7:
     return false
 
@@ -104,9 +104,9 @@ proc isColorFormat*(s: string, colorType: string): bool =
   for c in s[4..^2]:
     if c == ',':
       inc count
-  
+
   return count == 3
-  
+
 proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
   # Checks if the obj is a color.
   #
@@ -249,7 +249,7 @@ proc getColor*(obj: Tcl.PObj): Color =
 
   if scolor.len == 0:
     raise newException(InvalidColor, "Empty color string")
-  
+
   var color: Color
 
   if scolor.isColorXRGBAFormat("rgba"):
@@ -270,7 +270,7 @@ proc getColor*(obj: Tcl.PObj): Color =
     return parseColorHSV(scolor).color
   elif scolor.isTinyHexHtmlFormat():
     return chroma.parseHtmlHexTiny(scolor)
-  elif isColorSimpleFormat(obj, color): 
+  elif isColorSimpleFormat(obj, color):
     return color
   else:
     return parseHtmlColor(scolor)
@@ -317,28 +317,21 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
   var
     count: Tcl.Size
     elements: Tcl.PPObj
-    value : seq[cdouble]
 
   if Tcl.ListObjGetElements(interp, obj, count, elements) != Tcl.OK:
     return Tcl.ERROR
 
   if count != 9:
     return pixUtils.errorMSG(interp,
-      "wrong # args: 'matrix' should be 'Matrix 3x3'"
+      "wrong # args: Matrix 3x3 requires exactly 9 elements."
     )
 
-  value.setlen(count)
-
   for i in 0..count-1:
-    if Tcl.GetDoubleFromObj(interp, elements[i], value[i]) != Tcl.OK:
+    var value: cdouble
+    if Tcl.GetDoubleFromObj(interp, elements[i], value) != Tcl.OK:
       return Tcl.ERROR
-
-  # Fill the matrix3 with the values of the Tcl object.
-  matrix3 = vmath.mat3(
-    value[0], value[1], value[2],
-    value[3], value[4], value[5],
-    value[6], value[7], value[8]
-  )
+    # Fill the matrix3 with the values of the Tcl object.
+    matrix3[i div 3, i mod 3] = value
 
   return Tcl.OK
 
@@ -420,27 +413,27 @@ proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # Returns: A Tcl dictionary with two keys:
   # `ctx` a Tcl list of all [ctx] keys and
   # `img` a Tcl list of all [img] keys.
-  let 
+  let
     dictObj    = Tcl.NewDictObj()
     newListctx = Tcl.NewListObj(0, nil)
     newListimg = Tcl.NewListObj(0, nil)
     ptable     = cast[PixTable](clientData)
-  
+
   for key in ptable.ctxTable.keys:
     discard Tcl.ListObjAppendElement(
-      interp, newListctx, 
+      interp, newListctx,
       Tcl.NewStringObj(key.cstring, -1)
     )
 
   for key in ptable.imgTable.keys:
     discard Tcl.ListObjAppendElement(
-      interp, newListimg, 
+      interp, newListimg,
       Tcl.NewStringObj(key.cstring, -1)
     )
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("ctx", 3), newListctx)
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), newListimg)
-  
+
   Tcl.SetObjResult(interp, dictObj)
 
   return Tcl.OK
@@ -449,16 +442,16 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
   # Convert an [img] object to base 64.
   #
   # object - [img] or [ctx] object.
-  # 
-  # On the Nim side, `base64` module is considered **unstable**, 
-  # so use the [toBinary] command instead 
+  #
+  # On the Nim side, `base64` module is considered **unstable**,
+  # so use the [toBinary] command instead
   # and then Tcl's binary encode base64 command.
   #
   # Returns string.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
     return Tcl.ERROR
-  
+
   let ptable = cast[PixTable](clientData)
   let arg1= $objv[1]
 
@@ -495,7 +488,7 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img> ?format:optional")
     return Tcl.ERROR
-  
+
   let ptable = cast[PixTable](clientData)
   let arg1= $objv[1]
 
@@ -542,7 +535,7 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
     Tcl.WrongNumArgs(interp, 1, objv, "angle ?matrix:optional")
     return Tcl.ERROR
 
-  var 
+  var
     angle: cdouble
     matrix3: vmath.Mat3
 
@@ -563,7 +556,7 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
     for j in 0..2:
       discard Tcl.ListObjAppendElement(
         interp,
-        listobj, 
+        listobj,
         Tcl.NewDoubleObj(matrix3[i][j])
       )
 
@@ -581,7 +574,7 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if objc notin [2 ,3]:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
     return Tcl.ERROR
-    
+
   var
     x, y: cdouble
     matrix3: vmath.Mat3
@@ -597,7 +590,7 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
-     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: 
+     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK:
     return Tcl.ERROR
 
   if objc == 3:
@@ -614,14 +607,14 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     for j in 0..2:
       discard Tcl.ListObjAppendElement(
         interp,
-        listobj, 
+        listobj,
         Tcl.NewDoubleObj(matrix3[i][j])
       )
 
   Tcl.SetObjResult(interp, listobj)
 
   return Tcl.OK
-  
+
 proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create translation matrix.
   #
@@ -632,7 +625,7 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if objc notin [2 ,3]:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
     return Tcl.ERROR
-    
+
   var
     x, y: cdouble
     matrix3: vmath.Mat3
@@ -648,7 +641,7 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
-     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK: 
+     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK:
     return Tcl.ERROR
 
   if objc == 3:
@@ -665,24 +658,24 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     for j in 0..2:
       discard Tcl.ListObjAppendElement(
         interp,
-        listobj, 
+        listobj,
         Tcl.NewDoubleObj(matrix3[i][j])
       )
 
   Tcl.SetObjResult(interp, listobj)
 
   return Tcl.OK
-  
+
 proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Multiplies matrices.
   #
-  # args - matrix (9 values) 
+  # args - matrix (9 values)
   #
   # Returns: The multiplied matrix as a list.
   if objc < 3:
     Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 matrix...")
     return Tcl.ERROR
-    
+
   var
     m: vmath.Mat3
     lm: seq[vmath.Mat3]
@@ -692,7 +685,7 @@ proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
     lm.add(m)
 
-  let 
+  let
     matrix3 = lm.foldl(a * b)
     listobj = Tcl.NewListObj(0, nil)
 
@@ -700,7 +693,7 @@ proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
     for j in 0..2:
       discard Tcl.ListObjAppendElement(
         interp,
-        listobj, 
+        listobj,
         Tcl.NewDoubleObj(matrix3[i][j])
       )
 
