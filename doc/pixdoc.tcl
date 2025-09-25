@@ -278,7 +278,9 @@ foreach dirName {
             [string match "*let mess =*" $line] ||
             [string match "* if *:*" $line] ||
             [string match "* var *" $line] ||
+            [string match "* var*" $line] ||
             [string match "* let *" $line] ||
+            [string match "* let*" $line] ||
             [string match "*# See *" $line]) && $hasProc
         } {
             set myarg {}
