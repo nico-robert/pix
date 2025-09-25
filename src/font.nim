@@ -386,7 +386,7 @@ proc pix_font_descent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pix_font_capHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # The font cap height value in font units.
+  # The font cap height value in font units (pixie >= 5.1.0).
   #
   # typeface - [font::readTypeface]
   #
