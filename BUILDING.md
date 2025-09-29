@@ -39,8 +39,8 @@ nimble --version
 ### Prerequisites
 To compile the `pix` library, you will need:
 - [Nim](https://nim-lang.org) >= 2.0.6 (see installation above)
-- [Pixie](https://github.com/treeform/pixie) >= 5.0.7
-- `Tcl/Tk` 8.6 or 9.0 installed on your system
+- [Pixie](https://github.com/treeform/pixie) >= 5.1.0
+- `Tcl/Tk` 8.6 and/or 9.0 installed on your system
 - GCC (or compatible C compiler)
 
 ### Path Configuration
