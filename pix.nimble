@@ -55,7 +55,7 @@ srcDir      = "src"
 
 # Dependencies
 requires "nim >= 2.0.6"
-requires "pixie >= 5.0.7"
+requires "pixie >= 5.1.0"
 
 # Task definition for generating the pix Tcl/Tk library
 # Compile bindings for 2 versions of Tcl/Tk.
@@ -69,8 +69,7 @@ task pixTclTkBindings, "Generate pix Tcl library.":
       if trimmedLine.startsWith("version"):
         let parts = trimmedLine.split("=")
         if parts.len >= 2:
-          result = parts[1].strip().replace("\"", "")
-          return result
+          return parts[1].strip().replace("\"", "")
 
     quit("pix(error): Unable to extract version from 'pix.nimble' file.")
 
