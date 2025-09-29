@@ -57,7 +57,7 @@ See **[examples folder](/examples)** for more demos.
 
 Documentation :
 -------------------------
-A large part of the `pix` [documentation](http://htmlpreview.github.io/?https://github.com/nico-robert/pix/blob/master/doc/pix.html) comes from the [Pixie API](https://treeform.github.io/pixie/) and source files. 
+A large part of the `pix` [documentation](https://nico-robert.github.io/pix/) comes from the [Pixie API](https://treeform.github.io/pixie/) and source files. 
 
 #### Currently API tested and supported are :
 | API        | Description
