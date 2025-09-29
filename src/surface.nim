@@ -13,17 +13,17 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
   
   let ptable = cast[PixTable](clientData)
-  let arg1 = $objv[1]
-  var img: pixie.Image
+  let key = $objv[1]
 
-  if ptable.hasContext(arg1):
-    img = ptable.getContext(arg1).image
-  elif ptable.hasImage(arg1):
-    img = ptable.getImage(arg1)
-  else:
-    return pixUtils.errorMSG(interp,
-      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
-    ) 
+  let img =
+    if ptable.hasContext(key):
+      ptable.getContext(key).image
+    elif ptable.hasImage(key):
+      ptable.getImage(key)
+    else:
+      return pixUtils.errorMSG(interp,
+        "pix(error): unknown <image> or <ctx> key object found: '" & key & "'"
+      ) 
 
   let 
     photosource = Tcl.GetString(objv[2])
@@ -58,7 +58,10 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if Tk.PhotoSetSize(interp, source, pblock.width, pblock.height) != Tcl.OK:
     return Tcl.ERROR
 
-  if Tk.PhotoPutBlock(interp, source, pblock.addr, 0, 0, pblock.width, pblock.height, Tk.PHOTO_COMPOSITE_SET) != Tcl.OK:
-      return Tcl.ERROR
+  if Tk.PhotoPutBlock(
+    interp, source, pblock.addr, 0, 0, pblock.width, pblock.height,
+    Tk.PHOTO_COMPOSITE_SET
+  ) != Tcl.OK:
+    return Tcl.ERROR
 
   return Tcl.OK
