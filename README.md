@@ -21,7 +21,7 @@ Source distributions and binary packages can be downloaded [here](https://github
 above.
 
 > [!NOTE]  
-> I have mainly tested this package on Windows and MacOs x64 with version **8.6.14** and **9.0.1** of Tcl/Tk, it should work on Linux and
+> I have mainly tested this package on Windows and MacOs x64 with version **8.6.16** and **9.0.1** of Tcl/Tk, it should work on Linux and
 MacOS arm (I hope so !)
 
 Build :
