@@ -2,41 +2,44 @@ namespace eval pix::color {
     # Ruff documentation
     variable _ruff_preamble {
 * The following color formats can be used:
-rgba         - e.g : *rgba(x,x,x,x)*<br>
+rgba - e.g : *rgba(x,x,x,x)*<br>
 This format takes four arguments, for the *red*, *green*, *blue*, and
-*alpha* components of the color. The arguments are all floating point
-numbers between **0.0** and **255.0**.
-hexHtml      - e.g : *#F8D1DD*<br>
+*alpha* components of the color. The arguments are all **integers**
+numbers between **0** and **255**.
+hexHtml - e.g : *#F8D1DD*<br>
 This format takes a single argument, which is a string in the
-format of a hex code. The hex code should **7**
-characters long, and each character should be a valid hex digit.
-rgb          - e.g : *rgb(x,x,x)*<br>
+format of a hex code. The hex code should be **7**
+characters long (including the # symbol), and each character (except #) should be a valid hex digit.
+rgb - e.g : *rgb(x,x,x)*<br>
 This format takes three arguments, for the red, green, and blue
-components of the color. The arguments are all floating point
-numbers between **0.0** and **255.0**.
-hexalpha     - e.g : *FF0000FF*<br>
-Only uppercase hexadecimal characters.
+components of the color. The arguments are all **integers**
+numbers between **0** and **255**.
+hexalpha - e.g : *FF0000FF*<br>
+Hexadecimal characters (uppercase or lowercase).
 Length of **8** characters (typical for an **RGBA** color)
-hex          - e.g : *FF0000*<br>
-Only uppercase hexadecimal characters.
+hex - e.g : *FF0000*<br>
+Hexadecimal characters (uppercase or lowercase).
 Length of **6** characters (typical for an **RGB** color)
-rgbx         - e.g : *rgbx(x,x,x,x)*<br>
+rgbx - e.g : *rgbx(x,x,x,x)*<br>
 This format takes four arguments, for the *red*, *green*, *blue*, and
-*alpha* components of the color. The arguments are all floating point
-numbers between **0.0** and **1.0**.
-simple color - e.g : *{0.0 0.0 0.0 0.0}*<br>
-This format takes a single argument, which is a list of four
+*alpha* components of the color. The arguments are all **integers**
+numbers between **0** and **255**.
+simple color - e.g : *{0.0 0.0 0.0 0.0}* or *{0.0 0.0 0.0}*<br>
+This format takes a list of **three or four**
 floating point numbers between **0.0** and **1.0**. The numbers are the
-*red*, *green*, *blue*, and *alpha* components of the color.
-string color  - e.g : *white*<br>
+*red*, *green*, *blue*, and optionally *alpha* components of the color.
+string color - e.g : *white*<br>
 HTML color as a name.
-hsv          - e.g : *hsv(h,s,v)*<br>
+hsv - e.g : *hsv(h,s,v)*<br>
 This format takes three arguments, for the *hue*, *saturation*, and
-*value* components of the color. The arguments are all floating point
+*value* components of the color. The arguments are all floating point.
 hue 0 to 360, saturation 0 to 100, and value 0 to 100.
-hsl          - e.g : *hsl(h,s,l)*<br>
+hsl - e.g : *hsl(h,s,l)*<br>
 This format takes three arguments, for the *hue*, *saturation*, and
-*lightness* components of the color. The arguments are all floating point
+*lightness* components of the color. The arguments are all floating point.
 hue 0 to 360, saturation 0 to 100, and lightness 0 to 100.
+tiny hex - e.g : *#FF6*<br>
+This format is a shorthand hexadecimal notation with **4** characters
+(including the # symbol), where each hex digit is doubled (e.g., #RGB becomes #RRGGBB).
 }
 }

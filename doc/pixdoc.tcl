@@ -278,9 +278,9 @@ foreach dirName {
             [string match "*let mess =*" $line] ||
             [string match "* if *:*" $line] ||
             [string match "* var *" $line] ||
-            [string match "* var*" $line] ||
+            [regexp {\svar$} $line] ||
             [string match "* let *" $line] ||
-            [string match "* let*" $line] ||
+            [regexp {\slet$} $line] ||
             [string match "*# See *" $line]) && $hasProc
         } {
             set myarg {}
@@ -361,42 +361,45 @@ puts $fp "namespace eval pix::color {
 puts $fp "* The following color formats can be used:"
 
 # Color
-puts $fp "rgba         - e.g : *rgba(x,x,x,x)*<br>"
+puts $fp "rgba - e.g : *rgba(x,x,x,x)*<br>"
 puts $fp "This format takes four arguments, for the *red*, *green*, *blue*, and"
-puts $fp "*alpha* components of the color. The arguments are all floating point"
-puts $fp "numbers between **0.0** and **255.0**."
-puts $fp "hexHtml      - e.g : *#F8D1DD*<br>"
+puts $fp "*alpha* components of the color. The arguments are all **integers**"
+puts $fp "numbers between **0** and **255**."
+puts $fp "hexHtml - e.g : *#F8D1DD*<br>"
 puts $fp "This format takes a single argument, which is a string in the"
-puts $fp "format of a hex code. The hex code should **7**"
-puts $fp "characters long, and each character should be a valid hex digit."
-puts $fp "rgb          - e.g : *rgb(x,x,x)*<br>"
+puts $fp "format of a hex code. The hex code should be **7**"
+puts $fp "characters long (including the # symbol), and each character (except #) should be a valid hex digit."
+puts $fp "rgb - e.g : *rgb(x,x,x)*<br>"
 puts $fp "This format takes three arguments, for the red, green, and blue"
-puts $fp "components of the color. The arguments are all floating point"
-puts $fp "numbers between **0.0** and **255.0**."
-puts $fp "hexalpha     - e.g : *FF0000FF*<br>"
-puts $fp "Only uppercase hexadecimal characters."
+puts $fp "components of the color. The arguments are all **integers**"
+puts $fp "numbers between **0** and **255**."
+puts $fp "hexalpha - e.g : *FF0000FF*<br>"
+puts $fp "Hexadecimal characters (uppercase or lowercase)."
 puts $fp "Length of **8** characters (typical for an **RGBA** color)"
-puts $fp "hex          - e.g : *FF0000*<br>"
-puts $fp "Only uppercase hexadecimal characters."
+puts $fp "hex - e.g : *FF0000*<br>"
+puts $fp "Hexadecimal characters (uppercase or lowercase)."
 puts $fp "Length of **6** characters (typical for an **RGB** color)"
-puts $fp "rgbx         - e.g : *rgbx(x,x,x,x)*<br>"
+puts $fp "rgbx - e.g : *rgbx(x,x,x,x)*<br>"
 puts $fp "This format takes four arguments, for the *red*, *green*, *blue*, and"
-puts $fp "*alpha* components of the color. The arguments are all floating point"
-puts $fp "numbers between **0.0** and **1.0**."
-puts $fp "simple color - e.g : *{0.0 0.0 0.0 0.0}*<br>"
-puts $fp "This format takes a single argument, which is a list of four"
+puts $fp "*alpha* components of the color. The arguments are all **integers**"
+puts $fp "numbers between **0** and **255**."
+puts $fp "simple color - e.g : *{0.0 0.0 0.0 0.0}* or *{0.0 0.0 0.0}*<br>"
+puts $fp "This format takes a list of **three or four**"
 puts $fp "floating point numbers between **0.0** and **1.0**. The numbers are the"
-puts $fp "*red*, *green*, *blue*, and *alpha* components of the color."
-puts $fp "string color  - e.g : *white*<br>"
+puts $fp "*red*, *green*, *blue*, and optionally *alpha* components of the color."
+puts $fp "string color - e.g : *white*<br>"
 puts $fp "HTML color as a name."
-puts $fp "hsv          - e.g : *hsv(h,s,v)*<br>"
+puts $fp "hsv - e.g : *hsv(h,s,v)*<br>"
 puts $fp "This format takes three arguments, for the *hue*, *saturation*, and"
-puts $fp "*value* components of the color. The arguments are all floating point"
+puts $fp "*value* components of the color. The arguments are all floating point."
 puts $fp "hue 0 to 360, saturation 0 to 100, and value 0 to 100."
-puts $fp "hsl          - e.g : *hsl(h,s,l)*<br>"
+puts $fp "hsl - e.g : *hsl(h,s,l)*<br>"
 puts $fp "This format takes three arguments, for the *hue*, *saturation*, and"
-puts $fp "*lightness* components of the color. The arguments are all floating point"
+puts $fp "*lightness* components of the color. The arguments are all floating point."
 puts $fp "hue 0 to 360, saturation 0 to 100, and lightness 0 to 100."
+puts $fp "tiny hex - e.g : *#FF6*<br>"
+puts $fp "This format is a shorthand hexadecimal notation with **4** characters"
+puts $fp "(including the # symbol), where each hex digit is doubled (e.g., #RGB becomes #RRGGBB)."
 puts $fp "}"
 puts $fp "}"
 

@@ -240,6 +240,7 @@ proc getColor*(obj: Tcl.PObj): Color =
   # in 'rgbx' format (e.g. rgbx(x,x,x,x))
   # in 'hsl' format (e.g. hsl(x,x,x))
   # in 'hsv' format (e.g. hsv(x,x,x))
+  # in tiny 'hex' format (e.g. #FF6)
   # a simple color format (e.g. {0.0 0.0 0.0 0.0})
   # a simple string html color name (e.g. red)
   #
