@@ -47,6 +47,10 @@ namespace eval ::pix {
         # pix - 2D graphics library
         Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in 👑 [Nim](https://nim-lang.org).
 
+        <p align="center">
+        <img src="assets/pix.png" style="max-height: 100%; max-width: 100%;">
+        </p>
+
         #### Compatibility
         Tcl/Tk 8.6 & 9.0
 
