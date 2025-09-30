@@ -3,8 +3,8 @@ pix - 2D graphics library
 Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-featured 2D graphics library written in 👑 [Nim](https://nim-lang.org).
 
 <p align="center">
-  <img src="examples/data/pix-dark.png#gh-dark-mode-only">
-  <img src="examples/data/pix.png#gh-light-mode-only">
+  <img src="docs/assets/pix-dark.png#gh-dark-mode-only">
+  <img src="docs/assets/pix.png#gh-light-mode-only">
 </p>
 
 Compatibility :
