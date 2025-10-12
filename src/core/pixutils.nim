@@ -3,7 +3,7 @@
 
 import pixie
 import ./pixtables
-import ./pixobj
+import ./pixobj as pixObj
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
 
@@ -341,7 +341,7 @@ proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Parse
   let color = try:
-    getColor(objv[1]).rgba
+    pixUtils.getColor(objv[1]).rgba
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -807,17 +807,235 @@ proc pix_hexHTML*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets a new name color object.
   #
-  # name  - name color string
+  # name  - HTML name
   #
   # Returns: A *new* type [color] object.
   if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "color name")
+    Tcl.WrongNumArgs(interp, 1, objv, "name")
     return Tcl.ERROR
 
   let color = try:
     chroma.parseHtmlName(strip($objv[1]))
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Darkens the color by amount 0-1.
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
+    return Tcl.ERROR
+
+  let colorObj = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  var amount: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
+    return Tcl.ERROR
+
+  if not (amount > 0 and amount < 1.0):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'amount' value must be between 0 and 1"
+    )
+
+  let color = colorObj.darken(amount)
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Lightens the color by amount 0-1.
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
+    return Tcl.ERROR
+
+  let colorObj = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  var amount: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
+    return Tcl.ERROR
+
+  if not (amount > 0 and amount < 1.0):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'amount' value must be between 0 and 1"
+    )
+
+  let color = colorObj.lighten(amount)
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Desaturate (makes grayer) the color by amount 0-1.
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
+    return Tcl.ERROR
+
+  let colorObj = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  var amount: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
+    return Tcl.ERROR
+
+  if not (amount > 0 and amount < 1.0):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'amount' value must be between 0 and 1"
+    )
+
+  let color = colorObj.desaturate(amount)
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_colorDistance*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # A distance function based on CIEDE2000 color difference formula.
+  #
+  # color1   - color or colorObj [color]
+  # color2   - color or colorObj [color]
+  #
+  # Returns: A distance.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2>")
+    return Tcl.ERROR
+
+  let color1 = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let color2 = try:
+    pixUtils.getColor(objv[2])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let dist = distance(color1, color2)
+
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(dist))
+
+  return Tcl.OK
+
+proc pix_colorAlmostEqual*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Almost equal colors.
+  #
+  # color1   - color or colorObj [color]
+  # color2   - color or colorObj [color]
+  # epsilon  - double value (optional:0.01)
+  #
+  # Returns: True if colors are close.
+  if objc notin [3, 4]:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2> ?epsilon:optional")
+    return Tcl.ERROR
+
+  let color1 = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let color2 = try:
+    pixUtils.getColor(objv[2])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let equal =
+    if objc == 4:
+      var epsilon: cdouble
+      if Tcl.GetDoubleFromObj(interp, objv[3], epsilon) != Tcl.OK:
+        return Tcl.ERROR
+      almostEqual(color1, color2, epsilon)
+    else:
+      almostEqual(color1, color2)
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(equal.cint))
+
+  return Tcl.OK
+
+proc pix_colorMix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Mixes two colours using simple averaging or simple lerp if the “lerp” argument is specified.
+  #
+  # color1   - color or colorObj [color]
+  # color2   - color or colorObj [color]
+  # lerp     - double value (optional)
+  #
+  # Returns: A *new* type [color] object.
+  if objc notin [3, 4]:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2> ?lerp:optional")
+    return Tcl.ERROR
+
+  let color1 = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let color2 = try:
+    pixUtils.getColor(objv[2])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let color =
+    if objc == 4:
+      var lerp: cdouble
+      if Tcl.GetDoubleFromObj(interp, objv[3], lerp) != Tcl.OK:
+        return Tcl.ERROR
+      mix(color1, color2, lerp)
+    else:
+      mix(color1, color2)
 
   let obj = pixObj.createColorObj(color)
 
