@@ -3,6 +3,7 @@
 
 import pixie
 import ./pixtables
+import ./pixobj
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
 
@@ -234,35 +235,39 @@ proc getColor*(obj: Tcl.PObj): Color =
   #
   # Returns: A `Color` object.
 
-  let scolor = strip($obj)
+  let colorObj = pixObj.getTypeColor(obj)
 
-  if scolor.len == 0:
-    raise newException(InvalidColor, "Empty color string")
-
-  var color: Color
-
-  if scolor.isColorXRGBAFormat("rgba"):
-    return chroma.parseHtmlRgba(scolor)
-  elif scolor.isHexHtmlFormat():
-    return chroma.parseHtmlHex(scolor)
-  elif scolor.isColorFormat("rgb"):
-    return chroma.parseHtmlRgb(scolor)
-  elif scolor.isHexAlphaFormat():
-    return chroma.parseHexAlpha(scolor)
-  elif scolor.isHexFormat():
-    return chroma.parseHex(scolor)
-  elif scolor.isColorXRGBAFormat("rgbx"):
-    return parseColorRGBX(scolor).color
-  elif scolor.isColorFormat("hsl"):
-    return parseColorHSL(scolor).color
-  elif scolor.isColorFormat("hsv"):
-    return parseColorHSV(scolor).color
-  elif scolor.isTinyHexHtmlFormat():
-    return chroma.parseHtmlHexTiny(scolor)
-  elif isColorSimpleFormat(obj, color):
-    return color
+  if not colorObj.isNil:
+    return colorObj[]
   else:
-    return parseHtmlColor(scolor)
+    let scolor = strip($obj)
+    if scolor.len == 0:
+      raise newException(InvalidColor, "Empty color string.")
+
+    var color: Color
+
+    if scolor.isColorXRGBAFormat("rgba"):
+      return chroma.parseHtmlRgba(scolor)
+    elif scolor.isHexHtmlFormat():
+      return chroma.parseHtmlHex(scolor)
+    elif scolor.isColorFormat("rgb"):
+      return chroma.parseHtmlRgb(scolor)
+    elif scolor.isHexAlphaFormat():
+      return chroma.parseHexAlpha(scolor)
+    elif scolor.isHexFormat():
+      return chroma.parseHex(scolor)
+    elif scolor.isColorXRGBAFormat("rgbx"):
+      return parseColorRGBX(scolor).color
+    elif scolor.isColorFormat("hsl"):
+      return parseColorHSL(scolor).color
+    elif scolor.isColorFormat("hsv"):
+      return parseColorHSV(scolor).color
+    elif scolor.isTinyHexHtmlFormat():
+      return chroma.parseHtmlHexTiny(scolor)
+    elif isColorSimpleFormat(obj, color):
+      return color
+    else:
+      return parseHtmlColor(scolor)
 
 template toHexPtr*[T](obj: T): string =
   # Converts an object to a hexadecimal string.
@@ -687,5 +692,140 @@ proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       )
 
   Tcl.SetObjResult(interp, listobj)
+
+  return Tcl.OK
+
+proc pix_rgba*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Sets a new rgba color object.
+  #
+  # r - integer (0-255)
+  # g - integer (0-255)
+  # b - integer (0-255)
+  # a - double (0-1)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 5:
+    Tcl.WrongNumArgs(interp, 1, objv, "r g b a")
+    return Tcl.ERROR
+
+  var r, g, b: cint
+  var a: cdouble
+
+  if Tcl.GetIntFromObj(interp, objv[1], r) != Tcl.OK or
+     Tcl.GetIntFromObj(interp, objv[2], g) != Tcl.OK or
+     Tcl.GetIntFromObj(interp, objv[3], b) != Tcl.OK:
+    return Tcl.ERROR
+
+  if Tcl.GetDoubleFromObj(interp, objv[4], a) != Tcl.OK:
+    return Tcl.ERROR
+
+  var color: Color
+
+  color.r = min(1.0, r / 255)
+  color.g = min(1.0, g / 255)
+  color.b = min(1.0, b / 255)
+  color.a = min(1.0, a)
+
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_rgb*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Sets a new rgb color object.
+  #
+  # r - integer (0-255)
+  # g - integer (0-255)
+  # b - integer (0-255)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "r g b")
+    return Tcl.ERROR
+
+  var r, g, b: cint
+
+  if Tcl.GetIntFromObj(interp, objv[1], r) != Tcl.OK or
+     Tcl.GetIntFromObj(interp, objv[2], g) != Tcl.OK or
+     Tcl.GetIntFromObj(interp, objv[3], b) != Tcl.OK:
+    return Tcl.ERROR
+
+  var color: Color
+
+  color.r = min(1.0, r / 255)
+  color.g = min(1.0, g / 255)
+  color.b = min(1.0, b / 255)
+  color.a = 1.0
+
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_hexHTML*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Sets a new hex html color object.
+  #
+  # hex  - hex string
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "#xxxxxx")
+    return Tcl.ERROR
+
+  let scolor = strip($objv[1])
+
+  if not (isHexHtmlFormat(scolor) and isValidHex(scolor[1..^1])):
+    return pixUtils.errorMSG(interp,
+      "pix(error): '" & scolor & "' is not a valid hex html color."
+    )
+
+  let
+    color = chroma.parseHtmlHex(scolor)
+    obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Sets a new name color object.
+  #
+  # name  - name color string
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "#xxxxxx")
+    return Tcl.ERROR
+
+  let color = try:
+    parseHtmlColor(strip($objv[1]))
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
 
   return Tcl.OK

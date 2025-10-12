@@ -3,7 +3,7 @@
 
 import pixie, pixie/fileformats/svg
 import std/[strutils, parsecfg, streams, tables, unicode]
-import core/[pixtables, pixparses, pixutils]
+import core/[pixtables, pixparses, pixutils, pixobj]
 
 when defined(x11):
   import bindings/x11/binding as X11
@@ -48,6 +48,12 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   # Package
   if Tcl.PkgProvideEx(interp, "pix", pixVersion.cstring, nil) != Tcl.OK:
     return Tcl.ERROR
+
+  # Object types
+  let colorObjType = createPixColorObjType(interp)
+  if colorObjType.isNil:
+    return Tcl.ERROR
+  Tcl.RegisterObjType(colorObjType)
 
   # Table of pix objects.
   let ptable = createPixTable()
@@ -243,6 +249,10 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::scaleMatrix"       : pix_scaleMatrix,
     "pix::transMatrix"       : pix_transMatrix,
     "pix::mulMatrix"         : pix_mulMatrix,
+    "pix::color::rgba"       : pix_rgba,
+    "pix::color::rgb"        : pix_rgb,
+    "pix::color::hexHTML"    : pix_hexHTML,
+    "pix::color::name"       : pix_nameColor,
     # ...
   }.toTable
 
@@ -253,7 +263,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
     if Tcl.CreateObjCommand(
-      interp, cmdName.cstring, cmdProc, 
+      interp, cmdName.cstring, cmdProc,
       cast[Tcl.TClientData](ptable), nil
     ) == nil:
       return Tcl.ERROR
