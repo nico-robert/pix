@@ -811,11 +811,11 @@ proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   #
   # Returns: A *new* type [color] object.
   if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "#xxxxxx")
+    Tcl.WrongNumArgs(interp, 1, objv, "color name")
     return Tcl.ERROR
 
   let color = try:
-    parseHtmlColor(strip($objv[1]))
+    chroma.parseHtmlName(strip($objv[1]))
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
