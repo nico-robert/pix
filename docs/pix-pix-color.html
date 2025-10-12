@@ -13,7 +13,7 @@
             <button id="ruffNavMove" onclick="ruffMoveNavPane()"></button>
             <button id="ruffToggleTheme" onclick="ruffNextTheme()"></button>
             </div>
-        </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='pix::color'></a>pix::color<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h1>
+        </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='::pix::color'></a>::pix::color<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
 <ul class='ruff'>
 <li>The following color formats can be used:</li>
@@ -35,6 +35,45 @@
 <tr><td><nobr>hsl</nobr></td><td>e.g : <em>hsl(h,s,l)</em><br> This format takes three arguments, for the <em>hue</em>, <em>saturation</em>, and <em>lightness</em> components of the color. The arguments are all floating point. hue 0 to 360, saturation 0 to 100, and lightness 0 to 100.</td></tr>
 <tr><td><nobr>tiny hex</nobr></td><td>e.g : <em>#FF6</em><br> This format is a shorthand hexadecimal notation with <strong>4</strong> characters (including the # symbol), where each hex digit is doubled (e.g., #RGB becomes #RRGGBB).</td></tr>
 </table>
+<h2 class='ruff'><a name='::pix::color-Commands'></a>Commands<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h2>
+<div style='clear:both;'></div>
+<h3 class='ruffproc'><a name='::pix::color::hexHTML'>hexHTML</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets a new hex html color object.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hexHTML</span> <span class='ruff_arg'>hex</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>hex</code></nobr></td><td>hex string</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
+<h3 class='ruffproc'><a name='::pix::color::name'>name</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets a new name color object.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>name</span> <span class='ruff_arg'>name</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>name</code></nobr></td><td>name color string</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
+<h3 class='ruffproc'><a name='::pix::color::rgb'>rgb</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets a new rgb color object.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>rgb</span> <span class='ruff_arg'>r g b</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>r</code></nobr></td><td>integer (0-255)</td></tr>
+<tr><td><nobr><code>g</code></nobr></td><td>integer (0-255)</td></tr>
+<tr><td><nobr><code>b</code></nobr></td><td>integer (0-255)</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
+<h3 class='ruffproc'><a name='::pix::color::rgba'>rgba</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets a new rgba color object.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>rgba</span> <span class='ruff_arg'>r g b a</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>r</code></nobr></td><td>integer (0-255)</td></tr>
+<tr><td><nobr><code>g</code></nobr></td><td>integer (0-255)</td></tr>
+<tr><td><nobr><code>b</code></nobr></td><td>integer (0-255)</td></tr>
+<tr><td><nobr><code>a</code></nobr></td><td>double (0-1)</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
@@ -48,6 +87,10 @@
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
 <li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
-<hr></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
+<hr><li class='ruff-toc2'><a href='#::pix::color-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::hexHTML'>hexHTML</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hexHTML</span> <span class='ruff_arg'>hex</span></pre>Sets a new hex html color object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::name'>name</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>name</span> <span class='ruff_arg'>name</span></pre>Sets a new name color object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::rgb'>rgb</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rgb</span> <span class='ruff_arg'>r g b</span></pre>Sets a new rgb color object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::rgba'>rgba</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rgba</span> <span class='ruff_arg'>r g b a</span></pre>Sets a new rgba color object.
+</span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>
 

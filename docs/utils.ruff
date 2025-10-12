@@ -80,3 +80,36 @@ proc pix::mulMatrix {args} {
   #
   # Returns: The multiplied matrix as a list.
 }
+proc pix::color::rgba {r g b a} {
+  # Sets a new rgba color object.
+  #
+  # r - integer (0-255)
+  # g - integer (0-255)
+  # b - integer (0-255)
+  # a - double (0-1)
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::rgb {r g b} {
+  # Sets a new rgb color object.
+  #
+  # r - integer (0-255)
+  # g - integer (0-255)
+  # b - integer (0-255)
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::hexHTML {hex} {
+  # Sets a new hex html color object.
+  #
+  # hex  - hex string
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::name {name} {
+  # Sets a new name color object.
+  #
+  # name  - name color string
+  #
+  # Returns: A *new* type [color] object.
+}
