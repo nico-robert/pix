@@ -30,9 +30,16 @@ type
     tcl_Panic                : proc(format: cstring) {.cdecl.}
     tcl_VarEval              : proc(interp: PInterp): cint {.cdecl.}
     tcl_EvalEx               : proc(interp: PInterp, script: cstring, numBytes: Size, flags: cint): cint {.cdecl.}
+    tcl_RegisterObjType      : proc(typePtr: PObjType) {.cdecl.}
+    tcl_InvalidateStringRep  : proc(objPtr: PObj) {.cdecl.}
+    tcl_NewObj               : proc(): PObj {.cdecl.}
+    tcl_GetObjType           : proc(typeName: cstring): PObjType {.cdecl.}
+    tcl_Alloc                : proc(size: HASH_TYPE): pointer {.cdecl.}
     when defined(tcl9):
       tcl_IncrRefCount       : proc(objPtr: PObj) {.cdecl.}
       tcl_DecrRefCount       : proc(objPtr: PObj) {.cdecl.}
+      tcl_FetchInternalRep   : proc(objPtr: PObj, typePtr: PObjType): PObjInternalRep {.cdecl.}
+      tcl_StoreInternalRep   : proc(objPtr: PObj, typePtr: PObjType, irPtr: PObjInternalRep) {.cdecl.}
     when defined(tcl8):
       tcl_NewIntObj          : proc(intValue: cint): PObj {.cdecl.}
       tcl_NewBooleanObj      : proc(intValue: cint): PObj {.cdecl.}
@@ -115,6 +122,21 @@ proc VarEval*(interp: PInterp): cint {.varargs.} =
 proc EvalEx*(interp: PInterp, script: cstring, numBytes: Size, flags: cint): cint =
   tclStubsPtr.tcl_EvalEx(interp, script, numBytes, flags)
 
+proc RegisterObjType*(typePtr: PObjType) =
+  tclStubsPtr.tcl_RegisterObjType(typePtr)
+
+proc InvalidateStringRep*(objPtr: PObj) =
+  tclStubsPtr.tcl_InvalidateStringRep(objPtr)
+
+proc NewObj*(): PObj =
+  return tclStubsPtr.tcl_NewObj()
+
+proc GetObjType*(typeName: cstring): PObjType =
+  return tclStubsPtr.tcl_GetObjType(typeName)
+
+proc Alloc*(size: HASH_TYPE): pointer =
+  return tclStubsPtr.tcl_Alloc(size)
+
 proc GetStringResult*(interp: PInterp): cstring {.cdecl.} =
   return GetString(GetObjResult(interp))
 
@@ -143,6 +165,12 @@ when defined(tcl9):
 
   proc DecrRefCount*(objPtr: PObj) =
     tclStubsPtr.tcl_DecrRefCount(objPtr)
+
+  proc FetchInternalRep*(objPtr: PObj, typePtr: PObjType): PObjInternalRep =
+    tclStubsPtr.tcl_FetchInternalRep(objPtr, typePtr)
+
+  proc StoreInternalRep*(objPtr: PObj, typePtr: PObjType, irPtr: PObjInternalRep) =
+    tclStubsPtr.tcl_StoreInternalRep(objPtr, typePtr, irPtr)
 
   proc Eval*(interp: PInterp, script: cstring): cint =
     return EvalEx(interp, script, TCL_INDEX_NONE, 0)

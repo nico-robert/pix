@@ -4,9 +4,13 @@ const
   TCL_INDEX_NONE* = -1
 
 when defined(tcl9):
-  type Size* {.importc: "Tcl_Size", header: "tcl.h".} = clong
+  type
+    Size* {.importc: "Tcl_Size", header: "tcl.h".} = clong
+    HASH_TYPE* = csize_t
 else:
-  type Size* = cint
+  type
+    Size* = cint
+    HASH_TYPE* = cuint
 
 type
   TInterp*{.incompleteStruct.} = object
@@ -22,11 +26,18 @@ type
   TNamespaceDeleteProc* {.importc: "Tcl_NamespaceDeleteProc", header: "tcl.h".} = proc(
     clientData: TClientData
     ) {.cdecl.}
-  
+
   TCommand*{.incompleteStruct.} = object
   PCommand* = ptr TCommand
 
-  TObjType* {.incompleteStruct.} = object
+  ObjType* = object
+    name*:             cstring
+    freeIntRepProc*:   proc(objPtr: PObj) {.cdecl.}
+    dupIntRepProc*:    proc(srcPtr: PObj, dupPtr: PObj) {.cdecl.}
+    updateStringProc*: proc(objPtr: PObj) {.cdecl.}
+    setFromAnyProc*:   proc(interp: PInterp, objPtr: PObj): cint {.cdecl.}
+
+  PObjType* = ptr ObjType
 
   TwoPtrValue* = object
     ptr1*: pointer
@@ -44,12 +55,14 @@ type
     twoPtrValue*: TwoPtrValue
     ptrAndLongRep*: PtrAndLongRep
 
+  PObjInternalRep*  = ptr TObjInternalRep
+
   TObj* = object
     refCount*   : Size
     bytes*      : cstring
     length*     : Size
-    typePtr*    : ptr TObjType
-    internalRep*: TObjInternalRep 
+    typePtr*    : PObjType
+    internalRep*: TObjInternalRep
 
   PObj*  = ptr TObj
   PPObj* = ptr UncheckedArray[PObj]
