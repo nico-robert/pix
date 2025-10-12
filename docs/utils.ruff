@@ -109,7 +109,57 @@ proc pix::color::hexHTML {hex} {
 proc pix::color::name {name} {
   # Sets a new name color object.
   #
-  # name  - name color string
+  # name  - HTML name
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::darken {color amount} {
+  # Darkens the color by amount 0-1.
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::lighten {color amount} {
+  # Lightens the color by amount 0-1.
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::desaturate {color amount} {
+  # Desaturate (makes grayer) the color by amount 0-1.
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::distance {color1 color2} {
+  # A distance function based on CIEDE2000 color difference formula.
+  #
+  # color1   - color or colorObj [color]
+  # color2   - color or colorObj [color]
+  #
+  # Returns: A distance.
+}
+proc pix::color::almostEqual {color1 color2 {epsilon {0.01}}} {
+  # Almost equal colors.
+  #
+  # color1   - color or colorObj [color]
+  # color2   - color or colorObj [color]
+  # epsilon  - double value 
+  #
+  # Returns: True if colors are close.
+}
+proc pix::color::mix {color1 color2 {lerp {}}} {
+  # Mixes two colours using simple averaging or simple lerp if the “lerp” argument is specified.
+  #
+  # color1   - color or colorObj [color]
+  # color2   - color or colorObj [color]
+  # lerp     - double value 
   #
   # Returns: A *new* type [color] object.
 }
