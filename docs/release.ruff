@@ -45,6 +45,12 @@ namespace eval ::Release {
     - Fixes `setLineDash` command to get around pixie's problem when Tcl list is not even.<br>
     - Try to improve the `X11` binding.<br>
     - Cosmetic changes.<br>
+*  **13-Oct-2025** : 0.7<br>
+    - Adds new procedures for playing with colours (mix, darken,...).<br>
+    - Improved compilation support.<br>
+    - Bump `pixie` to version `5.1.0`.<br>
+    - Refactoring matrix3x3 procedure.<br>
+    - Fix doc: Matrix values are in row order (I think it's good now!).<br>
 <br>
 }
 }
