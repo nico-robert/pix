@@ -137,6 +137,14 @@ proc pix::color::desaturate {color amount} {
   #
   # Returns: A *new* type [color] object.
 }
+proc pix::color::saturate {color amount} {
+  # Saturates (makes brighter) the color by amount 0-1. 
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+}
 proc pix::color::distance {color1 color2} {
   # A distance function based on CIEDE2000 color difference formula.
   #
