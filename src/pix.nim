@@ -256,6 +256,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::color::darken"      : pix_colorDarken,
     "pix::color::lighten"     : pix_colorLighten,
     "pix::color::desaturate"  : pix_colorDesaturate,
+    "pix::color::saturate"    : pix_colorSaturate,
     "pix::color::distance"    : pix_colorDistance,
     "pix::color::almostEqual" : pix_colorAlmostEqual,
     "pix::color::mix"         : pix_colorMix,

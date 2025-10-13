@@ -851,12 +851,12 @@ proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
     return Tcl.ERROR
 
-  if not (amount > 0 and amount < 1.0):
+  if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1"
     )
 
-  let color = colorObj.darken(amount)
+  let color = darken(colorObj, amount)
   let obj = pixObj.createColorObj(color)
 
   if obj.isNil:
@@ -889,12 +889,12 @@ proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
     return Tcl.ERROR
 
-  if not (amount > 0 and amount < 1.0):
+  if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1"
     )
 
-  let color = colorObj.lighten(amount)
+  let color = lighten(colorObj, amount)
   let obj = pixObj.createColorObj(color)
 
   if obj.isNil:
@@ -927,12 +927,50 @@ proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
     return Tcl.ERROR
 
-  if not (amount > 0 and amount < 1.0):
+  if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1"
     )
 
-  let color = colorObj.desaturate(amount)
+  let color = desaturate(colorObj, amount)
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object"
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Saturates (makes brighter) the color by amount 0-1. 
+  #
+  # color   - color or colorObj [color]
+  # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
+    return Tcl.ERROR
+
+  let colorObj = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  var amount: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[2], amount) != Tcl.OK:
+    return Tcl.ERROR
+
+  if not (amount >= 0 and amount <= 1.0):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'amount' value must be between 0 and 1"
+    )
+
+  let color = saturate(colorObj, amount)
   let obj = pixObj.createColorObj(color)
 
   if obj.isNil:
