@@ -45,8 +45,14 @@
                # Fixes `setLineDash` command to get around pixie's problem when Tcl list is not even.
                # Try to improve the `X11` binding.
                # Cosmetic changes.
+# 13-Oct-2025 : v0.7
+               # Adds new procedures for playing with colours (mix, darken,...).
+               # Improved compilation support.
+               # Bump `pixie` to version `5.1.0`.
+               # Refactoring matrix3x3 procedure.
+               # Fix doc: Matrix values are in row order (I think it's good now!).
 
-version     = "0.6"
+version     = "0.7"
 author      = "Nicolas ROBERT"
 description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), " &
               "a full-featured 2D graphics library written in Nim."

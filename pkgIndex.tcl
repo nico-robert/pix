@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-package ifneeded pix 0.6 [list apply {dir {
+package ifneeded pix 0.7 [list apply {dir {
     package require platform
 
     # Check Tcl version.
@@ -11,7 +11,7 @@ package ifneeded pix 0.6 [list apply {dir {
 
     set os  [platform::generic]
     set ext [info sharedlibextension]
-    set pixv 0.6
+    set pixv 0.7
 
     switch -exact $os {
         macosx-x86_64 -
