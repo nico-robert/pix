@@ -772,7 +772,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  var value: int = 0
+  var value: cint = 0
 
   # Coordinates
   var x, y: cdouble
@@ -801,7 +801,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
   return Tcl.OK
 

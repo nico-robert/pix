@@ -1430,7 +1430,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 
   var
     x, y: cdouble
-    value: int = 0
+    value: cint = 0
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1452,7 +1452,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
   return Tcl.OK
 
@@ -1479,7 +1479,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   var
     x, y: cdouble
-    value: int = 0
+    value: cint = 0
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
@@ -1525,7 +1525,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
 
   return Tcl.OK
 
