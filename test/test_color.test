@@ -1,0 +1,40 @@
+lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
+
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
+
+set color1 [pix::color::rgba 0 0 0 0.85]
+
+if {$color1 ne "(0.0, 0.0, 0.0, 0.85)"} {
+    error "color1 doesn't match with '(0.0, 0.0, 0.0, 0.85)'"
+}
+
+set color2 [pix::color::name "white"]
+
+if {$color2 ne "(1.0, 1.0, 1.0, 1.0)"} {
+    error "color2 doesn't match with '(1.0, 1.0, 1.0, 1.0)'"
+}
+
+if {![pix::color::almostEqual "red" "red"]} {
+    error "Color red should be equal to red"
+}
+
+set color3 [pix::color::mix "red" "white"]
+
+if {$color3 ne "(1.0, 0.5, 0.5, 1.0)"} {
+    error "color3 doesn't match with '(1.0, 0.5, 0.5, 1.0)'"
+}
+
+set color4 [pix::color::hexHTML "#BADA55"]
+
+if {![string match "(0.7*, 0.85*, 0.33*, 1.0)" $color4]} {
+    error "color4 doesn't match with '#BADA55'"
+}
+
+set color5 [pix::color::distance "red" "blue"]
+
+if {$color5 < 52} {
+    error "Distance color5 should be greater than 52."
+}
+
+exit 0

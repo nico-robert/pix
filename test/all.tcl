@@ -5,6 +5,7 @@ set files {
     test_images.test
     test_paints.test
     test_paths.test
+    test_color.test
 }
 
 set dir [file dirname [info script]]
