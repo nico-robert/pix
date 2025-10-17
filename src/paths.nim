@@ -464,7 +464,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
       return Tcl.ERROR
 
   let value = try:
-    if path.fillOverlaps(vec2(x, y), matrix3, windingRule): 1 else: 0
+    path.fillOverlaps(vec2(x, y), matrix3, windingRule)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
