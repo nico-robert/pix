@@ -36,6 +36,16 @@ type
     dupIntRepProc*:    proc(srcPtr: PObj, dupPtr: PObj) {.cdecl.}
     updateStringProc*: proc(objPtr: PObj) {.cdecl.}
     setFromAnyProc*:   proc(interp: PInterp, objPtr: PObj): cint {.cdecl.}
+    when defined(tcl9):
+      version*: csize_t
+      lengthProc*: pointer      # TODO: Tcl_ObjTypeLengthProc
+      indexProc*: pointer       # TODO: Tcl_ObjTypeIndexProc
+      sliceProc*: pointer       # TODO: Tcl_ObjTypeSliceProc
+      reverseProc*: pointer     # TODO: Tcl_ObjTypeReverseProc
+      getElementsProc*: pointer # TODO: Tcl_ObjTypeGetElements
+      setElementProc*: pointer  # TODO: Tcl_ObjTypeSetElement
+      replaceProc*: pointer     # TODO: Tcl_ObjTypeReplaceProc
+      inOperProc*: pointer      # TODO: Tcl_ObjTypeInOperatorProc
 
   PObjType* = ptr ObjType
 
