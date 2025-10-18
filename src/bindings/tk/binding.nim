@@ -5,36 +5,36 @@ when defined(x11):
   import ../x11/xtypes as X
 
 import ../tcl/binding as Tcl
-
-include "private/tktypes.inc"
+import ./tktypes as Tk
+export Tk
 
 when defined(x11):
   type
     # Image types.
     ImageType* = object
       name*           : cstring
-      createProc*     : proc(interp: Tcl.PInterp, imageName: cstring, objc: cint, objv: Tcl.PPObj, typePtr: ptr ImageType, masterPtr: ImageMaster, clientDataPtr: Tcl.PClientData): cint {.cdecl.}
-      getProc*        : proc(tkwin: Window, masterData: Tcl.TClientData): Tcl.TClientData {.cdecl.}
+      createProc*     : proc(interp: Tcl.PInterp, imageName: cstring, objc: cint, objv: Tcl.PPObj, typePtr: ptr ImageType, masterPtr: Tk.ImageMaster, clientDataPtr: Tcl.PClientData): cint {.cdecl.}
+      getProc*        : proc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData {.cdecl.}
       displayProc*    : proc(instanceData: Tcl.TClientData, display: ptr X.Display, drawable: X.Drawable, imageX: cint, imageY: cint, width: cint, height: cint, drawableX: cint, drawableY: cint) {.cdecl.}
       freeProc*       : proc(instanceData: Tcl.TClientData, display: ptr X.Display) {.cdecl.}
       deleteProc*     : proc(instanceData: Tcl.TClientData) {.cdecl.}
 
 type 
   TkStubs {.importc.} = object
-    tk_FindPhoto       : proc(interp: Tcl.PInterp, imageName: cstring): PhotoHandle {.cdecl.}
-    tk_PhotoPutBlock   : proc(interp: Tcl.PInterp, handle: PhotoHandle, blockPtr: ptr PhotoImageBlock, x: cint, y: cint, width: cint, height: cint, compRule: cint): cint {.cdecl.}
-    tk_PhotoSetSize    : proc(interp: Tcl.PInterp, handle: PhotoHandle, width: cint, height: cint): cint {.cdecl.}
-    tk_DisplayName     : proc(tkwin: Window): cstring {.cdecl.}
+    tk_FindPhoto       : proc(interp: Tcl.PInterp, imageName: cstring): Tk.PhotoHandle {.cdecl.}
+    tk_PhotoPutBlock   : proc(interp: Tcl.PInterp, handle: Tk.PhotoHandle, blockPtr: ptr Tk.PhotoImageBlock, x: cint, y: cint, width: cint, height: cint, compRule: cint): cint {.cdecl.}
+    tk_PhotoSetSize    : proc(interp: Tcl.PInterp, handle: Tk.PhotoHandle, width: cint, height: cint): cint {.cdecl.}
+    tk_DisplayName     : proc(tkwin: Tk.Window): cstring {.cdecl.}
     when defined(x11):
-      tk_GetColor          : proc(interp: Tcl.PInterp, tkwin: Window, name: cstring): X.Color {.cdecl.}
-      tk_GetOption         : proc(tkwin: Window, name: cstring, className: cstring): Uid {.cdecl.}
+      tk_GetColor          : proc(interp: Tcl.PInterp, tkwin: Tk.Window, name: cstring): X.Color {.cdecl.}
+      tk_GetOption         : proc(tkwin: Tk.Window, name: cstring, className: cstring): Uid {.cdecl.}
       tk_FreeGC            : proc(display: ptr X.Display, gc: X.GC) {.cdecl.}
       tk_GetPixmap         : proc(display: ptr X.Display, d: X.Drawable, width: cint, height: cint, depth: cint): Pixmap {.cdecl.}
       tk_FreePixmap        : proc(display: ptr X.Display, pixmap: Pixmap) {.cdecl.}
       tk_CreateImageType   : proc(typePtr: ptr ImageType) {.cdecl.}
-      tk_GetGC             : proc(tkwin: Window, valueMask: culong, valuePtr: var X.GCValues): X.GC {.cdecl.}
-      tk_ImageChanged      : proc(imageMaster: ImageMaster, x: cint, y: cint, width: cint, height: cint, imageWidth: cint, imageHeight: cint) {.cdecl.}
-      tk_NameOfImage       : proc(imageMaster: ImageMaster): cstring {.cdecl.}
+      tk_GetGC             : proc(tkwin: Tk.Window, valueMask: culong, valuePtr: var X.GCValues): X.GC {.cdecl.}
+      tk_ImageChanged      : proc(imageMaster: Tk.ImageMaster, x: cint, y: cint, width: cint, height: cint, imageWidth: cint, imageHeight: cint) {.cdecl.}
+      tk_NameOfImage       : proc(imageMaster: Tk.ImageMaster): cstring {.cdecl.}
       when defined(tcl9):
         tk_GetImageModelData  : proc(interp: Tcl.PInterp, name: cstring, typePtrPtr: var ImageType): Tcl.TClientData {.cdecl.}
       else:
@@ -42,21 +42,21 @@ type
 
 var tkStubsPtr {.importc: "tkStubsPtr", header: "tkDecls.h".} : ptr TkStubs
 
-proc FindPhoto*(interp: Tcl.PInterp, imageName: cstring): PhotoHandle =
+proc FindPhoto*(interp: Tcl.PInterp, imageName: cstring): Tk.PhotoHandle =
   return tkStubsPtr.tk_FindPhoto(interp, imageName)
 
-proc PhotoPutBlock*(interp: Tcl.PInterp, handle: PhotoHandle, blockPtr: ptr PhotoImageBlock, x: cint, y: cint, width: cint, height: cint, compRule: cint): cint =
+proc PhotoPutBlock*(interp: Tcl.PInterp, handle: Tk.PhotoHandle, blockPtr: ptr Tk.PhotoImageBlock, x: cint, y: cint, width: cint, height: cint, compRule: cint): cint =
   return tkStubsPtr.tk_PhotoPutBlock(interp, handle, blockPtr, x, y, width, height, compRule)
 
-proc PhotoSetSize*(interp: Tcl.PInterp, handle: PhotoHandle, width: cint, height: cint): cint =
+proc PhotoSetSize*(interp: Tcl.PInterp, handle: Tk.PhotoHandle, width: cint, height: cint): cint =
   return tkStubsPtr.tk_PhotoSetSize(interp, handle, width, height)
 
-proc DisplayName*(tkwin: Window): cstring =
+proc DisplayName*(tkwin: Tk.Window): cstring =
   return tkStubsPtr.tk_DisplayName(tkwin)
 
-proc Depth*   (tkwin: Window): cint   {.cdecl, importc: "Tk_Depth", header: "tk.h".}
-proc WindowId*(tkwin: Window): culong {.cdecl, importc: "Tk_WindowId", header: "tk.h".}
-proc Parent*  (tkwin: Window): Window {.cdecl, importc: "Tk_Parent", header: "tk.h".}
+proc Depth*   (tkwin: Tk.Window): cint   {.cdecl, importc: "Tk_Depth", header: "tk.h".}
+proc WindowId*(tkwin: Tk.Window): culong {.cdecl, importc: "Tk_WindowId", header: "tk.h".}
+proc Parent*  (tkwin: Tk.Window): Tk.Window {.cdecl, importc: "Tk_Parent", header: "tk.h".}
 
 when defined(x11):
 
@@ -104,12 +104,12 @@ when defined(x11):
   proc TkPutImage*(colors: ptr culong, ncolors: cint, display: ptr X.Display, d: X.Drawable, gc: X.GC, image: ptr XImage, src_x: cint, src_y: cint, dest_x: cint, dest_y: cint, width: cuint, height: cuint): cint =
     return tkIntXlibStubsPtr.tkPutImage(colors, ncolors, display, d, gc, image, src_x, src_y, dest_x, dest_y, width, height)
 
-  proc Visual*(tkwin: Window): ptr X.Visual {.cdecl, importc: "Tk_Visual", header: "tk.h".}
+  proc Visual*(tkwin: Tk.Window): ptr X.Visual {.cdecl, importc: "Tk_Visual", header: "tk.h".}
 
-  proc GetColor*(interp: Tcl.PInterp, tkwin: Window, name: cstring): X.Color =
+  proc GetColor*(interp: Tcl.PInterp, tkwin: Tk.Window, name: cstring): X.Color =
     return tkStubsPtr.tk_GetColor(interp, tkwin, name)
 
-  proc GetOption*(tkwin: Window, name: cstring, className: cstring): Uid =
+  proc GetOption*(tkwin: Tk.Window, name: cstring, className: cstring): Uid =
     return tkStubsPtr.tk_GetOption(tkwin, name, className)
 
   proc FreeGC*(display: ptr X.Display, gc: X.GC) =
@@ -124,13 +124,13 @@ when defined(x11):
   proc CreateImageType*(typePtr: ptr ImageType) =
     tkStubsPtr.tk_CreateImageType(typePtr)
 
-  proc GetGC*(tkwin: Window, valueMask: culong, valuePtr: var X.GCValues): X.GC =
+  proc GetGC*(tkwin: Tk.Window, valueMask: culong, valuePtr: var X.GCValues): X.GC =
     return tkStubsPtr.tk_GetGC(tkwin, valueMask, valuePtr)
 
-  proc ImageChanged*(imageMaster: ImageMaster, x: cint, y: cint, width: cint, height: cint, imageWidth: cint, imageHeight: cint) =
+  proc ImageChanged*(imageMaster: Tk.ImageMaster, x: cint, y: cint, width: cint, height: cint, imageWidth: cint, imageHeight: cint) =
     tkStubsPtr.tk_ImageChanged(imageMaster, x, y, width, height, imageWidth, imageHeight)
 
-  proc NameOfImage*(imageMaster: ImageMaster): cstring =
+  proc NameOfImage*(imageMaster: Tk.ImageMaster): cstring =
     return tkStubsPtr.tk_NameOfImage(imageMaster)
 
   when defined(tcl9):
