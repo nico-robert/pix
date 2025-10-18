@@ -1,7 +1,7 @@
 const
   OK*    = 0
   ERROR* = 1
-  TCL_INDEX_NONE* = -1
+  INDEX_NONE* = -1
 
 when defined(tcl9):
   type
@@ -22,7 +22,7 @@ type
   TClientData* = pointer
   PClientData* = ptr TClientData
 
-  PNamespaceDeleteProc = pointer
+  PNamespaceDeleteProc* = pointer
   TNamespaceDeleteProc* {.importc: "Tcl_NamespaceDeleteProc", header: "tcl.h".} = proc(
     clientData: TClientData
     ) {.cdecl.}
