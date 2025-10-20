@@ -301,13 +301,13 @@ template toHexPtr*[T](obj: T): string =
   ("0x" & hex & "^" & typeName).toLowerAscii
 
 proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cint =
-# Converts a Tcl list to a matrix 3x3.
-#
-# interp  - The Tcl interpreter.
-# obj     - The Tcl object.
-# matrix3 - The matrix to fill with the values of the Tcl object.
-#
-# Returns: Tcl.OK if successful, Tcl.ERROR otherwise.
+  # Converts a Tcl list to a matrix 3x3.
+  #
+  # interp  - The Tcl interpreter.
+  # obj     - The Tcl object.
+  # matrix3 - The matrix to fill with the values of the Tcl object.
+  #
+  # Returns: Tcl.OK if successful, Tcl.ERROR otherwise.
   var
     count: Tcl.Size
     elements: Tcl.PPObj
@@ -329,6 +329,24 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
 
   return Tcl.OK
 
+proc addToListObj*(matrix3: vmath.Mat3): Tcl.PObj =
+  # Adds a matrix 3x3 to a Tcl list object.
+  #
+  # matrix3 - matrix.
+  #
+  # Returns: A Tcl list as object.
+  let listMtxobj = Tcl.NewListObj(0, nil)
+
+  for i in 0..2:
+    for j in 0..2:
+      discard Tcl.ListObjAppendElement(
+        nil,
+        listMtxobj,
+        Tcl.NewDoubleObj(matrix3[i, j])
+      )
+
+  return listMtxobj
+
 proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts an HTML color into an RGBA value and returns it as a Tcl list.
   #
@@ -345,14 +363,14 @@ proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let newobj = Tcl.NewListObj(0, nil)
+  let listColorObj = Tcl.NewListObj(0, nil)
 
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.r.cint))
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.g.cint))
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.b.cint))
-  discard Tcl.ListObjAppendElement(interp, newobj, Tcl.NewIntObj(color.a.cint))
+  discard Tcl.ListObjAppendElement(nil, listColorObj, Tcl.NewIntObj(color.r.cint))
+  discard Tcl.ListObjAppendElement(nil, listColorObj, Tcl.NewIntObj(color.g.cint))
+  discard Tcl.ListObjAppendElement(nil, listColorObj, Tcl.NewIntObj(color.b.cint))
+  discard Tcl.ListObjAppendElement(nil, listColorObj, Tcl.NewIntObj(color.a.cint))
 
-  Tcl.SetObjResult(interp, newobj)
+  Tcl.SetObjResult(interp, listColorObj)
 
   return Tcl.OK
 
@@ -544,17 +562,7 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   matrix3 = matrix3 * vmath.rotate(angle.float32)
 
-  let listobj = Tcl.NewListObj(0, nil)
-
-  for i in 0..2:
-    for j in 0..2:
-      discard Tcl.ListObjAppendElement(
-        interp,
-        listobj,
-        Tcl.NewDoubleObj(matrix3[i][j])
-      )
-
-  Tcl.SetObjResult(interp, listobj)
+  Tcl.SetObjResult(interp, matrix3.addToListObj())
 
   return Tcl.OK
 
@@ -595,17 +603,7 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   matrix3 = matrix3 * vmath.scale(vec2(x, y))
 
-  let listobj = Tcl.NewListObj(0, nil)
-
-  for i in 0..2:
-    for j in 0..2:
-      discard Tcl.ListObjAppendElement(
-        interp,
-        listobj,
-        Tcl.NewDoubleObj(matrix3[i][j])
-      )
-
-  Tcl.SetObjResult(interp, listobj)
+  Tcl.SetObjResult(interp, matrix3.addToListObj())
 
   return Tcl.OK
 
@@ -646,17 +644,7 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   matrix3 = matrix3 * vmath.translate(vec2(x, y))
 
-  let listobj = Tcl.NewListObj(0, nil)
-
-  for i in 0..2:
-    for j in 0..2:
-      discard Tcl.ListObjAppendElement(
-        interp,
-        listobj,
-        Tcl.NewDoubleObj(matrix3[i][j])
-      )
-
-  Tcl.SetObjResult(interp, listobj)
+  Tcl.SetObjResult(interp, matrix3.addToListObj())
 
   return Tcl.OK
 
@@ -679,19 +667,9 @@ proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       return Tcl.ERROR
     lm.add(m)
 
-  let
-    matrix3 = lm.foldl(a * b)
-    listobj = Tcl.NewListObj(0, nil)
+  let matrix3 = lm.foldl(a * b)
 
-  for i in 0..2:
-    for j in 0..2:
-      discard Tcl.ListObjAppendElement(
-        interp,
-        listobj,
-        Tcl.NewDoubleObj(matrix3[i][j])
-      )
-
-  Tcl.SetObjResult(interp, listobj)
+  Tcl.SetObjResult(interp, matrix3.addToListObj())
 
   return Tcl.OK
 
