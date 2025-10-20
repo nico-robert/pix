@@ -251,6 +251,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::mulMatrix"          : pix_mulMatrix,
     "pix::color::rgba"        : pix_rgba,
     "pix::color::rgb"         : pix_rgb,
+    "pix::color::hsl"         : pix_hsl,
     "pix::color::hexHTML"     : pix_hexHTML,
     "pix::color::name"        : pix_nameColor,
     "pix::color::darken"      : pix_colorDarken,
@@ -260,6 +261,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::color::distance"    : pix_colorDistance,
     "pix::color::almostEqual" : pix_colorAlmostEqual,
     "pix::color::mix"         : pix_colorMix,
+    "pix::color::spin"        : pix_colorSpin,
     # ...
   }.toTable
 

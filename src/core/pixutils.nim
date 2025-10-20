@@ -730,7 +730,7 @@ proc pix_rgba*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -767,7 +767,7 @@ proc pix_rgb*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -797,7 +797,53 @@ proc pix_hexHTML*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_hsl*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Sets a new hsl color object.
+  #
+  # h - hue        (0-360)
+  # s - saturation (0-100)
+  # l - lightness  (0-100)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "h s l")
+    return Tcl.ERROR
+
+  var h, s, l: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[1], h) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[2], s) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[3], l) != Tcl.OK:
+    return Tcl.ERROR
+
+  if not (h >= 0 and h <= 360):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'hue' value must be between 0 and 360."
+    )
+
+  if not (s >= 0 and s <= 100):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'saturation' value must be between 0 and 100."
+    )
+
+  if not (l >= 0 and s <= 100):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'lightness' value must be between 0 and 100."
+    )
+
+  let hsl = hsl(h, s, l)
+  let obj = pixObj.createColorObj(hsl.color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -823,7 +869,7 @@ proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -853,7 +899,7 @@ proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
-      "pix(error): 'amount' value must be between 0 and 1"
+      "pix(error): 'amount' value must be between 0 and 1."
     )
 
   let color = darken(colorObj, amount)
@@ -861,7 +907,7 @@ proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -891,7 +937,7 @@ proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
-      "pix(error): 'amount' value must be between 0 and 1"
+      "pix(error): 'amount' value must be between 0 and 1."
     )
 
   let color = lighten(colorObj, amount)
@@ -899,7 +945,7 @@ proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -929,7 +975,7 @@ proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
-      "pix(error): 'amount' value must be between 0 and 1"
+      "pix(error): 'amount' value must be between 0 and 1."
     )
 
   let color = desaturate(colorObj, amount)
@@ -937,7 +983,7 @@ proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -967,7 +1013,7 @@ proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   if not (amount >= 0 and amount <= 1.0):
     return pixUtils.errorMSG(interp,
-      "pix(error): 'amount' value must be between 0 and 1"
+      "pix(error): 'amount' value must be between 0 and 1."
     )
 
   let color = saturate(colorObj, amount)
@@ -975,7 +1021,45 @@ proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
+    )
+
+  Tcl.SetObjResult(interp, obj)
+
+  return Tcl.OK
+
+proc pix_colorSpin*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Rotates the hue of the color by degrees (0-360).
+  #
+  # color   - color or colorObj [color]
+  # degrees - double value (0-360)
+  #
+  # Returns: A *new* type [color] object.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<color> degrees")
+    return Tcl.ERROR
+
+  let colorObj = try:
+    pixUtils.getColor(objv[1])
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  var degrees: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[2], degrees) != Tcl.OK:
+    return Tcl.ERROR
+
+  if not (degrees >= 0 and degrees <= 360):
+    return pixUtils.errorMSG(interp,
+      "pix(error): 'degrees' value must be between 0 and 360."
+    )
+
+  let color = spin(colorObj, degrees)
+  let obj = pixObj.createColorObj(color)
+
+  if obj.isNil:
+    return pixUtils.errorMSG(interp,
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
@@ -1079,7 +1163,7 @@ proc pix_colorMix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
   if obj.isNil:
     return pixUtils.errorMSG(interp,
-      "pix(error): Failed to create color object"
+      "pix(error): Failed to create color object."
     )
 
   Tcl.SetObjResult(interp, obj)
