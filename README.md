@@ -78,7 +78,7 @@ License :
 -------------------------
 **pix** is covered under the terms of the [MIT](LICENSE) license.
 
-Release :
+Changes :
 -------------------------
 *  **03-Jun-2024** : 0.1
     - Initial release.
