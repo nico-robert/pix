@@ -246,6 +246,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::toB64"              : pix_toB64,
     "pix::toBinary"           : pix_toBinary,
     "pix::rotMatrix"          : pix_rotMatrix,
+    "pix::invMatrix"          : pix_invMatrix,
     "pix::scaleMatrix"        : pix_scaleMatrix,
     "pix::transMatrix"        : pix_transMatrix,
     "pix::mulMatrix"          : pix_mulMatrix,

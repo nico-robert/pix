@@ -566,6 +566,30 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
+proc pix_invMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Create an inverse matrix.
+  #
+  # matrix  - list (9 values) (optional:mat3())
+  #
+  # Returns: The matrix inverse as a list.
+  if objc > 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "?matrix:optional")
+    return Tcl.ERROR
+
+  var matrix3: vmath.Mat3
+
+  if objc == 2:
+    if matrix3x3(interp, objv[1], matrix3) != Tcl.OK:
+      return Tcl.ERROR
+  else:
+    matrix3 = vmath.mat3()
+
+  matrix3 = matrix3.inverse()
+
+  Tcl.SetObjResult(interp, matrix3.addToListObj())
+
+  return Tcl.OK
+
 proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create scale matrix.
   #
