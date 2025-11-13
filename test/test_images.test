@@ -209,4 +209,13 @@ if {![isEqual $a $data_image_test21]} {
     error "data test 21 doesn't match with 'data_image_test21'"
 }
 
+# Test 22
+set a [pix::img::readImage [file join [file dirname [info script]] images turtle@10x.png]]
+set b [pix::img::minifyBy2 $a]
+pix::img::toGrayScale $b
+
+if {![isEqual $b $data_image_test22]} {
+    error "data test 22 doesn't match with 'data_image_test22'"
+}
+
 exit 0
