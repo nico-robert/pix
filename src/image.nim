@@ -1344,6 +1344,38 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   return Tcl.OK
 
+proc pix_image_toGrayScale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Converts an image to grayscale.
+  #
+  # img - <img> object
+  #
+  # Returns: nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+    return Tcl.ERROR
+
+  # Image
+  let ptable = cast[PixTable](clientData)
+  let img = ptable.loadImage(interp, objv[1])
+  if img.isNil: return Tcl.ERROR
+
+  for y in 0 ..< img.height:
+    for x in 0 ..< img.width:
+      let color = img.unsafe[x, y]
+      let rgbaColor = color.rgba()
+      
+      # The ITU-R BT.601 formula:
+      let gray = uint8(
+        0.299 * float(rgbaColor.r) + 
+        0.587 * float(rgbaColor.g) + 
+        0.114 * float(rgbaColor.b)
+      )
+
+      let grayColor = rgba(gray, gray, gray, rgbaColor.a)
+      img.unsafe[x, y] = grayColor.rgbx()
+
+  return Tcl.OK
+
 proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Save image file.
   #

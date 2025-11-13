@@ -187,6 +187,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::img::fillGradient"   : pix_image_fillGradient,
     "pix::img::destroy"        : pix_image_destroy,
     "pix::img::writeFile"      : pix_image_writeFile,
+    "pix::img::toGrayScale"    : pix_image_toGrayScale,
 
     # Paint commands
     "pix::paint::new"          : pix_paint,
