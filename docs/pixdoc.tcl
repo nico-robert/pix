@@ -34,7 +34,7 @@ proc parseExample {file} {
 }
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
-package require ruff 2.5
+package require ruff 2.7
 
 set dirpix [file dirname [file dirname [info script]]]
 
