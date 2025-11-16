@@ -52,7 +52,7 @@ namespace eval ::pix {
         </p>
 
         #### Compatibility
-        Tcl/Tk 8.6 & 9.0
+        Tcl/Tk 8.6 or higher
 
         #### Platforms
         * MacOS (x64 / arm64)
@@ -409,10 +409,10 @@ puts $fp "}"
 
 close $fp
 
-# Write release.ruff
-set fp [open [file join [file dirname [info script]] release.ruff] w+]
+# Write changes.ruff
+set fp [open [file join [file dirname [info script]] changes.ruff] w+]
 
-puts $fp "namespace eval ::Release {
+puts $fp "namespace eval ::changes {
     # Ruff documentation
     variable _ruff_preamble {"
 
@@ -422,19 +422,19 @@ set readme [split [read $fpreadme] \n]
 close $fpreadme
 
 set match false
-set release {}
+set changes {}
 foreach line $readme {
-    if {[string match "Release*:*" $line]} {
+    if {[string match "Changes*:*" $line]} {
         set match true
         continue
     }
     if {$match && ![string match "--------*" $line]} {
-        lappend release "$line<br>"
+        lappend changes "$line<br>"
     }
 }
 
-if {$release ne ""} {
-    puts $fp "#### Release :\n[join $release \n]"
+if {$changes ne ""} {
+    puts $fp [join $changes \n]
 }
 
 puts $fp "}"
@@ -442,7 +442,7 @@ puts $fp "}"
 
 close $fp
 
-foreach name {examples color release pix context paint image svg paths font utils} {
+foreach name {examples color changes pix context paint image svg paths font utils} {
     source [file join [file dirname [info script]] $name.ruff]
 }
 
@@ -466,7 +466,7 @@ if {$version eq ""} {
 }
 
 # Generate docs
-::ruff::document "::examples ::Release ::pix [namespace children ::pix]" \
+::ruff::document "::examples ::changes ::pix [namespace children ::pix]" \
                  -title "pix ${version}: Reference Manual" \
                  -sortnamespaces true \
                  -preamble $::pix::_intro \
@@ -480,7 +480,7 @@ if {$version eq ""} {
 # Syntax highlight.
 foreach nameFile {
     pix-examples.html pix.html pix-pix-ctx.html pix-pix-img.html pix-pix-font.html
-    pix-pix-path.html pix-pix-paint.html
+    pix-pix-path.html pix-pix-paint.html pix-pix-svg.html
 } {
     set fp [open [file join [file dirname [info script]] $nameFile] r]
     set html [split [read $fp] \n]
