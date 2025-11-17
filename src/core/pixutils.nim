@@ -6,6 +6,7 @@ import ./pixtables
 import ./pixobj as pixObj
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
+import ../bindings/resvg/types
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
@@ -35,14 +36,14 @@ proc isValidHex(s: string): bool =
 
 proc isHexFormat*(s: string): bool =
   # Checks whether a string is in ‘hex’ format (e.g. FF0000)
-  # - Only uppercase hexadecimal characters
+  # - Only hexadecimal characters
   # - Length of 6 characters (typical for an RGB color)
 
   return (s.len == 6) and isValidHex(s)
 
 proc isHexAlphaFormat*(s: string): bool =
   # Checks whether a string is in ‘hexalpha’ format (e.g. FF0000FF)
-  # - Only uppercase hexadecimal characters
+  # - Only hexadecimal characters
   # - Length of 8 characters (typical for an RGBA color)
 
   return (s.len == 8) and isValidHex(s)
@@ -297,6 +298,7 @@ template toHexPtr*[T](obj: T): string =
     elif T is pixie.Path        : "path"
     elif T is Svg               : "svg"
     elif T is pixie.Arrangement : "arr"
+    elif T is Resvg             : "resvg"
     else: {.error: "pix type not supported : " & $T .}
   ("0x" & hex & "^" & typeName).toLowerAscii
 
