@@ -1,5 +1,5 @@
-Other Copyrights
-================
+Third-Party Software Notices and Information
+============================================
 
 Portions of code are inspired, derived or copied from code
 covered by the following copyright:
