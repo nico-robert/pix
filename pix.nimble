@@ -51,8 +51,19 @@
                # Bump `pixie` to version `5.1.0`.
                # Refactoring matrix3x3 procedure.
                # Fix doc: Matrix values are in row order (I think it's good now!).
+# 17-Nov-2025 : v0.8
+               # Adds `hsl` color + `spin` command.
+               # Adds matrix inverse procedure.
+               # Adds `toGrayScale` procedure.
+               # Update `ruff` version to `2.7.0`.
+               # `resvg` rust library [C-API] for SVG rendering, is now a
+               # part of this project (optional). From now on there will be two releases 
+               # distributions, one with `resvg` binding and one without. 
+               # Previous versions `(v0.1-v0.7)` included Ruff! documentation 
+               # assets without proper license attribution. This has been corrected 
+               # in `v0.8+`.
 
-version     = "0.7"
+version     = "0.8"
 author      = "Nicolas ROBERT"
 description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), " &
               "a full-featured 2D graphics library written in Nim."
@@ -79,6 +90,36 @@ task pixTclTkBindings, "Generate pix Tcl library.":
 
     quit("pix(error): Unable to extract version from 'pix.nimble' file.")
 
+  proc getResvgconfig(): bool =
+    let cfgContent = readFile("src/pix.nim.cfg")
+
+    let arch = 
+      when defined(macosx):  "@if macosx:" 
+      elif defined(windows): "@if windows:"
+      elif defined(linux):   "@if linux:"
+      else: return false
+
+    var platform: bool = false
+    var resvg: bool = false
+
+    for line in cfgContent.splitLines():
+      let trimmedLine = line.strip()
+      if trimmedLine.startsWith(arch):
+        platform = true
+      if platform:
+        if trimmedLine.startsWith("@if resvg:"):
+          resvg = true
+      if resvg:
+        if trimmedLine.startsWith("--passL:"):
+          let parts = trimmedLine.split(":", maxsplit = 1)
+          if parts.len > 1:
+            let path = parts[1].strip().replace("\"", "")
+            if fileExists(path): return true
+          platform = false
+          resvg = false
+
+    return false
+
   proc generatePixPkgIndexFile(version: string) =
     let templatePath = "src/pkgIndex.tcl.in"
     if not fileExists(templatePath):
@@ -94,8 +135,8 @@ task pixTclTkBindings, "Generate pix Tcl library.":
     except IOError as e:
       quit("pix(error): Unable to write to file: " & outputPath)
 
-  proc compile(libName: string, flags= "") =
-    exec "nim c " & flags & " -d:strip -d:useMalloc -d:release --out:" & libName & " src/pix.nim"
+  proc compile(libName: string, flags: string) =
+    exec "nim c " & flags & " --out:" & libName & " src/pix.nim"
 
   proc getArchFolder(): tuple[folder: string, suffix: string, ext: string] =
     when defined(arm64):
@@ -114,17 +155,31 @@ task pixTclTkBindings, "Generate pix Tcl library.":
       result.ext    = ".so"
 
   let arch = getArchFolder()
+  let resvgEnabled = getResvgconfig()
 
   # Generate pix Tcl/Tk library:
-  for vtcl in ["8", "9"]:
-    let tclFlags = "-d:tcl" & vtcl
+  const baseFlags = " -d:strip -d:useMalloc -d:release"
+  for withResvg in [true, false]:
 
-    when defined(windows):
-      compile "./" & arch.folder & "/pix" & vtcl & "-" & version & arch.ext, tclFlags
-    elif defined(macosx) or defined(linux):
-      compile "./" & arch.folder & "/lib" & vtcl & "pix" & version & arch.ext, tclFlags
-    else:
-      quit("pix(error): Unsupported operating system!")
+    if withResvg and not resvgEnabled:
+      echo "pix(warning): Skipping resvg build (disabled in config)"
+      continue
+
+    for vtcl in ["8", "9"]:
+      let resvgSuffix = if withResvg: "r" else: ""
+      let resvgFlag   = if withResvg: " -d:resvg" else: ""
+
+      let flags = "-d:tcl" & vtcl & baseFlags & resvgFlag
+
+      let libDir =
+        when defined(windows):
+          "./" & arch.folder & "/pix" & vtcl & "-" & version & resvgSuffix & arch.ext
+        elif defined(macosx) or defined(linux):
+          "./" & arch.folder & "/lib" & vtcl & "pix" & version & resvgSuffix & arch.ext
+        else:
+          quit("pix(error): Unsupported operating system!")
+
+      compile(libDir, flags)
 
   # Generate pkgIndex.tcl:
   let currentVersion = extractPixVersionFromNimble()

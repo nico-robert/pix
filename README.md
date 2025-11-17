@@ -9,7 +9,7 @@ Tcl/Tk wrapper around [Pixie](https://github.com/treeform/pixie), a full-feature
 
 Compatibility :
 -------------------------
-- Tcl/Tk 8.6 & 9.0
+- Tcl/Tk 8.6 or higher
 
 Platforms :
 -------------------------
@@ -68,6 +68,9 @@ A large part of the `pix` [documentation](https://nico-robert.github.io/pix/) co
 | _paint_    | This namespace plays with colors.
 | _path_     | Vector Paths.
 | _svg_      | Parse, render SVG (namespace pretty limited)
+
+> [!NOTE]  
+> Since version `0.8`, if available [resvg](https://github.com/linebender/resvg) is used to render SVG files in the `pix::svg` namespace.
 
 Acknowledgments :
 -------------------------
@@ -129,3 +132,13 @@ Changes :
     - Bump `pixie` to version `5.1.0`.
     - Refactoring matrix3x3 procedure.
     - Fix doc: Matrix values are in row order (I think it's good now!).
+*  **17-Nov-2025** : 0.8
+    - Adds `hsl` color + `spin` command.
+    - Adds matrix inverse procedure.
+    - Adds `toGrayScale` procedure.
+    - Update `ruff` version to `2.7.0`.
+    - `resvg` rust library [C-API] for SVG rendering, is now a  
+      part of this project (optional). From now on there will be two releases    
+      distributions, one with `resvg` binding and one without.
+    - Previous versions `(v0.1-v0.7)` included `Ruff!` documentation    
+      assets without proper license attribution. This has been corrected in `v0.8+`.
