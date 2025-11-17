@@ -181,10 +181,25 @@ proc pix_image_readImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   # Note: This will throw an exception if the file does not exist,
   # or if the file is not a valid image or supported.
   let img = try:
-    readimage(file)
+    when defined(resvg):
+      # Use resvg for svg files.
+      if file.endsWith(".svg") or file.endsWith(".svgz"):
+        let data = readFile(file)
+        resvg.toImage(resvg.parse(data))
+      else:
+        readimage(file)
+    else:
+      # Use pixie
+      readimage(file)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except IOError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except Exception as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  
   let imgKey = toHexPtr(img)
   ptable.addImage(imgKey, img)
 
