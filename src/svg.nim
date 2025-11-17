@@ -67,7 +67,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
       else:
         var opts = RenderResvgOpts()
         try:
-          resvg.options(interp, objv[3], opts)
+          resvg.options(interp, objv[2], opts)
           svg = resvg.parse(arg1, option = some(opts))
         except ValueError as e:
           return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
