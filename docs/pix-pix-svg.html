@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.7: Reference Manual</title>
+<title>pix 0.8: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.7: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.8: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -37,15 +37,84 @@
 <h3 class='ruffproc'><a name='::pix::svg::parse'>parse</a><span class='ns_scope'> [<a href="pix-pix-svg.html#::pix::svg" title="::pix::svg" class='ruff_cmd'>::pix::svg</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Parse SVG XML. Defaults to the SVG's view box size.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size? ?opts?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>svg</code></nobr></td><td>string data</td></tr>
 <tr><td><nobr><code>size</code></nobr></td><td>list width,height Optional, default <code>SVGviewbox</code>.</td></tr>
+<tr><td><nobr><code>opts</code></nobr></td><td>dict options (if compiled with <strong>resvg</strong> lib) Optional, default <code>&quot;&quot;</code>.</td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'><strong>resvg</strong> dictionary options. The options are:<br> 
+<table class='ruff_deflist'>
+<tr>
+<td><strong>dpi</strong>                </td>
+<td> Sets the target DPI.</td>
+</tr>
+<tr>
+<td><strong>mtx</strong>                </td>
+<td> The transformation matrix (<em>matrix3x3</em>) to apply to the SVG.</td>
+</tr>
+<tr>
+<td><strong>styleSheet</strong>         </td>
+<td> The style sheet to use.</td>
+</tr>
+<tr>
+<td><strong>serifFontFamily</strong>    </td>
+<td> Sets the <code>serif</code> font family.</td>
+</tr>
+<tr>
+<td><strong>sansSerifFontFamily</strong></td>
+<td> Sets the <code>sans-serif</code> font family.</td>
+</tr>
+<tr>
+<td><strong>cursiveFontFamily</strong>  </td>
+<td> Sets the <code>cursive</code> font family.</td>
+</tr>
+<tr>
+<td><strong>fantasyFontFamily</strong>  </td>
+<td> Sets the <code>fantasy</code> font family.</td>
+</tr>
+<tr>
+<td><strong>monospaceFontFamily</strong></td>
+<td> Sets the <code>monospace</code> font family.</td>
+</tr>
+<tr>
+<td><strong>languages</strong>          </td>
+<td> Sets the list of languages.</td>
+</tr>
+<tr>
+<td><strong>shapeRenderingMode</strong> </td>
+<td> Sets the default shape rendering method.</td>
+</tr>
+<tr>
+<td><strong>textRenderingMode</strong>  </td>
+<td> Sets the default text rendering method.</td>
+</tr>
+<tr>
+<td><strong>imageRenderingMode</strong> </td>
+<td> Sets the default image rendering method.</td>
+</tr>
+<tr>
+<td><strong>fontFamily</strong>         </td>
+<td> Sets the default font family.</td>
+</tr>
+<tr>
+<td><strong>loadFontFile</strong>       </td>
+<td> Loads a font file into the internal fonts database.</td>
+</tr>
+<tr>
+<td><strong>fontSize</strong>           </td>
+<td> Sets the default font size.</td>
+</tr>
+<tr>
+<td><strong>loadSystemFonts</strong>    </td>
+<td> Loads system fonts into the internal fonts database.</td>
+</tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-svg.html#::pix::svg" title="svg" class='ruff_cmd'>svg</a> object.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
+<li class='ruff-toc1'><a href='pix-changes.html'>changes</a></li>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
 <li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
@@ -55,9 +124,9 @@
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix-svg.html'>pix::svg</a></li>
-<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
 <hr><li class='ruff-toc2'><a href='#::pix::svg-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::destroy'>destroy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></pre>Destroy current svg or all svgs if special word <code>all</code> is specified.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::newImage'>newImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>newImage</span> <span class='ruff_arg'>svg</span></pre>Render SVG and return the image.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::parse'>parse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size?</span></pre>Parse SVG XML. Defaults to the SVG's view box size.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-svg.html#::pix::svg::parse'>parse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size? ?opts?</span></pre>Parse SVG XML. Defaults to the SVG's view box size.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>
+

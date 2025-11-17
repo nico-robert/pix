@@ -1,21 +1,19 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.7: Reference Manual</title>
+<title>pix 0.8: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.7: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.8: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
             <button id="ruffNavMove" onclick="ruffMoveNavPane()"></button>
             <button id="ruffToggleTheme" onclick="ruffNextTheme()"></button>
             </div>
-        </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='Release'></a>Release<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h1>
-<div style='clear:both;'></div>
-<h4 class='ruff'><a name='::Release-Release :'></a>Release :<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h4>
+        </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='changes'></a>changes<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
 <ul class='ruff'>
 <li><strong>03-Jun-2024</strong> : 0.1<br> - Initial release.<br></li>
@@ -24,11 +22,13 @@
 <li><strong>02-Mar-2025</strong> : 0.4<br> - Support for <code>Tcl/Tk9</code>.<br> - Adds binary for MacOS <code>arm64</code>.<br> - Adds <code>X11</code> for purpose testing.<br> - Code refactoring ++.<br></li>
 <li><strong>03-Apr-2025</strong> : 0.5<br> - Try to improve the comments for the documentation.<br> - Fixes bug for <code>pix::ctx::clip</code> + <code>pix::ctx::isPointInPath</code>   <br> procedures when args count was equal to 2.<br> - Adds <code>pix::toBinary</code> procedure.<br> - Adds <code>pix::getKeys</code> procedure for image &amp; context, useful for debugging.<br> - Adds procedures for working with <code>matrices</code> (translate, scale, multiply).<br> - Adds <code>useMalloc</code> flag for <code>nim c</code> command.<br> - Adds another test for fonts (works only with Tcl9)<br> - Reworks tests files (Compare the result with <code>pix::img::diff</code> proc).<br> - Simplification of some procedures + cosmetic changes.<br></li>
 <li><strong>07-Sep-2025</strong> : 0.6<br> - Fix doc : Matrix values are in column order.<br> - Adds HSL color.<br> - Redefining Tcl/Tk procedures for transition to Nim version <code>2.2.4</code>.<br> - Fixes <code>setLineDash</code> command to get around pixie's problem when Tcl list is not even.<br> - Try to improve the <code>X11</code> binding.<br> - Cosmetic changes.<br></li>
-<li><strong>13-Oct-2025</strong> : 0.7<br> - Adds new procedures for playing with colours (mix, darken,...).<br> - Improved compilation support.<br> - Bump <code>pixie</code> to version <code>5.1.0</code>.<br> - Refactoring matrix3x3 procedure.<br> - Fix doc: Matrix values are in row order (I think it's good now!).<br> <br></li>
+<li><strong>13-Oct-2025</strong> : 0.7<br> - Adds new procedures for playing with colours (mix, darken,...).<br> - Improved compilation support.<br> - Bump <code>pixie</code> to version <code>5.1.0</code>.<br> - Refactoring matrix3x3 procedure.<br> - Fix doc: Matrix values are in row order (I think it's good now!).<br></li>
+<li><strong>17-Nov-2025</strong> : 0.8<br> - Adds <code>hsl</code> color + <code>spin</code> command.<br> - Adds matrix inverse procedure.<br> - Adds <code>toGrayScale</code> procedure.<br> - Update <code>ruff</code> version to <code>2.7.0</code>.<br> - <code>resvg</code> rust library [C-API] for SVG rendering, is now a<br> part of this project (optional). From now on there will be two releases <br> distributions, one with <code>resvg</code> binding and one without.<br> <br></li>
 </ul>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
+<li class='ruff-toc1'><a class='ruff-highlight' href='pix-changes.html'>changes</a></li>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
 <li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
@@ -38,6 +38,5 @@
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<li class='ruff-toc1'><a class='ruff-highlight' href='pix-Release.html'>Release</a></li>
-<hr><li class='ruff-toc4'><a href='#::Release-Release :'>Release :</a></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
+<hr></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>

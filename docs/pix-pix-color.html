@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.7: Reference Manual</title>
+<title>pix 0.8: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.7: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.8: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -82,6 +82,16 @@
 <tr><td><nobr><code>hex</code></nobr></td><td>hex string</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
+<h3 class='ruffproc'><a name='::pix::color::hsl'>hsl</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets a new hsl color object.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hsl</span> <span class='ruff_arg'>h s l</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>h</code></nobr></td><td>hue        (0-360)</td></tr>
+<tr><td><nobr><code>s</code></nobr></td><td>saturation (0-100)</td></tr>
+<tr><td><nobr><code>l</code></nobr></td><td>lightness  (0-100)</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
 <h3 class='ruffproc'><a name='::pix::color::lighten'>lighten</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Lightens the color by amount 0-1.</p>
@@ -139,9 +149,19 @@
 <tr><td><nobr><code>amount</code></nobr></td><td>double value (0-1)</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
+<h3 class='ruffproc'><a name='::pix::color::spin'>spin</a><span class='ns_scope'> [<a href="pix-pix-color.html#::pix::color" title="::pix::color" class='ruff_cmd'>::pix::color</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Rotates the hue of the color by degrees (0-360).</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>spin</span> <span class='ruff_arg'>color degrees</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>color</code></nobr></td><td>color or colorObj <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a></td></tr>
+<tr><td><nobr><code>degrees</code></nobr></td><td>double value (0-360)</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> type <a href="pix-pix-color.html#::pix::color" title="color" class='ruff_cmd'>color</a> object.</p>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
+<li class='ruff-toc1'><a href='pix-changes.html'>changes</a></li>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-pix-color.html'>pix::color</a></li>
@@ -151,18 +171,19 @@
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
 <hr><li class='ruff-toc2'><a href='#::pix::color-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::almostEqual'>almostEqual</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>almostEqual</span> <span class='ruff_arg'>color1 color2 ?epsilon?</span></pre>Almost equal colors.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::darken'>darken</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>darken</span> <span class='ruff_arg'>color amount</span></pre>Darkens the color by amount 0-1.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::desaturate'>desaturate</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>desaturate</span> <span class='ruff_arg'>color amount</span></pre>Desaturate (makes grayer) the color by amount 0-1.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::distance'>distance</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>distance</span> <span class='ruff_arg'>color1 color2</span></pre>A distance function based on CIEDE2000 color difference formula.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::hexHTML'>hexHTML</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hexHTML</span> <span class='ruff_arg'>hex</span></pre>Sets a new hex html color object.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::hsl'>hsl</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hsl</span> <span class='ruff_arg'>h s l</span></pre>Sets a new hsl color object.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::lighten'>lighten</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>lighten</span> <span class='ruff_arg'>color amount</span></pre>Lightens the color by amount 0-1.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::mix'>mix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>mix</span> <span class='ruff_arg'>color1 color2 ?lerp?</span></pre>Mixes two colours using simple averaging or simple lerp if the “lerp” argument is specified.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::name'>name</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>name</span> <span class='ruff_arg'>name</span></pre>Sets a new name color object.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::rgb'>rgb</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rgb</span> <span class='ruff_arg'>r g b</span></pre>Sets a new rgb color object.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::rgba'>rgba</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>rgba</span> <span class='ruff_arg'>r g b a</span></pre>Sets a new rgba color object.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::saturate'>saturate</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>saturate</span> <span class='ruff_arg'>color amount</span></pre>Saturates (makes brighter) the color by amount 0-1.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-color.html#::pix::color::spin'>spin</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>spin</span> <span class='ruff_arg'>color degrees</span></pre>Rotates the hue of the color by degrees (0-360).
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>
 

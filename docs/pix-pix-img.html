@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.7: Reference Manual</title>
+<title>pix 0.8: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.7: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.8: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -443,6 +443,14 @@
 <p class='ruff'>If the coordinates and size of the superImage are outside the bounds of the original image, a super image is created with the original image centered and padded with transparency. The resulting super image is always the size specified in the arguments.</p>
 <p class='ruff'>If the resulting super image is different from the original image, a new image is created. If the resulting super image is the same as the original image, the original image is returned.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>A <em>new</em> <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object.</p>
+<h3 class='ruffproc'><a name='::pix::img::toGrayScale'>toGrayScale</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Converts an image to grayscale.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>toGrayScale</span> <span class='ruff_arg'>img</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code>img</code></nobr></td><td><img> object</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>nothing.</p>
 <h3 class='ruffproc'><a name='::pix::img::writeFile'>writeFile</a><span class='ns_scope'> [<a href="pix-pix-img.html#::pix::img" title="::pix::img" class='ruff_cmd'>::pix::img</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Save image file.</p>
@@ -455,6 +463,7 @@
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='pix-docindex.html' accesskey='i'>Index</a></li>
 <hr>
+<li class='ruff-toc1'><a href='pix-changes.html'>changes</a></li>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
 <li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
@@ -464,7 +473,6 @@
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
 <hr><li class='ruff-toc2'><a href='#::pix::img-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::applyOpacity'>applyOpacity</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>applyOpacity</span> <span class='ruff_arg'>image opacity</span></pre>Multiplies alpha of the image by opacity.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::blur'>blur</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>blur</span> <span class='ruff_arg'>image radius ?color?</span></pre>Applies Gaussian blur to the image given a radius.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::ceil'>ceil</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>ceil</span> <span class='ruff_arg'>image</span></pre>A value of 0 stays 0. Anything else turns into 255.
@@ -499,6 +507,7 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::strokeText'>strokeText</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeText</span> <span class='ruff_arg'>image object text options</span></pre>This procedure is responsible for rendering text onto an image with various styling options.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::subImage'>subImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>subImage</span> <span class='ruff_arg'>image coordinates size</span></pre>Gets a sub image from this image.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::superImage'>superImage</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>superImage</span> <span class='ruff_arg'>image coordinates size</span></pre>Either cuts a sub image or returns a super image with padded transparency.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::toGrayScale'>toGrayScale</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toGrayScale</span> <span class='ruff_arg'>img</span></pre>Converts an image to grayscale.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-img.html#::pix::img::writeFile'>writeFile</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>writeFile</span> <span class='ruff_arg'>image filePath</span></pre>Save image file.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>

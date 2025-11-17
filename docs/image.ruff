@@ -407,6 +407,13 @@ proc pix::img::strokeText {image object text options} {
   #
   # Returns: Nothing.
 }
+proc pix::img::toGrayScale {img} {
+  # Converts an image to grayscale.
+  #
+  # img - <img> object
+  #
+  # Returns: nothing.
+}
 proc pix::img::writeFile {image filePath} {
   # Save image file.
   #

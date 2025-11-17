@@ -57,6 +57,13 @@ proc pix::rotMatrix {angle {matrix {}}} {
   #
   # Returns: The matrix rotation as a list.
 }
+proc pix::invMatrix {{matrix {}}} {
+  # Create an inverse matrix.
+  #
+  # matrix  - list (9 values) 
+  #
+  # Returns: The matrix inverse as a list.
+}
 proc pix::scaleMatrix {scale {matrix {}}} {
   # Create scale matrix.
   #
@@ -106,6 +113,15 @@ proc pix::color::hexHTML {hex} {
   #
   # Returns: A *new* type [color] object.
 }
+proc pix::color::hsl {h s l} {
+  # Sets a new hsl color object.
+  #
+  # h - hue        (0-360)
+  # s - saturation (0-100)
+  # l - lightness  (0-100)
+  #
+  # Returns: A *new* type [color] object.
+}
 proc pix::color::name {name} {
   # Sets a new name color object.
   #
@@ -142,6 +158,14 @@ proc pix::color::saturate {color amount} {
   #
   # color   - color or colorObj [color]
   # amount  - double value (0-1)
+  #
+  # Returns: A *new* type [color] object.
+}
+proc pix::color::spin {color degrees} {
+  # Rotates the hue of the color by degrees (0-360).
+  #
+  # color   - color or colorObj [color]
+  # degrees - double value (0-360)
   #
   # Returns: A *new* type [color] object.
 }

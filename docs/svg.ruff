@@ -5,11 +5,32 @@ namespace eval ::pix {
                 variable _ruff_preamble "Load, parse, render SVG."
             }
         }
-proc pix::svg::parse {svg {size {SVGviewbox}}} {
+proc pix::svg::parse {svg {size {SVGviewbox}} {opts {}}} {
   # Parse SVG XML. Defaults to the SVG's view box size.
   #
   # svg  - string data
   # size - list width,height 
+  # opts - dict options (if compiled with **resvg** lib) 
+  #
+  #  **resvg** dictionary options. The options are:<br>
+  #  #Begintable
+  #  **dpi**                : Sets the target DPI.
+  #  **mtx**                : The transformation matrix (*matrix3x3*) to apply to the SVG.
+  #  **styleSheet**         : The style sheet to use.
+  #  **serifFontFamily**    : Sets the `serif` font family.
+  #  **sansSerifFontFamily**: Sets the `sans-serif` font family.
+  #  **cursiveFontFamily**  : Sets the `cursive` font family.
+  #  **fantasyFontFamily**  : Sets the `fantasy` font family.
+  #  **monospaceFontFamily**: Sets the `monospace` font family.
+  #  **languages**          : Sets the list of languages.
+  #  **shapeRenderingMode** : Sets the default shape rendering method.
+  #  **textRenderingMode**  : Sets the default text rendering method.
+  #  **imageRenderingMode** : Sets the default image rendering method.
+  #  **fontFamily**         : Sets the default font family.
+  #  **loadFontFile**       : Loads a font file into the internal fonts database.
+  #  **fontSize**           : Sets the default font size. 
+  #  **loadSystemFonts**    : Loads system fonts into the internal fonts database.
+  #  #EndTable
   #
   # Returns: A *new* [svg] object.
 }

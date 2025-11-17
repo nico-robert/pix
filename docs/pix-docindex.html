@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>pix 0.7: Reference Manual</title>
+<title>pix 0.8: Reference Manual</title>
 <link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
 <script type='text/javascript' src='assets/ruff-min.js'></script>
 </head>
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='pix.html'>pix 0.7: Reference Manual</a>
+<a style='text-decoration:none;' href='pix.html'>pix 0.8: Reference Manual</a>
 
 
             <div id="ruffButtonBar">
@@ -113,9 +113,11 @@
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::globalAlpha'>globalAlpha</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>globalAlpha</span> <span class='ruff_arg'>context alpha</span></pre>Sets color alpha.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::hasGlyph'>hasGlyph</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hasGlyph</span> <span class='ruff_arg'>typeface char</span></pre>Guess if the glyph exists for this rune.
 </span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-color.html#::pix::color::hexHTML'>hexHTML</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hexHTML</span> <span class='ruff_arg'>hex</span></pre>Sets a new hex html color object.
+</span> ::pix::color</li><li class='ruff-tip'><a href='pix-pix-color.html#::pix::color::hsl'>hsl</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>hsl</span> <span class='ruff_arg'>h s l</span></pre>Sets a new hsl color object.
 </span> ::pix::color</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::inside'>inside</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>inside</span> <span class='ruff_arg'>image coordinates</span></pre>Returns true if (x, y) is inside the image, false otherwise.
 </span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::invert'>invert</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>invert</span> <span class='ruff_arg'>image</span></pre>Inverts all of the colors and alpha.
-</span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::isOneColor'>isOneColor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isOneColor</span> <span class='ruff_arg'>image</span></pre>Checks if the entire image is the same color.
+</span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix.html#::pix::invMatrix'>invMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>invMatrix</span> <span class='ruff_arg'>?matrix?</span></pre>Create an inverse matrix.
+</span> ::pix</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::isOneColor'>isOneColor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isOneColor</span> <span class='ruff_arg'>image</span></pre>Checks if the entire image is the same color.
 </span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::isOpaque'>isOpaque</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isOpaque</span> <span class='ruff_arg'>image</span></pre>Checks if the entire image is opaque (alpha values are all 255).
 </span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::isPointInPath'>isPointInPath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isPointInPath</span> <span class='ruff_arg'>context coordinates ?path? ?windingRule?</span></pre>Checks whether or not the specified point is contained in the current path.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::isPointInStroke'>isPointInStroke</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>isPointInStroke</span> <span class='ruff_arg'>context coordinates ?path?</span></pre>Checks whether or not the specified point is inside the area contained by the stroking of a path.
@@ -147,7 +149,7 @@
 </span> ::pix::svg</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::newSpan'>newSpan</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>newSpan</span> <span class='ruff_arg'>font text</span></pre>Sets new Span.
 </span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::opaqueBounds'>opaqueBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>opaqueBounds</span> <span class='ruff_arg'>image</span></pre>Checks the bounds of opaque pixels.
 </span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::paint'>paint</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>paint</span> <span class='ruff_arg'>font ?paint?</span></pre>Sets font Paint if paint optional argument is set, otherwise gets the font paint.
-</span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-svg.html#::pix::svg::parse'>parse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size?</span></pre>Parse SVG XML. Defaults to the SVG's view box size.
+</span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-svg.html#::pix::svg::parse'>parse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parse</span> <span class='ruff_arg'>svg ?size? ?opts?</span></pre>Parse SVG XML. Defaults to the SVG's view box size.
 </span> ::pix::svg</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::parseOtf'>parseOtf</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parseOtf</span> <span class='ruff_arg'>buffer</span></pre>Parse Otf string.
 </span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::parseSvgFont'>parseSvgFont</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parseSvgFont</span> <span class='ruff_arg'>buffer</span></pre>Parse Svg Font string.
 </span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::parseTtf'>parseTtf</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>parseTtf</span> <span class='ruff_arg'>buffer</span></pre>Parse Ttf string.
@@ -184,7 +186,8 @@
 </span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::setTransform'>setTransform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>setTransform</span> <span class='ruff_arg'>context matrix3x3</span></pre>Overrides the transform matrix being applied to the context.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::shadow'>shadow</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>shadow</span> <span class='ruff_arg'>image options</span></pre>Create a shadow of the image with the offset, spread and blur.
 </span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-font.html#::pix::font::size'>size</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>size</span> <span class='ruff_arg'>font size</span></pre>Sets font Size (Same as pix::font::configure procedure).
-</span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::stroke'>stroke</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>stroke</span> <span class='ruff_arg'>context ?path?</span></pre>Strokes (outlines) the current or given path with the current strokeStyle.
+</span> ::pix::font</li><li class='ruff-tip'><a href='pix-pix-color.html#::pix::color::spin'>spin</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>spin</span> <span class='ruff_arg'>color degrees</span></pre>Rotates the hue of the color by degrees (0-360).
+</span> ::pix::color</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::stroke'>stroke</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>stroke</span> <span class='ruff_arg'>context ?path?</span></pre>Strokes (outlines) the current or given path with the current strokeStyle.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeCircle'>strokeCircle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeCircle</span> <span class='ruff_arg'>context coordinates radius</span></pre>Draws a circle that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::strokeEllipse'>strokeEllipse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeEllipse</span> <span class='ruff_arg'>context coordinates radiusx radiusy</span></pre>Draws an ellipse that is stroked (outlined) according to the current strokeStyle and other context settings.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-path.html#::pix::path::strokeOverlaps'>strokeOverlaps</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>strokeOverlaps</span> <span class='ruff_arg'>path coordinates ?options?</span></pre>Checks if a point is inside the stroking of a path.
@@ -204,7 +207,8 @@
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::textBaseline'>textBaseline</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>textBaseline</span> <span class='ruff_arg'>context baselineAlignment</span></pre>Set the base line alignment for the current context.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix.html#::pix::toB64'>toB64</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toB64</span> <span class='ruff_arg'>object</span></pre>Convert an <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object to base 64.
 </span> ::pix</li><li class='ruff-tip'><a href='pix-pix.html#::pix::toBinary'>toBinary</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toBinary</span> <span class='ruff_arg'>object ?format?</span></pre>Convert an <a href="pix-pix-img.html#::pix::img" title="img" class='ruff_cmd'>img</a> object to binary.
-</span> ::pix</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::transform'>transform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>transform</span> <span class='ruff_arg'>context matrix3x3</span></pre>Multiplies the current transform with the matrix described by the arguments of this method.
+</span> ::pix</li><li class='ruff-tip'><a href='pix-pix-img.html#::pix::img::toGrayScale'>toGrayScale</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>toGrayScale</span> <span class='ruff_arg'>img</span></pre>Converts an image to grayscale.
+</span> ::pix::img</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::transform'>transform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>transform</span> <span class='ruff_arg'>context matrix3x3</span></pre>Multiplies the current transform with the matrix described by the arguments of this method.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix-path.html#::pix::path::transform'>transform</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>transform</span> <span class='ruff_arg'>path matrix</span></pre>Apply a matrix transform to a path.
 </span> ::pix::path</li><li class='ruff-tip'><a href='pix-pix-ctx.html#::pix::ctx::translate'>translate</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>translate</span> <span class='ruff_arg'>context coordinates</span></pre>Adds a translation transformation to the current matrix.
 </span> ::pix::ctx</li><li class='ruff-tip'><a href='pix-pix.html#::pix::transMatrix'>transMatrix</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>transMatrix</span> <span class='ruff_arg'>trans ?matrix?</span></pre>Create translation matrix.
@@ -219,6 +223,7 @@ myIndexInit();</script>
 </main><nav class='ruff-nav'><ul style='position: sticky; top: 0;'><li class='ruff-toc1'><a style='padding-top:2px;' href='pix.html'>Start page</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='pix-docindex.html'>Index</a></li>
 <hr>
+<li class='ruff-toc1'><a href='pix-changes.html'>changes</a></li>
 <li class='ruff-toc1'><a href='pix-examples.html'>examples</a></li>
 <li class='ruff-toc1'><a href='pix-pix.html'>pix</a></li>
 <li class='ruff-toc1'><a href='pix-pix-color.html'>pix::color</a></li>
@@ -228,6 +233,5 @@ myIndexInit();</script>
 <li class='ruff-toc1'><a href='pix-pix-paint.html'>pix::paint</a></li>
 <li class='ruff-toc1'><a href='pix-pix-path.html'>pix::path</a></li>
 <li class='ruff-toc1'><a href='pix-pix-svg.html'>pix::svg</a></li>
-<li class='ruff-toc1'><a href='pix-Release.html'>Release</a></li>
 <hr></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></footer>
 </div></body></html>

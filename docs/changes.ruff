@@ -1,7 +1,6 @@
-namespace eval ::Release {
+namespace eval ::changes {
     # Ruff documentation
     variable _ruff_preamble {
-#### Release :
 *  **03-Jun-2024** : 0.1<br>
     - Initial release.<br>
 *  **25-Jun-2024** : 0.2<br>
@@ -51,6 +50,14 @@ namespace eval ::Release {
     - Bump `pixie` to version `5.1.0`.<br>
     - Refactoring matrix3x3 procedure.<br>
     - Fix doc: Matrix values are in row order (I think it's good now!).<br>
+*  **17-Nov-2025** : 0.8<br>
+    - Adds `hsl` color + `spin` command.<br>
+    - Adds matrix inverse procedure.<br>
+    - Adds `toGrayScale` procedure.<br>
+    - Update `ruff` version to `2.7.0`.<br>
+    - `resvg` rust library [C-API] for SVG rendering, is now a<br>
+      part of this project (optional). From now on there will be two releases <br>
+      distributions, one with `resvg` binding and one without.<br>
 <br>
 }
 }
