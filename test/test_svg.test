@@ -1,0 +1,36 @@
+lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
+
+# source all.tcl
+if {[catch {package present pix}]} {package require pix}
+
+set hello [file join [file dirname [file dirname [info script]]] examples data hello.svg]
+
+try {
+    if {[file exists $hello]} {
+        set fp [open $hello r]
+        set data [read $fp]
+        close $fp
+        set svg [pix::svg::parse $data {200 200}]
+
+        # Try to load shared library with resvg support
+        foreach lib [info loaded] {
+            lassign $lib libfullpath name
+            if {$name eq "Pix"} {
+                set dirdll [file dirname $libfullpath]
+                set rootname [file rootname [file tail $lib]]
+                set dll_r [file join $dirdll [string cat $rootname r][file extension $libfullpath]]
+                if {[file exists $dll_r]} {
+                    package forget pix ; namespace delete pix
+                    load $dll_r Pix ; # load shared library with resvg support.
+                    # test with resvg support options (very basic test) for convenience support.
+                    set svg [pix::svg::parse $data {200 200} {dpi 200 fontSize 12}]
+                }
+                break
+            }
+        }
+    }
+} on error {result options} {
+    error [dict get $options -errorinfo]
+}
+
+exit 0
