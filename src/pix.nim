@@ -8,6 +8,11 @@ import core/[pixtables, pixparses, pixutils, pixobj]
 when defined(x11):
   import bindings/x11/binding as X11
 
+when defined(resvg):
+  import std/options
+  import bindings/resvg/binding as resvg
+  import bindings/resvg/types
+
 import bindings/tcl/binding as Tcl
 import bindings/tk/binding  as Tk
 
