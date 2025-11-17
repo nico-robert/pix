@@ -3,8 +3,8 @@
 
 import pixie, pixie/fileformats/svg
 import std/tables
+import ../bindings/resvg/types
 
-from ../bindings/tk/binding as Tk import ImageMaster
 from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj, GetString, `$`
 
 type
@@ -18,7 +18,7 @@ type
     arrTable*    : Table[string, pixie.Arrangement]
     svgTable*    : Table[string, Svg]
     spanTable*   : Table[string, pixie.Span]
-    masterTable* : Table[string, Tk.ImageMaster]
+    resvgTable*  : Table[string, Resvg]
 
 proc createPixTable*(): PixTable =
   result = PixTable()
@@ -31,7 +31,7 @@ proc createPixTable*(): PixTable =
   result.arrTable     = initTable[string, pixie.Arrangement]()
   result.svgTable     = initTable[string, Svg]()
   result.spanTable    = initTable[string, pixie.Span]()
-  result.masterTable  = initTable[string, Tk.ImageMaster]()
+  result.resvgTable   = initTable[string, Resvg]()
 
 # Context functions
 proc getContext*(pTable: PixTable, key: string): pixie.Context = 
@@ -285,16 +285,6 @@ proc loadSVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Svg =
 
   return pTable.getSVG(key)
 
-# Master table functions
-proc getMasterTable*(pTable: PixTable, key: string): Tk.ImageMaster = 
-  result = pTable.masterTable[key]
-
-proc hasMasterTable*(pTable: PixTable, key: string): bool = 
-  result = pTable.masterTable.hasKey(key)
-
-proc addMasterTable*(pTable: PixTable, key: string, value: Tk.ImageMaster): void = 
-  pTable.masterTable[key] = value
-
 # Span functions
 proc getSpan*(pTable: PixTable, key: string): pixie.Span = 
   result = pTable.spanTable[key]
@@ -304,3 +294,36 @@ proc hasSpan*(pTable: PixTable, key: string): bool =
 
 proc addSpan*(pTable: PixTable, key: string, value: pixie.Span): void = 
   pTable.spanTable[key] = value
+
+# RESVG functions
+proc getRESVG*(pTable: PixTable, key: string): Resvg = 
+  result = pTable.resvgTable[key]
+
+proc hasRESVG*(pTable: PixTable, key: string): bool = 
+  result = pTable.resvgTable.hasKey(key)
+
+proc addRESVG*(pTable: PixTable, key: string, value: Resvg): void = 
+  pTable.resvgTable[key] = value
+
+proc clearRESVG*(pTable: PixTable): void = 
+  pTable.resvgTable.clear()
+
+proc delKeyRESVG*(pTable: PixTable, key: string): void = 
+  pTable.resvgTable.del(key)
+
+proc loadRESVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Resvg =
+  # Searches the Resvg table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated Resvg object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
+  let key = $obj
+
+  if not pTable.hasRESVG(key):
+    let msg = "pix(error): unknown <resvg> key object found: '" & key & "'."
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
+    # We return nil to indicate that an error occurred.
+    return nil
+
+  return pTable.getRESVG(key)
