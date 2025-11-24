@@ -502,11 +502,11 @@ proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   # Compute the bounds of the path.
   # 
   # path    - [path]
-  # matrix  - list
+  # matrix  - list (9 values) (optional:mat3())
   #
   # Returns: A Tcl dictionary with keys *(x, y, w, h)*.
-  if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> matrix")
+  if objc notin [2 ,3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> ?matrix:optional")
     return Tcl.ERROR
 
   # Path
@@ -514,16 +514,17 @@ proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  # Matrix 3x3 check
-  var matrix3: vmath.Mat3
-
-  if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
-    return Tcl.ERROR
-
-  let rect = try:
-    path.computeBounds(matrix3)
-  except PixieError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let rect = 
+    try:
+      if objc == 3:
+        var matrix3: vmath.Mat3
+        if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+          return Tcl.ERROR
+        path.computeBounds(matrix3)
+      else:
+        path.computeBounds()
+    except PixieError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let dictObj = Tcl.NewDictObj()
 
