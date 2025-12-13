@@ -204,11 +204,15 @@ proc parseColorRGBX*(s: string): ColorRGBX =
     while (endPos < s.len) and (s[endPos] != ',') and (s[endPos] != ')'):
       inc endPos
 
-    try:
-      color[i] = parseInt(s[start..<endPos]).uint8
+    let value = try:
+       parseInt(s[start..<endPos]).uint8
     except ValueError as e:
       raise newException(InvalidColor, "invalid color format: " & e.msg)
 
+    if not (value >= 0 and value <= 255):
+      raise newException(InvalidColor, "the value must be between 0 and 255: " & s)
+
+    color[i] = value
     start = endPos + 1
 
   return rgbx(color[0], color[1], color[2], color[3])
@@ -279,7 +283,7 @@ template toHexPtr*[T](obj: T): string =
 
   let
     myPtr  = cast[pointer](obj)
-    hexstr = cast[uint64](myPtr).toHex()
+    hexStr = cast[uint64](myPtr).toHex()
 
   # Inline strip leading zeros
   let hex = block:
@@ -467,7 +471,7 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let arg1= $objv[1]
+  let arg1 = $objv[1]
 
   let img = if ptable.hasContext(arg1):
     ptable.getContext(arg1).image
@@ -504,7 +508,7 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
-  let arg1= $objv[1]
+  let arg1 = $objv[1]
 
   let img = if ptable.hasContext(arg1):
     ptable.getContext(arg1).image
@@ -515,7 +519,7 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
       "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
     )
 
-  var fileformat: FileFormat = PngFormat
+  var fileFormat: FileFormat = PngFormat
 
   if objc == 3:
     let format = $objv[2]
@@ -530,7 +534,7 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
         )
 
   let data = try:
-    encodeImage(img, fileformat)
+    encodeImage(img, fileFormat)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -545,7 +549,7 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # matrix  - list (9 values) (optional:mat3())
   #
   # Returns: The matrix rotation as a list.
-  if objc notin [2 ,3]:
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "angle ?matrix:optional")
     return Tcl.ERROR
 
@@ -599,7 +603,7 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # matrix  - list (9 values) (optional:mat3())
   #
   # Returns: The matrix scaled as a list.
-  if objc notin [2 ,3]:
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
     return Tcl.ERROR
 
@@ -640,7 +644,7 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # matrix  - list (9 values) (optional:mat3())
   #
   # Returns: The matrix translated as a list.
-  if objc notin [2 ,3]:
+  if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
     return Tcl.ERROR
 
@@ -837,7 +841,7 @@ proc pix_hsl*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
       "pix(error): 'saturation' value must be between 0 and 100."
     )
 
-  if not (l >= 0 and s <= 100):
+  if not (l >= 0 and l <= 100):
     return pixUtils.errorMSG(interp,
       "pix(error): 'lightness' value must be between 0 and 100."
     )
