@@ -67,10 +67,10 @@ A large part of the `pix` [documentation](https://nico-robert.github.io/pix/) co
 | _image_    | Crop, resize, blur image and much more.
 | _paint_    | This namespace plays with colors.
 | _path_     | Vector Paths.
-| _svg_      | Parse, render SVG (namespace pretty limited)
+| _svg_      | Parse, render SVG (namespace pretty limited, see note below for extended solution)
 
 > [!NOTE]  
-> Since version `0.8`, if available [resvg](https://github.com/linebender/resvg) is used to render SVG files in the `pix::svg` namespace.
+> Since version `0.8`, if available, [resvg](https://github.com/linebender/resvg) is used to render SVG files in the `pix::svg` namespace.
 
 Acknowledgments :
 -------------------------
