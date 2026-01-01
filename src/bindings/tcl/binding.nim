@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import ./tcltypes as Tcl
@@ -143,6 +143,12 @@ proc GetStringResult*(interp: Tcl.PInterp): cstring {.cdecl.} =
 
 proc `$`*(obj: Tcl.PObj): string =
   let s = GetString(obj)
+  if s.isNil:
+    return ""
+  return $s
+
+proc `$`*(interp: Tcl.PInterp): string =
+  let s = GetStringResult(interp)
   if s.isNil:
     return ""
   return $s
