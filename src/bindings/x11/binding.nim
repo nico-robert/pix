@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details
 
 from pixie import Image, Context
@@ -113,7 +113,7 @@ proc pix_createProc(
   if Tcl.EvalObjv(interp, 2, cmdPtr, 0) != Tcl.OK:
     Tcl.DecrRefCount(cmd[0])
     Tcl.DecrRefCount(cmd[1])
-    return pixUtils.errorMSG(interp, $Tcl.GetStringResult(interp))
+    return pixUtils.errorMSG(interp, $interp)
   
   Tcl.DecrRefCount(cmd[0])
   Tcl.DecrRefCount(cmd[1])

@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie
@@ -94,7 +94,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
-    raise newException(ValueError, $Tcl.GetStringResult(interp))
+    raise newException(ValueError, $interp)
 
   if count mod 2 != 0:
     raise newException(ValueError,
@@ -108,14 +108,14 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
     case key:
       of "blur":
         if Tcl.GetDoubleFromObj(interp, value, opts.blur) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "spread":
         if Tcl.GetDoubleFromObj(interp, value, opts.spread) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "offset":
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'offset' should be 'x' 'y'") != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
         opts.offset = vec2(x, y)
       of "color":
         try:
@@ -142,7 +142,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
-    raise newException(ValueError, $Tcl.GetStringResult(interp))
+    raise newException(ValueError, $interp)
 
   if count mod 2 != 0:
     raise newException(ValueError,
@@ -156,10 +156,10 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
     case key:
       of "strokeWidth":
         if Tcl.GetDoubleFromObj(interp, value, opts.strokeWidth) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "transform":
         if pixUtils.matrix3x3(interp, value, opts.transform) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "lineCap":
         try:
           opts.lineCap = parseEnum[LineCap]($value)
@@ -167,7 +167,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           raise newException(ValueError, move(e.msg))
       of "miterLimit":
         if Tcl.GetDoubleFromObj(interp, value, opts.miterLimit) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "lineJoin":
         try:
           opts.lineJoin = parseEnum[LineJoin]($value)
@@ -175,11 +175,11 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           raise newException(ValueError, move(e.msg))
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
 
         for j in 0..dashescount-1:
           if Tcl.GetDoubleFromObj(interp, dasheselements[j], dashes) != Tcl.OK:
-            raise newException(ValueError, $Tcl.GetStringResult(interp))
+            raise newException(ValueError, $interp)
           opts.dashes.add(dashes)
 
         # To get around pixie's problem when my list is not even, 
@@ -207,7 +207,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
-    raise newException(ValueError, $Tcl.GetStringResult(interp))
+    raise newException(ValueError, $interp)
 
   if count mod 2 != 0:
     raise newException(ValueError,
@@ -221,13 +221,13 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
     case key:
       of "strokeWidth":
         if Tcl.GetDoubleFromObj(interp, value, opts.strokeWidth) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "transform":
         if pixUtils.matrix3x3(interp, value, opts.transform) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "miterLimit":
         if Tcl.GetDoubleFromObj(interp, value, opts.miterLimit) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
       of "hAlign":
         try:
           opts.hAlign = parseEnum[HorizontalAlignment]($value)
@@ -250,11 +250,11 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           raise newException(ValueError, move(e.msg))
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
 
         for j in 0..dashescount-1:
           if Tcl.GetDoubleFromObj(interp, dasheselements[j], dashes) != Tcl.OK:
-            raise newException(ValueError, $Tcl.GetStringResult(interp))
+            raise newException(ValueError, $interp)
           opts.dashes.add(dashes)
 
         # To get around pixie's problem when my list is not even, 
@@ -267,7 +267,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
       of "bounds":
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
 
         opts.bounds = vec2(x, y)
       else:
@@ -291,7 +291,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
-    raise newException(ValueError, $Tcl.GetStringResult(interp))
+    raise newException(ValueError, $interp)
 
   if count mod 2 != 0:
     raise newException(ValueError,
@@ -305,7 +305,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
     case key:
       of "wrap":
         if Tcl.GetBooleanFromObj(interp, value, wrapB) != Tcl.OK: 
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
         opts.wrap = wrapB.bool
       of "hAlign":
         try:
@@ -320,7 +320,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
       of "bounds":
         if getListDouble(interp, value, x, y, 
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
 
         opts.bounds = vec2(x, y)
       else:

@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Nicolas ROBERT.
+# Copyright (c) 2025-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import ./types as resvg
@@ -171,7 +171,7 @@ proc options*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderResvgOpts) =
 
   # Dict
   if Tcl.ListObjGetElements(interp, objv, count, elements) != Tcl.OK:
-    raise newException(ValueError, $Tcl.GetStringResult(interp))
+    raise newException(ValueError, $interp)
 
   if count mod 2 != 0:
     raise newException(ValueError,
@@ -186,7 +186,7 @@ proc options*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderResvgOpts) =
       of "dpi":
         var dpi: cdouble
         if Tcl.GetDoubleFromObj(interp, value, dpi) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
         if dpi <= 0.0:
           raise newException(ValueError, "dpi must be greater than 0.")
         opts.dpi = some(dpi.cfloat)
@@ -226,20 +226,20 @@ proc options*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderResvgOpts) =
       of "fontSize":
         var fontSize: cdouble
         if Tcl.GetDoubleFromObj(interp, value, fontSize) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
         if fontSize <= 0.0:
           raise newException(ValueError, "fontSize must be greater than 0.")
         opts.fontSize = some(fontSize.cfloat)
       of "loadSystemFonts":
         var load: cint
         if Tcl.GetBooleanFromObj(interp, value, load) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
         if load.bool:
           opts.loadSystemFonts = some(true)
       of "mtx":
         var mtx: vmath.Mat3
         if pixUtils.matrix3x3(interp, value, mtx) != Tcl.OK:
-          raise newException(ValueError, $Tcl.GetStringResult(interp))
+          raise newException(ValueError, $interp)
         opts.mtx = some(toResvgMat(mtx))
       else:
         raise newException(ValueError, 
