@@ -19,13 +19,13 @@ proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
 
   return Tcl.ERROR
 
-proc isHexDigit(c: char): bool =
+func isHexDigit(c: char): bool =
   # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).
   return (c >= '0' and c <= '9') or
          (c >= 'A' and c <= 'F') or
          (c >= 'a' and c <= 'f')
 
-proc isValidHex(s: string): bool =
+func isValidHex(s: string): bool =
   # Checks whether a string is a valid hex format.
 
   for c in s:
@@ -34,26 +34,26 @@ proc isValidHex(s: string): bool =
 
   return true
 
-proc isHexFormat*(s: string): bool =
+func isHexFormat*(s: string): bool =
   # Checks whether a string is in ‘hex’ format (e.g. FF0000)
   # - Only hexadecimal characters
   # - Length of 6 characters (typical for an RGB color)
 
   return (s.len == 6) and isValidHex(s)
 
-proc isHexAlphaFormat*(s: string): bool =
+func isHexAlphaFormat*(s: string): bool =
   # Checks whether a string is in ‘hexalpha’ format (e.g. FF0000FF)
   # - Only hexadecimal characters
   # - Length of 8 characters (typical for an RGBA color)
 
   return (s.len == 8) and isValidHex(s)
 
-proc isHexHtmlFormat*(s: string): bool =
+func isHexHtmlFormat*(s: string): bool =
   # Checks whether a string is in ‘hexHtml’ format (e.g. #F8D1DD)
 
   return (s.len == 7) and (s[0] == '#')
 
-proc isTinyHexHtmlFormat*(s: string): bool =
+func isTinyHexHtmlFormat*(s: string): bool =
   # Checks whether a string is in ‘TinyhexHtml’ format (e.g. #FF6)
 
   return (s.len == 4) and (s[0] == '#')
