@@ -166,11 +166,11 @@ proc pix::path::transform {path matrix} {
   #
   # Returns: Nothing.
 }
-proc pix::path::computeBounds {path matrix} {
+proc pix::path::computeBounds {path {matrix {}}} {
   # Compute the bounds of the path.
   # 
   # path    - [path]
-  # matrix  - list
+  # matrix  - list (9 values) 
   #
   # Returns: A Tcl dictionary with keys *(x, y, w, h)*.
 }

@@ -55,9 +55,11 @@ namespace eval ::changes {
     - Adds matrix inverse procedure.<br>
     - Adds `toGrayScale` procedure.<br>
     - Update `ruff` version to `2.7.0`.<br>
-    - `resvg` rust library [C-API] for SVG rendering, is now a<br>
-      part of this project (optional). From now on there will be two releases <br>
+    - `resvg` rust library [C-API] for SVG rendering, is now a  <br>
+      part of this project (optional). From now on there will be two releases    <br>
       distributions, one with `resvg` binding and one without.<br>
+    - Previous versions `(v0.1-v0.7)` included `Ruff!` documentation    <br>
+      assets without proper license attribution. This has been corrected in `v0.8+`.<br>
 <br>
 }
 }

@@ -114,10 +114,10 @@
 <h3 class='ruffproc'><a name='::pix::path::computeBounds'>computeBounds</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <p class='ruff'>Compute the bounds of the path.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>path matrix</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>path ?matrix?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code>path</code></nobr></td><td><a href="pix-pix-path.html#::pix::path" title="path" class='ruff_cmd'>path</a></td></tr>
-<tr><td><nobr><code>matrix</code></nobr></td><td>list</td></tr>
+<tr><td><nobr><code>matrix</code></nobr></td><td>list (9 values) Optional, default <code>&quot;&quot;</code>.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>A Tcl dictionary with keys <em>(x, y, w, h)</em>.</p>
 <h3 class='ruffproc'><a name='::pix::path::copy'>copy</a><span class='ns_scope'> [<a href="pix-pix-path.html#::pix::path" title="::pix::path" class='ruff_cmd'>::pix::path</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='pix.html'>Main</a>, <a href='pix-docindex.html#'>Index</a></span></h3>
@@ -313,7 +313,7 @@
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::bezierCurveTo'>bezierCurveTo</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>bezierCurveTo</span> <span class='ruff_arg'>path coordinates1 coordinates2 coordinates3</span></pre>Adds a cubic Bézier curve to the current sub-path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::circle'>circle</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>circle</span> <span class='ruff_arg'>path coordinates radius</span></pre>Adds a circle.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::closePath'>closePath</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>closePath</span> <span class='ruff_arg'>path</span></pre>Attempts to add a straight line from the current point to the start of the current sub-path. If the shape has already been closed or has only one point, this function does nothing.
-</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::computeBounds'>computeBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>path matrix</span></pre>Compute the bounds of the path.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::computeBounds'>computeBounds</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>computeBounds</span> <span class='ruff_arg'>path ?matrix?</span></pre>Compute the bounds of the path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::copy'>copy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>copy</span> <span class='ruff_arg'>path</span></pre>Copy path.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::destroy'>destroy</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>destroy</span> <span class='ruff_arg'>value</span></pre>Destroy current path or all paths if special word <code>all</code> is specified.
 </span></li><li class='ruff-toc3 ruff-tip'><a href='pix-pix-path.html#::pix::path::ellipse'>ellipse</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>ellipse</span> <span class='ruff_arg'>path coordinates rx ry</span></pre>Adds a ellipse.

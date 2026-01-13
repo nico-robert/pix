@@ -60,7 +60,10 @@ namespace eval ::pix {
         *image*    - Crop, resize, blur image and much more.
         *paint*    - This namespace plays with colors.
         *paths*    - Vector Paths.
-        *svg*      - Parse, render SVG (namespace pretty limited)
+        *svg*      - Parse, render SVG (namespace pretty limited, see note below for extended solution)
+
+        ##### Note
+        * Since version `0.8`, if available, [resvg](https://github.com/linebender/resvg) is used to render SVG files <br>in the `pix::svg` namespace.
 
         #### Acknowledgement:
         * [tclstubs-nimble](https://github.com/mpcjanssen/tclstubs-nimble) (MIT) <br>
