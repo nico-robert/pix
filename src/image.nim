@@ -1362,33 +1362,58 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_image_toGrayScale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts an image to grayscale.
   #
-  # img - <img> object
+  # img         - <img> object
+  # handleAlpha - Boolean value that indicates whether to handle 
+  #               the alpha channel (optional:true).
   #
   # Returns: nothing.
-  if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "<img>")
+  
+  if objc notin [2, 3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img> ?handleAlpha:optional?")
     return Tcl.ERROR
-
+  
   # Image
   let ptable = cast[PixTable](clientData)
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
-
+  
+  var handleAlpha = true
+  
+  # Handle Alpha
+  if objc == 3:
+    var handle: cint = 0
+    if Tcl.GetBooleanFromObj(interp, objv[2], handle) != Tcl.OK:
+      return Tcl.ERROR
+    handleAlpha = handle.bool
+  
   for y in 0 ..< img.height:
     for x in 0 ..< img.width:
-      let color = img.unsafe[x, y]
-      let rgbaColor = color.rgba()
+      let pixelColor = img.unsafe[x, y]
+      let rgba = pixelColor.rgba()
       
-      # The ITU-R BT.601 formula:
-      let gray = uint8(
-        0.299 * float(rgbaColor.r) + 
-        0.587 * float(rgbaColor.g) + 
-        0.114 * float(rgbaColor.b)
-      )
+      let grayColor =
+        if handleAlpha:
+          # Consider transparency: transparent areas → black
+          let alphaFactor = rgba.a.float / 255.0
+          let grayF = (0.299 * rgba.r.float + 
+                       0.587 * rgba.g.float + 
+                       0.114 * rgba.b.float) * alphaFactor
+          let grayValue = uint8(clamp(grayF, 0.0, 255.0))
+          # Opaque result (alpha = 255) because transparency 
+          # is incorporated into RGB.
+          rgba(grayValue, grayValue, grayValue, 255)
+        else:
+          # Ignore transparency, just convert to gray.
+          let grayValue = uint8(clamp(
+            0.299 * rgba.r.float + 
+            0.587 * rgba.g.float + 
+            0.114 * rgba.b.float,
+            0.0, 255.0
+          ))
+          rgba(grayValue, grayValue, grayValue, rgba.a)
 
-      let grayColor = rgba(gray, gray, gray, rgbaColor.a)
       img.unsafe[x, y] = grayColor.rgbx()
-
+  
   return Tcl.OK
 
 proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
