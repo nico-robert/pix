@@ -317,6 +317,7 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
   var
     count: Tcl.Size
     elements: Tcl.PPObj
+    value: cdouble
 
   if Tcl.ListObjGetElements(interp, obj, count, elements) != Tcl.OK:
     return Tcl.ERROR
@@ -327,7 +328,6 @@ proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): ci
     )
 
   for i in 0..count-1:
-    var value: cdouble
     if Tcl.GetDoubleFromObj(interp, elements[i], value) != Tcl.OK:
       return Tcl.ERROR
     # Fill the matrix3 with the values of the Tcl object.
@@ -590,9 +590,159 @@ proc pix_invMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   else:
     matrix3 = vmath.mat3()
 
+  let det = matrix3.determinant()
+  if abs(det) < 1e-10:
+    return pixUtils.errorMSG(interp, "matrix is singular, cannot invert.")
+
   matrix3 = matrix3.inverse()
 
   Tcl.SetObjResult(interp, matrix3.addToListObj())
+
+  return Tcl.OK
+
+proc pix_determinantMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Compute a determinant of the matrix.
+  #
+  # matrix  - list (9 values)
+  #
+  # Returns: The determinant.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "matrix")
+    return Tcl.ERROR
+
+  var matrix3: vmath.Mat3
+
+  if matrix3x3(interp, objv[1], matrix3) != Tcl.OK:
+    return Tcl.ERROR
+
+  Tcl.SetObjResult(
+    interp, 
+    Tcl.NewDoubleObj(matrix3.determinant())
+  )
+
+  return Tcl.OK
+
+proc pix_transformMatrixPoint*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Transform a point by matrix.
+  #
+  # point  - list {x y}
+  # matrix - list (9 values)
+  #
+  # Returns: A list of the transformed point.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "{x y} matrix")
+    return Tcl.ERROR
+
+  var
+    x, y: cdouble 
+    matrix3: vmath.Mat3
+    count: Tcl.Size
+    elements: Tcl.PPObj
+    
+  if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count != 2:
+    return pixUtils.errorMSG(interp,
+      "wrong # args: 'point' should be 'x' 'y'"
+    )
+
+  if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK:
+    return Tcl.ERROR
+    
+  if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+    return Tcl.ERROR
+
+  let transformed = matrix3 * vec3(x, y, 1.0)
+  
+  let lptT = Tcl.NewListObj(0, nil)
+
+  discard Tcl.ListObjAppendElement(interp, lptT, Tcl.NewDoubleObj(transformed.x))
+  discard Tcl.ListObjAppendElement(interp, lptT, Tcl.NewDoubleObj(transformed.y))
+  
+  Tcl.SetObjResult(interp, lptT)
+
+  return Tcl.OK
+
+proc pix_identityMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Create an identity matrix.
+  #
+  # Returns: The identity matrix as a list.
+  if objc != 1:
+    Tcl.WrongNumArgs(interp, 1, objv, "")
+    return Tcl.ERROR
+
+  Tcl.SetObjResult(interp, vmath.mat3().addToListObj())
+
+  return Tcl.OK
+
+proc pix_lerpMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Linear interpolation between two 2D transformation matrices.
+  #
+  # Algorithm based on:
+  # - W3C CSS Transforms Module Level 1 (2D Matrix Decomposition)
+  #   https://www.w3.org/TR/css-transforms-1/#decomposing-a-2d-matrix
+  #
+  # matrix1 - start matrix (9 values)
+  # matrix2 - end matrix (9 values)
+  # factor  - interpolation factor [0..1]
+  #
+  # Returns: Interpolated matrix as a list.
+  
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 factor")
+    return Tcl.ERROR
+
+  var m1, m2: vmath.Mat3
+  var factor: cdouble
+  
+  if matrix3x3(interp, objv[1], m1) != Tcl.OK or
+     matrix3x3(interp, objv[2], m2) != Tcl.OK or
+     Tcl.GetDoubleFromObj(interp, objv[3], factor) != Tcl.OK:
+    return Tcl.ERROR
+
+  let tf = clamp(factor.float32, 0.0, 1.0)
+  
+  # Decompose matrix 1
+  let trans1 = vec2(m1[2, 0], m1[2, 1])
+  
+  # Scale and rotation extraction using polar decomposition
+  let det1 = m1[0, 0] * m1[1, 1] - m1[0, 1] * m1[1, 0]
+  let signX1 = if det1 < 0: -1.0.float32 else: 1.0.float32
+  
+  let scaleX1 = signX1 * sqrt(m1[0, 0] * m1[0, 0] + m1[0, 1] * m1[0, 1])
+  let scaleY1 = sqrt(m1[1, 0] * m1[1, 0] + m1[1, 1] * m1[1, 1])
+  
+  # Rotation angle from normalized basis vector
+  let rot1 = arctan2(m1[0, 1], m1[0, 0])
+  
+  # Decompose matrix 2
+  let trans2 = vec2(m2[2, 0], m2[2, 1])
+  
+  let det2 = m2[0, 0] * m2[1, 1] - m2[0, 1] * m2[1, 0]
+  let signX2 = if det2 < 0: -1.0.float32 else: 1.0.float32
+  
+  let scaleX2 = signX2 * sqrt(m2[0, 0] * m2[0, 0] + m2[0, 1] * m2[0, 1])
+  let scaleY2 = sqrt(m2[1, 0] * m2[1, 0] + m2[1, 1] * m2[1, 1])
+  let rot2 = arctan2(m2[0, 1], m2[0, 0])
+  
+  # Interpolate components linearly
+  # Note: This assumes rotation angles are within 180° of each other
+  let transLerp = vmath.mix(trans1, trans2, tf)
+  let scaleLerp = vec2(
+    scaleX1 * (1.0 - tf) + scaleX2 * tf,
+    scaleY1 * (1.0 - tf) + scaleY2 * tf
+  )
+  let rotLerp = rot1 * (1.0 - tf) + rot2 * tf
+  
+  # Recompose matrix: T * R * S (standard composition order)
+  var resultMtx = vmath.mat3()
+  resultMtx = resultMtx * vmath.translate(transLerp)
+  resultMtx = resultMtx * vmath.rotate(rotLerp.float32)
+  resultMtx = resultMtx * vmath.scale(scaleLerp)
+  
+  Tcl.SetObjResult(interp, resultMtx.addToListObj())
 
   return Tcl.OK
 
