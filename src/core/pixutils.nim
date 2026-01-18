@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie
@@ -473,14 +473,15 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
   let ptable = cast[PixTable](clientData)
   let arg1 = $objv[1]
 
-  let img = if ptable.hasContext(arg1):
-    ptable.getContext(arg1).image
-  elif ptable.hasImage(arg1):
-    ptable.getImage(arg1)
-  else:
-    return pixUtils.errorMSG(interp,
-      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
-    )
+  let img =
+    if ptable.hasContext(arg1):
+      ptable.getContext(arg1).image
+    elif ptable.hasImage(arg1):
+      ptable.getImage(arg1)
+    else:
+      return pixUtils.errorMSG(interp,
+        "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+      )
 
   let data = try:
     encodeImage(img, PngFormat)
@@ -510,14 +511,15 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   let ptable = cast[PixTable](clientData)
   let arg1 = $objv[1]
 
-  let img = if ptable.hasContext(arg1):
-    ptable.getContext(arg1).image
-  elif ptable.hasImage(arg1):
-    ptable.getImage(arg1)
-  else:
-    return pixUtils.errorMSG(interp,
-      "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
-    )
+  let img =
+    if ptable.hasContext(arg1):
+      ptable.getContext(arg1).image
+    elif ptable.hasImage(arg1):
+      ptable.getImage(arg1)
+    else:
+      return pixUtils.errorMSG(interp,
+        "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
+      )
 
   var fileFormat: FileFormat = PngFormat
 
@@ -616,7 +618,7 @@ proc pix_determinantMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
     return Tcl.ERROR
 
   Tcl.SetObjResult(
-    interp, 
+    interp,
     Tcl.NewDoubleObj(matrix3.determinant())
   )
 
@@ -634,11 +636,11 @@ proc pix_transformMatrixPoint*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
     return Tcl.ERROR
 
   var
-    x, y: cdouble 
+    x, y: cdouble
     matrix3: vmath.Mat3
     count: Tcl.Size
     elements: Tcl.PPObj
-    
+
   if Tcl.ListObjGetElements(interp, objv[1], count, elements) != Tcl.OK:
     return Tcl.ERROR
 
@@ -650,17 +652,17 @@ proc pix_transformMatrixPoint*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
      Tcl.GetDoubleFromObj(interp, elements[1], y) != Tcl.OK:
     return Tcl.ERROR
-    
+
   if matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
     return Tcl.ERROR
 
   let transformed = matrix3 * vec3(x, y, 1.0)
-  
+
   let lptT = Tcl.NewListObj(0, nil)
 
   discard Tcl.ListObjAppendElement(interp, lptT, Tcl.NewDoubleObj(transformed.x))
   discard Tcl.ListObjAppendElement(interp, lptT, Tcl.NewDoubleObj(transformed.y))
-  
+
   Tcl.SetObjResult(interp, lptT)
 
   return Tcl.OK
@@ -686,47 +688,47 @@ proc pix_lerpMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   #
   # matrix1 - start matrix (9 values)
   # matrix2 - end matrix (9 values)
-  # factor  - interpolation factor [0..1]
+  # factor  - interpolation factor (0..1)
   #
   # Returns: Interpolated matrix as a list.
-  
+
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 factor")
     return Tcl.ERROR
 
   var m1, m2: vmath.Mat3
   var factor: cdouble
-  
+
   if matrix3x3(interp, objv[1], m1) != Tcl.OK or
      matrix3x3(interp, objv[2], m2) != Tcl.OK or
      Tcl.GetDoubleFromObj(interp, objv[3], factor) != Tcl.OK:
     return Tcl.ERROR
 
   let tf = clamp(factor.float32, 0.0, 1.0)
-  
+
   # Decompose matrix 1
-  let trans1 = vec2(m1[2, 0], m1[2, 1])
-  
+  let trans1 = vec2(m1[2,0], m1[2,1])
+
   # Scale and rotation extraction using polar decomposition
-  let det1 = m1[0, 0] * m1[1, 1] - m1[0, 1] * m1[1, 0]
+  let det1 = m1[0,0] * m1[1,1] - m1[0,1] * m1[1,0]
   let signX1 = if det1 < 0: -1.0.float32 else: 1.0.float32
-  
-  let scaleX1 = signX1 * sqrt(m1[0, 0] * m1[0, 0] + m1[0, 1] * m1[0, 1])
-  let scaleY1 = sqrt(m1[1, 0] * m1[1, 0] + m1[1, 1] * m1[1, 1])
-  
+
+  let scaleX1 = signX1 * sqrt(m1[0,0] * m1[0,0] + m1[0,1] * m1[0,1])
+  let scaleY1 = sqrt(m1[1,0] * m1[1,0] + m1[1,1] * m1[1,1])
+
   # Rotation angle from normalized basis vector
-  let rot1 = arctan2(m1[0, 1], m1[0, 0])
-  
+  let rot1 = arctan2(m1[0,1], m1[0,0])
+
   # Decompose matrix 2
   let trans2 = vec2(m2[2, 0], m2[2, 1])
-  
-  let det2 = m2[0, 0] * m2[1, 1] - m2[0, 1] * m2[1, 0]
+
+  let det2 = m2[0,0] * m2[1,1] - m2[0,1] * m2[1,0]
   let signX2 = if det2 < 0: -1.0.float32 else: 1.0.float32
-  
-  let scaleX2 = signX2 * sqrt(m2[0, 0] * m2[0, 0] + m2[0, 1] * m2[0, 1])
-  let scaleY2 = sqrt(m2[1, 0] * m2[1, 0] + m2[1, 1] * m2[1, 1])
-  let rot2 = arctan2(m2[0, 1], m2[0, 0])
-  
+
+  let scaleX2 = signX2 * sqrt(m2[0,0] * m2[0,0] + m2[0,1] * m2[0,1])
+  let scaleY2 = sqrt(m2[1,0] * m2[1,0] + m2[1,1] * m2[1,1])
+  let rot2 = arctan2(m2[0,1], m2[0,0])
+
   # Interpolate components linearly
   # Note: This assumes rotation angles are within 180° of each other
   let transLerp = vmath.mix(trans1, trans2, tf)
@@ -735,13 +737,13 @@ proc pix_lerpMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
     scaleY1 * (1.0 - tf) + scaleY2 * tf
   )
   let rotLerp = rot1 * (1.0 - tf) + rot2 * tf
-  
+
   # Recompose matrix: T * R * S (standard composition order)
   var resultMtx = vmath.mat3()
   resultMtx = resultMtx * vmath.translate(transLerp)
   resultMtx = resultMtx * vmath.rotate(rotLerp.float32)
   resultMtx = resultMtx * vmath.scale(scaleLerp)
-  
+
   Tcl.SetObjResult(interp, resultMtx.addToListObj())
 
   return Tcl.OK
@@ -1037,7 +1039,7 @@ proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Darkens the color by amount 0-1.
   #
-  # color   - color or colorObj [color]
+  # color   - str color or colorObj [color]
   # amount  - double value (0-1)
   #
   # Returns: A *new* type [color] object.
@@ -1075,7 +1077,7 @@ proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Lightens the color by amount 0-1.
   #
-  # color   - color or colorObj [color]
+  # color   - str color or colorObj [color]
   # amount  - double value (0-1)
   #
   # Returns: A *new* type [color] object.
@@ -1113,7 +1115,7 @@ proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Desaturate (makes grayer) the color by amount 0-1.
   #
-  # color   - color or colorObj [color]
+  # color   - str color or colorObj [color]
   # amount  - double value (0-1)
   #
   # Returns: A *new* type [color] object.
@@ -1149,9 +1151,9 @@ proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   return Tcl.OK
 
 proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Saturates (makes brighter) the color by amount 0-1. 
+  # Saturates (makes brighter) the color by amount 0-1.
   #
-  # color   - color or colorObj [color]
+  # color   - str color or colorObj [color]
   # amount  - double value (0-1)
   #
   # Returns: A *new* type [color] object.
@@ -1189,7 +1191,7 @@ proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_colorSpin*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Rotates the hue of the color by degrees (0-360).
   #
-  # color   - color or colorObj [color]
+  # color   - str color or colorObj [color]
   # degrees - double value (0-360)
   #
   # Returns: A *new* type [color] object.
@@ -1227,8 +1229,8 @@ proc pix_colorSpin*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_colorDistance*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # A distance function based on CIEDE2000 color difference formula.
   #
-  # color1   - color or colorObj [color]
-  # color2   - color or colorObj [color]
+  # color1   - str color or colorObj [color]
+  # color2   - str color or colorObj [color]
   #
   # Returns: A distance.
   if objc != 3:
@@ -1254,8 +1256,8 @@ proc pix_colorDistance*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_colorAlmostEqual*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Almost equal colors.
   #
-  # color1   - color or colorObj [color]
-  # color2   - color or colorObj [color]
+  # color1   - str color or colorObj [color]
+  # color2   - str color or colorObj [color]
   # epsilon  - double value (optional:0.01)
   #
   # Returns: True if colors are close.
@@ -1287,10 +1289,11 @@ proc pix_colorAlmostEqual*(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   return Tcl.OK
 
 proc pix_colorMix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Mixes two colours using simple averaging or simple lerp if the “lerp” argument is specified.
+  # Mixes two colours using simple averaging or
+  # simple lerp if the 'lerp' argument is specified.
   #
-  # color1   - color or colorObj [color]
-  # color2   - color or colorObj [color]
+  # color1   - str color or colorObj [color]
+  # color2   - str color or colorObj [color]
   # lerp     - double value (optional)
   #
   # Returns: A *new* type [color] object.
