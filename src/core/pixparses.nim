@@ -32,7 +32,7 @@ proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cint, errorMsg
   # objv      - The Tcl object to parse.
   # v1, v2    - The two integers to populate from the object.
   # errorMsg  - The error message to return if the object is not equal to 2.
-  # 
+  #
   # Returns: if the object is a list of two integers, returns Tcl.OK (0).
   # Otherwise, returns Tcl.ERROR (1).
   var
@@ -46,10 +46,9 @@ proc getListInt*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cint, errorMsg
     return pixUtils.errorMSG(interp, errorMsg)
 
   if Tcl.GetIntFromObj(interp, elements[0], v1) != Tcl.OK or
-     Tcl.GetIntFromObj(interp, elements[1], v2) != Tcl.OK: 
+     Tcl.GetIntFromObj(interp, elements[1], v2) != Tcl.OK:
     return Tcl.ERROR
 
-  # Return success.
   return Tcl.OK
 
 proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, errorMsg: string): cint =
@@ -59,7 +58,7 @@ proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, er
   # objv      - The Tcl object to parse.
   # v1, v2    - The two doubles to populate from the object.
   # errorMsg  - The error message to return if the object is not equal to 2.
-  # 
+  #
   # Returns: if the object is a list of two doubles, returns Tcl.OK (0).
   # Otherwise, returns Tcl.ERROR (1).
   var
@@ -73,10 +72,9 @@ proc getListDouble*(interp: Tcl.PInterp, objv: Tcl.PObj, v1, v2: var cdouble, er
     return pixUtils.errorMSG(interp, errorMsg)
 
   if Tcl.GetDoubleFromObj(interp, elements[0], v1) != Tcl.OK or
-     Tcl.GetDoubleFromObj(interp, elements[1], v2) != Tcl.OK: 
+     Tcl.GetDoubleFromObj(interp, elements[1], v2) != Tcl.OK:
     return Tcl.ERROR
 
-  # Return success.
   return Tcl.OK
 
 proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow) =
@@ -98,11 +96,11 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'dict options' should be :key value ?key1 ?value1..."
+      "wrong # args: 'shadow options' should be :key value ?key1 ?value1..."
     )
 
   for i in countup(0, count - 1, 2):
-    let 
+    let
       key = $elements[i]
       value = elements[i+1]
     case key:
@@ -113,7 +111,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
         if Tcl.GetDoubleFromObj(interp, value, opts.spread) != Tcl.OK:
           raise newException(ValueError, $interp)
       of "offset":
-        if getListDouble(interp, value, x, y, 
+        if getListDouble(interp, value, x, y,
           "wrong # args: 'offset' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $interp)
         opts.offset = vec2(x, y)
@@ -123,7 +121,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
         except InvalidColor as e:
           raise newException(ValueError, move(e.msg))
       else:
-        raise newException(ValueError, 
+        raise newException(ValueError,
           "wrong # args: Key '" & key & "' not supported."
         )
 
@@ -146,11 +144,11 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'dict options' should be :key value ?key1 ?value1..."
+      "wrong # args: 'options' should be :key value ?key1 ?value1..."
     )
 
   for i in countup(0, count - 1, 2):
-    let 
+    let
       key = $elements[i]
       value = elements[i+1]
     case key:
@@ -182,7 +180,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
             raise newException(ValueError, $interp)
           opts.dashes.add(dashes)
 
-        # To get around pixie's problem when my list is not even, 
+        # To get around pixie's problem when my list is not even,
         # because pixie uses 'dashes.add(dashes)' which is not allowed.
         # With -d:useMalloc enabled, I have an error in particular on MacOs.
         if opts.dashes.len mod 2 != 0:
@@ -215,7 +213,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
     )
 
   for i in countup(0, count - 1, 2):
-    let 
+    let
       key = $elements[i]
       value = elements[i+1]
     case key:
@@ -257,7 +255,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
             raise newException(ValueError, $interp)
           opts.dashes.add(dashes)
 
-        # To get around pixie's problem when my list is not even, 
+        # To get around pixie's problem when my list is not even,
         # because pixie uses 'dashes.add(dashes)' which is not allowed.
         # With -d:useMalloc enabled, I have an error in particular on MacOs.
         if opts.dashes.len mod 2 != 0:
@@ -265,13 +263,13 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
           opts.dashes.add(copyOfDashes)
 
       of "bounds":
-        if getListDouble(interp, value, x, y, 
+        if getListDouble(interp, value, x, y,
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $interp)
 
         opts.bounds = vec2(x, y)
       else:
-        raise newException(ValueError, 
+        raise newException(ValueError,
           "wrong # args: Key '" & key & "' not supported."
         )
 
@@ -295,7 +293,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'typeSet options' should be :key value ?key1 ?value1 ..."
     )
 
   for i in countup(0, count - 1, 2):
@@ -304,7 +302,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
       value = elements[i+1]
     case key:
       of "wrap":
-        if Tcl.GetBooleanFromObj(interp, value, wrapB) != Tcl.OK: 
+        if Tcl.GetBooleanFromObj(interp, value, wrapB) != Tcl.OK:
           raise newException(ValueError, $interp)
         opts.wrap = wrapB.bool
       of "hAlign":
@@ -318,7 +316,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
         except ValueError as e:
           raise newException(ValueError, move(e.msg))
       of "bounds":
-        if getListDouble(interp, value, x, y, 
+        if getListDouble(interp, value, x, y,
           "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
           raise newException(ValueError, $interp)
 
