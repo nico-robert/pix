@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
@@ -934,6 +934,31 @@ proc pix_ctx_lineJoin(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
+proc pix_ctx_lineCap(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # An enum value describing the style of the end caps for lines. Possible values include
+  # 'ButtCap', 'RoundCap', and 'SquareCap'.
+  #
+  # context - [ctx::new]
+  # enum    - The line cap style (Enum)
+  #
+  # Returns: Nothing.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> enum=LineCap")
+    return Tcl.ERROR
+
+  # Context
+  let ptable = cast[PixTable](clientData)
+  let ctx = ptable.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
+
+  try:
+    # Enum
+    ctx.lineCap = parseEnum[LineCap]($objv[2])
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  
+  return Tcl.OK
+
 proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills the path with the current fillStyle.
   #
@@ -1737,6 +1762,32 @@ proc pix_ctx_lineWidth(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   ctx.lineWidth = width
+
+  return Tcl.OK
+
+proc pix_ctx_miterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Sets the miter limit. This is relevant when 'lineJoin' is set to 'MiterJoin' and
+  # controls the maximum length of the miter. If the miter limit is exceeded, a bevel join is used instead.
+  #
+  # context    - [ctx::new]
+  # miterlimit - double value
+  #
+  # Returns: Nothing.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx> miterlimit")
+    return Tcl.ERROR
+
+  # Context
+  let ptable = cast[PixTable](clientData)
+  let ctx = ptable.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
+
+  var miterlimit: cdouble
+
+  if Tcl.GetDoubleFromObj(interp, objv[2], miterlimit) != Tcl.OK:
+    return Tcl.ERROR
+
+  ctx.miterLimit = miterlimit
 
   return Tcl.OK
 

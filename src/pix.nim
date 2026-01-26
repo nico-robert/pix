@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie, pixie/fileformats/svg
@@ -116,8 +116,10 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     # Undocumented context commands.
     "pix::ctx::strokeStyle"       : pix_ctx_strokeStyle,
     "pix::ctx::lineJoin"          : pix_ctx_lineJoin,
+    "pix::ctx::lineCap"           : pix_ctx_lineCap,
     "pix::ctx::fillStyle"         : pix_ctx_fillStyle,
     "pix::ctx::lineWidth"         : pix_ctx_lineWidth,
+    "pix::ctx::miterLimit"        : pix_ctx_miterLimit,
     "pix::ctx::writeFile"         : pix_ctx_writeFile,
     "pix::ctx::font"              : pix_ctx_font,
     "pix::ctx::fontSize"          : pix_ctx_fontSize,
