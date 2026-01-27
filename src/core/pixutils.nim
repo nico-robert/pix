@@ -683,8 +683,8 @@ proc pix_lerpMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   # Linear interpolation between two 2D transformation matrices.
   #
   # Algorithm based on:
-  # - W3C CSS Transforms Module Level 1 (2D Matrix Decomposition)
-  #   https://www.w3.org/TR/css-transforms-1/#decomposing-a-2d-matrix
+  # W3C CSS Transforms Module Level 1 (2D Matrix Decomposition)
+  # https://www.w3.org/TR/css-transforms-1/#decomposing-a-2d-matrix
   #
   # matrix1 - start matrix (9 values)
   # matrix2 - end matrix (9 values)
