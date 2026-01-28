@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 package ifneeded pix 0.8 [list apply {dir {
@@ -13,7 +13,7 @@ package ifneeded pix 0.8 [list apply {dir {
     set ext [info sharedlibextension]
     set pixv 0.8
 
-    switch -exact $os {
+    switch -exact -- $os {
         macosx-x86_64 -
         macosx-arm    -
         linux-x86_64 {set lib [format {lib%spix%s%s} $version $pixv $ext]}
