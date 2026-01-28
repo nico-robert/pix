@@ -6,7 +6,9 @@ import ./pixtables
 import ./pixobj as pixObj
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
-import ../bindings/resvg/types
+
+when defined(resvg):
+  import ../bindings/resvg/types
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
@@ -289,8 +291,7 @@ template toHexPtr*[T](obj: T): string =
   let hex = block:
     var i = 0
     while i < hexStr.len and hexStr[i] == '0': inc i
-    if i >= hexStr.len: "0"
-    else: hexStr[i..^1]
+    if i >= hexStr.len: "0" else: hexStr[i..^1]
 
   let typeName =
     when T is pixie.Context     : "ctx"
@@ -302,7 +303,7 @@ template toHexPtr*[T](obj: T): string =
     elif T is pixie.Path        : "path"
     elif T is Svg               : "svg"
     elif T is pixie.Arrangement : "arr"
-    elif T is Resvg             : "resvg"
+    elif defined(resvg) and T is Resvg : "resvg"
     else: {.error: "pix type not supported : " & $T .}
   ("0x" & hex & "^" & typeName).toLowerAscii
 

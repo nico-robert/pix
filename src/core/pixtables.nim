@@ -1,9 +1,11 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie, pixie/fileformats/svg
 import std/tables
-import ../bindings/resvg/types
+
+when defined(resvg):
+  import ../bindings/resvg/types
 
 from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj, GetString, `$`
 
@@ -18,7 +20,8 @@ type
     arrTable*    : Table[string, pixie.Arrangement]
     svgTable*    : Table[string, Svg]
     spanTable*   : Table[string, pixie.Span]
-    resvgTable*  : Table[string, Resvg]
+    when defined(resvg):
+      resvgTable*  : Table[string, Resvg]
 
 proc createPixTable*(): PixTable =
   result = PixTable()
@@ -31,7 +34,8 @@ proc createPixTable*(): PixTable =
   result.arrTable     = initTable[string, pixie.Arrangement]()
   result.svgTable     = initTable[string, Svg]()
   result.spanTable    = initTable[string, pixie.Span]()
-  result.resvgTable   = initTable[string, Resvg]()
+  when defined(resvg):
+    result.resvgTable   = initTable[string, Resvg]()
 
 # Context functions
 proc getContext*(pTable: PixTable, key: string): pixie.Context = 
@@ -295,35 +299,36 @@ proc hasSpan*(pTable: PixTable, key: string): bool =
 proc addSpan*(pTable: PixTable, key: string, value: pixie.Span): void = 
   pTable.spanTable[key] = value
 
-# RESVG functions
-proc getRESVG*(pTable: PixTable, key: string): Resvg = 
-  result = pTable.resvgTable[key]
+when defined(resvg):
+  # RESVG functions
+  proc getRESVG*(pTable: PixTable, key: string): Resvg = 
+    result = pTable.resvgTable[key]
 
-proc hasRESVG*(pTable: PixTable, key: string): bool = 
-  result = pTable.resvgTable.hasKey(key)
+  proc hasRESVG*(pTable: PixTable, key: string): bool = 
+    result = pTable.resvgTable.hasKey(key)
 
-proc addRESVG*(pTable: PixTable, key: string, value: Resvg): void = 
-  pTable.resvgTable[key] = value
+  proc addRESVG*(pTable: PixTable, key: string, value: Resvg): void = 
+    pTable.resvgTable[key] = value
 
-proc clearRESVG*(pTable: PixTable): void = 
-  pTable.resvgTable.clear()
+  proc clearRESVG*(pTable: PixTable): void = 
+    pTable.resvgTable.clear()
 
-proc delKeyRESVG*(pTable: PixTable, key: string): void = 
-  pTable.resvgTable.del(key)
+  proc delKeyRESVG*(pTable: PixTable, key: string): void = 
+    pTable.resvgTable.del(key)
 
-proc loadRESVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Resvg =
-  # Searches the Resvg table for a key that matches the given obj.
-  #
-  # Returns:
-  # If found, it returns the associated Resvg object.
-  # If not found, it sets an error message on the given interp and returns nil.
+  proc loadRESVG*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Resvg =
+    # Searches the Resvg table for a key that matches the given obj.
+    #
+    # Returns:
+    # If found, it returns the associated Resvg object.
+    # If not found, it sets an error message on the given interp and returns nil.
 
-  let key = $obj
+    let key = $obj
 
-  if not pTable.hasRESVG(key):
-    let msg = "pix(error): unknown <resvg> key object found: '" & key & "'."
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
-    # We return nil to indicate that an error occurred.
-    return nil
+    if not pTable.hasRESVG(key):
+      let msg = "pix(error): unknown <resvg> key object found: '" & key & "'."
+      Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
+      # We return nil to indicate that an error occurred.
+      return nil
 
-  return pTable.getRESVG(key)
+    return pTable.getRESVG(key)
