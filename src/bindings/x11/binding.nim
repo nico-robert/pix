@@ -60,18 +60,17 @@ proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: 
   let ptable = cast[PixTable](clientData)
 
   # Context
-  var img: pixie.Image
   let key = $objv[1]
-  let newListobj = Tcl.NewListObj(0, nil)
+  let newListobj = Tcl.NewListObj(2, nil)
 
-  if ptable.hasContext(key): 
-    let ctx = ptable.getContext(key)
-    img = ctx.image
-  elif ptable.hasImage(key): 
-    img = ptable.getImage(key)
-  else:
-    let errormsg = "wrong # args: unknown <ctx> or <img> key object found: '" & key & "'."
-    return pixUtils.errorMSG(interp, errormsg)
+  let img =
+    if ptable.hasContext(key): 
+      ptable.getContext(key).image
+    elif ptable.hasImage(key): 
+      ptable.getImage(key)
+    else:
+      let errormsg = "wrong # args: unknown <ctx> or <img> key object found: '" & key & "'."
+      return pixUtils.errorMSG(interp, errormsg)
 
   discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewIntObj(img.width.cint))
   discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewIntObj(img.height.cint))

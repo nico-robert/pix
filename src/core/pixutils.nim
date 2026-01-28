@@ -341,7 +341,7 @@ proc addToListObj*(matrix3: vmath.Mat3): Tcl.PObj =
   # matrix3 - matrix.
   #
   # Returns: A Tcl list as object.
-  let listMtxobj = Tcl.NewListObj(0, nil)
+  let listMtxobj = Tcl.NewListObj(9, nil)
 
   for i in 0..2:
     for j in 0..2:
@@ -369,7 +369,7 @@ proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let listColorObj = Tcl.NewListObj(0, nil)
+  let listColorObj = Tcl.NewListObj(4, nil)
 
   discard Tcl.ListObjAppendElement(nil, listColorObj, Tcl.NewIntObj(color.r.cint))
   discard Tcl.ListObjAppendElement(nil, listColorObj, Tcl.NewIntObj(color.g.cint))
@@ -433,9 +433,9 @@ proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # `img` a Tcl list of all [img] keys.
   let
     dictObj    = Tcl.NewDictObj()
-    newListctx = Tcl.NewListObj(0, nil)
-    newListimg = Tcl.NewListObj(0, nil)
     ptable     = cast[PixTable](clientData)
+    newListctx = Tcl.NewListObj(Tcl.Size(ptable.ctxTable.len), nil)
+    newListimg = Tcl.NewListObj(Tcl.Size(ptable.imgTable.len), nil)
 
   for key in ptable.ctxTable.keys:
     discard Tcl.ListObjAppendElement(
@@ -658,7 +658,7 @@ proc pix_transformMatrixPoint*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
   let transformed = matrix3 * vec3(x, y, 1.0)
 
-  let lptT = Tcl.NewListObj(0, nil)
+  let lptT = Tcl.NewListObj(2, nil)
 
   discard Tcl.ListObjAppendElement(interp, lptT, Tcl.NewDoubleObj(transformed.x))
   discard Tcl.ListObjAppendElement(interp, lptT, Tcl.NewDoubleObj(transformed.y))

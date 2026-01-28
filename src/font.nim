@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_font_readFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
@@ -654,7 +654,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
     bounds = spans.layoutBounds()
 
-  let newListobj = Tcl.NewListObj(0, nil)
+  let newListobj = Tcl.NewListObj(2, nil)
 
   discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewDoubleObj(bounds.x))
   discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewDoubleObj(bounds.y))
