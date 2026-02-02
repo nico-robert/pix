@@ -15,7 +15,7 @@ type
     tcl_ListObjGetElements   : proc(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size, objvPtr: var Tcl.PPObj): cint {.cdecl.}
     tcl_ListObjLength        : proc(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cint {.cdecl.}
     tcl_NewDoubleObj         : proc(doubleValue: cdouble): Tcl.PObj {.cdecl.}
-    tcl_NewWideIntObj        : proc(wideValue: WideInt): Tcl.PObj {.cdecl.}
+    tcl_NewWideIntObj        : proc(wideValue: Tcl.WideInt): Tcl.PObj {.cdecl.}
     tcl_NewListObj           : proc(objc: Tcl.Size, objv: Tcl.PPObj): Tcl.PObj {.cdecl.}
     tcl_NewStringObj         : proc(bytes: cstring, length: Tcl.Size): Tcl.PObj {.cdecl.}
     tcl_CreateObjCommand     : proc(interp: Tcl.PInterp, cmdName: cstring, callback: Tcl.PObjCmdProc, clientData: Tcl.TClientData, deleteProc: Tcl.PCmdDeleteProc): Tcl.PCommand {.cdecl.}
@@ -75,7 +75,7 @@ proc ListObjLength*(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.S
 proc NewDoubleObj*(doubleValue: cdouble): Tcl.PObj =
   return tclStubsPtr.tcl_NewDoubleObj(doubleValue)
 
-proc NewWideIntObj*(wideValue: WideInt): Tcl.PObj =
+proc NewWideIntObj*(wideValue: Tcl.WideInt): Tcl.PObj =
   return tclStubsPtr.tcl_NewWideIntObj(wideValue)
 
 proc NewListObj*(objc: Tcl.Size, objv: Tcl.PPObj): Tcl.PObj =
@@ -182,8 +182,8 @@ when defined(tcl9):
   proc Eval*(interp: Tcl.PInterp, script: cstring): cint =
     return EvalEx(interp, script, TCL.INDEX_NONE, 0)
 
-  template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(WideInt(value))
-  template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(WideInt(if intValue != 0: 1 else: 0))
+  template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(Tcl.WideInt(value))
+  template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(Tcl.WideInt(if intValue != 0: 1 else: 0))
 
 proc tclInitStubs(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl, importc: "Tcl_InitStubs", header: "tcl.h".}
 
