@@ -1,3 +1,6 @@
+# Copyright (c) 2025 Nicolas ROBERT.
+# Distributed under MIT license. Please see LICENSE for details.
+
 import ../bindings/tcl/binding as Tcl
 import chroma
 
