@@ -5,7 +5,7 @@ when defined(x11):
   import ../x11/xtypes as X
 
 import ../tcl/binding as Tcl
-import ./tktypes as Tk
+import ./types as Tk
 export Tk
 
 when defined(x11):
