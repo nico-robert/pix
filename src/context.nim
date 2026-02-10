@@ -41,11 +41,17 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
     if pixParses.getListInt(interp, objv[1], width, height, 
       "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
       return Tcl.ERROR
+    
+    # Color or paint 
+    let arg2 = $objv[2]
 
     try:
       img = newImage(width, height)
       # Color gets.
-      img.fill(pixUtils.getColor(objv[2]))
+      if ptable.hasPaint(arg2):
+        img.fill(ptable.getPaint(arg2))
+      else:
+        img.fill(pixUtils.getColor(objv[2]))
     except InvalidColor as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     except PixieError as e:
