@@ -274,7 +274,7 @@ proc getColor*(obj: Tcl.PObj): Color =
     elif isColorSimpleFormat(obj, color):
       return color
     else:
-      return parseHtmlColor(scolor)
+      return chroma.parseHtmlName(scolor)
 
 template toHexPtr*[T](obj: T): string =
   # Converts an object to a hexadecimal string.
