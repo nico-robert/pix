@@ -313,7 +313,7 @@ proc pix_deleteProc(instanceData: Tcl.TClientData) {.cdecl.} =
 
 proc createPixImgType*(interp: Tcl.PInterp): ptr Tk.ImageType =
 
-  let imageType = cast[ptr Tk.ImageType](alloc0(sizeof(Tk.ImageType)))
+  let imageType = create(Tk.ImageType)
   if imageType == nil:
     let errormsg = "pix(error): Could not allocate memory for Tk.ImageType."
     Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
