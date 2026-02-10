@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details
 
 when defined(x11):
-  import ../x11/xtypes as X
+  import ../x11/types as X
 
 import ../tcl/binding as Tcl
 import ./types as Tk

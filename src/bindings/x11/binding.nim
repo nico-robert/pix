@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details
 
 from pixie import Image, Context
-import ./xtypes as X
+import ./types as X
 import ../tcl/binding as Tcl
 import ../tk/binding as Tk
 import ../../core/pixtables
