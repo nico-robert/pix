@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
-import ./tcltypes as Tcl
+import ./types as Tcl
 export Tcl
 
 type
