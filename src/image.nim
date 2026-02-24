@@ -109,11 +109,11 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       # If 5 arguments are provided, draw <img2> onto <img1> with the transformation
       # specified by the 3rd argument and the blend mode specified by the 5th
       # argument.
-      if pixUtils.matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
+      if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
         return Tcl.ERROR
 
       # Blend mode
-      let myEnum = parseEnum[BlendMode]($objv[5])
+      let myEnum = parseEnum[BlendMode]($objv[4])
 
       img1.draw(img2, transform = matrix3, blendMode = myEnum)
   except ValueError as e:
