@@ -1,4 +1,6 @@
 # 02-Jun-2024 : v1.0 : Initial example
+# 02-Mar-2026 : v2.0 : Not necessary to configure font,color and
+#                      size in progressChart proc
 
 proc progressChart {} {
     global ctx cW cH counter start maxVal p font
@@ -6,11 +8,6 @@ proc progressChart {} {
     set diff [expr {(($counter / 100.) * 3.14 * 2 * 10)}]
     
     pix::ctx::clearRect $ctx {0 0} [list $cW $cH]
-    pix::ctx::lineWidth $ctx 15
-    pix::ctx::fillStyle $ctx #ff883c
-    pix::ctx::textAlign $ctx CenterAlign
-    pix::ctx::font $ctx $font
-    pix::ctx::fontSize $ctx 25
     pix::ctx::fillText $ctx "$counter%" [list [expr {$cW * 0.5}] [expr {$cH * 0.55}]]
     
     pix::ctx::beginPath $ctx 
@@ -44,6 +41,12 @@ set counter 0
 set start 4.72
 set maxVal 70
 set ctx [pix::ctx::new {200 200} "white"]
+pix::ctx::lineWidth $ctx 15
+pix::ctx::fillStyle $ctx #ff883c
+pix::ctx::textAlign $ctx CenterAlign
+pix::ctx::font $ctx $font
+pix::ctx::fontSize $ctx 25
+
 set p [image create photo]
 
 label .l1 -image $p -borderwidth 0
