@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
@@ -32,20 +32,22 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if source == nil:
     return pixUtils.errorMSG(interp, "pix(error): photo not found")
 
-  var 
-    pblock : Tk.PhotoImageBlock
-    imgData = cast[ptr UncheckedArray[uint8]](img.data[0].addr)
+  let
+    size = img.width * img.height * 4
+    imgDataCopy = img.data
 
-  let size = img.width * img.height * 4
+  var
+    pblock : Tk.PhotoImageBlock
+    imgData = cast[ptr UncheckedArray[uint8]](imgDataCopy[0].addr)
 
   {.push checks: off.}
   for offset in countup(0, size - 4, 4):
     let alpha = imgData[offset+3]
     if alpha != 0 and alpha != 255:
-      let multiplier = round((255 / alpha.float32) * 255).uint32
-      imgData[offset+0] = ((imgData[offset+0].uint32 * multiplier + 127) div 255).uint8
-      imgData[offset+1] = ((imgData[offset+1].uint32 * multiplier + 127) div 255).uint8
-      imgData[offset+2] = ((imgData[offset+2].uint32 * multiplier + 127) div 255).uint8
+      let m = UNMULTIPLY_LUT[alpha]
+      imgData[offset+0] = ((imgData[offset+0].uint32 * m + 127) div 255).uint8
+      imgData[offset+1] = ((imgData[offset+1].uint32 * m + 127) div 255).uint8
+      imgData[offset+2] = ((imgData[offset+2].uint32 * m + 127) div 255).uint8
   {.pop.}
 
   pblock.pixelPtr  = imgData
