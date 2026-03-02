@@ -17,7 +17,14 @@ import bindings/tcl/binding as Tcl
 import bindings/tk/binding  as Tk
 
 # Source : https://stackoverflow.com/questions/57121829/get-version-from-nimble-package
-const pixVersion = staticRead("../pix.nimble").newStringStream.loadConfig.getSectionValue("", "version")
+const PIX_VERSION = staticRead("../pix.nimble").newStringStream.loadConfig.getSectionValue("", "version")
+
+const UNMULTIPLY_LUT = block:
+  var lut: array[256, uint32]
+  lut[0] = 0
+  for a in 1..255:
+    lut[a] = round((255.0 / float32(a)) * 255.0).uint32
+  lut
 
 include "image.nim"
 include "context.nim"
@@ -51,7 +58,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
       return pixUtils.errorMSG(interp, "Can't create or find namespace 'pix'")
 
   # Package
-  if Tcl.PkgProvideEx(interp, "pix", pixVersion.cstring, nil) != Tcl.OK:
+  if Tcl.PkgProvideEx(interp, "pix", PIX_VERSION.cstring, nil) != Tcl.OK:
     return Tcl.ERROR
 
   # Object types
