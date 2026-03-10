@@ -159,8 +159,9 @@ task pixTclTkBindings, "Generate pix Tcl library.":
 
   # Generate pix Tcl/Tk library:
   const baseFlags = " -d:strip -d:useMalloc -d:release"
-  for withResvg in [true, false]:
+  var flags: string
 
+  for withResvg in [true, false]:
     if withResvg and not resvgEnabled:
       echo "pix(warning): Skipping resvg build (disabled in config)"
       continue
@@ -169,7 +170,17 @@ task pixTclTkBindings, "Generate pix Tcl library.":
       let resvgSuffix = if withResvg: "r" else: ""
       let resvgFlag   = if withResvg: " -d:resvg" else: ""
 
-      let flags = "-d:tcl" & vtcl & baseFlags & resvgFlag
+      flags = "-d:tcl" & vtcl & baseFlags & resvgFlag
+
+      when defined(windows):
+        if vtcl == "9":
+          let cmd = "cmd /c \"echo puts [::tcl::build-info gcc] | tclsh90\""
+          let (output, exitCode) = gorgeEx(cmd)
+          if exitCode == 0:
+            let gcc = output.strip()
+            if gcc == "0":
+              flags = flags & " -d:useVCC"
+              echo "pix(info): Using Visual C++ compiler for Windows with Tcl/Tk v" & vtcl
 
       let libDir =
         when defined(windows):
