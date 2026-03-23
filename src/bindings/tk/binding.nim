@@ -8,17 +8,6 @@ import ../tcl/binding as Tcl
 import ./types as Tk
 export Tk
 
-when defined(x11):
-  type
-    # Image types.
-    ImageType* = object
-      name*           : cstring
-      createProc*     : proc(interp: Tcl.PInterp, imageName: cstring, objc: cint, objv: Tcl.PPObj, typePtr: ptr ImageType, masterPtr: Tk.ImageMaster, clientDataPtr: Tcl.PClientData): cint {.cdecl.}
-      getProc*        : proc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData {.cdecl.}
-      displayProc*    : proc(instanceData: Tcl.TClientData, display: ptr X.Display, drawable: X.Drawable, imageX: cint, imageY: cint, width: cint, height: cint, drawableX: cint, drawableY: cint) {.cdecl.}
-      freeProc*       : proc(instanceData: Tcl.TClientData, display: ptr X.Display) {.cdecl.}
-      deleteProc*     : proc(instanceData: Tcl.TClientData) {.cdecl.}
-
 type 
   TkStubs {.importc.} = object
     tk_FindPhoto       : proc(interp: Tcl.PInterp, imageName: cstring): Tk.PhotoHandle {.cdecl.}
@@ -31,14 +20,14 @@ type
       tk_FreeGC            : proc(display: ptr X.Display, gc: X.GC) {.cdecl.}
       tk_GetPixmap         : proc(display: ptr X.Display, d: X.Drawable, width: cint, height: cint, depth: cint): Pixmap {.cdecl.}
       tk_FreePixmap        : proc(display: ptr X.Display, pixmap: Pixmap) {.cdecl.}
-      tk_CreateImageType   : proc(typePtr: ptr ImageType) {.cdecl.}
+      tk_CreateImageType   : proc(typePtr: ptr Tk.ImageType) {.cdecl.}
       tk_GetGC             : proc(tkwin: Tk.Window, valueMask: culong, valuePtr: var X.GCValues): X.GC {.cdecl.}
       tk_ImageChanged      : proc(imageMaster: Tk.ImageMaster, x: cint, y: cint, width: cint, height: cint, imageWidth: cint, imageHeight: cint) {.cdecl.}
       tk_NameOfImage       : proc(imageMaster: Tk.ImageMaster): cstring {.cdecl.}
       when defined(tcl9):
-        tk_GetImageModelData  : proc(interp: Tcl.PInterp, name: cstring, typePtrPtr: var ImageType): Tcl.TClientData {.cdecl.}
+        tk_GetImageModelData  : proc(interp: Tcl.PInterp, name: cstring, typePtrPtr: var Tk.ImageType): Tcl.TClientData {.cdecl.}
       else:
-        tk_GetImageMasterData : proc(interp: Tcl.PInterp, name: cstring, typePtrPtr: var ImageType): Tcl.TClientData {.cdecl.}
+        tk_GetImageMasterData : proc(interp: Tcl.PInterp, name: cstring, typePtrPtr: var Tk.ImageType): Tcl.TClientData {.cdecl.}
 
 var tkStubsPtr {.importc: "tkStubsPtr", header: "tkDecls.h".} : ptr TkStubs
 
@@ -54,56 +43,13 @@ proc PhotoSetSize*(interp: Tcl.PInterp, handle: Tk.PhotoHandle, width: cint, hei
 proc DisplayName*(tkwin: Tk.Window): cstring =
   return tkStubsPtr.tk_DisplayName(tkwin)
 
-proc Depth*   (tkwin: Tk.Window): cint   {.cdecl, importc: "Tk_Depth", header: "tk.h".}
-proc WindowId*(tkwin: Tk.Window): culong {.cdecl, importc: "Tk_WindowId", header: "tk.h".}
-proc Parent*  (tkwin: Tk.Window): Tk.Window {.cdecl, importc: "Tk_Parent", header: "tk.h".}
+proc Depth*(tkwin: Tk.Window): cint {.cdecl, importc: "Tk_Depth", header: "tk.h".}
+proc Parent*(tkwin: Tk.Window): Tk.Window {.cdecl, importc: "Tk_Parent", header: "tk.h".}
 
 when defined(x11):
 
-  type TkIntXlibStubs {.importc.} = object
-    xCreateImage    : proc(display: ptr X.Display, v: ptr X.Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): X.PXImage {.cdecl.}
-    xCreateGC       : proc(display: ptr X.Display, d: X.Drawable, valueMask: culong, valuePtr: var X.GCValues): X.GC {.cdecl.}
-    xPutImage       : proc(display: ptr X.Display, dr: X.Drawable, gc: X.GC, im: X.PXImage, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint {.cdecl.}
-    xFlush          : proc(display: ptr X.Display): cint {.cdecl.}
-    xSetBackground  : proc(display: ptr X.Display, gc: X.GC, bg: culong): cint {.cdecl.}
-    xSetForeground  : proc(display: ptr X.Display, gc: X.GC, fg: culong): cint {.cdecl.}
-    xCopyArea       : proc(display: ptr X.Display, dr1: X.Drawable, dr2: X.Drawable, gc: X.GC, i1: cint, i2: cint, ui1: cuint, ui2: cuint, i3: cint, i4: cint): cint {.cdecl.}
-    xFillRectangle  : proc(display: ptr X.Display, dr: X.Drawable, gc: X.GC, x: cint, y: cint, width: cuint, height: cuint): cint {.cdecl.}
-    xSetClipMask    : proc(display: ptr X.Display, gc: X.GC, pixmap: X.Pixmap): cint {.cdecl.}
-    tkPutImage      : proc(colors: ptr culong, ncolors: cint, display: ptr X.Display, d: X.Drawable, gc: X.GC, image: ptr XImage, src_x: cint, src_y: cint, dest_x: cint, dest_y: cint, width: cuint, height: cuint): cint {.cdecl.}
-
-  var tkIntXlibStubsPtr {.importc: "tkIntXlibStubsPtr", header: "tkIntXlibDecls.h".}: ptr TkIntXlibStubs
-
-  proc XCreateImage*(display: ptr X.Display, v: ptr X.Visual, ui1: cuint, i1: cint, i2: cint, cp: cstring, ui2: cuint, ui3: cuint, i3: cint, i4: cint): X.PXImage =
-    return tkIntXlibStubsPtr.xCreateImage(display, v, ui1, i1, i2, cp, ui2, ui3, i3, i4)
-
-  proc XCreateGC*(display: ptr X.Display, d: X.Drawable, valueMask: culong, valuePtr: var X.GCValues): X.GC =
-    return tkIntXlibStubsPtr.xCreateGC(display, d, valueMask, valuePtr)
-
-  proc XPutImage*(display: ptr X.Display, dr: X.Drawable, gc: X.GC, im: X.PXImage, sx: cint, sy: cint, dx: cint, dy: cint, w: cuint, h: cuint): cint =
-    return tkIntXlibStubsPtr.xPutImage(display, dr, gc, im, sx, sy, dx, dy, w, h)
-
-  proc XFlush*(display: ptr X.Display): cint =
-    return tkIntXlibStubsPtr.xFlush(display)
-
-  proc XSetBackground*(display: ptr X.Display, gc: X.GC, bg: culong): cint =
-    return tkIntXlibStubsPtr.xSetBackground(display, gc, bg)
-
-  proc XSetForeground*(display: ptr X.Display, gc: X.GC, fg: culong): cint =
-    return tkIntXlibStubsPtr.xSetForeground(display, gc, fg)
-
-  proc XCopyArea*(display: ptr X.Display, dr1: X.Drawable, dr2: X.Drawable, gc: X.GC, i1: cint, i2: cint, ui1: cuint, ui2: cuint, i3: cint, i4: cint): cint =
-    return tkIntXlibStubsPtr.xCopyArea(display, dr1, dr2, gc, i1, i2, ui1, ui2, i3, i4)
-
-  proc XFillRectangle*(display: ptr X.Display, dr: X.Drawable, gc: X.GC, x: cint, y: cint, width: cuint, height: cuint): cint =
-    return tkIntXlibStubsPtr.xFillRectangle(display, dr, gc, x, y, width, height)
-
-  proc XSetClipMask*(display: ptr X.Display, gc: X.GC, pixmap: X.Pixmap): cint =
-    return tkIntXlibStubsPtr.xSetClipMask(display, gc, pixmap)
-
-  proc TkPutImage*(colors: ptr culong, ncolors: cint, display: ptr X.Display, d: X.Drawable, gc: X.GC, image: ptr XImage, src_x: cint, src_y: cint, dest_x: cint, dest_y: cint, width: cuint, height: cuint): cint =
-    return tkIntXlibStubsPtr.tkPutImage(colors, ncolors, display, d, gc, image, src_x, src_y, dest_x, dest_y, width, height)
-
+  proc Display*(tkwin: Tk.Window): ptr X.Display {.cdecl, importc: "Tk_Display", header: "tk.h".}
+  proc WindowId*(tkwin: Tk.Window): X.ID {.cdecl, importc: "Tk_WindowId", header: "tk.h".}
   proc Visual*(tkwin: Tk.Window): ptr X.Visual {.cdecl, importc: "Tk_Visual", header: "tk.h".}
 
   proc GetColor*(interp: Tcl.PInterp, tkwin: Tk.Window, name: cstring): X.Color =
@@ -121,7 +67,7 @@ when defined(x11):
   proc FreePixmap*(display: ptr X.Display, pixmap: Pixmap) =
     tkStubsPtr.tk_FreePixmap(display, pixmap)
 
-  proc CreateImageType*(typePtr: ptr ImageType) =
+  proc CreateImageType*(typePtr: ptr Tk.ImageType) =
     tkStubsPtr.tk_CreateImageType(typePtr)
 
   proc GetGC*(tkwin: Tk.Window, valueMask: culong, valuePtr: var X.GCValues): X.GC =
@@ -134,10 +80,10 @@ when defined(x11):
     return tkStubsPtr.tk_NameOfImage(imageMaster)
 
   when defined(tcl9):
-    proc GetImageModelData*(interp: Tcl.PInterp, name: cstring, typePtrPtr: var ImageType): Tcl.TClientData =
+    proc GetImageModelData*(interp: Tcl.PInterp, name: cstring, typePtrPtr: var Tk.ImageType): Tcl.TClientData =
       return tkStubsPtr.tk_GetImageModelData(interp, name, typePtrPtr)
   else:
-    proc GetImageMasterData*(interp: Tcl.PInterp, name: cstring, typePtrPtr: var ImageType): Tcl.TClientData =
+    proc GetImageMasterData*(interp: Tcl.PInterp, name: cstring, typePtrPtr: var Tk.ImageType): Tcl.TClientData =
       return tkStubsPtr.tk_GetImageMasterData(interp, name, typePtrPtr)
 
   when defined(tcl9):

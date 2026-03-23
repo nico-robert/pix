@@ -21,19 +21,19 @@ const
 when defined(windows):
   when defined(cpu64):
     type
-      XID = culonglong
-      Drawable* = XID
-      Pixmap* = XID
+      ID* = culonglong
+      Drawable* = ID
+      Pixmap* = ID
   else:
     type
-      XID = culong
-      Drawable* = XID
-      Pixmap* = XID
+      ID* = culong
+      Drawable* = ID
+      Pixmap* = ID
 else:
   type
-    XID = culong
-    Drawable* = XID
-    Pixmap* = XID
+    ID* = culong
+    Drawable* = ID
+    Pixmap* = ID
 
 # X11 types declarations first
 type
@@ -131,7 +131,6 @@ type
     sub_image*      : proc(ximage: PXImage, x, y: cint, width, height: cuint): PXImage {.cdecl.}
     add_pixel*      : proc(ximage: PXImage, value: clong): cint {.cdecl.}
 
-  PXImage* = ptr XImage
   XImage*{.importc: "XImage", header: "X11/Xlib.h".} = object
     width*           : cint
     height*          : cint
@@ -150,6 +149,8 @@ type
     blue_mask*       : culong
     obdata*          : XPointer
     f*               : XImageFuncs
+
+  PXImage* = ptr XImage
 
 proc DestroyImage*(ximage: PXImage): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
   return ximage.f.destroy_image(ximage)
