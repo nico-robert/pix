@@ -285,8 +285,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   }.toTable
 
   when defined(x11):
-    commands["pix::surfXUpdate"] = X11.surfXUpdate
-    commands["pix::xInfo"] = X11.xInfo
+    commands["pix::drawPixSurface"] = X11.draw_pix_surface
 
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
