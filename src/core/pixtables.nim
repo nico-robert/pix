@@ -4,8 +4,8 @@
 import pixie, pixie/fileformats/svg
 import std/tables
 
-when defined(resvg):
-  import ../bindings/resvg/types
+when defined(resvg): import ../bindings/resvg/types
+when defined(pixGL): import boxy
 
 from ../bindings/tcl/binding as Tcl import PInterp, NewStringObj, SetObjResult, PObj, GetString, `$`
 
@@ -20,6 +20,8 @@ type
     arrTable*    : Table[string, pixie.Arrangement]
     svgTable*    : Table[string, Svg]
     spanTable*   : Table[string, pixie.Span]
+    when defined(pixGL):
+      boxyTable*   : Table[string, Boxy]
     when defined(resvg):
       resvgTable*  : Table[string, Resvg]
 
@@ -34,8 +36,10 @@ proc createPixTable*(): PixTable =
   result.arrTable     = initTable[string, pixie.Arrangement]()
   result.svgTable     = initTable[string, Svg]()
   result.spanTable    = initTable[string, pixie.Span]()
+  when defined(pixGL):
+    result.boxyTable  = initTable[string, Boxy]()
   when defined(resvg):
-    result.resvgTable   = initTable[string, Resvg]()
+    result.resvgTable = initTable[string, Resvg]()
 
 # Context functions
 proc getContext*(pTable: PixTable, key: string): pixie.Context = 
@@ -298,6 +302,40 @@ proc hasSpan*(pTable: PixTable, key: string): bool =
 
 proc addSpan*(pTable: PixTable, key: string, value: pixie.Span): void = 
   pTable.spanTable[key] = value
+
+when defined(pixGL):
+  # Boxy functions
+  proc getBoxy*(pTable: PixTable, key: string): Boxy = 
+    result = pTable.boxyTable[key]
+
+  proc hasBoxy*(pTable: PixTable, key: string): bool = 
+    result = pTable.boxyTable.hasKey(key)
+
+  proc addBoxy*(pTable: PixTable, key: string, value: Boxy): void = 
+    pTable.boxyTable[key] = value
+
+  proc clearBoxy*(pTable: PixTable): void = 
+    pTable.boxyTable.clear()
+
+  proc delKeyBoxy*(pTable: PixTable, key: string): void = 
+    pTable.boxyTable.del(key)
+
+  proc loadBoxy*(pTable: PixTable, interp: Tcl.PInterp, obj: Tcl.PObj): Boxy =
+  # Searches the Boxy table for a key that matches the given obj.
+  #
+  # Returns:
+  # If found, it returns the associated Boxy object.
+  # If not found, it sets an error message on the given interp and returns nil.
+
+    let key = $obj
+
+    if not pTable.hasBoxy(key):
+      let msg = "pix(error): unknown <boxy> key object found: '" & key & "'."
+      Tcl.SetObjResult(interp, Tcl.NewStringObj(msg.cstring, -1))
+      # We return nil to indicate that an error occurred.
+      return nil
+
+    return pTable.getBoxy(key)
 
 when defined(resvg):
   # RESVG functions
