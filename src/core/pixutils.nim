@@ -307,6 +307,17 @@ template toHexPtr*[T](obj: T): string =
     else: {.error: "pix type not supported : " & $T .}
   ("0x" & hex & "^" & typeName).toLowerAscii
 
+when defined(pixGL):
+  template toHexPtr*(obj: Boxy): string =
+    let
+      myPtr  = cast[pointer](obj)
+      hexStr = cast[uint64](myPtr).toHex()
+    let hex = block:
+      var i = 0
+      while i < hexStr.len and hexStr[i] == '0': inc i
+      if i >= hexStr.len: "0" else: hexStr[i..^1]
+    ("0x" & hex & "^boxy").toLowerAscii
+
 proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cint =
   # Converts a Tcl list to a matrix 3x3.
   #
