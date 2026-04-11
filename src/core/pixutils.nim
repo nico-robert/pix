@@ -7,6 +7,9 @@ import ./pixobj as pixObj
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
 
+when defined(pixGL):
+  import boxy
+
 when defined(resvg):
   import ../bindings/resvg/types
 
