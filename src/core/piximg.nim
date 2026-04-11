@@ -7,313 +7,251 @@ import ../bindings/tcl/binding as Tcl
 import ../bindings/tk/binding as Tk
 import ./pixtables
 import ./pixutils as pixUtils
-import ./pixparses as pixParses
-import times
 
-template timeBody*(name: string, body: untyped): untyped =
-  # Measures the time taken to execute a block of code.
-  #
-  # name - The name of the block.
-  # body - The block of code to execute.
-  #
-  # Returns: The time taken to execute the block in milliseconds.
-  let start = cpuTime()
-  body
-  let elapsed = cpuTime() - start
-  echo name, ": ", elapsed * 1000, "ms"
-
-# Instance types that depend on previous definitions
+# Instance shared by Display
 type
   PixImageInstance* = object
-    master   : ptr PixImageMaster
-    tkwin    : Tk.Window
-    width    : cint
-    height   : cint
-    gc       : X.GC
-    ximage   : X.PXImage
-    pixmap   : X.Pixmap
-    dr       : X.Drawable
-    refCount : cint
-    dirty    : bool
+    master*: ptr PixImageMaster
+    displayName*: string        # Tk.DisplayName for identification
+    tkwin*: Tk.Window
+    refCount*: cint             # Counter for sharing by display
+    gc*: X.GC
+    pixmap*: X.Pixmap           # Backing store
+    convertedBuffer*: pointer   # Persistent BGRA buffer
+    bufferWidth*: cint
+    bufferHeight*: cint
+    nextInstance*: ptr PixImageInstance
 
   PixImageMaster* = object
-    imageKey  : string
-    image     : pixie.Image
-    width     : cint
-    height    : cint
-    name      : cstring
-    instances : ptr PixImageInstance
-    cmd       : Tcl.PCommand
-    interp    : Tcl.PInterp
-    tkMaster  : Tk.ImageMaster
+    imageKey*: string
+    image*: pixie.Image
+    width*: cint
+    height*: cint
+    name*: cstring
+    interp*: Tcl.PInterp
+    tkMaster*: Tk.ImageMaster
+    needflush*: bool            # Flag centralized in the Master
+    instances*: ptr PixImageInstance
 
-proc xInfo*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Try to get [ctx] or [img] from `key`
-  #
-  # context or image - [ctx::new] or [img::new]
-  #
-  # Returns: The instance size of [ctx] or [img].
-  if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
-    return Tcl.ERROR
+proc pix_createProc(
+  interp: Tcl.PInterp,
+  imageName: cstring,
+  objc: cint,
+  objv: Tcl.PPObj,
+  typePtr: ptr Tk.ImageType,
+  masterPtr: Tk.ImageMaster,
+  clientDataPtr: Tcl.PClientData
+): cint {.cdecl.} =
 
-  let ptable = cast[PixTable](clientData)
+  # Optional validation of arguments
+  if objc > 0:
+    if objc != 2 or $objv[0] != "-data":
+      return pixUtils.errorMSG(interp, "Usage: image create pix ?name? ?-data key?")
 
-  # Context
-  let key = $objv[1]
-  let newListobj = Tcl.NewListObj(2, nil)
+  var master = cast[ptr PixImageMaster](alloc0(sizeof(PixImageMaster)))
 
-  let img =
-    if ptable.hasContext(key): 
-      ptable.getContext(key).image
-    elif ptable.hasImage(key): 
-      ptable.getImage(key)
-    else:
-      let errormsg = "wrong # args: unknown <ctx> or <img> key object found: '" & key & "'."
-      return pixUtils.errorMSG(interp, errormsg)
+  if objc == 2:
+    master.imageKey = $objv[1]
+  else:
+    master.imageKey = "" # Empty for now
 
-  discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewIntObj(img.width.cint))
-  discard Tcl.ListObjAppendElement(interp, newListobj, Tcl.NewIntObj(img.height.cint))
+  master.image = nil
+  master.width = 0
+  master.height = 0
+  master.name = imageName
+  master.interp = interp
+  master.tkMaster = masterPtr
+  master.needflush = false
+  master.instances = nil
 
-  Tcl.SetObjResult(interp, newListobj)
+  clientDataPtr[] = cast[Tcl.TClientData](master)
 
   return Tcl.OK
 
-proc pix_createProc(
-  interp        : Tcl.PInterp,
-  imageName     : cstring,
-  objc          : cint,
-  objv          : Tcl.PPObj,
-  typePtr       : ptr Tk.ImageType,
-  masterPtr     : Tk.ImageMaster,
-  clientDataPtr : Tcl.PClientData
-): cint {.cdecl.} =
+proc pix_getProc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData {.cdecl.} =
+  # Instance retrieval or creation (sharing by Display)
 
-  #  Image creation logic
-  var width, height: cint
-  
-  if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "image create pix ?name -data (<img>|<ctx>)")
-    return Tcl.ERROR
-  
-  if $objv[0] != "-data":
-    let errormsg = "wrong # args: '-data' should present in a image create pix command."
-    return pixUtils.errorMSG(interp, errormsg)
-  
-  var cmd: array[2, Tcl.PObj]
-  
-  cmd[0] = Tcl.NewStringObj("pix::xInfo".cstring, -1)
-  cmd[1] = objv[1]
-  Tcl.IncrRefCount(cmd[0])
-  Tcl.IncrRefCount(cmd[1])
-  
-  let cmdPtr = cast[Tcl.PPObj](addr cmd[0])
-  
-  if Tcl.EvalObjv(interp, 2, cmdPtr, 0) != Tcl.OK:
-    Tcl.DecrRefCount(cmd[0])
-    Tcl.DecrRefCount(cmd[1])
-    return pixUtils.errorMSG(interp, $interp)
-  
-  Tcl.DecrRefCount(cmd[0])
-  Tcl.DecrRefCount(cmd[1])
-  
-  if pixParses.getListInt(interp, Tcl.GetObjResult(interp), width, height, 
-    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
-    return Tcl.ERROR
-  
-  var master = cast[ptr PixImageMaster](alloc0(sizeof(PixImageMaster)))
-  
-  if master == nil:
-    let errormsg = "pix(error): allocation error for PixImageMaster object."
-    return pixUtils.errorMSG(interp, errormsg)
-  
-  master.imageKey = $objv[1]
-  master.image    = nil
-  master.width    = width
-  master.height   = height
-  master.name     = imageName
-  master.interp   = interp
-  master.tkMaster = masterPtr
-  
-  clientDataPtr[] = master
-
-  Tk.ImageChanged(masterPtr, 0, 0, width, height, width, height)
-  
-  return Tcl.Ok
-
-proc pix_getProc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData {.cdecl.} = 
-  # Image recovery logic
   let master = cast[ptr PixImageMaster](masterData)
+  let displayName = $Tk.DisplayName(tkwin)
 
-  if master == nil:
-    Tcl.Panic("pix(error): masterData is nil")
-    
-  var gcValues: X.GCValues
-  gcValues.graphics_exposures = false
+  # Search for existing instance for this Display
+  var inst = master.instances
+  while inst != nil:
+    if inst.displayName == displayName:
+      inst.refCount.inc
+      return cast[Tcl.TClientData](inst)
+    inst = inst.nextInstance
 
-  # Create a new instance that directly references the master image
+  # New instance
   var instance = cast[ptr PixImageInstance](alloc0(sizeof(PixImageInstance)))
-
   if instance == nil:
-    Tcl.Panic("pix(error): allocation error for PixImageInstance object.")
+    Tcl.Panic("pix(error): allocation error for PixImageInstance")
 
   instance.master = master
-  instance.tkwin  = tkwin
-  instance.width  = master.width
-  instance.height = master.height
-  instance.gc     = Tk.GetGC(tkwin, X.GCGraphicsExposures, gcValues)
-  instance.pixmap = 0
-  instance.dirty  = false
+  instance.tkwin = tkwin
+  instance.displayName = displayName
   instance.refCount = 1
+  instance.pixmap = 0
+  instance.convertedBuffer = nil
+  instance.bufferWidth = 0
+  instance.bufferHeight = 0
 
-  # Add instance to master instance list
+  var gcValues: X.GCValues
+  gcValues.graphics_exposures = false
+  instance.gc = Tk.GetGC(tkwin, X.GCGraphicsExposures, gcValues)
+
+  # Chaining
+  instance.nextInstance = master.instances
   master.instances = instance
 
   return cast[Tcl.TClientData](instance)
 
-proc pix_displayProc(
-  instanceData : Tcl.TClientData,
-  display      : ptr X.Display,
-  drawable     : X.Drawable,
-  imageX       : cint,
-  imageY       : cint,
-  width        : cint,
-  height       : cint,
-  drawableX    : cint,
-  drawableY    : cint) {.cdecl.} = 
+proc updateInstanceBuffer(inst: ptr PixImageInstance, display: ptr X.Display) =
+  # Update the converted buffer (only once per modification)
 
-  let instance = cast[ptr PixImageInstance](instanceData)
-  
-  if instance == nil or instance.master.image == nil:
+  let master = inst.master
+  if master.image == nil or master.image.data.len == 0:
     return
-  
-  if instance.dirty or instance.pixmap == 0:
-    # Clean up any existing pixmap
-    if instance.pixmap != 0:
-      Tk.FreePixmap(display, instance.pixmap)
-      instance.pixmap = 0
-  
-    # Update the instance size
-    instance.width = instance.master.width
-    instance.height = instance.master.height
-  
-    let
-      pixelCount = instance.width * instance.height
-      bufferSize = pixelCount * 4
-  
-    # Check if the image data is empty
-    if instance.master.image.data.len == 0:
-      echo "pix(error): image data is empty"
-      return
-  
-    # Allocate image buffer
-    let imageBuffer = cast[ptr UncheckedArray[uint8]](alloc0(bufferSize))
-    if imageBuffer == nil:
-      Tcl.Panic("pix(error): allocation error for image buffer")
-  
-    let
-      srcPixels = cast[ptr UncheckedArray[uint32]](instance.master.image.data[0].addr)
-      dstPixels = cast[ptr UncheckedArray[uint32]](imageBuffer)
-  
-    {.push checks: off.}
-    for i in 0..<pixelCount:
-      let rgba = srcPixels[i]
-      dstPixels[i] = (rgba and 0xFF00FF00'u32) or
-                     ((rgba and 0x000000FF'u32) shl 16) or
-                     ((rgba and 0x00FF0000'u32) shr 16)
-    {.pop.}
-  
-    let depth = Tk.Depth(instance.tkwin)
-  
-    # Create XImage
-    let ximage = X.CreateImage(
-      display, 
-      Tk.Visual(instance.tkwin),
-      depth.cuint,
-      ZPixmap,
-      0,    
-      cast[cstring](imageBuffer),
-      instance.width.cuint,
-      instance.height.cuint,
-      32,
-      instance.width * 4
+
+  let newWidth = master.width
+  let newHeight = master.height
+  let pixelCount = newWidth * newHeight
+  let bufferSize = pixelCount * 4
+
+  # Conditional reallocation
+  if newWidth != inst.bufferWidth or newHeight != inst.bufferHeight:
+    if inst.convertedBuffer != nil:
+      dealloc(inst.convertedBuffer)
+    inst.convertedBuffer = alloc(bufferSize)
+    inst.bufferWidth = newWidth
+    inst.bufferHeight = newHeight
+
+    if inst.pixmap != 0:
+      Tk.FreePixmap(display, inst.pixmap)
+      inst.pixmap = 0
+
+  # RGBA -> BGRA conversion
+  let src = cast[ptr UncheckedArray[uint32]](master.image.data[0].addr)
+  let dst = cast[ptr UncheckedArray[uint32]](inst.convertedBuffer)
+
+  {.push checks: off.}
+  for i in 0..<pixelCount:
+    let rgba = src[i]
+    dst[i] =  (
+      (rgba and 0xFF00FF00'u32) or
+      ((rgba and 0x000000FF'u32) shl 16) or
+      ((rgba and 0x00FF0000'u32) shr 16)
     )
-  
-    # Possible failure on Windows !!
-    if instance.ximage != nil:
-      instance.ximage.data = nil
-      discard X.DestroyImage(instance.ximage)
-  
-    instance.ximage = ximage
-  
-    if instance.ximage == nil:
-      echo "pix(error): XImage creation error"
-      dealloc(imageBuffer)
-      return
-  
-    # Create a pixmap
-    let pixmap = Tk.GetPixmap(
-      display, 
-      drawable, 
-      instance.width, 
-      instance.height, 
-      depth
-    )
-    
-    if pixmap == 0:
-      echo "pix(error): Pixmap creation error"
-      dealloc(imageBuffer)
-      return
-  
-    instance.pixmap = pixmap
-  
-    # Put the image
-    let putResult = X.PutImage(
-      display, instance.pixmap, instance.gc, instance.ximage, 
-      0, 0, 0, 0, 
-      instance.width.cuint, instance.height.cuint
-    )
-  
-    dealloc(imageBuffer)
-  
-    if putResult != 0:
-      Tcl.Panic("pix(error): X.PutImage failed with code: %i", putResult)
-  
-    instance.dirty = false
+  {.pop.}
 
-  # Copy the pixmap to the drawable
-  discard X.CopyArea(display, instance.pixmap, drawable, instance.gc,
-    imageX, imageY, width.cuint, height.cuint,
-    drawableX, drawableY
-  )
-  
-  discard X.Flush(display)
-  
-proc pix_freeProc(instanceData: Tcl.TClientData, display: ptr X.Display) {.cdecl.} = 
-  # Logic of image liberation
-  let instance = cast[ptr PixImageInstance](instanceData)
-  if instance != nil:
-    if instance.pixmap != 0:
-      Tk.FreePixmap(display, instance.pixmap)
+proc pix_displayProc(
+  instanceData: Tcl.TClientData,
+  display: ptr X.Display,
+  drawable: X.Drawable,
+  imageX: cint,
+  imageY: cint,
+  width: cint,
+  height: cint,
+  drawableX: cint,
+  drawableY: cint
+) {.cdecl.} =
+  # Display with centralized needflush
+  let inst = cast[ptr PixImageInstance](instanceData)
+  let master = inst.master
 
-    if instance.ximage != nil:
-      instance.ximage.data = nil
-      
-    if instance.gc != nil:
-      Tk.FreeGC(display, instance.gc)
+  if master == nil or master.image == nil or master.imageKey == "":
+    return
 
-    dealloc(instance)
+  # Check the centralized flag of the Master
+  let needsUpdate = master.needflush or inst.pixmap == 0
 
-proc pix_deleteProc(instanceData: Tcl.TClientData) {.cdecl.} = 
-  # Image removal logic
+  if needsUpdate and master.image != nil:
+    if master.needflush:
+      updateInstanceBuffer(inst, display)
+      master.needflush = false  # Reset of the central flag
+
+    # Lazy creation of pixmap
+    if inst.pixmap == 0:
+      let depth = Tk.Depth(inst.tkwin)
+      inst.pixmap = Tk.GetPixmap(display, drawable,
+                                 inst.bufferWidth, inst.bufferHeight, depth)
+
+    # Upload to pixmap via temporary XImage
+    if inst.pixmap != 0 and inst.convertedBuffer != nil:
+      let ximage = X.CreateImage(
+        display,
+        Tk.Visual(inst.tkwin),
+        Tk.Depth(inst.tkwin).cuint,
+        X.ZPixmap,
+        0,
+        cast[cstring](inst.convertedBuffer),
+        inst.bufferWidth.cuint,
+        inst.bufferHeight.cuint,
+        32,
+        inst.bufferWidth * 4
+      )
+
+      if ximage != nil:
+        discard X.PutImage(display, inst.pixmap, inst.gc, ximage,
+                          0, 0, 0, 0,
+                          inst.bufferWidth.cuint, inst.bufferHeight.cuint)
+        ximage.data = nil
+        discard X.DestroyImage(ximage)
+
+  # Fast blit from the backing store
+  if inst.pixmap != 0:
+    discard X.CopyArea(display, inst.pixmap, drawable, inst.gc,
+                      imageX, imageY, width.cuint, height.cuint,
+                      drawableX, drawableY)
+    discard X.Flush(display)
+
+proc pix_freeProc(instanceData: Tcl.TClientData, display: ptr X.Display) {.cdecl.} =
+  # Release with refCount management
+
+  let inst = cast[ptr PixImageInstance](instanceData)
+  if inst == nil: return
+
+  inst.refCount.dec
+  if inst.refCount > 0:
+    return  # Still has references
+
+  let master = inst.master
+
+  # Removal from linked list
+  if master.instances == inst:
+    master.instances = inst.nextInstance
+  else:
+    var prev = master.instances
+    while prev != nil and prev.nextInstance != inst:
+      prev = prev.nextInstance
+    if prev != nil:
+      prev.nextInstance = inst.nextInstance
+
+  # Release of resources
+  if inst.pixmap != 0:
+    Tk.FreePixmap(display, inst.pixmap)
+  if inst.gc != nil:
+    Tk.FreeGC(display, inst.gc)
+  if inst.convertedBuffer != nil:
+    dealloc(inst.convertedBuffer)
+
+  dealloc(inst)
+
+proc pix_deleteProc(instanceData: Tcl.TClientData) {.cdecl.} =
+  # Destruction of the Master
   let master = cast[ptr PixImageMaster](instanceData)
-  if master != nil:
-    # Free the master image
-    dealloc(master)
+  if master == nil: return
 
-proc createPixImgType*(interp: Tcl.PInterp): ptr Tk.ImageType =
+  if master.instances != nil:
+    Tcl.Panic("pix(error): tried to delete image when instances still exist")
+
+  dealloc(master)
+
+proc createPixPhotoType*(interp: Tcl.PInterp): ptr Tk.ImageType =
+  # Creation of image type
 
   let imageType = create(Tk.ImageType)
+
   if imageType == nil:
     let errormsg = "pix(error): Could not allocate memory for Tk.ImageType."
     Tcl.SetObjResult(interp, Tcl.NewStringObj(errormsg.cstring, -1))
@@ -328,82 +266,82 @@ proc createPixImgType*(interp: Tcl.PInterp): ptr Tk.ImageType =
 
   return imageType
 
-proc surfXUpdate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-
-  if objc != 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "pix:image")
+proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
+                  objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Draws object to Tk photo.
+  #
+  # object - [img], [ctx] object or 'pixphoto' name.
+  # photo  - Tk pix photo variable(optional).
+  #
+  # Returns: Nothing.
+  if objc notin [2, 3]:
+    Tcl.WrongNumArgs(interp, 1, objv, "<img|ctx|pixPhoto> ?pixPhoto?")
     return Tcl.ERROR
 
-  let pixImgName = Tcl.GetString(objv[1])
-  var img: pixie.Image
-  var imageType: Tk.ImageType
-
-  let instanceData = Tk.GetImageMasterData(interp, pixImgName, imageType)
-
-  let master = cast[ptr PixImageMaster](instanceData)
-  if master == nil:
-    let errormsg = "pix(error): cannot get master data for '" & $pixImgName & "'"
-    return pixUtils.errorMSG(interp, errormsg)
-
-  # Table
   let ptable = cast[PixTable](clientData)
-  let masterKey = master.imageKey
+  var key: string
+  var master: ptr PixImageMaster = nil
+  var dummyImgType: Tk.ImageType
 
-  if ptable.hasContext(masterKey):
-    img = ptable.getContext(masterKey).image
-  elif ptable.hasImage(masterKey):
-    img = ptable.getImage(masterKey)
+  if objc == 2:
+    # Single argument: can be img/ctx key OR pixPhoto name
+    let arg1 = $objv[1]
+    
+    # Check if it's a data key (image or context in table)
+    if ptable.hasContext(arg1) or ptable.hasImage(arg1):
+      key = arg1
+      # Use same name for the pix image
+      master = cast[ptr PixImageMaster](
+        Tk.GetImageMasterData(interp, arg1.cstring, dummyImgType)
+      )
+      if master == nil:
+        return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo: " & arg1)
+    else:
+      # Not a data key: treat as pixPhoto name, retrieve existing key
+      master = cast[ptr PixImageMaster](
+        Tk.GetImageMasterData(interp, arg1.cstring, dummyImgType)
+      )
+      if master == nil:
+        return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo or key: " & arg1)
+      
+      if master.imageKey == "":
+        return pixUtils.errorMSG(
+          interp, 
+          "pix(error): Image '" & arg1 & "' has no data key attached and argument is not a known key."
+        )
+      key = master.imageKey
   else:
-    let errormsg = "pix(error): unknown <image> or <ctx> key object found '" & masterKey & "'"
-    return pixUtils.errorMSG(interp, errormsg)
+    # objc == 3: first is data key (img/ctx), second is pixPhoto
+    key = $objv[1]
+    let pixPhotoName = $objv[2]
+    
+    # Verify key exists in table
+    if not (ptable.hasContext(key) or ptable.hasImage(key)):
+      return pixUtils.errorMSG(interp, "pix(error): Unknown key: " & key)
 
-  # Update image + size
-  master.image  = img
-  master.width  = img.width.cint
+    master = cast[ptr PixImageMaster](
+      Tk.GetImageMasterData(interp, pixPhotoName.cstring, dummyImgType)
+    )
+    if master == nil:
+      return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo: " & pixPhotoName)
+
+  # Attach the key to master (updates or confirms the binding)
+  master.imageKey = key
+
+  let img =
+    if ptable.hasContext(key):
+      ptable.getContext(key).image
+    elif ptable.hasImage(key):
+      ptable.getImage(key)
+    else:
+      return pixUtils.errorMSG(interp, "pix(error): Unknown key: " & key)
+
+  master.image = img
+  master.width = img.width.cint
   master.height = img.height.cint
+  master.needflush = true
 
-  if master.instances != nil:
-    master.instances.dirty = true
-    master.instances.width = master.width
-    master.instances.height = master.height
-  
-  Tk.ImageChanged(
-    master.tkMaster, 
-    0, 0, master.width, master.height, 
-    master.width, master.height
-  )
-
-  return Tcl.OK
-
-proc surfXFlush*(interp: Tcl.PInterp, obj: Tcl.PObj, ctx: pixie.Context): cint =
-
-  let pixImgName = Tcl.GetString(obj)
-  var imageType: Tk.ImageType
-
-  let instanceData = Tk.GetImageMasterData(interp, pixImgName, imageType)
-
-  let master = cast[ptr PixImageMaster](instanceData)
-  if master == nil:
-    let errormsg = "pix(error): cannot get master data for '" & $pixImgName & "'"
-    return pixUtils.errorMSG(interp, errormsg)
-
-  # Image
-  let img = ctx.image 
-
-  # Update image + size
-  master.image  = img
-  master.width  = img.width.cint
-  master.height = img.height.cint
-
-  if master.instances != nil:
-    master.instances.dirty = true
-    master.instances.width = master.width
-    master.instances.height = master.height
-  
-  Tk.ImageChanged(
-    master.tkMaster, 
-    0, 0, master.width, master.height, 
-    master.width, master.height
-  )
-
+  Tk.ImageChanged(master.tkMaster, 0, 0,
+                  master.width, master.height,
+                  master.width, master.height)
   return Tcl.OK
