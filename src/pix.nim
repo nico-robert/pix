@@ -34,6 +34,10 @@ include "surface.nim"
 include "font.nim"
 include "svg.nim"
 
+# For testing purposes.
+when defined(pixGL):
+  include "./core/pixgl.nim"
+
 proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   # Package initialization entry point.
   #
@@ -286,6 +290,16 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
 
   when defined(x11):
     commands["pix::drawPixSurface"] = X11.draw_pix_surface
+
+  when defined(pixGL):
+    # boxy commands
+    commands["pix::boxy::loadExtensions"] = pix_boxy_load_extensions
+    commands["pix::boxy::create"]         = pix_boxy_create
+    commands["pix::boxy::addImage"]       = pix_boxy_add_image_cmd
+    commands["pix::boxy::beginFrame"]     = pix_boxy_begin_frame_cmd
+    commands["pix::boxy::drawImageRect"]  = pix_boxy_draw_image_rect_cmd
+    commands["pix::boxy::drawImage"]      = pix_boxy_draw_image_cmd
+    commands["pix::boxy::endFrame"]       = pix_boxy_end_frame_cmd
 
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
