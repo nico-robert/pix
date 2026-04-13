@@ -247,7 +247,7 @@ proc pix_deleteProc(instanceData: Tcl.TClientData) {.cdecl.} =
 
   dealloc(master)
 
-proc createPixPhotoType*(interp: Tcl.PInterp): ptr Tk.ImageType =
+proc createPixImgType*(interp: Tcl.PInterp): ptr Tk.ImageType =
   # Creation of image type
 
   let imageType = create(Tk.ImageType)
@@ -280,53 +280,38 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
   let ptable = cast[PixTable](clientData)
   var key: string
-  var master: ptr PixImageMaster = nil
+  var pixPhotoName: string
   var dummyImgType: Tk.ImageType
 
+  # Parse arguments
   if objc == 2:
-    # Single argument: can be img/ctx key OR pixPhoto name
     let arg1 = $objv[1]
-    
-    # Check if it's a data key (image or context in table)
     if ptable.hasContext(arg1) or ptable.hasImage(arg1):
+      # Argument is a data key
       key = arg1
-      # Use same name for the pix image
-      master = cast[ptr PixImageMaster](
-        Tk.GetImageMasterData(interp, arg1.cstring, dummyImgType)
-      )
-      if master == nil:
-        return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo: " & arg1)
+      pixPhotoName = arg1
     else:
-      # Not a data key: treat as pixPhoto name, retrieve existing key
-      master = cast[ptr PixImageMaster](
-        Tk.GetImageMasterData(interp, arg1.cstring, dummyImgType)
+      # Argument is a pixPhoto name
+      pixPhotoName = arg1
+      let master = cast[ptr PixImageMaster](
+        Tk.GetImageMasterData(interp, pixPhotoName.cstring, dummyImgType)
       )
-      if master == nil:
+      if master == nil or master.imageKey == "":
         return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo or key: " & arg1)
-      
-      if master.imageKey == "":
-        return pixUtils.errorMSG(
-          interp, 
-          "pix(error): Image '" & arg1 & "' has no data key attached and argument is not a known key."
-        )
       key = master.imageKey
   else:
-    # objc == 3: first is data key (img/ctx), second is pixPhoto
     key = $objv[1]
-    let pixPhotoName = $objv[2]
+    pixPhotoName = $objv[2]
     
-    # Verify key exists in table
     if not (ptable.hasContext(key) or ptable.hasImage(key)):
       return pixUtils.errorMSG(interp, "pix(error): Unknown key: " & key)
 
-    master = cast[ptr PixImageMaster](
-      Tk.GetImageMasterData(interp, pixPhotoName.cstring, dummyImgType)
-    )
-    if master == nil:
-      return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo: " & pixPhotoName)
-
-  # Attach the key to master (updates or confirms the binding)
-  master.imageKey = key
+  # Retrieve the master and image
+  let master = cast[ptr PixImageMaster](
+    Tk.GetImageMasterData(interp, pixPhotoName.cstring, dummyImgType)
+  )
+  if master == nil:
+    return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo: " & pixPhotoName)
 
   let img =
     if ptable.hasContext(key):
@@ -336,9 +321,11 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
     else:
       return pixUtils.errorMSG(interp, "pix(error): Unknown key: " & key)
 
-  master.image = img
-  master.width = img.width.cint
-  master.height = img.height.cint
+  # Update master and trigger refresh
+  master.image     = img
+  master.imageKey  = key
+  master.width     = img.width.cint
+  master.height    = img.height.cint
   master.needflush = true
 
   Tk.ImageChanged(master.tkMaster, 0, 0,
