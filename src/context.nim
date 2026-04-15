@@ -64,7 +64,7 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 
   # Adds img + ctx.
   ptable.addContext(ctxKey, ctx)
-  ptable.addImage(imgKey, img)
+  ptable.addImage(imgKey, ctx.image)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(ctxKey.cstring, -1))
 
