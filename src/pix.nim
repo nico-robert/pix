@@ -136,10 +136,12 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::ctx::fontSize"          : pix_ctx_fontSize,
     "pix::ctx::textAlign"         : pix_ctx_textAlign,
     "pix::ctx::get"               : pix_ctx_get,
+    "pix::ctx::getInfoStruct"     : pix_ctx_get,
     "pix::ctx::globalAlpha"       : pix_ctx_globalAlpha,
     "pix::ctx::textBaseline"      : pix_ctx_textBaseline,
     "pix::ctx::fillPath"          : pix_ctx_fillPath,
     "pix::ctx::strokePath"        : pix_ctx_strokePath,
+    "pix::ctx::getSize"           : pix_ctx_getSize,
     "pix::ctx::destroy"           : pix_ctx_destroy,
 
     # Path commands
@@ -202,6 +204,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::img::fillText"       : pix_image_fillText,
     "pix::img::strokePath"     : pix_image_strokePath,
     "pix::img::get"            : pix_image_get,
+    "pix::img::getSize"        : pix_image_get,
     "pix::img::fillGradient"   : pix_image_fillGradient,
     "pix::img::destroy"        : pix_image_destroy,
     "pix::img::writeFile"      : pix_image_writeFile,

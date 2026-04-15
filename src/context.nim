@@ -2233,6 +2233,31 @@ proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 
   return Tcl.OK
 
+proc pix_ctx_getSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Gets the size of the image associated with the context.
+  #
+  # context - [ctx]
+  #
+  # Returns: A Tcl dictionary object that contains the 
+  # width and height of the image.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
+    return Tcl.ERROR
+
+  # Context
+  let ptable = cast[PixTable](clientData)
+  let ctx = ptable.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
+
+  let dictObj = Tcl.NewDictObj()
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width.cint))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height.cint))
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
+
 proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets line dash for current context.
   #
