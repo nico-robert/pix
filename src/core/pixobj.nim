@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Nicolas ROBERT.
+# Copyright (c) 2025-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 import ../bindings/tcl/binding as Tcl
@@ -10,6 +10,7 @@ proc freeColorIntRep(objPtr: Tcl.PObj) {.cdecl.} =
   # objPtr - The Tcl object to free.
   #
   # Returns: Nothing.
+
   if objPtr.isNil: return
   let colorObjType = Tcl.GetObjType("pixcolor")
 
@@ -52,7 +53,7 @@ proc updateColorString(objPtr: Tcl.PObj) {.cdecl.} =
   let color = cast[ptr Color](objPtr.internalRep.otherValuePtr)
   if color.isNil: return
 
-  let str = $color[]
+  let str = $color[].toHexAlpha()
   let strLen = str.len
   let bytes = cast[cstring](Tcl.Alloc(Tcl.HASH_TYPE(strLen + 1)))
   copyMem(bytes, cstring(str), strLen + 1)
@@ -68,13 +69,14 @@ proc setColorFromAny(interp: Tcl.PInterp, objPtr: Tcl.PObj): cint {.cdecl.} =
   #
   # Returns : Tcl.OK - If the object was successfully set or
   #           Tcl.ERROR - If the object could not be set.
+
   if objPtr.bytes.isNil:
     return Tcl.ERROR
 
   try:
     let colorStr = $objPtr.bytes
     # Parse the color string
-    let color = parseHex(colorStr)
+    let color = parseHexAlpha(colorStr)
 
     if objPtr.typePtr != nil and objPtr.typePtr.freeIntRepProc != nil:
       objPtr.typePtr.freeIntRepProc(objPtr)
@@ -120,6 +122,7 @@ proc storeInternalRep(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjIn
   # If the object has a string representation, it is invalidated.
   #
   # Returns: Nothing.
+
   when defined(tcl9):
     Tcl.StoreInternalRep(objPtr, typePtr, irPtr)
   else:
@@ -138,6 +141,7 @@ proc createColorObj*(color: Color): Tcl.PObj =
   # color - The color to create the object from.
   #
   # Returns: A new color object.
+
   let obj = Tcl.NewObj()
 
   let colorObjType = Tcl.GetObjType("pixcolor")
@@ -162,6 +166,7 @@ proc getTypeColor*(objPtr: Tcl.PObj): ptr Color =
   # objPtr - The Tcl object to retrieve the internal representation of.
   #
   # Returns: A pointer to the internal representation of the color object.
+
   if objPtr.isNil:
     return nil
 
@@ -187,6 +192,7 @@ proc createPixColorObjType*(interp: Tcl.PInterp): Tcl.PObjType =
   # Returns: A pointer to the Tcl object type for a color object.
 
   # Allocate memory for the Tcl object type
+
   let colorObjType = cast[Tcl.PObjType](alloc0(sizeof(Tcl.ObjType)))
 
   if colorObjType == nil:
