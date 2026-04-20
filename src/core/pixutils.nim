@@ -63,6 +63,23 @@ func isTinyHexHtmlFormat*(s: string): bool =
 
   return (s.len == 4) and (s[0] == '#')
 
+func fmtHexPtr*[T](obj: T): string =
+  # Converts an object to a hexadecimal string.
+  #
+  # obj - The object to convert.
+  #
+  # Returns: Hex string like '0x12345'.
+
+  let
+    myPtr  = cast[pointer](obj)
+    hexStr = cast[uint64](myPtr).toHex()
+
+  # Inline strip leading zeros
+  result = block:
+    var i = 0
+    while i < hexStr.len and hexStr[i] == '0': inc i
+    if i >= hexStr.len: "0" else: hexStr[i..^1]
+
 proc isColorXRGBAFormat*(s: string, colorType: string): bool =
   # Checks if the color is a color in the rgba
   # or rgbx format.
@@ -284,17 +301,7 @@ template toHexPtr*[T](obj: T): string =
   #
   # obj - The object to convert.
   #
-  # Returns: A hexadecimal string.
-
-  let
-    myPtr  = cast[pointer](obj)
-    hexStr = cast[uint64](myPtr).toHex()
-
-  # Inline strip leading zeros
-  let hex = block:
-    var i = 0
-    while i < hexStr.len and hexStr[i] == '0': inc i
-    if i >= hexStr.len: "0" else: hexStr[i..^1]
+  # Returns: A hexadecimal string according to the type.
 
   let typeName =
     when T is pixie.Context     : "ctx"
@@ -306,20 +313,16 @@ template toHexPtr*[T](obj: T): string =
     elif T is pixie.Path        : "path"
     elif T is Svg               : "svg"
     elif T is pixie.Arrangement : "arr"
-    elif defined(resvg) and T is Resvg : "resvg"
     else: {.error: "pix type not supported : " & $T .}
-  ("0x" & hex & "^" & typeName).toLowerAscii
+  ("0x" & fmtHexPtr(obj) & "^" & typeName).toLowerAscii
 
 when defined(pixGL):
   template toHexPtr*(obj: Boxy): string =
-    let
-      myPtr  = cast[pointer](obj)
-      hexStr = cast[uint64](myPtr).toHex()
-    let hex = block:
-      var i = 0
-      while i < hexStr.len and hexStr[i] == '0': inc i
-      if i >= hexStr.len: "0" else: hexStr[i..^1]
-    ("0x" & hex & "^boxy").toLowerAscii
+    ("0x" & fmtHexPtr(obj) & "^boxy").toLowerAscii
+
+when defined(resvg):
+  template toHexPtr*(obj: Resvg): string =
+    ("0x" & fmtHexPtr(obj) & "^resvg").toLowerAscii
 
 proc matrix3x3*(interp: Tcl.PInterp, obj: Tcl.PObj, matrix3: var vmath.Mat3): cint =
   # Converts a Tcl list to a matrix 3x3.
