@@ -271,30 +271,31 @@ proc getColor*(obj: Tcl.PObj): Color =
     if scolor.len == 0:
       raise newException(InvalidColor, "Empty color string.")
 
-    var color: Color
+    var myColor: Color
 
-    if scolor.isColorXRGBAFormat("rgba"):
-      return chroma.parseHtmlRgba(scolor)
-    elif scolor.isHexHtmlFormat():
-      return chroma.parseHtmlHex(scolor)
-    elif scolor.isColorFormat("rgb"):
-      return chroma.parseHtmlRgb(scolor)
-    elif scolor.isHexAlphaFormat():
-      return chroma.parseHexAlpha(scolor)
-    elif scolor.isHexFormat():
-      return chroma.parseHex(scolor)
-    elif scolor.isColorXRGBAFormat("rgbx"):
-      return parseColorRGBX(scolor).color
-    elif scolor.isColorFormat("hsl"):
-      return parseColorHSL(scolor).color
-    elif scolor.isColorFormat("hsv"):
-      return parseColorHSV(scolor).color
-    elif scolor.isTinyHexHtmlFormat():
-      return chroma.parseHtmlHexTiny(scolor)
-    elif isColorSimpleFormat(obj, color):
-      return color
-    else:
-      return chroma.parseHtmlName(scolor)
+    result =
+      if scolor.isColorXRGBAFormat("rgba"):
+       chroma.parseHtmlRgba(scolor)
+      elif scolor.isHexHtmlFormat():
+        chroma.parseHtmlHex(scolor)
+      elif scolor.isColorFormat("rgb"):
+        chroma.parseHtmlRgb(scolor)
+      elif scolor.isHexAlphaFormat():
+        chroma.parseHexAlpha(scolor)
+      elif scolor.isHexFormat():
+        chroma.parseHex(scolor)
+      elif scolor.isColorXRGBAFormat("rgbx"):
+        parseColorRGBX(scolor).color
+      elif scolor.isColorFormat("hsl"):
+        parseColorHSL(scolor).color
+      elif scolor.isColorFormat("hsv"):
+        parseColorHSV(scolor).color
+      elif scolor.isTinyHexHtmlFormat():
+        chroma.parseHtmlHexTiny(scolor)
+      elif isColorSimpleFormat(obj, myColor):
+        myColor
+      else:
+        chroma.parseHtmlName(scolor)
 
 template toHexPtr*[T](obj: T): string =
   # Converts an object to a hexadecimal string.
