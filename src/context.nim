@@ -5,7 +5,7 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   # Sets a *new* context.
   #
   # size  - list width,height
-  # value - string [color] or [img::new] (optional:none)
+  # value - string [color] or [img] (optional:none)
   #
   # Returns: A *new* [ctx] object.
   if objc notin [2, 3]:
@@ -73,8 +73,8 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 proc pix_ctx_strokeStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets color style current context.
   #
-  # context - [ctx::new]
-  # color   - [paint::new] or string [color]
+  # context - [ctx]
+  # color   - [paint] or string [color]
   #
   # If the string is not in the correct format, an error
   # will be generated.
@@ -107,7 +107,7 @@ proc pix_ctx_save(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # Saves the entire state of the context
   # by pushing the current state onto a stack.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # The *pix::ctx::save* procedure adds the current context state
   # to the stack, and the restore() procedure pops the
@@ -131,7 +131,7 @@ proc pix_ctx_save(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_textBaseline(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Set the base line alignment for the current context.
   #
-  # context           - [ctx::new]
+  # context           - [ctx]
   # baselineAlignment - Enum value
   #
   # Parse the second argument as an enum value of type `BaselineAlignment`.
@@ -160,7 +160,7 @@ proc pix_ctx_restore(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   # Restores the most recently saved context state by popping the top entry
   # in the drawing state stack. If there is no saved state, this method does nothing.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
   if objc != 2:
@@ -184,7 +184,7 @@ proc pix_ctx_saveLayer(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   # and allocates a new image layer for subsequent drawing. Calling restore blends
   # the current layer image onto the prior layer or root image.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
   if objc != 2:
@@ -207,7 +207,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # Strokes a segment (draws a line from ax, ay to bx, by) according to
   # the current strokeStyle and other context settings.
   #
-  # context       - [ctx::new]
+  # context       - [ctx]
   # coordinates1  - list x,y
   # coordinates2  - list x1,y1
   #
@@ -252,7 +252,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # Draws a rectangle that is stroked (outlined) according to the
   # current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - list width,height
   #
@@ -291,7 +291,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
   # The starting point is the latest point in the current path,
   # which can be changed using moveTo() before creating the quadratic Bézier curve.
   #
-  # context       - [ctx::new]
+  # context       - [ctx]
   # coordinates1  - list cpx,cpy
   # coordinates2  - list x,y
   #
@@ -323,7 +323,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
 proc pix_ctx_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circular arc to the current sub-path.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # radius      - double value
   # angleStart  - double value (radian)
@@ -372,7 +372,7 @@ proc pix_ctx_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 proc pix_ctx_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circular arc using the given control points and radius.
   #
-  # context       - [ctx::new]
+  # context       - [ctx]
   # coordinates1  - list x1,y1
   # coordinates2  - list x2,y2
   # radius        - double value
@@ -415,7 +415,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # The starting point is the latest point in the current path,
   # which can be changed using moveTo() before creating the Bézier curve.
   #
-  # context      - [ctx::new]
+  # context      - [ctx]
   # coordinates1 - list cp1x,cp1y
   # coordinates2 - list cp2x,cp2y
   # coordinates3 - list x,y
@@ -452,7 +452,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 proc pix_ctx_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circle to the current path.
   #
-  # context      - [ctx::new]
+  # context      - [ctx]
   # coordinates  - list cx,cy
   # radius       - double value
   #
@@ -485,8 +485,8 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # The previous clipping region, if any, is intersected
   # with the current or given path to create the new clipping region.
   #
-  # context     - [ctx::new]
-  # path        - [path::new] (optional)
+  # context     - [ctx]
+  # path        - [path] (optional)
   # windingRule - Enum value (optional:NonZero)
   #
   # Returns: Nothing.
@@ -530,7 +530,7 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_measureText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Information about the measured text.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # text     - string
   #
   # Returns: A Tcl dict that contains information
@@ -567,7 +567,7 @@ proc pix_ctx_measureText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_resetTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Resets the current transform to the identity matrix.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
   if objc != 2:
@@ -586,8 +586,8 @@ proc pix_ctx_resetTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 proc pix_ctx_drawImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws a source image onto the destination image.
   #
-  # context  - [ctx::new]
-  # image    - [img::new]
+  # context  - [ctx]
+  # image    - [img]
   # options  - See description below:
   #
   # There are 3 ways to use this proc:
@@ -690,7 +690,7 @@ proc pix_ctx_drawImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds an ellipse to the current sub-path.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # radiusx     - double value
   # radiusy     - double value
@@ -725,7 +725,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # Draws an ellipse that is stroked (outlined) according
   # to the current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # radiusx     - double value
   # radiusy     - double value
@@ -762,7 +762,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 proc pix_ctx_setTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Overrides the transform matrix being applied to the context.
   #
-  # context   - [ctx::new]
+  # context   - [ctx]
   # matrix3x3 - list
   #
   # If you want to save the current transform matrix, you can get it by calling
@@ -804,7 +804,7 @@ proc pix_ctx_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   # Multiplies the current transform with the matrix
   # described by the arguments of this method.
   #
-  # context   - [ctx::new]
+  # context   - [ctx]
   # matrix3x3 - list
   #
   # This is useful if you want to add a new transform
@@ -845,7 +845,7 @@ proc pix_ctx_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_rotate(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a rotation to the transformation matrix.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   # angle   - double value (radian)
   #
   # The rotation is around the origin (0,0).
@@ -875,7 +875,7 @@ proc pix_ctx_rotate(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_ctx_translate(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a translation transformation to the current matrix.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   #
   # The translation is by the given *(x, y)* vector in the current
@@ -913,7 +913,7 @@ proc pix_ctx_lineJoin(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Parse the string as an enum value of type LineJoin
   # and assign it to the lineJoin property of the context.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # lineJoin - Enum value
   #
   # The parseEnum function will raise an exception if the string is not a valid
@@ -941,7 +941,7 @@ proc pix_ctx_lineCap(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   # An enum value describing the style of the end caps for lines. Possible values include
   # 'ButtCap', 'RoundCap', and 'SquareCap'.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   # enum    - The line cap style (Enum)
   #
   # Returns: Nothing.
@@ -965,8 +965,8 @@ proc pix_ctx_lineCap(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills the path with the current fillStyle.
   #
-  # context     - [ctx::new]
-  # path        - [path::new] (optional)
+  # context     - [ctx]
+  # path        - [path] (optional)
   # windingRule - Enum value (optional:NonZero)
   #
   # If no path is specified, then call *pix::ctx::fill $ctx* with no arguments.
@@ -1026,7 +1026,7 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a rectangle to the current path.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - list width,height
   #
@@ -1059,7 +1059,7 @@ proc pix_ctx_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_fillRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws a rectangle that is filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - list width,height
   #
@@ -1095,7 +1095,7 @@ proc pix_ctx_fillRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws a rectangle with rounded corners that is filled according to the current fillStyle.
   #
-  # context      - [ctx::new]
+  # context      - [ctx]
   # coordinates  - list x,y
   # size         - list width,height
   # radius       - list {nw ne se sw}
@@ -1149,7 +1149,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_fillRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws a rounded rectangle that is filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - list width,height
   # radius      - double value or list radius {nw ne se sw}
@@ -1221,7 +1221,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   # Draws a rounded rectangle that is stroked (outlined) according
   # to the current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - list width,height
   # radius      - double value or list radius {nw ne se sw}
@@ -1292,7 +1292,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 proc pix_ctx_clearRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Erases the pixels in a rectangular area.
   #
-  # context      - [ctx::new]
+  # context      - [ctx]
   # coordinates  - list x,y
   # size         - list width,height
   #
@@ -1328,8 +1328,8 @@ proc pix_ctx_clearRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_fillStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills current style.
   #
-  # context - [ctx::new]
-  # value   - [paint::new] or string [color]
+  # context - [ctx]
+  # value   - [paint] or string [color]
   #
   # Returns: Nothing.
   if objc != 3:
@@ -1358,7 +1358,7 @@ proc pix_ctx_fillStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_globalAlpha(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets color alpha.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   # alpha   - double value
   #
   # This determines the transparency level of the drawing operations.
@@ -1394,7 +1394,7 @@ proc pix_ctx_globalAlpha(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Begins a new sub-path at the point *(x, y)*.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   #
   # This is a fundamental operation,
@@ -1433,9 +1433,9 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   # Checks whether or not the specified point is inside the area
   # contained by the stroking of a path.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
-  # path        - [path::new] (optional)
+  # path        - [path] (optional)
   #
   # Returns: A Tcl boolean value.
   if objc notin [3, 4]:
@@ -1479,9 +1479,9 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks whether or not the specified point is contained in the current path.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
-  # path        - [path::new] (optional)
+  # path        - [path] (optional)
   # windingRule - Enum value (optional:NonZero)
   #
   # Returns: A Tcl boolean value.
@@ -1553,7 +1553,7 @@ proc pix_ctx_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # Adds a straight line to the current sub-path by connecting
   # the sub-path's last point to the specified *(x, y)* coordinates.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   #
   # The lineTo method can be called multiple times to draw multiple lines.
@@ -1598,8 +1598,8 @@ proc pix_ctx_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_ctx_stroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Strokes (outlines) the current or given path with the current strokeStyle.
   #
-  # context - [ctx::new]
-  # path    - [path::new] (optional)
+  # context - [ctx]
+  # path    - [path] (optional)
   #
   # Returns: Nothing.
   if objc notin [2, 3]:
@@ -1632,7 +1632,7 @@ proc pix_ctx_stroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_ctx_scale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a scaling transformation to the context units horizontally and/or vertically.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   #
   # Returns: Nothing.
@@ -1659,7 +1659,7 @@ proc pix_ctx_scale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 proc pix_ctx_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Save context to image file.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # The context is rendered into an image which is then saved to the
@@ -1694,7 +1694,7 @@ proc pix_ctx_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_beginPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Starts a new path by emptying the list of sub-paths.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Begin a new path by clearing any existing sub-paths in the context.
   # This is typically used to start drawing a new shape or path.
@@ -1718,7 +1718,7 @@ proc pix_ctx_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   # the start of the current sub-path. If the shape has already been
   # closed or has only one point, this function does nothing.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
   if objc != 2:
@@ -1737,7 +1737,7 @@ proc pix_ctx_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_lineWidth(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets line width for current context.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   # width   - double value
   #
   # Returns: Nothing.
@@ -1764,7 +1764,7 @@ proc pix_ctx_miterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # Sets the miter limit. This is relevant when 'lineJoin' is set to 'MiterJoin' and
   # controls the maximum length of the miter. If the miter limit is exceeded, a bevel join is used instead.
   #
-  # context    - [ctx::new]
+  # context    - [ctx]
   # miterlimit - double value
   #
   # Returns: Nothing.
@@ -1789,7 +1789,7 @@ proc pix_ctx_miterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_ctx_font(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets font for current context.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # filepath - string
   #
   # Returns: Nothing.
@@ -1809,7 +1809,7 @@ proc pix_ctx_font(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 proc pix_ctx_fontSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets font size for current context.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   # size    - double value
   #
   # Returns: Nothing.
@@ -1836,7 +1836,7 @@ proc pix_ctx_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Draws a text string at the specified coordinates,
   # filling the string's characters with the current fillStyle.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # text        - string
   # coordinates - list x,y
   #
@@ -1867,7 +1867,7 @@ proc pix_ctx_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_ctx_fillCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws a circle that is filled according to the current fillStyle
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list cx,cy
   # radius      - double value
   #
@@ -1908,7 +1908,7 @@ proc pix_ctx_fillCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_ctx_fillEllipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws an ellipse that is filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # radiusx     - double value
   # radiusy     - double value
@@ -1945,7 +1945,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   # Draws an n-sided regular polygon at *(x, y)* of size that is 
   # filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - double value
   # sides       - integer value
@@ -1986,7 +1986,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds an n-sided regular polygon at *(x, y)* of size to the current path.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - double value
   # sides       - integer value
@@ -2028,7 +2028,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # Draws an n-sided regular polygon at *(x, y)* of size that is stroked
   # (outlined) according to the current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list x,y
   # size        - double value
   # sides       - integer value
@@ -2070,7 +2070,7 @@ proc pix_ctx_strokeCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # Draws a circle that is stroked (outlined) according to the current
   # strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # coordinates - list cx,cy
   # radius      - double value
   #
@@ -2110,7 +2110,7 @@ proc pix_ctx_strokeCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_ctx_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws the outlines of the characters of a text string at the specified coordinates.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # text        - string
   # coordinates - list x,y
   #
@@ -2141,7 +2141,7 @@ proc pix_ctx_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_ctx_textAlign(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets text alignment.
   #
-  # context             - [ctx::new]
+  # context             - [ctx]
   # horizontalAlignment - Enum value
   #
   # Returns: Nothing.
@@ -2165,7 +2165,7 @@ proc pix_ctx_textAlign(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Retrieves detailed information about the current context and returns it as a Tcl dictionary.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # The dictionary includes:
   #
@@ -2261,7 +2261,7 @@ proc pix_ctx_getSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets line dash for current context.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   # dashes  - list
   #
   # Returns: Nothing.
@@ -2301,7 +2301,7 @@ proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_ctx_getTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Gets matrix for current context.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # The matrix is represented as a sequence of 3 sequences
   # of floats, where each inner sequence represents a row
@@ -2342,7 +2342,7 @@ proc pix_ctx_getTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_ctx_getLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Gets line dash for current context.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: A list with current values.
   if objc != 2:

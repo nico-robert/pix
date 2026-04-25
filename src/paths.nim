@@ -84,7 +84,7 @@ proc pix_path_miterLimitToAngle(clientData: Tcl.TClientData, interp: Tcl.PInterp
 proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circular arc to the current sub-path.
   # 
-  # path         - [path::new]
+  # path         - [path]
   # coordinates  - list x,y
   # radius       - double value
   # angle0       - double value (radian)
@@ -134,7 +134,7 @@ proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # Adds a circular arc using the given control points and radius.
   # Commonly used for making rounded corners.
   # 
-  # path          - [path::new]
+  # path          - [path]
   # coordinates1  - list x1,y1
   # coordinates2  - list x2,y2
   # radius        - double value
@@ -177,7 +177,7 @@ proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a cubic Bézier curve to the current sub-path.
   # 
-  # path          - [path::new]
+  # path          - [path]
   # coordinates1  - list x1,y1
   # coordinates2  - list x2,y2
   # coordinates3  - list x3,y3

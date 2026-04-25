@@ -36,7 +36,7 @@ proc pix_image_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # This procedure creates a new image by copying the contents 
   # of the given image object.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns: A *new* [img] object.
   if objc != 2:
@@ -61,8 +61,8 @@ proc pix_image_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws one image onto another using a matrix transform and color blending.
   #
-  # image     - [img::new]
-  # image2    - [img::new]
+  # image     - [img]
+  # image2    - [img]
   # matrix3   - list (optional:mat3)
   # blendMode - Enum value (optional:NormalBlend)
   #
@@ -126,7 +126,7 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills the image with the color.
   #
-  # image   - [img::new]
+  # image   - [img]
   # value   - string [color] or [paint] object
   #
   # This proc takes an image object and a color or paint object as arguments.
@@ -210,7 +210,7 @@ proc pix_image_readImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills a path with a color or paint object.
   #
-  # image      - The [img::new] object to draw on.
+  # image      - The [img] object to draw on.
   # pathValue  - A string containing a path or a path object.
   #             The path can be specified as a string like this:
   #             **M 0 0 L 100 0 L 100 100 Z**
@@ -283,7 +283,7 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # Strokes a path with a color or a paint object and optional
   # stroke and line join options.
   #
-  # image   - The [img::new] object to draw on.
+  # image   - The [img] object to draw on.
   # value   - A string path or a [path] object created with the
   #          *pix::path::new* Tcl proc.
   # color   - A string [color] or a [paint] object created with the
@@ -364,7 +364,7 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_image_blur(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Applies Gaussian blur to the image given a radius.
   #
-  # image   - [img::new]
+  # image   - [img]
   # radius  - double value
   # color   - string [color] (optional:transparent)
   #
@@ -404,7 +404,7 @@ proc pix_image_blur(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_shadow(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create a shadow of the image with the offset, spread and blur.
   #
-  # image   - [img::new]
+  # image   - [img]
   # options - dict (offset, spread, blur, [color])
   #
   # Returns: Nothing.
@@ -448,7 +448,7 @@ proc pix_image_shadow(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills the image with the rendered text.
   #
-  # image  - [img::new]
+  # image  - [img]
   # object - [font::typeset] or [font::readFont] object
   # args   - A Tcl dict (options described below)
   #
@@ -549,7 +549,7 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_resize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Resize an image to a given height and width
   #
-  # image  - [img::new]
+  # image  - [img]
   # size   - list width,height
   #
   # Returns: Nothing.
@@ -588,7 +588,7 @@ proc pix_image_resize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Gets image size.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns: A Tcl dictionary with keys containing the width and the 
   # height of the [img].
@@ -613,7 +613,7 @@ proc pix_image_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 proc pix_image_getPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Gets a pixel at (x, y) or returns transparent black if outside of bounds.
   #
-  # image        - [img::new]
+  # image        - [img]
   # coordinates  - list x,y (x column of the pixel, y row of the pixel)
   #
   # Returns: A Tcl dictionary with keys (r, g, b, a) representing 
@@ -650,7 +650,7 @@ proc pix_image_getPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_setPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets a pixel at (x, y) or does nothing if outside of bounds.
   #
-  # image       - [img::new]
+  # image       - [img]
   # coordinates - list x,y
   # color       - string [color]
   #
@@ -681,7 +681,7 @@ proc pix_image_setPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_applyOpacity(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Multiplies alpha of the image by opacity.
   #
-  # image    - [img::new]
+  # image    - [img]
   # opacity  - double value
   #
   # Image *pix::img::applyOpacity* multiplies the opacity of the image by the
@@ -712,7 +712,7 @@ proc pix_image_applyOpacity(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 proc pix_image_ceil(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # A value of 0 stays 0. Anything else turns into 255.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # The *pix::img::ceil* proc takes an image and replaces all pixels that are
   # not fully transparent (i.e. have an alpha of 0) with a pixel that
@@ -738,8 +738,8 @@ proc pix_image_diff(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # compare to the master image. The *pix::img::diff* method returns a dict
   # with two elements.
   #
-  # masterimage - [img::new]
-  # image       - [img::new]
+  # masterimage - [img]
+  # image       - [img]
   #
   # 1. A cdouble representing the difference score between the two
   # images. This score is 0 if the images are identical, and 1 if the
@@ -790,7 +790,7 @@ proc pix_image_flipHorizontal(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
   # As a result, the left and right sides of the image are swapped.
   # This operation is useful for creating mirror images or for certain graphical effects.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns: Nothing.
   if objc != 2:
@@ -809,7 +809,7 @@ proc pix_image_flipHorizontal(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
 proc pix_image_flipVertical(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # This method modifies the image in place, flipping it around the X-axis.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # As a result, the top and bottom sides of the image are swapped.
   # This operation is useful for creating mirror images or for certain graphical effects.
@@ -831,7 +831,7 @@ proc pix_image_flipVertical(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 proc pix_image_getColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Gets a color at (x, y) or returns transparent black if outside of bounds.
   #
-  # image        - [img::new]
+  # image        - [img]
   # coordinates  - list x,y
   #
   # Returns: A Tcl dictionary with keys (r, g, b, a) representing
@@ -869,7 +869,7 @@ proc pix_image_getColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_inside(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Returns true if (x, y) is inside the image, false otherwise.
   #
-  # image        - [img::new]
+  # image        - [img]
   # coordinates  - list x,y
   #
   if objc != 3:
@@ -897,7 +897,7 @@ proc pix_image_inside(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_invert(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Inverts all of the colors and alpha.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # This will flip the image by changing the color and alpha of every pixel.
   # The result will be a new image where every pixel is the exact opposite of
@@ -927,7 +927,7 @@ proc pix_image_invert(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_image_isOneColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks if the entire image is the same color.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns: A Tcl boolean value.
   if objc != 2:
@@ -948,7 +948,7 @@ proc pix_image_isOneColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_image_isOpaque(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks if the entire image is opaque (alpha values are all 255).
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns: A Tcl boolean value.
   if objc != 2:
@@ -969,7 +969,7 @@ proc pix_image_isOpaque(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_isTransparent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks if this image is fully transparent or not.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns true, false otherwise.
   if objc != 2:
@@ -990,7 +990,7 @@ proc pix_image_isTransparent(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 proc pix_image_magnifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Scales image up by 2 ^ power.
   #
-  # image  - [img::new]
+  # image  - [img]
   # power  - integer value (optional:1)
   #
   # If only one argument is given (i.e. the image object), just magnify by 2.
@@ -1034,7 +1034,7 @@ proc pix_image_magnifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_image_minifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Scales the image down by an integer scale.
   #
-  # image  - [img::new]
+  # image  - [img]
   # power  - integer value (optional:1)
   #
   # We were given an integer power as an argument, so we call
@@ -1078,7 +1078,7 @@ proc pix_image_minifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_image_opaqueBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks the bounds of opaque pixels.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Some images have transparency around them,
   # use this to find just the visible part of the image and then use subImage to cut
@@ -1111,7 +1111,7 @@ proc pix_image_opaqueBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 proc pix_image_rotate90(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Rotates the image 90 degrees clockwise.
   #
-  # image - [img::new]
+  # image - [img]
   #
   # Returns: Nothing.
   if objc != 2:
@@ -1133,7 +1133,7 @@ proc pix_image_rotate90(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_subImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Gets a sub image from this image.
   #
-  # image        - [img::new]
+  # image        - [img]
   # coordinates  - list x,y
   # size         - list width,height
   #
@@ -1179,7 +1179,7 @@ proc pix_image_subImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_image_superImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Either cuts a sub image or returns a super image with padded transparency.
   #
-  # image        - [img::new]
+  # image        - [img]
   # coordinates  - list x,y
   # size         - list width,height
   #
@@ -1230,8 +1230,8 @@ proc pix_image_superImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_image_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills with the Paint gradient.
   #
-  # image  - [img::new]
-  # paint  - [paint::new]
+  # image  - [img]
+  # paint  - [paint]
   #
   # Returns: Nothing.
   if objc != 3:
@@ -1419,7 +1419,7 @@ proc pix_image_toGrayScale(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Save image file.
   #
-  # image    - [img::new]
+  # image    - [img]
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # Returns: Nothing.
@@ -1444,7 +1444,7 @@ proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_image_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy current image or all images if special word `all` is specified.
   #
-  # value - [img::new] object or string
+  # value - [img] object or string
   #
   # Returns: Nothing.
   if objc != 2:

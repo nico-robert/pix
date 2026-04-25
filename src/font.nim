@@ -140,7 +140,7 @@ proc pix_font_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   # Sets font Paint if paint optional argument is set, otherwise gets the font paint.
   #
   # font  - [font::newFont]
-  # paint - [paint::new] (optional)
+  # paint - [paint] (optional)
   #
   # Returns: 
   # A *new* [paint] if no paint optional argument is set, otherwise set the font paint.

@@ -134,7 +134,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Create a new Paint with the same properties.
   #
-  # paint - [paint::new]
+  # paint - [paint]
   #
   # Returns: A *new* [paint] object.
   if objc != 2:
@@ -158,8 +158,8 @@ proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills with the Paint gradient.
   #
-  # paint - [paint::new]
-  # image - [img::new]
+  # paint - [paint]
+  # image - [img]
   #
   # Returns: Nothing.
   if objc != 3:
@@ -186,7 +186,7 @@ proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 proc pix_paint_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy current [paint] or all paints if special word `all` is specified.
   #
-  # value - [paint::new] object or string.
+  # value - [paint] object or string.
   #
   # Returns: Nothing.
   if objc != 2:

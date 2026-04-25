@@ -402,7 +402,7 @@ proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Parse [path] object.
   #
-  # path - [path::new]
+  # path - [path]
   #
   # Returns: The parsed [path] to SVG style path (string).
   if objc != 2:
@@ -419,7 +419,7 @@ proc pix_pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   return Tcl.OK
 
 proc pix_svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Transforms a SVG style path (string) to a [path::new] object.
+  # Transforms a SVG style path (string) to a [path] object.
   #
   # path - a string in SVG style.
   #
