@@ -274,28 +274,26 @@ proc pix_font_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
     Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> ?transform:optional")
     return Tcl.ERROR
 
-  var
-    matrix3: vmath.Mat3
-    rect: Rect
-
   # Arrangement
   let ptable = cast[PixTable](clientData)
   let arr = ptable.loadArr(interp, objv[1])
   if arr.isNil: return Tcl.ERROR
 
-  if objc == 3:
-    # Matrix 3x3 check
-    if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
-      return Tcl.ERROR
-    try:
-      rect = arr.computeBounds(matrix3)
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    try:
-      rect = arr.computeBounds()
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let rect = 
+    if objc == 3:
+      # Matrix 3x3 check
+      var matrix3: vmath.Mat3
+      if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
+        return Tcl.ERROR
+      try:
+        arr.computeBounds(matrix3)
+      except PixieError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    else:
+      try:
+        arr.computeBounds()
+      except PixieError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let dictObj = Tcl.NewDictObj()
 
@@ -608,7 +606,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   #
   # The bounds does not include the outline of the glyphs, only the filled region.
   #
-  # Returns: A Tcl dict value {x y} where the x is the width of the bounds in pixels,
+  # Returns: A Tcl list value {x y} where the x is the width of the bounds in pixels,
   # and the y is the height of the bounds in pixels.
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv,
