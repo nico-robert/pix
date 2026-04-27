@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_image(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
@@ -489,12 +489,11 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # Font or arrangement.
   let arg2 = $objv[2]
 
-  var matrix3: vmath.Mat3
-
   if ptable.hasArr(arg2):
     # Arrangement
     let arrangement = ptable.getArr(arg2)
     if objc == 4:
+      var matrix3: vmath.Mat3
       if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
         return Tcl.ERROR
       try:
