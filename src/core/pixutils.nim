@@ -24,6 +24,28 @@ proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
 
   return Tcl.ERROR
 
+proc setVar*(interp: Tcl.PInterp, name: string, value: int): cint =
+  # Sets a global variable in the interpreter.
+  #
+  # interp  - The Tcl interpreter.
+  # name    - The name of the variable.
+  # value   - The value of the variable.
+  #
+  # Returns: Tcl.OK on success, Tcl.ERROR on failure.
+
+  let obj = Tcl.ObjSetVar2(
+    interp,
+    Tcl.NewStringObj(name.cstring, -1),
+    nil,
+    Tcl.NewIntObj(value.cint),
+    Tcl.GLOBAL_ONLY
+  )
+
+  if obj.isNil: 
+    return pixUtils.errorMSG(interp, "pix(error): " & $interp)
+
+  return Tcl.OK
+
 func isHexDigit(c: char): bool =
   # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).
   return (c >= '0' and c <= '9') or
