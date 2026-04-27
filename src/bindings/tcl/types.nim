@@ -2,6 +2,7 @@ const
   OK*    = 0
   ERROR* = 1
   INDEX_NONE* = -1
+  GLOBAL_ONLY* = 1
 
 when defined(tcl9):
   type
