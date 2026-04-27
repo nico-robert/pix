@@ -36,6 +36,7 @@ type
     tcl_NewObj               : proc(): Tcl.PObj {.cdecl.}
     tcl_GetObjType           : proc(typeName: cstring): Tcl.PObjType {.cdecl.}
     tcl_Alloc                : proc(size: Tcl.HASH_TYPE): pointer {.cdecl.}
+    tcl_ObjSetVar2           : proc(interp: Tcl.PInterp, part1Ptr: Tcl.PObj, part2Ptr: Tcl.PObj, newValuePtr: Tcl.PObj, flags: cint): Tcl.PObj {.cdecl.}
     when defined(tcl9):
       tcl_IncrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
       tcl_DecrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
@@ -137,6 +138,9 @@ proc GetObjType*(typeName: cstring): Tcl.PObjType =
 
 proc Alloc*(size: Tcl.HASH_TYPE): pointer =
   return tclStubsPtr.tcl_Alloc(size)
+
+proc ObjSetVar2*(interp: Tcl.PInterp, part1Ptr: Tcl.PObj, part2Ptr: Tcl.PObj, newValuePtr: Tcl.PObj, flags: cint): Tcl.PObj =
+  return tclStubsPtr.tcl_ObjSetVar2(interp, part1Ptr, part2Ptr, newValuePtr, flags)
 
 proc GetStringResult*(interp: Tcl.PInterp): cstring {.cdecl.} =
   return GetString(GetObjResult(interp))
