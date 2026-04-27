@@ -75,6 +75,13 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
   let ptable = createPixTable()
   GC_ref(ptable)
 
+  # Sets variables to store in the pix namespace.
+  if pixUtils.setVar(interp, "::pix::x11",   if defined(x11):   1 else: 0) != Tcl.OK or
+     pixUtils.setVar(interp, "::pix::resvg", if defined(resvg): 1 else: 0) != Tcl.OK or
+     pixUtils.setVar(interp, "::pix::pixGL", if defined(pixGL): 1 else: 0) != Tcl.OK:
+    return Tcl.ERROR
+
+
   var commands = {
     # Context commands :
     "pix::ctx::new"               : pix_context,
