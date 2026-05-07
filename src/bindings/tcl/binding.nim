@@ -47,7 +47,12 @@ type
       tcl_NewBooleanObj      : proc(intValue: cint): Tcl.PObj {.cdecl.}
       tcl_Eval               : proc(interp: Tcl.PInterp, script: cstring): cint {.cdecl.}
 
-var tclStubsPtr {.importc: "tclStubsPtr", header: "tclDecls.h".} : ptr TclStubs
+var tclStubsPtr   {.importc: "tclStubsPtr", header: "tclDecls.h".} : ptr TclStubs
+var tclVersion    {.importc: "TCL_VERSION", header: "tcl.h".}: cstring
+var tclPatchLevel {.importc: "TCL_PATCH_LEVEL", header: "tcl.h".}: cstring
+
+proc VERSION*(): string     = return $tclVersion
+proc PATCH_LEVEL*(): string = return $tclPatchLevel
 
 proc PkgProvideEx*(interp: Tcl.PInterp, name: cstring, version: cstring, clientData: Tcl.TClientData): cint =
   return tclStubsPtr.tcl_PkgProvideEx(interp, name, version, clientData)
