@@ -354,9 +354,7 @@ proc pix_font_defaultLineHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp
   let font = ptable.loadFont(interp, objv[1])
   if font.isNil: return Tcl.ERROR
 
-  let defaultLineHeight = font.defaultLineHeight
-
-  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(defaultLineHeight))
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(font.defaultLineHeight))
 
   return Tcl.OK
 
@@ -591,10 +589,10 @@ proc pix_font_hasGlyph(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     Tcl.SetObjResult(interp, Tcl.NewIntObj(0))
     return Tcl.OK
 
-  let c = str.runeAt(0)
-  let hasglyph = if tface.hasGlyph(c): 1 else: 0
-
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(hasglyph.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(
+    if tface.hasGlyph(str.runeAt(0)): 1 else: 0
+    )
+  )
 
   return Tcl.OK
 
@@ -681,9 +679,7 @@ proc pix_font_lineGap(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
-  let lineGap = tface.lineGap()
-
-  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(lineGap))
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(tface.lineGap()))
 
   return Tcl.OK
 
@@ -710,9 +706,7 @@ proc pix_font_lineHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   let tface = ptable.loadTFace(interp, objv[1])
   if tface.isNil: return Tcl.ERROR
 
-  let lineHeight = tface.lineHeight()
-
-  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(lineHeight))
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(tface.lineHeight()))
 
   return Tcl.OK
 

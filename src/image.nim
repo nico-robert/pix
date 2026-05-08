@@ -887,9 +887,10 @@ proc pix_image_inside(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
     return Tcl.ERROR
 
-  let value = if img.inside(x, y): 1 else: 0
-
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(
+    if img.inside(x, y): 1 else: 0
+    )
+  )
 
   return Tcl.OK
 
@@ -938,9 +939,10 @@ proc pix_image_isOneColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let value = if img.isOneColor(): 1 else: 0
-
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(
+    if img.isOneColor(): 1 else: 0
+    )
+  )
 
   return Tcl.OK
 
@@ -959,9 +961,10 @@ proc pix_image_isOpaque(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let value = if img.isOpaque(): 1 else: 0
-
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(
+    if img.isOpaque(): 1 else: 0
+    )
+  )
 
   return Tcl.OK
 
@@ -980,9 +983,10 @@ proc pix_image_isTransparent(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let value = if img.isTransparent(): 1 else: 0
-
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(
+    if img.isTransparent(): 1 else: 0
+    )
+  )
 
   return Tcl.OK
 
