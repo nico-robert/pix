@@ -144,6 +144,54 @@ proc updateInstanceBuffer(inst: ptr PixImageInstance, display: ptr X.Display) =
     )
   {.pop.}
 
+proc pix_displayProc2(
+  instanceData: Tcl.TClientData,
+  display: ptr X.Display,
+  drawable: X.Drawable,
+  imageX: cint,
+  imageY: cint,
+  width: cint,
+  height: cint,
+  drawableX: cint,
+  drawableY: cint
+) {.cdecl.} =
+  # Display with centralized needflush
+  # This is an alternative displayProc that bypasses the pixmap 
+  # method to avoid X11 BadDrawable with XCopyArea on macOS 9.0.3+
+  let inst = cast[ptr PixImageInstance](instanceData)
+  let master = inst.master
+
+  if master == nil or master.image == nil or master.imageKey == "":
+    return
+
+  if master.needflush or inst.convertedBuffer == nil:
+    updateInstanceBuffer(inst, display)
+
+  # Render directly to the drawable 
+  # (bypasses the inst.pixmap method that causes the X11 error)
+  if inst.convertedBuffer != nil:
+    let ximage = X.CreateImage(
+      display,
+      Tk.Visual(inst.tkwin),
+      Tk.Depth(inst.tkwin).cuint,
+      X.ZPixmap,
+      0,
+      cast[cstring](inst.convertedBuffer),
+      inst.bufferWidth.cuint,
+      inst.bufferHeight.cuint,
+      32,
+      inst.bufferWidth * 4
+    )
+
+    if ximage != nil:
+      # We push the pixels directly into the context specified by Tk
+      # without strictly adhering to the requested offsets.
+      discard X.PutImage(display, drawable, inst.gc, ximage,
+                         imageX, imageY, drawableX, drawableY,
+                         width.cuint, height.cuint)
+      ximage.data = nil
+      discard X.DestroyImage(ximage)
+
 proc pix_displayProc(
   instanceData: Tcl.TClientData,
   display: ptr X.Display,
@@ -260,7 +308,10 @@ proc createPixImgType*(interp: Tcl.PInterp): ptr Tk.ImageType =
   imageType.name        = "pix"
   imageType.createProc  = pix_createProc
   imageType.getProc     = pix_getProc
-  imageType.displayProc = pix_displayProc
+  imageType.displayProc =  when defined(macosx):
+    (if Tcl.PATCH_LEVEL() >= "9.0.3": pix_displayProc2 else: pix_displayProc)
+  else:
+    pix_displayProc
   imageType.freeProc    = pix_freeProc
   imageType.deleteProc  = pix_deleteProc
 
