@@ -32,12 +32,10 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if source == nil:
     return pixUtils.errorMSG(interp, "pix(error): photo not found")
 
-  let
-    size = img.width * img.height * 4
-    imgDataCopy = img.data
+  let size = img.width * img.height * 4
 
   var
-    pblock : Tk.PhotoImageBlock
+    imgDataCopy = img.data
     imgData = cast[ptr UncheckedArray[uint8]](imgDataCopy[0].addr)
 
   {.push checks: off.}
@@ -49,6 +47,8 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
       imgData[offset+1] = ((imgData[offset+1].uint32 * m + 127) div 255).uint8
       imgData[offset+2] = ((imgData[offset+2].uint32 * m + 127) div 255).uint8
   {.pop.}
+
+  var pblock: Tk.PhotoImageBlock
 
   pblock.pixelPtr  = imgData
   pblock.width     = img.width.cint
