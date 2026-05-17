@@ -2282,19 +2282,9 @@ proc pix_ctx_getTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  let newListobj = Tcl.NewListObj(9, nil)
-
-  # Get the transformation matrix for the context.
-  let mat = ctx.getTransform()
-  for x in 0..2:
-    for y in 0..2:
-      if Tcl.ListObjAppendElement(
-          interp, newListobj, 
-          Tcl.NewDoubleObj(mat[x,y])
-      ) != Tcl.OK:
-        return Tcl.ERROR
-
-  Tcl.SetObjResult(interp, newListobj)
+  # Gets the transformation matrix for the context.
+  let matListobj = ctx.getTransform().addToListObj()
+  Tcl.SetObjResult(interp, matListobj)
 
   return Tcl.OK
 
