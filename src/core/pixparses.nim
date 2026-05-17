@@ -96,7 +96,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'shadow options' should be :key value ?key1 ?value1..."
+      "wrong # args: 'shadow options' should be :?key value key1 value1 ...?"
     )
 
   for i in countup(0, count - 1, 2):
@@ -112,7 +112,7 @@ proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow)
           raise newException(ValueError, $interp)
       of "offset":
         if getListDouble(interp, value, x, y,
-          "wrong # args: 'offset' should be 'x' 'y'") != Tcl.OK:
+          "wrong # args: 'offset' should be {x y}") != Tcl.OK:
           raise newException(ValueError, $interp)
         opts.offset = vec2(x, y)
       of "color":
@@ -144,7 +144,7 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'options' should be :key value ?key1 ?value1..."
+      "wrong # args: 'options' should be :key value ?key1 ?value1 ...?"
     )
 
   for i in countup(0, count - 1, 2):
@@ -209,7 +209,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'font options' should be :key value ?key1 ?value1..."
+      "wrong # args: 'font options' should be :?key value key1 value1 ...?"
     )
 
   for i in countup(0, count - 1, 2):
@@ -264,7 +264,7 @@ proc fontOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
 
       of "bounds":
         if getListDouble(interp, value, x, y,
-          "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
+          "wrong # args: 'bounds' should be {x y}") != Tcl.OK:
           raise newException(ValueError, $interp)
 
         opts.bounds = vec2(x, y)
@@ -293,7 +293,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'typeSet options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'typeSet options' should be :?key value key1 value1 ...?"
     )
 
   for i in countup(0, count - 1, 2):
@@ -317,7 +317,7 @@ proc typeSetOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOption
           raise newException(ValueError, move(e.msg))
       of "bounds":
         if getListDouble(interp, value, x, y,
-          "wrong # args: 'bounds' should be 'x' 'y'") != Tcl.OK:
+          "wrong # args: 'bounds' should be {x y}") != Tcl.OK:
           raise newException(ValueError, $interp)
 
         opts.bounds = vec2(x, y)
