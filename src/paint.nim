@@ -1,12 +1,12 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets a new paint.
+  # Creates and returns a new paint object.
   #
-  # paintKind - Enum value
+  # paintKind - Enum value (PaintKind)
   #
-  # Returns: A *new* [paint] object.
+  # Returns: A *new* handle [paint] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "enum:PaintKind")
     return Tcl.ERROR
@@ -28,26 +28,24 @@ proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   return Tcl.OK
 
 proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Configure paint object parameters.
+  # Configures the parameters of a paint object.
   #
-  # paint   - [paint]
-  # options - A Tcl dict (options described below)
+  # paint   - [paint] object handle
+  # options - A Tcl list of key-value pairs (see supported options below).
   #
   # #Begintable
-  #  **image**                   : A object [img].
-  #  **imageMat**                : A list matrix.
-  #  **color**                   : A string [color].
-  #  **blendMode**               : A Enum value.
-  #  **opacity**                 : A double value.
-  #  **gradientHandlePositions** : A list positions {{x y} {x y}}.
-  #  **gradientStops**           : A list [color] + color position (double value).
+  #  **image**                   : [img] object handle.
+  #  **imageMat**                : 3x3 transformation matrix (list of 9 numbers).
+  #  **color**                   : Color string.
+  #  **blendMode**               : Enum value (BlendMode).
+  #  **opacity**                 : Double value (0 to 1).
+  #  **gradientHandlePositions** : List coordinates {{x y} {x y}}.
+  #  **gradientStops**           : List of color stops {{offset color} {offset1 color1}}.
   # #EndTable
   #
   # Returns: Nothing.
   if objc != 3:
-    let errMsg = "wrong # args: <paint> {image? ?value imageMat? ?value color? ?value blendMode? " &
-    "?value gradientHandlePositions? ?value gradientStops? ?value opacity? ?value}"
-    Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
+    Tcl.WrongNumArgs(interp, 1, objv, "<paint> {?image value color value ...?}")
     return Tcl.ERROR
 
   var
@@ -67,7 +65,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   if count mod 2 != 0:
     return pixUtils.errorMSG(interp,
-      "wrong # args: 'dict options' should be key value ?key1 ?value1..."
+      "wrong # args: 'options' should be a list of {?key value key1 value1 ...?}"
     )
 
   try:
@@ -97,7 +95,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
             var positions = newSeq[vmath.Vec2]()
             for j in 0..subcount-1:
               if pixParses.getListDouble(interp, subelements[j], x, y, 
-                "wrong # args: 'gradient positions' should be 'x' 'y'") != Tcl.OK:
+                "wrong # args: 'gradient positions' should be {x y}") != Tcl.OK:
                 return Tcl.ERROR
 
               positions.add(vec2(x, y))
@@ -132,11 +130,11 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   return Tcl.OK
 
 proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create a new Paint with the same properties.
+  # Creates a copy of the specified paint object.
   #
-  # paint - [paint]
+  # paint - [paint] object handle
   #
-  # Returns: A *new* [paint] object.
+  # Returns: A *new* copied type [paint] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<paint>")
     return Tcl.ERROR
@@ -156,10 +154,10 @@ proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Fills with the Paint gradient.
+  # Fills an entire image using the gradient settings of the paint object.
   #
-  # paint - [paint]
-  # image - [img]
+  # paint - [paint] object handle
+  # image - [img] object handle
   #
   # Returns: Nothing.
   if objc != 3:
@@ -184,7 +182,7 @@ proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_paint_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Destroy current [paint] or all paints if special word `all` is specified.
+  # Destroy the [paint] or all paints if special word `all` is specified.
   #
   # value - [paint] object or string.
   #
