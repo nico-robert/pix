@@ -2,15 +2,14 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_font_readFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Try to read the font from the file located at the given path.
+  # Attempts to read a font from the specified file path.
   #
-  # filePath - file font
+  # filePath - path to the font file.
   #
-  # Pixie will take care of the rest (loading the font, verifying it, etc.).<br>
-  # If there is an error (like the file not existing), an exception will be
-  # raised which we will catch and return the error message.
+  # Pixie handles font loading and verification. If the file does not exist 
+  # or is invalid, an error message is returned.
   #
-  # Returns: A *new* [font] object.
+  # Returns: A *new* handle [font] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "filePath")
     return Tcl.ERROR
@@ -31,10 +30,10 @@ proc pix_font_readFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   return Tcl.OK
 
 proc pix_font_size(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets font Size (Same as pix::font::configure procedure).
+  # Sets the font size (Equivalent to `pix::font::configure`).
   #
-  # font  - [font::newFont]
-  # size  - double value
+  # font - [font] object handle
+  # size - Double value (in pixels)
   #
   # Returns: Nothing.
   if objc != 3:
@@ -57,10 +56,10 @@ proc pix_font_size(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   return Tcl.OK
 
 proc pix_font_color(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets font color (Same as pix::font::configure procedure).
+  # Sets the font color (Equivalent to `pix::font::configure`).
   #
-  # font  - [font::newFont]
-  # color - string [color]
+  # font  - [font::readFont] object handle
+  # color - color string (e.g., "red" or "#HEX")
   #
   # Returns: Nothing.
   if objc != 3:
@@ -81,16 +80,11 @@ proc pix_font_color(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_font_newFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create a new pixie.Font from the given *TypeFace* object.
+  # Creates a new [font] object from a given TypeFace.
   #
-  # typeface - [font::readTypeface]
+  # typeface - [readTypeface] object handle (created via `pix::font::readTypeface`)
   #
-  # The size of the font is set to 0 (which is the default value).
-  # The [paint] object is initialized with a default *Color (black)*.
-  # The text buffer is initialized with a default string ("").
-  # The flags are initialized with a default value of 0.
-  #
-  # Returns: A *new* [font].
+  # Returns: A *new* handle [font] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace>")
     return Tcl.ERROR
@@ -113,10 +107,10 @@ proc pix_font_newFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_font_newSpan(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets new Span.
   #
-  # font - [font::newFont]
+  # font - [font::readFont]
   # text - string
   #
-  # Returns: A *new* span object.
+  # Returns: A *new* handle <span> object.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<font> text")
     return Tcl.ERROR
@@ -139,13 +133,13 @@ proc pix_font_newSpan(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_font_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets font Paint if paint optional argument is set, otherwise gets the font paint.
   #
-  # font  - [font::newFont]
+  # font  - [font::readFont]
   # paint - [paint] (optional)
   #
   # Returns: 
-  # A *new* [paint] if no paint optional argument is set, otherwise set the font paint.
+  # A *new* handle [paint] object if no paint optional argument is set, otherwise set the font paint.
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<font> ?<paint>:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<font> ?<paint>?")
     return Tcl.ERROR
 
   # Font
@@ -172,9 +166,9 @@ proc pix_font_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_font_readTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Loads a typeface from a file.
   #
-  # filePath - file font
+  # filePath - file font (otf, ttc, ttf, svg)
   #
-  # Returns: A *new* Typeface object.
+  # Returns: A *new* handle <TypeFace> object.
   #
   # See also : [font::parseTtf] [font::parseOtf] [font::parseSvgFont]
   if objc != 2:
@@ -199,7 +193,7 @@ proc pix_font_readTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 proc pix_font_readTypefaces(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Loads a OpenType Collection (.ttc).
   #
-  # filePath - file font
+  # filePath - file font (ttc)
   #
   # Returns: A Tcl list with `Typeface` objects.
   if objc != 2:
@@ -223,17 +217,13 @@ proc pix_font_readTypefaces(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_font_ascent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # The font ascender value in font units.
+  # Gets the font ascender value in font units.<br>
   #
   # typeface - [font::readTypeface]
   #
-  # The ascender is the distance from the baseline to the highest point of any glyph in the font.
-  # This value is used to position text in the y-direction.
-  # The value is in the font's coordinate system.
-  # The value is in pixels but can be a floating point value.
-  # The value is positive.
+  # The ascender is the distance from the baseline to the highest point of any glyph.
   #
-  # Returns: A Tcl double value.
+  # Returns: A double value in pixels (always positive).
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace>")
     return Tcl.ERROR
@@ -251,27 +241,23 @@ proc pix_font_ascent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   return Tcl.OK
 
 proc pix_font_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Computes the bounds of an `arrangement` object.
+  # Computes the bounding box of a text arrangement.
   #
-  # arrangement - [font::typeset]
-  # transform   - matrix list (optional:mat3)
+  # arrangement - [font::typeset] object (from `pix::font::typeset`)
+  # transform   - optional 3x3 transformation matrix (optional:identityMatrix)
   #
-  # The bounds is the axis-aligned bounding box of all the glyphs in the
-  # arrangement. The bounds is computed in the arrangement's coordinate system.
-  # The bounds does not include the outline of the glyphs, only the filled
-  # region.
-  #
-  # If the transform argument is provided, the bounds is computed after applying
-  # the transformation matrix to the arrangement. The transformation matrix is
-  # a 3x3 matrix as a list of 9 elements.
+  # The bounds represent the axis-aligned bounding box of all filled glyph 
+  # regions in the arrangement's coordinate system.
   #
   # Returns: A Tcl dict value where:<br>
-  #    **x** : is the x offset of the top-left corner of the bounds.<br>
-  #    **y** : is the y offset of the top-left corner of the bounds.<br>
-  #    **w** : is the width of the bounds.<br>
-  #    **h** : is the height of the bounds.<br>
+  # #Begintable
+  #    **x** : The x offset of the top-left corner of the bounds.
+  #    **y** : The y offset of the top-left corner of the bounds.
+  #    **w** : The width of the bounds.
+  #    **h** : The height of the bounds.
+  # #EndTable
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> ?transform:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement> ?transform?")
     return Tcl.ERROR
 
   # Arrangement
@@ -311,7 +297,7 @@ proc pix_font_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   #
   # font - [font::readFont]
   #
-  # Returns: A *new* [font] object.
+  # Returns: A *new* handle [font] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<font>")
     return Tcl.ERROR
@@ -359,15 +345,13 @@ proc pix_font_defaultLineHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp
   return Tcl.OK
 
 proc pix_font_descent(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # The font descender value in font units.
+  # Gets the font descender value in font units.
   #
   # typeface - [font::readTypeface]
   #
-  # The descent is the distance from the baseline to the lowest point of any glyph in the font.
-  # This value is used to position text in the y-direction.
-  # The value is negative.
+  # The descent is the distance from the baseline to the lowest point of any glyph.
   #
-  # Returns: A value is in pixels but can be a floating point value.
+  # Returns: A double value in pixels (usually negative).
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace>")
     return Tcl.ERROR
@@ -404,12 +388,13 @@ proc pix_font_capHeight(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
 
 proc pix_font_fallbackTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Looks through fallback typefaces to find one that has the glyph.
+  # Searches through fallback typefaces to find one containing the specified character.
   #
-  # typeface - [font::readTypeface]
-  # char     - char
+  # typeface - [font::readTypeface] object handle.
+  # char     - the character to look for.
   #
-  # Returns: A *new* Tcl `TypeFace` or the arg `TypeFace` if typeface has glyph.
+  # Returns: A handle to the fallback typeface, or the original typeface if it 
+  # already contains the glyph.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace> char")
     return Tcl.ERROR
@@ -486,7 +471,7 @@ proc pix_font_getGlyphPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # typeface - [font::readTypeface]
   # char     - char
   #
-  # Returns: A *new* [path].
+  # Returns: A *new* handle [path] object.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace> char")
     return Tcl.ERROR
@@ -537,7 +522,7 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.TClientData, interp: Tcl.PInt
   #
   # Returns: A Tcl double value.
   if objc != 4:
-    Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace> char char")
+    Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace> char1 char2")
     return Tcl.ERROR
 
   # TypeFace
@@ -597,15 +582,12 @@ proc pix_font_hasGlyph(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   return Tcl.OK
 
 proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Computes the width and height in pixels.
+  # Computes the logical width and height (in pixels) of the given object.
   #
-  # object - [font::typeset], [font::readFont] or [font::newSpan]
-  # text   - string (if [font] object is present)
+  # object - [typeset], [readFont] or [newSpan] object.
+  # text   - required only if a [font] object is provided.
   #
-  # The bounds does not include the outline of the glyphs, only the filled region.
-  #
-  # Returns: A Tcl list value {x y} where the x is the width of the bounds in pixels,
-  # and the y is the height of the bounds in pixels.
+  # Returns: A Tcl list {width height}.
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv,
       "<Arrangement> or <font> + 'text' or <span>"
@@ -630,7 +612,7 @@ proc pix_font_layoutBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     let font = ptable.getFont(arg1)
     if objc != 3:
       return pixUtils.errorMSG(interp,
-        "pix(error): If <font> is present, a 'text' must be associated."
+        "pix(error): 'text' argument missing; required when the first argument is a <font> object."
       )
 
     bounds = font.layoutBounds($objv[2])
@@ -739,7 +721,7 @@ proc pix_font_parseOtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   # The goal is to take a string buffer containing an Otf *(Open Type Font)*
   # and parse it into a TypeFace object.
   #
-  # Returns: A *new* TypeFace object.
+  # Returns: A *new* handle <TypeFace> object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
@@ -764,10 +746,10 @@ proc pix_font_parseSvgFont(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   #
   # buffer - string
   #
-  # The *pix::font::parseSvgFont* function is used to interpret the string as an SVG font
+  # The `pix::font::parseSvgFont` function is used to interpret the string as an SVG font
   # and convert it into a `TypeFace` object.
   #
-  # Returns: A *new* TypeFace object.
+  # Returns: A *new* handle <TypeFace> object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
@@ -792,10 +774,10 @@ proc pix_font_parseTtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   #
   # buffer - string
   #
-  # The *pix::font::parseTtf* function is used to interpret the string as a Ttf
+  # The `pix::font::parseTtf` function is used to interpret the string as a Ttf
   # (TrueType Font) and convert it into a `TypeFace` object.
   #
-  # Returns: A *new* TypeFace object.
+  # Returns: A *new* handle <TypeFace> object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "buffer")
     return Tcl.ERROR
@@ -859,10 +841,10 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # **wrap**   : A boolean value.
   # #EndTable
   #
-  # Returns: A *new* arrangement object.
+  # Returns: A *new* handle <arrangement> object.
   if objc notin (2..4):
-    let errMsg = "<font> 'text' {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value} or " &
-    "<span> {?bounds ?value ?hAlign ?value ?vAlign ?value ?wrap ?value}"
+    let errMsg = "<font> 'text' {?bounds value ?hAlign value ?vAlign value ?wrap value} or " &
+    "<span> {?bounds value ?hAlign value ?vAlign value ?wrap value}"
     Tcl.WrongNumArgs(interp, 1, objv, errMsg.cstring)
     return Tcl.ERROR
 
@@ -884,7 +866,7 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     font = ptable.getFont(arg1)
     if objc < 3:
       return pixUtils.errorMSG(interp,
-        "pix(error): If <font> is present, a 'text' must be associated."
+        "pix(error): 'text' argument missing; required when the first argument is a <font> object."
       )
     text = $objv[2]
   else:
@@ -939,20 +921,18 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # options - A Tcl dict, see description below.
   #
   # #Begintable
-  #  **noKerningAdjustments** : A boolean value.
-  #  **underline**            : A boolean value.
-  #  **strikethrough**        : A boolean value.
-  #  **size**                 : A double value.
-  #  **lineHeight**           : A double value.
-  #  **paint**                : A list of [paint] objects.
-  #  **color**                : A string [color].
+  # **noKerningAdjustments** : Boolean.
+  # **underline**            : Boolean.
+  # **strikethrough**        : Boolean.
+  # **size**                 : Double (pixels).
+  # **lineHeight**           : Double (pixels).
+  # **color**                : Color string.
+  # **paint**                : [paint] object.
   # #EndTable
   #
   # Returns: Nothing.
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv,
-      "<font> {?size ?value ?noKerningAdjustments ?value ?lineHeight ?value}"
-    )
+    Tcl.WrongNumArgs(interp, 1, objv, "<font> {?size value ...?}")
     return Tcl.ERROR
 
   # Font
@@ -971,7 +951,7 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   if count mod 2 != 0:
     return pixUtils.errorMSG(interp,
-      "wrong # args: 'dict options' should be :key value ?key1 ?value1 ..."
+      "wrong # args: 'options' should be a list of {?key value ...?}"
     )
 
   for i in countup(0, count - 1, 2):
@@ -1028,20 +1008,12 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
 
 proc pix_font_selectionRects(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Gets coordinates rectangle for [font::typeset].
+  # Gets the selection rectangles for a text arrangement.
   #
-  # arrangement - [font::typeset]
+  # arrangement - [font::typeset] object handle.
   #
-  # The selectionRects method returns a seq of vec4 that represents the
-  # coordinates of the rectangles that are used to render the text for
-  # the given arrangement object.
-  #
-  # The coordinates are in the format *(x, y, w, h)* where:
-  #  x and y are the top-left corner of the rectangle
-  #  w and h are the width and height of the rectangle
-  #
-  # Returns: A Tcl dictionary with keys that contains the coordinates of the rectangle
-  # in the format *(x, y, w, h)*.
+  # Returns: A Tcl dictionary where each value represents 
+  # a selection rectangle {x y w h}.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<Arrangement>")
     return Tcl.ERROR
@@ -1066,7 +1038,7 @@ proc pix_font_selectionRects(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   return Tcl.OK
 
 proc pix_font_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Destroy current font or all fonts if special word `all` is specified.
+  # Destroy the [font] or all fonts if special word `all` is specified.
   #
   # value - [font::readFont] or string
   #
