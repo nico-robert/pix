@@ -175,7 +175,7 @@ proc options*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderResvgOpts) =
 
   if count mod 2 != 0:
     raise newException(ValueError,
-      "wrong # args: 'dict options' should be :key value ?key1 ?value1..."
+      "wrong # args: 'dict options' should be :?key value key1 value1 ...?"
     )
 
   for i in countup(0, count - 1, 2):

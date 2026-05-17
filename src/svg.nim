@@ -1,11 +1,11 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Parse SVG XML. Defaults to the SVG's view box size.
   #
   # svg  - string data
-  # size - list width,height (optional:SVGviewbox)
+  # size - A list {width height} (optional:SVGviewbox)
   # opts - dict options (if compiled with **resvg** lib) (optional)
   #
   #  **resvg** dictionary options. The options are:<br>
@@ -28,11 +28,11 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   #  **loadSystemFonts**    : Loads system fonts into the internal fonts database.
   #  #EndTable
   #
-  # Returns: A *new* [svg] object.
+  # Returns: A *new* handle [svg] object.
   when defined(resvg):
     if objc notin (2..4):
       Tcl.WrongNumArgs(interp, 1, objv,
-        "'svg string' ?{width height} ?opts"
+        "'svg string' ?size? ?opts?"
       )
       return Tcl.ERROR
 
@@ -47,7 +47,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
       # Size
       if pixParses.getListInt(interp, objv[2], width, height, 
-        "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
+        "wrong # args: 'size' should be '{width height}") != Tcl.OK:
         return Tcl.ERROR
 
       var opts = RenderResvgOpts()
@@ -62,7 +62,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
       # Size
       if pixParses.getListInt(interp, objv[2], width, height, 
-        "wrong # args: 'size' should be 'width' 'height'") == Tcl.OK:
+        "wrong # args: 'size' should be '{width height}") == Tcl.OK:
         svg = resvg.parse(arg1, width, height)
       else:
         var opts = RenderResvgOpts()
@@ -85,7 +85,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   else:
     if objc notin [2, 3]:
       Tcl.WrongNumArgs(interp, 1, objv,
-        "'svg string' ?{width height}:optional"
+        "'svg string' ?size?"
       )
       return Tcl.ERROR
 
@@ -100,7 +100,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
       # Size
       if pixParses.getListInt(interp, objv[2], width, height, 
-        "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
+        "wrong # args: 'size' should be '{width height}") != Tcl.OK:
         return Tcl.ERROR
 
       try:
@@ -125,7 +125,7 @@ proc pix_svg_newImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   #
   # svg - [svg::parse]
   #
-  # Returns: A *new* [img] object.
+  # Returns: A *new* handle [img] object.
   if objc != 2:
     let text = if defined(resvg): "<resvg>" else: "<svg>"
     Tcl.WrongNumArgs(interp, 1, objv, text.cstring)
@@ -159,7 +159,7 @@ proc pix_svg_newImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pix_svg_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Destroy current svg or all svgs if special word `all` is specified.
+  # Destroy the [svg] or all svgs if special word `all` is specified.
   #
   # value - [svg::parse] or string.
   #
