@@ -35,7 +35,7 @@ proc parseExample {file} {
 }
 
 lappend auto_path [file dirname [file dirname [file dirname [info script]]]]
-package require ruff 2.7
+package require ruff 3.0
 
 set dirpix [file dirname [file dirname [info script]]]
 
@@ -63,7 +63,7 @@ namespace eval ::pix {
         Source distributions and binary packages can be downloaded [here](https://github.com/nico-robert/pix/releases) for the platforms mentioned
         above.
 
-        **Note**: I have mainly tested this package on Windows and MacOs x64 with version *8.6.16* and *9.0.1* of Tcl/Tk, it should work on Linux and
+        **Note**: I have mainly tested this package on Windows and MacOs x64 with version *8.6.16* and *9.0.3* of Tcl/Tk, it should work on Linux and
         MacOS arm (I hope so!)
 
         #### Example
@@ -176,48 +176,44 @@ foreach dirName {
             miterLimit    - double
             lineCap       - Enum LineCap
             lineJoin      - Enum LineJoin
-            font          - string ## File path to a .ttf or .otf file.
+            font          - string filePath to a .ttf or .otf file.
             fontSize      - double
             textAlign     - Enum HorizontalAlignment
             textBaseline  - Enum BaselineAlignment
 
             #### Enum BaselineAlignment:
-            BaselineAlignment - enum
-            TopBaseline - &nbsp;
-            HangingBaseline - &nbsp;
-            MiddleBaseline - &nbsp;
-            AlphabeticBaseline - &nbsp;
-            IdeographicBaseline - &nbsp;
-            BottomBaseline - &nbsp;
+            * TopBaseline
+            * HangingBaseline
+            * MiddleBaseline
+            * AlphabeticBaseline 
+            * IdeographicBaseline
+            * BottomBaseline
 
         }}
     } elseif {$name eq "font"} {
         set ns "font"
         set preamble {{
             #### Enum HorizontalAlignment:
-            HorizontalAlignment  - enum
-            LeftAlign            - &nbsp;
-            CenterAlign          - &nbsp;
-            RightAlign           - &nbsp;
+            * LeftAlign
+            * CenterAlign
+            * RightAlign
 
             #### Enum VerticalAlignment:
-            VerticalAlignment    - enum
-            TopAlign             - &nbsp;
-            MiddleAlign          - &nbsp;
-            BottomAlign          - &nbsp;
+            * TopAlign   
+            * MiddleAlign
+            * BottomAlign
 
         }}
     } elseif {$name eq "paint"} {
         set ns "paint"
         set preamble {{
             #### Enum PaintKind:
-            PaintKind             - enum
-            SolidPaint            - &nbsp;
-            ImagePaint            - &nbsp;
-            TiledImagePaint       - &nbsp;
-            LinearGradientPaint   - &nbsp;
-            RadialGradientPaint   - &nbsp;
-            AngularGradientPaint  - &nbsp;
+            * SolidPaint          
+            * ImagePaint          
+            * TiledImagePaint     
+            * LinearGradientPaint 
+            * RadialGradientPaint 
+            * AngularGradientPaint
         }}
 
     } elseif {$name eq "image"} {
@@ -225,20 +221,17 @@ foreach dirName {
     } elseif {$name eq "paths"} {
         set ns "path"
         set preamble {{
-            #### Enum Winding rules:
-            WindingRule  - enum
-            NonZero      - &nbsp;
-            EvenOdd      - &nbsp;
-            #### Enum Line cap type for strokes:
-            LineCap      - enum
-            ButtCap      - &nbsp;
-            RoundCap     - &nbsp;
-            SquareCap    - &nbsp;
-            #### Enum Line join type for strokes:
-            LineJoin      - enum
-            MiterJoin    - &nbsp;
-            RoundJoin    - &nbsp;
-            BevelJoin    - &nbsp;
+            #### Enum WindingRule:
+            * NonZero
+            * EvenOdd
+            #### Enum LineCap:
+            * ButtCap  
+            * RoundCap 
+            * SquareCap
+            #### Enum LineJoin:
+            * MiterJoin
+            * RoundJoin
+            * BevelJoin
         }}
 
     } elseif {$name eq "svg"} {
@@ -369,45 +362,50 @@ puts $fp "namespace eval pix::color {
 puts $fp "* The following color formats can be used:"
 
 # Color
-puts $fp "rgba - e.g : *rgba(x,x,x,x)*<br>"
-puts $fp "This format takes four arguments, for the *red*, *green*, *blue*, and"
-puts $fp "*alpha* components of the color. The arguments are all **integers**"
-puts $fp "numbers between **0** and **255**."
+puts $fp "rgba - e.g : *rgba(r,g,b,a)*<br>"
+puts $fp "This format takes four arguments: *red*, *green*, and *blue* as **integers**"
+puts $fp "between **0** and **255**, and *alpha* as a **floating-point** number between **0.0** and **1.0**."
+
 puts $fp "hexHtml - e.g : *#F8D1DD*<br>"
-puts $fp "This format takes a single argument, which is a string in the"
-puts $fp "format of a hex code. The hex code should be **7**"
-puts $fp "characters long (including the # symbol), and each character (except #) should be a valid hex digit."
-puts $fp "rgb - e.g : *rgb(x,x,x)*<br>"
-puts $fp "This format takes three arguments, for the red, green, and blue"
-puts $fp "components of the color. The arguments are all **integers**"
-puts $fp "numbers between **0** and **255**."
+puts $fp "This format takes a single string argument representing a hexadecimal color code."
+puts $fp "The hex code must be **7** characters long (including the '#' symbol), and each"
+puts $fp "subsequent character must be a valid hexadecimal digit."
+
+puts $fp "rgb - e.g : *rgb(r,g,b)*<br>"
+puts $fp "This format takes three arguments for the *red*, *green*, and *blue*"
+puts $fp "components of the color. All arguments are **integer** numbers between **0** and **255**."
+
 puts $fp "hexalpha - e.g : *FF0000FF*<br>"
-puts $fp "Hexadecimal characters (uppercase or lowercase)."
-puts $fp "Length of **8** characters (typical for an **RGBA** color)"
+puts $fp "A string of **8** hexadecimal characters (case-insensitive), typically representing"
+puts $fp "an **RGBA** color format."
+
 puts $fp "hex - e.g : *FF0000*<br>"
-puts $fp "Hexadecimal characters (uppercase or lowercase)."
-puts $fp "Length of **6** characters (typical for an **RGB** color)"
-puts $fp "rgbx - e.g : *rgbx(x,x,x,x)*<br>"
-puts $fp "This format takes four arguments, for the *red*, *green*, *blue*, and"
-puts $fp "*alpha* components of the color. The arguments are all **integers**"
-puts $fp "numbers between **0** and **255**."
+puts $fp "A string of **6** hexadecimal characters (case-insensitive), typically representing"
+puts $fp "an **RGB** color format."
+
+puts $fp "rgbx - e.g : *rgbx(r,g,b,x)*<br>"
+puts $fp "This format takes four arguments: *red*, *green*, *blue*, and *alpha* components."
+puts $fp "Unlike standard rgba, all four arguments in this format are **integers** between **0** and **255**."
+
 puts $fp "simple color - e.g : *{0.0 0.0 0.0 0.0}* or *{0.0 0.0 0.0}*<br>"
-puts $fp "This format takes a list of **three or four**"
-puts $fp "floating point numbers between **0.0** and **1.0**. The numbers are the"
-puts $fp "*red*, *green*, *blue*, and optionally *alpha* components of the color."
+puts $fp "This format takes a Tcl list of **three or four floating-point** numbers"
+puts $fp "between **0.0** and **1.0**, representing the *red*, *green*, *blue*, and optional *alpha* components."
+
 puts $fp "string color - e.g : *white*<br>"
-puts $fp "HTML color as a name."
+puts $fp "A standard HTML or CSS color specified by its name."
+
 puts $fp "hsv - e.g : *hsv(h,s,v)*<br>"
-puts $fp "This format takes three arguments, for the *hue*, *saturation*, and"
-puts $fp "*value* components of the color. The arguments are all floating point."
-puts $fp "hue 0 to 360, saturation 0 to 100, and value 0 to 100."
+puts $fp "This format takes three floating-point arguments for *hue* (**0 to 360**),"
+puts $fp "*saturation* (**0 to 100**), and *value* (**0 to 100**) components."
+
 puts $fp "hsl - e.g : *hsl(h,s,l)*<br>"
-puts $fp "This format takes three arguments, for the *hue*, *saturation*, and"
-puts $fp "*lightness* components of the color. The arguments are all floating point."
-puts $fp "hue 0 to 360, saturation 0 to 100, and lightness 0 to 100."
+puts $fp "This format takes three floating-point arguments for *hue* (**0 to 360**),"
+puts $fp "*saturation* (**0 to 100**), and *lightness* (**0 to 100**) components."
+
 puts $fp "tiny hex - e.g : *#FF6*<br>"
-puts $fp "This format is a shorthand hexadecimal notation with **4** characters"
-puts $fp "(including the # symbol), where each hex digit is doubled (e.g., #RGB becomes #RRGGBB)."
+puts $fp "A shorthand hexadecimal notation of **4** characters (including the '#' symbol),"
+puts $fp "where each color digit is automatically doubled (e.g., #RGB expands to #RRGGBB)."
+
 puts $fp "}"
 puts $fp "}"
 
@@ -473,6 +471,7 @@ if {$version eq ""} {
 ::ruff::document "::examples ::changes ::pix [namespace children ::pix]" \
                  -title "pix ${version}: Reference Manual" \
                  -sortnamespaces true \
+                 --include "classes procs" \
                  -preamble $::pix::_intro \
                  -compact false \
                  -pagesplit namespace \
