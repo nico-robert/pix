@@ -1,10 +1,10 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 
 proc pix_path(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets a new path.
+  # Creates and returns a new path object.
   #
-  # Returns: A *new* [path] object.
+  # Returns: A *new* handle [path] object.
   let ptable = cast[PixTable](clientData)
   let path = newPath()
 
@@ -16,10 +16,10 @@ proc pix_path(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
   return Tcl.OK
 
 proc pix_path_addPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Adds a path to the current path.
+  # Appends the geometry of another path to the current path.
   # 
-  # path1 - [path]
-  # path2 - [path]
+  # path1 - destination [path] object handle
+  # path2 - source [path] object handle
   #
   # Returns: Nothing.
   if objc != 3:
@@ -42,7 +42,7 @@ proc pix_path_addPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_path_angleToMiterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts miter-limit-angle to miter-limit-ratio.
   # 
-  # angle - double value (radian)
+  # angle - Double value (radian)
   #
   # Returns: A Tcl double value.
   if objc != 2:
@@ -63,7 +63,7 @@ proc pix_path_angleToMiterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp
 proc pix_path_miterLimitToAngle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts miter-limit-ratio to miter-limit-angle.
   # 
-  # angle - double value (radian)
+  # angle - Double value (radian)
   #
   # Returns: A Tcl double value.
   if objc != 2:
@@ -85,16 +85,16 @@ proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   # Adds a circular arc to the current sub-path.
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # radius       - double value
-  # angle0       - double value (radian)
-  # angle1       - double value (radian)
-  # ccw          - boolean value (optional:false)
+  # coordinates  - A list {x y}
+  # radius       - Double value
+  # angle0       - Double value (radian)
+  # angle1       - Double value (radian)
+  # ccw          - Boolean value (optional:false)
   #
   # Returns: Nothing.
   if objc notin [6, 7]:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x y} r a0 a1 ?ccw:optional"
+      "<path> coordinates radius angle0 angle1 ?ccw?"
     )
     return Tcl.ERROR
 
@@ -110,7 +110,7 @@ proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   if Tcl.GetDoubleFromObj(interp, objv[3], r)  != Tcl.OK or
@@ -132,17 +132,16 @@ proc pix_path_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
 proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a circular arc using the given control points and radius.
-  # Commonly used for making rounded corners.
   # 
   # path          - [path]
-  # coordinates1  - list x1,y1
-  # coordinates2  - list x2,y2
-  # radius        - double value
+  # coordinates1  - A list {x1 y1}
+  # coordinates2  - A list {x2 y2}
+  # radius        - Double value
   #
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x1 y1} {x2 y2} radius"
+      "<path> coordinates1 coordinates2 radius"
     )
     return Tcl.ERROR
 
@@ -155,12 +154,12 @@ proc pix_path_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   var x1, y1, x2, y2, radius: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x1, y1, 
-    "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
+    "wrong # args: 'coordinates1' should be {x1 y1}") != Tcl.OK:
     return Tcl.ERROR
 
   # Coordinates2
   if pixParses.getListDouble(interp, objv[3], x2, y2, 
-    "wrong # args: 'coordinates2' should be 'x2' 'y2'") != Tcl.OK:
+    "wrong # args: 'coordinates2' should be {x2 y2}") != Tcl.OK:
     return Tcl.ERROR
 
   # Radius
@@ -178,19 +177,19 @@ proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   # Adds a cubic Bézier curve to the current sub-path.
   # 
   # path          - [path]
-  # coordinates1  - list x1,y1
-  # coordinates2  - list x2,y2
-  # coordinates3  - list x3,y3
+  # coordinates1  - A list {x1 y1}
+  # coordinates2  - A list {x2 y2}
+  # coordinates3  - A list {x3 y3}
   #
-  # It requires three points:
+  # It requires three points:<br>
   # the first two are control points and the third one is the end point.
   # The starting point is the latest point in the current path, 
-  # which can be changed using *pix::path::moveTo* before creating the Bézier curve.
+  # which can be changed using `pix::path::moveTo` before creating the Bézier curve.
   #
   # Returns: Nothing.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x1 y1} {x2 y2} {x3 y3}"
+      "<path> coordinates1 coordinates2 coordinates3"
     )
     return Tcl.ERROR
 
@@ -203,17 +202,17 @@ proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   var x1, y1, x2, y2, x3, y3: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x1, y1, 
-    "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
+    "wrong # args: 'coordinates1' should be {x1 y1}") != Tcl.OK:
     return Tcl.ERROR
 
   # Coordinates2
   if pixParses.getListDouble(interp, objv[3], x2, y2, 
-    "wrong # args: 'coordinates2' should be 'x2' 'y2'") != Tcl.OK:
+    "wrong # args: 'coordinates2' should be {x2 y2}") != Tcl.OK:
     return Tcl.ERROR
 
   # Coordinates3
   if pixParses.getListDouble(interp, objv[4], x3, y3, 
-    "wrong # args: 'coordinates3' should be 'x3' 'y3'") != Tcl.OK:
+    "wrong # args: 'coordinates3' should be {x3 y3}") != Tcl.OK:
     return Tcl.ERROR
 
   path.bezierCurveTo(x1, y1, x2, y2, x3, y3)
@@ -221,14 +220,14 @@ proc pix_path_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_path_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Begins a new sub-path at the point (x, y).
+  # Begins a new sub-path at the point {x y}.
   # 
   # path         - [path]
-  # coordinates  - list x,y
+  # coordinates  - A list {x y}
   #
   # Returns: Nothing.
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y}")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates")
     return Tcl.ERROR
 
   # Path
@@ -240,7 +239,7 @@ proc pix_path_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   var x, y: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   path.moveTo(x, y)
@@ -249,14 +248,14 @@ proc pix_path_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
 proc pix_path_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a straight line to the current sub-path by connecting
-  # the sub-path's last point to the specified (x, y) coordinates.
+  # the sub-path's last point to the specified {x y} coordinates.
   # 
   # path         - [path]
-  # coordinates  - list x,y
+  # coordinates  - A list {x y}
   #
   # Returns: Nothing.
   if objc != 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y}")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates")
     return Tcl.ERROR
 
   # Path
@@ -268,7 +267,7 @@ proc pix_path_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   var x, y: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   path.lineTo(x, y)
@@ -277,10 +276,12 @@ proc pix_path_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
 proc pix_path_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Attempts to add a straight line from the current point to the start
-  # of the current sub-path. If the shape has already been closed or
-  # has only one point, this function does nothing.
+  # of the current sub-path.
   # 
   # path - [path]
+  #
+  # If the shape has already been closed or
+  # has only one point, this function does nothing.
   #
   # Returns: Nothing.
   if objc != 2:
@@ -297,17 +298,16 @@ proc pix_path_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
     
 proc pix_path_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Adds an n-sided regular polygon at (x, y) with the parameter size.
-  # Polygons "face" north.
+  # Adds an n-sided regular polygon at {x y} with the parameter size.
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # size         - double value
-  # sides        - integer value
+  # coordinates  - A list {x y}
+  # size         - Double value
+  # sides        - Integer value
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} size sides")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates size sides")
     return Tcl.ERROR
 
   # Path
@@ -321,7 +321,7 @@ proc pix_path_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   # Coordinates polygon
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   # Size
@@ -343,14 +343,14 @@ proc pix_path_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   # a rect from a path when using even-odd winding rule.
   # 
   # path          - [path]
-  # coordinates   - list x,y
-  # size          - list width,height
-  # ccw           - boolean value (optional:true)
+  # coordinates   - A list {x y}
+  # size          - A list {width height}
+  # ccw           - Boolean value (optional:true)
   #
   # Returns: Nothing.
   if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x y} {width height} ?ccw:optional"
+      "<path> coordinates size ?ccw?"
     )
     return Tcl.ERROR
 
@@ -366,12 +366,12 @@ proc pix_path_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   # Size
   if pixParses.getListDouble(interp, objv[3], width, height, 
-    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
+    "wrong # args: 'size' should be {width height}") != Tcl.OK:
     return Tcl.ERROR
 
   if objc == 5:
@@ -387,12 +387,12 @@ proc pix_path_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   # Adds a circle.
   # 
   # path          - [path]
-  # coordinates   - list cx,cy
-  # radius        - double value
+  # coordinates   - A list {cx cy}
+  # radius        - Double value
   #
   # Returns: Nothing.
   if objc != 4:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {cx cy} r")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates radius")
     return Tcl.ERROR
 
   # Path
@@ -404,7 +404,7 @@ proc pix_path_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   var cx, cy, radius: cdouble
 
   if pixParses.getListDouble(interp, objv[2], cx, cy, 
-    "wrong # args: 'coordinates' should be 'cx' 'cy'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {cx cy}") != Tcl.OK:
     return Tcl.ERROR
 
   # Radius
@@ -416,24 +416,16 @@ proc pix_path_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   return Tcl.OK
 
 proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Returns whether or not the specified point is contained in the current path.
-  # 
-  # path          - [path]
-  # coordinates   - list x,y
-  # matrix        - list (optional:mat3)
-  # windingRule   - Enum value (optional:NonZero)
+  # Checks whether a given point is inside the filled region of the path.
   #
-  # The point is transformed into the path's coordinate system
-  # before the overlap check is done. The transformation matrix is
-  # given in the 'matrix' argument, which is a list of 9 double values.
-  # If the 'matrix' argument is not given, the identity matrix is used.
-  # The overlap check is done with the given 'windingRule' argument,
-  # which is a enum value. If the 'windingRule' argument is not given,
-  # the default value 'NonZero' is used.
+  # path        - [path] object handle
+  # coordinates - A Tcl list {x y} (the point to test)
+  # windingRule - Optional enum value (WindingRule, defaults to `NonZero`)
+  # transform   - An optional 3x3 transformation matrix (optional:identityMatrix)
+  #
+  # Returns: True if the point overlaps the filled area, false otherwise.
   if objc notin (3..5):
-    Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x y} or <path> {x y} 'matrix' or <path> {x y} 'matrix' enum:windingRule"
-    )
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates ?windingRule? ?transform?")
     return Tcl.ERROR
 
   # Path
@@ -445,7 +437,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   var x, y: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   let windingRule = 
@@ -473,10 +465,10 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   return Tcl.OK
 
 proc pix_path_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Apply a matrix transform to a path.
-  # 
-  # path    - [path]
-  # matrix  - list
+  # Applies an affine transformation matrix to the path.
+  #
+  # path      - [path] object handle
+  # matrix3x3 - A 3x3 transformation matrix (list of 9 numbers)
   #
   # Returns: Nothing.
   if objc != 3:
@@ -499,14 +491,14 @@ proc pix_path_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
   
 proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Compute the bounds of the path.
-  # 
-  # path    - [path]
-  # matrix  - list (9 values) (optional:mat3())
+  # Computes the bounding box enclosing the path.
   #
-  # Returns: A Tcl dictionary with keys *(x, y, w, h)*.
+  # path      - [path] object handle
+  # transform - An optional 3x3 transformation matrix (optional:identityMatrix)
+  #
+  # Returns: A Tcl dictionary with keys {x y w h} representing the bounding box.
   if objc notin [2 ,3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> ?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> ?matrix?")
     return Tcl.ERROR
 
   # Path
@@ -542,7 +534,7 @@ proc pix_path_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   #
   # path - [path]
   #
-  # Returns: A *new* [path] object.
+  # Returns: A *new* handle [path] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<path>")
     return Tcl.ERROR
@@ -565,13 +557,13 @@ proc pix_path_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Adds a ellipse.
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # rx           - double value
-  # ry           - double value
+  # coordinates  - A list {x y}
+  # rx           - Double value
+  # ry           - Double value
   #
   # Returns: Nothing.
   if objc != 5:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x y} rx ry")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates rx ry")
     return Tcl.ERROR
 
   # Path
@@ -583,7 +575,7 @@ proc pix_path_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   var x, y, rx, ry: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   # Radius
@@ -599,17 +591,17 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
   # Adds an elliptical arc to the current sub-path, 
   # using the given radius ratios, sweep flags, and end position. 
   # 
-  # path                - [path]
-  # coordinates_radius  - list rx,ry
-  # xAxisRotation       - double value
-  # largeArcFlag        - boolean value
-  # sweepFlag           - boolean value
-  # coordinates         - list x,y 
+  # path           - [path]
+  # coordinates    - A list {rx ry}
+  # xAxisRotation  - Double value
+  # largeArcFlag   - Boolean value
+  # sweepFlag      - Boolean value
+  # coordinates    - A list {x y} 
   #
   # Returns: Nothing.
   if objc != 7:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {rx ry} xAxisRotation largeArcFlag sweepFlag {x y}"
+      "<path> coordinates xAxisRotation largeArcFlag sweepFlag {x y}"
     )
     return Tcl.ERROR
 
@@ -624,7 +616,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
 
   # Coordinates radius
   if pixParses.getListDouble(interp, objv[2], rx, ry, 
-    "wrong # args: 'radius coordinates' should be 'rx' 'ry'") != Tcl.OK:
+    "wrong # args: 'radius coordinates' should be {rx ry}") != Tcl.OK:
     return Tcl.ERROR
 
   # Radius
@@ -635,7 +627,7 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[6], x, y, 
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   path.ellipticalArcTo(rx, ry, xAxisRotation, largeA.bool, sweepF.bool, x, y)
@@ -643,18 +635,20 @@ proc pix_path_ellipticalArcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
   return Tcl.OK
 
 proc pix_path_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Adds a quadratic Bézier curve to the current sub-path. It requires two points:
-  # the first one is a control point and the second one is the end point.
-  # The starting point is the latest point in the current path, which can be changed
-  # using moveTo() before creating the quadratic Bézier curve.
+  # Adds a quadratic Bézier curve to the current sub-path.
   # 
   # path         - [path]
-  # coordinates1 - list x1,y1
-  # coordinates2 - list x2,y2
+  # coordinates1 - A list {x1 y1}
+  # coordinates2 - A list {x2 y2}
+  #
+  # It requires two points:<br>
+  # The first one is a control point and the second one is the end point.
+  # The starting point is the latest point in the current path, which can be changed
+  # using `pix::path::moveTo` before creating the quadratic Bézier curve.
   #
   # Returns: Nothing.
   if objc != 4:
-    Tcl.WrongNumArgs(interp, 1, objv, "<path> {x1 y1} {x2 y2}")
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> coordinates1 coordinates2")
     return Tcl.ERROR
 
   # Path
@@ -666,12 +660,12 @@ proc pix_path_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   var x1, y1, x2, y2: cdouble
 
   if pixParses.getListDouble(interp, objv[2], x1, y1,
-    "wrong # args: 'coordinates1' should be 'x1' 'y1'") != Tcl.OK:
+    "wrong # args: 'coordinates1' should be {x1 y1}") != Tcl.OK:
     return Tcl.ERROR
 
   # Coordinates2
   if pixParses.getListDouble(interp, objv[3], x2, y2,
-    "wrong # args: 'coordinates2' should be 'x2' 'y2'") != Tcl.OK:
+    "wrong # args: 'coordinates2' should be {x2 y2}") != Tcl.OK:
     return Tcl.ERROR
 
   path.quadraticCurveTo(x1, y1, x2, y2)
@@ -683,15 +677,15 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # rect from a path when using even-odd winding rule. 
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # size         - list width,height
-  # radius       - list {nw ne se sw}
-  # ccw          - boolean value (optional:true)
+  # coordinates  - A list {x y}
+  # size         - A list {width height}
+  # radius       - A list {nw ne se sw}
+  # ccw          - Boolean value (optional:true)
   #
   # Returns: Nothing.
   if objc notin [5, 6]:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x y} {width height} {nw ne se sw} ?ccw:optional"
+      "<path> coordinates size radius ?ccw?"
     )
     return Tcl.ERROR
 
@@ -709,12 +703,12 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Coordinates
   if pixParses.getListDouble(interp, objv[2], x, y,
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   # Size
   if pixParses.getListDouble(interp, objv[3], width, height,
-    "wrong # args: 'size' should be 'width' 'height'") != Tcl.OK:
+    "wrong # args: 'size' should be {width height}") != Tcl.OK:
     return Tcl.ERROR
 
   # Radius
@@ -723,7 +717,7 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   if count != 4:
     return pixUtils.errorMSG(interp,
-      "wrong # args: 'radius' should be 'nw' 'ne' 'se' 'sw'"
+      "wrong # args: 'radius' should be {nw ne se sw}"
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], nw) != Tcl.OK or
@@ -742,11 +736,11 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   return Tcl.OK
 
 proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Checks if a point is inside the stroking of a path.
+  # Checks whether a given point intersects the stroked outline of the path.
   #
-  # path         - The [path] object to check.
-  # coordinates  - The coordinates x,y to check against the path.
-  # options      - Tcl dictionary (optional)
+  # path        - [path] object handle
+  # coordinates - A Tcl list {x y} (the point to test)
+  # options     - An optional dictionary of stroke rendering settings (optional).
   # 
   # If the dictionary is present it should contain the following keys:<br>
   # #Begintable
@@ -758,13 +752,10 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   # **dashes**      : The dashes to apply to the stroke.
   # #EndTable
   #
-  # Returns whether or not the specified point is inside the area
-  # contained by the stroking of a path. The point is considered
-  # inside if it is contained in the stroked path and not in any
-  # holes.
+  # Returns: True if the point overlaps the stroke outline, false otherwise.
   if objc notin [3, 4]:
     Tcl.WrongNumArgs(interp, 1, objv,
-      "<path> {x y} ?{key value key value ...}:optional"
+      "<path> coordinates {?key value key value ...?}"
     )
     return Tcl.ERROR
 
@@ -778,7 +769,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   # Coordinates
   var x, y: cdouble
   if pixParses.getListDouble(interp, objv[2], x, y,
-    "wrong # args: 'coordinates' should be 'x' 'y'") != Tcl.OK:
+    "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   try:
@@ -807,7 +798,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   return Tcl.OK
 
 proc pix_path_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Destroy current path or all paths if special word `all` is specified.
+  # Destroy the [path] or all paths if special word `all` is specified.
   # 
   # value - [path] object or string.
   #
