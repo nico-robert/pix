@@ -395,11 +395,11 @@ proc addToListObj*(matrix3: vmath.Mat3): Tcl.PObj =
   return listMtxobj
 
 proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Converts an HTML color into an RGBA value and returns it as a Tcl list.
+  # Converts an HTML color string into an RGBA value and returns it as a Tcl list.
   #
-  # HTMLcolor - string
+  # HTMLcolor - A color string
   #
-  # Returns: A Tcl list.
+  # Returns: A Tcl list {r g b a}.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "color")
     return Tcl.ERROR
@@ -422,11 +422,11 @@ proc pix_colorHTMLtoRGBA*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   return Tcl.OK
 
 proc pix_pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Parse [path] object.
+  # Parses a [path] object and returns its SVG path string representation.
   #
-  # path - [path]
+  # path - [path] object handle
   #
-  # Returns: The parsed [path] to SVG style path (string).
+  # Returns: The parsed [path] as an SVG-style string.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<path>")
     return Tcl.ERROR
@@ -441,11 +441,11 @@ proc pix_pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   return Tcl.OK
 
 proc pix_svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Transforms a SVG style path (string) to a [path] object.
+  # Transforms an SVG-style path string into a [path] object.
   #
-  # path - a string in SVG style.
+  # path - An SVG path data string.
   #
-  # Returns: A *new* [path] object.
+  # Returns: A *new* handle [path] object.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "string")
     return Tcl.ERROR
@@ -467,11 +467,11 @@ proc pix_svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Get all objects from the context and the image.
+  # Retrieves all registered object keys from both the context and image tables.
   #
-  # Returns: A Tcl dictionary with two keys:
-  # `ctx` a Tcl list of all [ctx] keys and
-  # `img` a Tcl list of all [img] keys.
+  # Returns: A Tcl dictionary containing two keys:<br>
+  # `ctx` : A Tcl list of all [ctx] handles.<br>
+  # `img` : A Tcl list of all [img] handles.
   let
     dictObj    = Tcl.NewDictObj()
     ptable     = cast[PixTable](clientData)
@@ -498,15 +498,15 @@ proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   return Tcl.OK
 
 proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Convert an [img] object to base 64.
+  # Converts an [img] or [ctx] object into a base64-encoded string.
   #
-  # object - [img] or [ctx] object.
+  # object - [img] or [ctx] object handle.
   #
-  # On the Nim side, `base64` module is considered **unstable**,
-  # so use the [toBinary] command instead
-  # and then Tcl's binary encode base64 command.
+  # Note: On the Nim side, the `base64` module is considered unstable.
+  # It is recommended to use the [toBinary] command combined with Tcl's
+  # native `binary encode base64` command instead.
   #
-  # Returns string.
+  # Returns: A base64-encoded string.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img>")
     return Tcl.ERROR
@@ -539,14 +539,14 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
   return Tcl.OK
 
 proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Convert an [img] object to binary.
+  # Converts an [img] or [ctx] object into raw binary image data.
   #
-  # object - [img] or [ctx] object.
-  # format - string (png, qoi, bmp, ppm) (optional:png).
+  # object - [img] or [ctx] object handle.
+  # format - Image format string (png, qoi, bmp, ppm; optional, defaults to `png`).
   #
-  # Returns: A string in binary format.
+  # Returns: A byte array string in binary format.
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img> ?format:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>|<img> ?format?")
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
@@ -586,14 +586,14 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   return Tcl.OK
 
 proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create rotation matrix.
+  # Creates a transformation rotation matrix or multiplies an existing one.
   #
-  # angle   - double value (radian)
-  # matrix  - list (9 values) (optional:mat3())
+  # angle  - Double value (in radians).
+  # matrix - Optional Tcl list of 9 numbers representing an input 3x3 matrix (optional:identityMatrix).
   #
-  # Returns: The matrix rotation as a list.
+  # Returns: The rotated 3x3 matrix as a Tcl list of 9 elements.
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "angle ?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "angle ?matrix?")
     return Tcl.ERROR
 
   var
@@ -616,13 +616,13 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_invMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create an inverse matrix.
+  # Inverts the specified 3x3 transformation matrix.
   #
-  # matrix  - list (9 values) (optional:mat3())
+  # matrix - Optional Tcl list of 9 numbers representing an input 3x3 matrix (optional:identityMatrix).
   #
-  # Returns: The matrix inverse as a list.
+  # Returns: The inverted 3x3 matrix as a Tcl list of 9 elements.
   if objc > 2:
-    Tcl.WrongNumArgs(interp, 1, objv, "?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "?matrix?")
     return Tcl.ERROR
 
   var matrix3: vmath.Mat3
@@ -644,11 +644,11 @@ proc pix_invMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_determinantMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Compute a determinant of the matrix.
+  # Computes the determinant of a 3x3 matrix.
   #
-  # matrix  - list (9 values)
+  # matrix - A Tcl list of 9 numbers representing the 3x3 matrix.
   #
-  # Returns: The determinant.
+  # Returns: The matrix determinant as a double.
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "matrix")
     return Tcl.ERROR
@@ -666,12 +666,12 @@ proc pix_determinantMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   return Tcl.OK
 
 proc pix_transformMatrixPoint*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Transform a point by matrix.
+  # Transforms a 2D point using a 3x3 transformation matrix.
   #
-  # point  - list {x y}
-  # matrix - list (9 values)
+  # point  - A Tcl list {x y} representing the point coordinates.
+  # matrix - A Tcl list of 9 numbers representing the 3x3 matrix.
   #
-  # Returns: A list of the transformed point.
+  # Returns: A Tcl list {x y} containing the transformed coordinates.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "{x y} matrix")
     return Tcl.ERROR
@@ -709,9 +709,9 @@ proc pix_transformMatrixPoint*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   return Tcl.OK
 
 proc pix_identityMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create an identity matrix.
+  # Creates a 3x3 identity matrix.
   #
-  # Returns: The identity matrix as a list.
+  # Returns: The identity matrix as a Tcl list of 9 elements.
   if objc != 1:
     Tcl.WrongNumArgs(interp, 1, objv, "")
     return Tcl.ERROR
@@ -721,14 +721,14 @@ proc pix_identityMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   return Tcl.OK
 
 proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create scale matrix.
+  # Creates a scaling matrix or multiplies an existing one.
   #
-  # scale   - list x,y
-  # matrix  - list (9 values) (optional:mat3())
+  # scale  - A Tcl list {x y} representing scale factor coordinates.
+  # matrix - Optional Tcl list of 9 numbers representing an input 3x3 matrix (optional:identityMatrix).
   #
-  # Returns: The matrix scaled as a list.
+  # Returns: The scaled 3x3 matrix as a Tcl list of 9 elements.
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix?")
     return Tcl.ERROR
 
   var
@@ -742,7 +742,7 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   if count != 2:
     return pixUtils.errorMSG(interp,
-      "wrong # args: 'scale' should be 'x' 'y'"
+      "wrong # args: 'scale' should be {x y}"
     )
 
   if Tcl.GetDoubleFromObj(interp, elements[0], x) != Tcl.OK or
@@ -762,14 +762,14 @@ proc pix_scaleMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Create translation matrix.
+  # Creates a translation matrix or multiplies an existing one.
   #
-  # trans   - list x,y
-  # matrix  - list (9 values) (optional:mat3())
+  # trans  - A Tcl list {x y} representing translation distance coordinates.
+  # matrix - Optional Tcl list of 9 numbers representing an input 3x3 matrix (optional:identityMatrix).
   #
-  # Returns: The matrix translated as a list.
+  # Returns: The translated 3x3 matrix as a Tcl list of 9 elements.
   if objc notin [2, 3]:
-    Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "{x y} ?matrix?")
     return Tcl.ERROR
 
   var
@@ -803,13 +803,13 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Multiplies matrices.
+  # Multiplies a sequence of 3x3 matrices together.
   #
-  # args - matrix (9 values)
+  # args - A variable list of matrices, where each matrix is a Tcl list of 9 numbers.
   #
-  # Returns: The multiplied matrix as a list.
+  # Returns: The resulting multiplied matrix as a Tcl list of 9 elements.
   if objc < 3:
-    Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 matrix...")
+    Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2 ?matrix ...?")
     return Tcl.ERROR
 
   var
@@ -828,14 +828,14 @@ proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   return Tcl.OK
 
 proc pix_rgba*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets a new rgba color object.
+  # Creates and returns a new RGBA color object.
   #
-  # r - integer (0-255)
-  # g - integer (0-255)
-  # b - integer (0-255)
-  # a - double (0-1)
+  # r - Integer value (0 to 255)
+  # g - Integer value (0 to 255)
+  # b - Integer value (0 to 255)
+  # a - Double value (0.0 to 1.0)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv, "r g b a")
     return Tcl.ERROR
@@ -870,13 +870,13 @@ proc pix_rgba*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   return Tcl.OK
 
 proc pix_rgb*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets a new rgb color object.
+  # Creates and returns a new RGB color object (alpha defaults to 1.0).
   #
-  # r - integer (0-255)
-  # g - integer (0-255)
-  # b - integer (0-255)
+  # r - Integer value (0 to 255)
+  # g - Integer value (0 to 255)
+  # b - Integer value (0 to 255)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "r g b")
     return Tcl.ERROR
@@ -907,11 +907,11 @@ proc pix_rgb*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
   return Tcl.OK
 
 proc pix_hexHTML*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Sets a new hex html color object.
+  # Creates and returns a new hex HTML color object.
   #
-  # hex  - hex string
+  # hex - Hexadecimal color string (e.g., "#xxxxxx").
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "#xxxxxx")
     return Tcl.ERROR
@@ -943,7 +943,7 @@ proc pix_hsl*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
   # s - saturation (0-100)
   # l - lightness  (0-100)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 4:
     Tcl.WrongNumArgs(interp, 1, objv, "h s l")
     return Tcl.ERROR
@@ -987,7 +987,7 @@ proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   #
   # name  - HTML name
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 2:
     Tcl.WrongNumArgs(interp, 1, objv, "name")
     return Tcl.ERROR
@@ -1011,10 +1011,10 @@ proc pix_nameColor*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Darkens the color by amount 0-1.
   #
-  # color   - str color or colorObj [color]
-  # amount  - double value (0-1)
+  # color   - A [color] string.
+  # amount  - Double value (0-1)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
     return Tcl.ERROR
@@ -1049,10 +1049,10 @@ proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Lightens the color by amount 0-1.
   #
-  # color   - str color or colorObj [color]
-  # amount  - double value (0-1)
+  # color   - A [color] string.
+  # amount  - Double value (0-1)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
     return Tcl.ERROR
@@ -1087,10 +1087,10 @@ proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Desaturate (makes grayer) the color by amount 0-1.
   #
-  # color   - str color or colorObj [color]
-  # amount  - double value (0-1)
+  # color   - A [color] string.
+  # amount  - Double value (0-1)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
     return Tcl.ERROR
@@ -1125,10 +1125,10 @@ proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Saturates (makes brighter) the color by amount 0-1.
   #
-  # color   - str color or colorObj [color]
-  # amount  - double value (0-1)
+  # color   - A [color] string.
+  # amount  - Double value (0-1)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<color> amount")
     return Tcl.ERROR
@@ -1163,10 +1163,10 @@ proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_colorSpin*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Rotates the hue of the color by degrees (0-360).
   #
-  # color   - str color or colorObj [color]
-  # degrees - double value (0-360)
+  # color   - A [color] string.
+  # degrees - Double value (0-360)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: Returns: A string representation of the [color].
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<color> degrees")
     return Tcl.ERROR
@@ -1201,8 +1201,8 @@ proc pix_colorSpin*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_colorDistance*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # A distance function based on CIEDE2000 color difference formula.
   #
-  # color1   - str color or colorObj [color]
-  # color2   - str color or colorObj [color]
+  # color1   - A [color] string.
+  # color2   - A [color] string.
   #
   # Returns: A distance.
   if objc != 3:
@@ -1228,13 +1228,13 @@ proc pix_colorDistance*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_colorAlmostEqual*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Almost equal colors.
   #
-  # color1   - str color or colorObj [color]
-  # color2   - str color or colorObj [color]
-  # epsilon  - double value (optional:0.01)
+  # color1   - A [color] string.
+  # color2   - A [color] string.
+  # epsilon  - Double value (optional:0.01)
   #
   # Returns: True if colors are close.
   if objc notin [3, 4]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2> ?epsilon:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2> ?epsilon?")
     return Tcl.ERROR
 
   let color1 = try:
@@ -1264,13 +1264,13 @@ proc pix_colorMix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   # Mixes two colours using simple averaging or
   # simple lerp if the 'lerp' argument is specified.
   #
-  # color1   - str color or colorObj [color]
-  # color2   - str color or colorObj [color]
-  # lerp     - double value (optional)
+  # color1   - A [color] string.
+  # color2   - A [color] string.
+  # lerp     - Double value (optional)
   #
-  # Returns: A *new* type [color] object.
+  # Returns: A string representation of the [color].
   if objc notin [3, 4]:
-    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2> ?lerp:optional")
+    Tcl.WrongNumArgs(interp, 1, objv, "<color1> <color2> ?lerp?")
     return Tcl.ERROR
 
   let color1 = try:
