@@ -575,8 +575,7 @@ proc pix_font_hasGlyph(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     return Tcl.OK
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(
-    if tface.hasGlyph(str.runeAt(0)): 1 else: 0
-    )
+    cint(tface.hasGlyph(str.runeAt(0))))
   )
 
   return Tcl.OK

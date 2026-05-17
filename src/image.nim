@@ -859,8 +859,7 @@ proc pix_image_inside(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     return Tcl.ERROR
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(
-    if img.inside(x, y): 1 else: 0
-    )
+    cint(img.inside(x, y)))
   )
 
   return Tcl.OK
@@ -911,8 +910,7 @@ proc pix_image_isOneColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if img.isNil: return Tcl.ERROR
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(
-    if img.isOneColor(): 1 else: 0
-    )
+    cint(img.isOneColor()))
   )
 
   return Tcl.OK
@@ -933,8 +931,7 @@ proc pix_image_isOpaque(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(
-    if img.isOpaque(): 1 else: 0
-    )
+    cint(img.isOpaque()))
   )
 
   return Tcl.OK
@@ -955,8 +952,7 @@ proc pix_image_isTransparent(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   if img.isNil: return Tcl.ERROR
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(
-    if img.isTransparent(): 1 else: 0
-    )
+    cint(img.isTransparent()))
   )
 
   return Tcl.OK
