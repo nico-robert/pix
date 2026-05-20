@@ -90,7 +90,7 @@ proc setColorFromAny(interp: Tcl.PInterp, objPtr: Tcl.PObj): cint {.cdecl.} =
     objPtr.internalRep.otherValuePtr = newColor
 
     return Tcl.OK
-  except Exception as e:
+  except CatchableError as e:
     Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring(e.msg), -1))
     return Tcl.ERROR
 

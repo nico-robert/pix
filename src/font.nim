@@ -537,12 +537,12 @@ proc pix_font_getKerningAdjustment(clientData: Tcl.TClientData, interp: Tcl.PInt
 
   let c1 = try:
     str1.runeAt(0)
-  except Exception as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let c2 = try:
     str2.runeAt(0)
-  except Exception as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let adjustment = tface.getKerningAdjustment(c1, c2)
@@ -900,7 +900,7 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
           vAlign = opts.vAlign,
           wrap = opts.wrap
         )
-    except ValueError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   else:

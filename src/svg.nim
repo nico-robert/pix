@@ -141,7 +141,7 @@ proc pix_svg_newImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
       if svg.isNil: return Tcl.ERROR
       try:
         resvg.toImage(svg)
-      except Exception as e:
+      except CatchableError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else:
       let svg = ptable.loadSVG(interp, objv[1])
