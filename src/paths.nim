@@ -788,9 +788,7 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
       ): value = 1
     else:
       if path.strokeOverlaps(vec2(x, y)): value = 1
-  except ValueError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value))

@@ -52,9 +52,7 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
         img.fill(ptable.getPaint(arg2))
       else:
         img.fill(pixUtils.getColor(objv[2]))
-    except InvalidColor as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    except PixieError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let
@@ -513,9 +511,7 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
       ctx.clip(path, myEnum)
     else:
       ctx.clip()
-  except ValueError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -990,9 +986,7 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
       # Enum only
       try:
         ctx.fill(parseEnum[WindingRule](arg2))
-      except ValueError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-      except PixieError as e:
+      except CatchableError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   elif objc == 4:
     # Path + Enum
@@ -1000,9 +994,7 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
     if path.isNil: return Tcl.ERROR
     try:
       ctx.fill(path, parseEnum[WindingRule]($objv[3]))
-    except ValueError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    except PixieError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # No path
@@ -1497,9 +1489,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
           x, y, 
           windingRule = parseEnum[WindingRule](arg3)
         ): value = 1
-      except ValueError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-      except PixieError as e:
+      except CatchableError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   elif objc == 5:
     # Enum + Path
@@ -1511,9 +1501,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
         x, y,
         windingRule = parseEnum[WindingRule]($objv[4])
       ): value = 1
-    except ValueError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    except PixieError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     try:

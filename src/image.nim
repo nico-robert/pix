@@ -117,9 +117,7 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       let myEnum = parseEnum[BlendMode]($objv[4])
 
       img1.draw(img2, transform = matrix3, blendMode = myEnum)
-  except ValueError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -184,13 +182,7 @@ proc pix_image_readImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
     else:
       # Use pixie
       readimage(file)
-  except PixieError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except ValueError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except IOError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except Exception as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   
   let imgKey = toHexPtr(img)
@@ -257,9 +249,7 @@ proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
       img.fillPath(path, paint, matrix3)
     else:
       img.fillPath(path, paint)
-  except InvalidColor as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -337,11 +327,7 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
       miterLimit = opts.miterLimit,
       dashes = opts.dashes
     )
-  except InvalidColor as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except ValueError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -379,9 +365,7 @@ proc pix_image_blur(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
       img.blur(radius, color)
     else:
       img.blur(radius)
-  except InvalidColor as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -418,9 +402,7 @@ proc pix_image_shadow(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
       blur   = opts.blur,
       color  = opts.color
     )
-  except ValueError as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except PixieError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let imgKey = toHexPtr(shadow)
@@ -523,9 +505,7 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
         )
       else:
         img.fillText(font, text)
-    except ValueError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    except PixieError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
@@ -1285,9 +1265,7 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
         )
       else:
         img.strokeText(arrangement)
-    except ValueError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    except PixieError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
   else:
     # Font
@@ -1321,9 +1299,7 @@ proc pix_image_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
         )
       else:
         img.strokeText(font, text)
-    except ValueError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    except PixieError as e:
+    except CatchableError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK

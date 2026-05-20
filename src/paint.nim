@@ -15,9 +15,8 @@ proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   var paint: pixie.Paint
 
   try:
-    let myEnum = parseEnum[PaintKind]($objv[1])
-    paint = newPaint(myEnum)
-  except ValueError as e:
+    paint = newPaint(parseEnum[PaintKind]($objv[1]))
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let p = toHexPtr(paint)
@@ -122,9 +121,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
           return pixUtils.errorMSG(interp,
             "wrong # args: Key '" & mkey & "' not supported."
           )
-  except InvalidColor as e:
-    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  except ValueError as e:
+  except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
