@@ -149,6 +149,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::ctx::fillPath"          : pix_ctx_fillPath,
     "pix::ctx::strokePath"        : pix_ctx_strokePath,
     "pix::ctx::getSize"           : pix_ctx_getSize,
+    "pix::ctx::getImage"          : pix_ctx_getImage,
     "pix::ctx::destroy"           : pix_ctx_destroy,
 
     # Path commands

@@ -58,7 +58,7 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   let
     ctx = newContext(img)
     ctxKey = toHexPtr(ctx)
-    imgKey = ctxKey.replace("^ctx", "^img")
+    imgKey = toHexPtr(ctx.image)
 
   # Adds img + ctx.
   ptable.addContext(ctxKey, ctx)
@@ -2168,10 +2168,9 @@ proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   let 
     dictObj    = Tcl.NewDictObj()
     dictImgObj = Tcl.NewDictObj()
-    ctxKey     = $objv[1]
-    img        = ctxKey.replace("^ctx", "^img")
+    imgKey     = toHexPtr(ctx.image)
 
-  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4),          Tcl.NewStringObj(img.cstring, -1))
+  discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("addr", 4),          Tcl.NewStringObj(imgKey.cstring, -1))
   discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("width", 5),         Tcl.NewIntObj(ctx.image.width.cint))
   discard Tcl.DictObjPut(nil, dictImgObj, Tcl.NewStringObj("height", 6),        Tcl.NewIntObj(ctx.image.height.cint))
   discard Tcl.DictObjPut(nil, dictObj,    Tcl.NewStringObj("image", 5),         dictImgObj)
@@ -2214,6 +2213,33 @@ proc pix_ctx_getSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   Tcl.SetObjResult(interp, dictObj)
 
   return Tcl.OK
+
+proc pix_ctx_getImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Gets the image associated with the context.
+  #
+  # context - [ctx]
+  #
+  # Returns: Image key as string.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<ctx>")
+    return Tcl.ERROR
+
+  # Context
+  let ptable = cast[PixTable](clientData)
+  let ctx = ptable.loadContext(interp, objv[1])
+  if ctx.isNil: return Tcl.ERROR
+
+  let imgKey = toHexPtr(ctx.image)
+
+  if not ptable.hasImage(imgKey):
+    return pixUtils.errorMSG(interp,
+      "pix(error): '" & imgKey & "' image from context not found in table."
+    )
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
+
+  return Tcl.OK
+
 
 proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets line dash for current context.
