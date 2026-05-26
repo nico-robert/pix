@@ -11,13 +11,14 @@ when defined(x11):
 when defined(resvg):
   import std/options
   import bindings/resvg/binding as resvg
-  import bindings/resvg/types
 
 import bindings/tcl/binding as Tcl
 import bindings/tk/binding  as Tk
 
 # Source : https://stackoverflow.com/questions/57121829/get-version-from-nimble-package
-const PIX_VERSION = staticRead("../pix.nimble").newStringStream.loadConfig.getSectionValue("", "version")
+const PIX_VERSION = staticRead("../pix.nimble")
+  .newStringStream
+  .loadConfig.getSectionValue("", "version")
 
 const UNMULTIPLY_LUT = block:
   var lut: array[256, uint32]
