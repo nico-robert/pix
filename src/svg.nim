@@ -29,93 +29,62 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   #  #EndTable
   #
   # Returns: A *new* handle [svg] object.
+  let ptable = cast[PixTable](clientData)
+  let svgStr = $objv[1]
+
   when defined(resvg):
     if objc notin (2..4):
-      Tcl.WrongNumArgs(interp, 1, objv,
-        "'svg string' ?size? ?opts?"
-      )
+      Tcl.WrongNumArgs(interp, 1, objv, "'svg string' ?size? ?opts?")
       return Tcl.ERROR
 
-    let ptable = cast[PixTable](clientData)
+    var width, height: int
+    var opts = none(RenderResvgOpts)
+    var hasSize = false
 
-    # Svg string
-    let arg1 = $objv[1]
-    var svg: Resvg
-
-    if objc == 4:
-      var width, height: cint
-
-      # Size
-      if pixParses.getListInt(interp, objv[2], width, height, 
-        "wrong # args: 'size' should be '{width height}") != Tcl.OK:
-        return Tcl.ERROR
-
-      var opts = RenderResvgOpts()
-      try:
-        resvg.options(interp, objv[3], opts)
-        svg = resvg.parse(arg1, width, height, some(opts))
-      except ValueError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-    elif objc == 3:
-      var width, height: cint
-
-      # Size
-      if pixParses.getListInt(interp, objv[2], width, height, 
-        "wrong # args: 'size' should be '{width height}") == Tcl.OK:
-        svg = resvg.parse(arg1, width, height)
+    if objc >= 3:
+      if getListInt(interp, objv[2], width, height, "") == Tcl.OK:
+        hasSize = true
+        if objc == 4:
+          var o = RenderResvgOpts()
+          try: resvg.options(interp, objv[3], o)
+          except ValueError as e:
+            return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+          opts = some(o)
       else:
-        var opts = RenderResvgOpts()
-        try:
-          resvg.options(interp, objv[2], opts)
-          svg = resvg.parse(arg1, option = some(opts))
+        var o = RenderResvgOpts()
+        try: resvg.options(interp, objv[2], o)
         except ValueError as e:
           return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    else:
-      # pixie SVG
-      try:
-        svg = resvg.parse(arg1)
-      except ValueError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        opts = some(o)
+
+    let svg = try:
+      if hasSize: resvg.parse(svgStr, width, height, opts)
+      else: resvg.parse(svgStr, option = opts)
+    except ValueError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
     let p = toHexPtr(svg)
     ptable.addRESVG(p, svg)
-
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+
   else:
     if objc notin [2, 3]:
-      Tcl.WrongNumArgs(interp, 1, objv,
-        "'svg string' ?size?"
-      )
+      Tcl.WrongNumArgs(interp, 1, objv, "'svg string' ?size?")
       return Tcl.ERROR
 
-    let ptable = cast[PixTable](clientData)
-
-    # Svg string
-    let arg1 = $objv[1]
-    var svg: Svg
-
-    if objc == 3:
-      var width, height: cint
-
-      # Size
-      if pixParses.getListInt(interp, objv[2], width, height, 
+    var width, height: int
+    if objc == 3 and getListInt(interp, objv[2], width, height,
         "wrong # args: 'size' should be '{width height}") != Tcl.OK:
-        return Tcl.ERROR
+      return Tcl.ERROR
 
-      try:
-        svg = parseSvg(arg1, width, height)
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    else:
-      try:
-        svg = parseSvg(arg1)
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    let svg = try:
+      if objc == 3: parseSvg(svgStr, width, height)
+      else: parseSvg(svgStr)
+    except PixieError as e:
+      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
     let p = toHexPtr(svg)
     ptable.addSVG(p, svg)
-
     Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
 
   return Tcl.OK
