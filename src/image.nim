@@ -11,11 +11,11 @@ proc pix_image(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
     Tcl.WrongNumArgs(interp, 1, objv, "size")
     return Tcl.ERROR
 
-  var width, height: cint
+  var width, height: int
   let ptable = cast[PixTable](clientData)
 
   # Size
-  if pixParses.getListInt(interp, objv[1], width, height, 
+  if getListInt(interp, objv[1], width, height, 
     "wrong # args: 'size' should be {width height}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -74,10 +74,8 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
     )
     return Tcl.ERROR
 
-  var
-    count: Tcl.Size
-    matrix3: vmath.Mat3
-  
+  var count: Tcl.Size
+
   let ptable = cast[PixTable](clientData)
 
   # Get destination image
@@ -103,20 +101,16 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
         img1.draw(img2, blendMode = myEnum)
       else:
         # Matrix specified as a list
-        if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
-          return Tcl.ERROR
-        img1.draw(img2, transform = matrix3)
+        img1.draw(img2, transform = objv[3].getMtx())
     else:
       # If 5 arguments are provided, draw <img2> onto <img1> with the transformation
-      # specified by the 3rd argument and the blend mode specified by the 5th
+      # specified by the 4th argument and the blend mode specified by the 5th
       # argument.
-      if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
-        return Tcl.ERROR
 
       # Blend mode
       let myEnum = parseEnum[BlendMode]($objv[4])
 
-      img1.draw(img2, transform = matrix3, blendMode = myEnum)
+      img1.draw(img2, transform = objv[3].getMtx(), blendMode = myEnum)
   except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -149,7 +143,7 @@ proc pix_image_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   else:
     try:
       # Fall back to color parsing.
-      img.fill(pixUtils.getColor(objv[2]))
+      img.fill(objv[2].getColor())
     except InvalidColor as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -231,18 +225,26 @@ proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Handle optional matrix
   if objc == 5:
-    if pixUtils.matrix3x3(interp, objv[4], matrix3) != Tcl.OK:
-      return Tcl.ERROR
-    hasMatrix = true
+    hasMatrix = try:
+      matrix3 = getMtx(objv[4], true)
+      true
+    except ValueError:
+      false
 
   try:
     # Get path object or use string path
-    let path = if ptable.hasPath(pathArg): ptable.getPath(pathArg)
-               else: parsePath(pathArg)
+    let path = 
+      if ptable.hasPath(pathArg):
+        ptable.getPath(pathArg)
+      else: 
+        parsePath(pathArg)
 
     # Get paint/color object
-    let paint = if ptable.hasPaint(paintArg): ptable.getPaint(paintArg)
-                else: pixUtils.getColor(objv[3]).SomePaint
+    let paint = 
+      if ptable.hasPaint(paintArg): 
+        ptable.getPaint(paintArg)
+      else: 
+        objv[3].getColor().SomePaint
 
     # Apply fill with or without matrix
     if hasMatrix:
@@ -315,7 +317,7 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
       if ptable.hasPaint(somepaint): 
         ptable.getPaint(somepaint) 
       else:
-        SomePaint(pixUtils.getColor(objv[3]))
+        SomePaint(objv[3].getColor())
 
     img.strokePath(
       path,
@@ -350,10 +352,7 @@ proc pix_image_blur(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   if img.isNil: return Tcl.ERROR
 
   # Radius
-  var radius: cdouble
-
-  if Tcl.GetDoubleFromObj(interp, objv[2], radius) != Tcl.OK:
-    return Tcl.ERROR
+  let radius = objv[2].getFloat()
 
   # 'blur' blurs the image using a Gaussian blur algorithm. The blur radius
   # is the distance from the point of the image to the point of the blur
@@ -361,7 +360,7 @@ proc pix_image_blur(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   try:
     if objc == 4:
       # If the user has provided a color, blur the image with that color.
-      let color = pixUtils.getColor(objv[3])
+      let color = objv[3].getColor()
       img.blur(radius, color)
     else:
       img.blur(radius)
@@ -460,9 +459,7 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
     # Arrangement
     let arrangement = ptable.getArr(arg2)
     if objc == 4:
-      var matrix3: vmath.Mat3
-      if pixUtils.matrix3x3(interp, objv[3], matrix3) != Tcl.OK:
-        return Tcl.ERROR
+      let matrix3 = objv[3].getMtx()
       try:
         # Use the fillText method of the image to render text based on the given arrangement.
         # The arrangement object contains pre-calculated positions and styles for text glyphs.
@@ -527,9 +524,9 @@ proc pix_image_resize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if img.isNil: return Tcl.ERROR
 
   # Gets size.
-  var width, height: cint
+  var width, height: int
 
-  if pixParses.getListInt(interp, objv[2], width, height, 
+  if getListInt(interp, objv[2], width, height, 
     "wrong # args: 'size' should be {width height}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -592,9 +589,9 @@ proc pix_image_getPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: cint
+  var x, y: int
 
-  if pixParses.getListInt(interp, objv[2], x, y, 
+  if getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -629,14 +626,14 @@ proc pix_image_setPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: cint
+  var x, y: int
 
-  if pixParses.getListInt(interp, objv[2], x, y, 
+  if getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   try:
-    img[x, y] = pixUtils.getColor(objv[3])
+    img[x, y] = objv[3].getColor()
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -659,12 +656,7 @@ proc pix_image_applyOpacity(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   if img.isNil: return Tcl.ERROR
 
   # Gets opacity.
-  var opacity: cdouble
-
-  if Tcl.GetDoubleFromObj(interp, objv[2], opacity) != Tcl.OK:
-    return Tcl.ERROR
-
-  img.applyOpacity(opacity)
+  img.applyOpacity(objv[2].getFloat())
 
   return Tcl.OK
 
@@ -796,9 +788,9 @@ proc pix_image_getColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: cint
+  var x, y: int
 
-  if pixParses.getListInt(interp, objv[2], x, y, 
+  if getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -832,9 +824,9 @@ proc pix_image_inside(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   if img.isNil: return Tcl.ERROR
 
   # Gets coordinates.
-  var x, y: cint
+  var x, y: int
 
-  if pixParses.getListInt(interp, objv[2], x, y, 
+  if getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -956,23 +948,18 @@ proc pix_image_magnifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  var
-    power: cint = 1
-    newimg: pixie.Image
-
-  if objc == 3:
-    if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
-      return Tcl.ERROR
-    try:
-      newimg = img.magnifyBy2(power)
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    try:
-      # The result is stored in newimg.
-      newimg = img.magnifyBy2()
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # The result is stored in newimg.
+  let newimg = 
+    if objc == 3:
+      try:
+        img.magnifyBy2(objv[2].getInt())
+      except PixieError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    else:
+      try:
+        img.magnifyBy2()
+      except PixieError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let imgKey = toHexPtr(newimg)
   ptable.addImage(imgKey, newimg)
@@ -1001,22 +988,18 @@ proc pix_image_minifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  var
-    power: cint = 1
-    newimg: pixie.Image
 
-  if objc == 3:
-    if Tcl.GetIntFromObj(interp, objv[2], power) != Tcl.OK:
-      return Tcl.ERROR
-    try:
-      newimg = img.minifyBy2(power)
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    try:
-      newimg = img.minifyBy2()
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let newimg =
+    if objc == 3:
+      try:
+        img.minifyBy2(objv[2].getInt())
+      except PixieError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    else:
+      try:
+        img.minifyBy2()
+      except PixieError as e:
+        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let imgKey = toHexPtr(newimg)
   ptable.addImage(imgKey, newimg)
@@ -1101,14 +1084,14 @@ proc pix_image_subImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if img.isNil: return Tcl.ERROR
 
   # Coordinates
-  var x, y, width, height: cint
+  var x, y, width, height: int
 
-  if pixParses.getListInt(interp, objv[2], x, y, 
+  if getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   # Size
-  if pixParses.getListInt(interp, objv[3], width, height, 
+  if getListInt(interp, objv[3], width, height, 
     "wrong # args: 'size' should be {width height}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -1154,14 +1137,14 @@ proc pix_image_superImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if img.isNil: return Tcl.ERROR
 
   # Coordinates
-  var x, y, width, height: cint
+  var x, y, width, height: int
 
-  if pixParses.getListInt(interp, objv[2], x, y, 
+  if getListInt(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
   # Size
-  if pixParses.getListInt(interp, objv[3], width, height, 
+  if getListInt(interp, objv[3], width, height, 
     "wrong # args: 'size' should be {width height}") != Tcl.OK:
     return Tcl.ERROR
 
@@ -1322,14 +1305,11 @@ proc pix_image_toGrayScale(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
   
-  var handleAlpha = true
+  var handleAlpha: bool = true
   
   # Handle Alpha
   if objc == 3:
-    var handle: cint = 0
-    if Tcl.GetBooleanFromObj(interp, objv[2], handle) != Tcl.OK:
-      return Tcl.ERROR
-    handleAlpha = handle.bool
+    handleAlpha = objv[2].getBool()
   
   for y in 0 ..< img.height:
     for x in 0 ..< img.width:

@@ -46,12 +46,7 @@ proc pix_font_size(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   if font.isNil: return Tcl.ERROR
 
   # Font size.
-  var fsize: cdouble
-
-  if Tcl.GetDoubleFromObj(interp, objv[2], fsize) != Tcl.OK:
-    return Tcl.ERROR
-
-  font.size = fsize
+  font.size = objv[2].getFloat()
 
   return Tcl.OK
 
@@ -73,7 +68,7 @@ proc pix_font_color(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   try:
     # Color gets.
-    font.paint.color = pixUtils.getColor(objv[2])
+    font.paint.color = objv[2].getColor()
   except InvalidColor as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -267,12 +262,8 @@ proc pix_font_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 
   let rect = 
     if objc == 3:
-      # Matrix 3x3 check
-      var matrix3: vmath.Mat3
-      if pixUtils.matrix3x3(interp, objv[2], matrix3) != Tcl.OK:
-        return Tcl.ERROR
       try:
-        arr.computeBounds(matrix3)
+        arr.computeBounds(objv[2].getMtx())
       except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else:
@@ -940,9 +931,7 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   if font.isNil: return Tcl.ERROR
 
   var
-    fsize, flineHeight: cdouble
     count, countP: Tcl.Size
-    myBool: cint = 0
     elements, elementsP: Tcl.PPObj
 
   if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
@@ -959,35 +948,19 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
       value = elements[i+1]
     case mkey:
       of "noKerningAdjustments":
-        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK: 
-          return Tcl.ERROR
-        font.noKerningAdjustments = myBool.bool
+        font.noKerningAdjustments = value.getBool()
       of "underline":
-        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK:
-          return Tcl.ERROR
-        font.underline = myBool.bool
+        font.underline = value.getBool()
       of "strikethrough":
-        if Tcl.GetBooleanFromObj(interp, value, myBool) != Tcl.OK:
-          return Tcl.ERROR
-        font.strikethrough = myBool.bool
+        font.strikethrough = value.getBool()
       of "size":
-        if Tcl.GetDoubleFromObj(interp, value, fsize) != Tcl.OK: 
-          return Tcl.ERROR
-        font.size = fsize
+        font.size = value.getFloat()
       of "lineHeight":
-        if Tcl.GetDoubleFromObj(interp, value, flineHeight) != Tcl.OK:
-          return Tcl.ERROR
-        font.lineHeight = flineHeight
+        font.lineHeight = value.getFloat()
       of "paint":
-        try:
-          font.paint = SomePaint(pixUtils.getColor(value))
-        except InvalidColor as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        font.paint = SomePaint(value.getColor())
       of "color":
-        try:
-          font.paint.color = pixUtils.getColor(value)
-        except InvalidColor as e:
-          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+        font.paint.color = value.getColor()
       of "paints":
         if Tcl.ListObjGetElements(interp, value, countP, elementsP) != Tcl.OK:
           return Tcl.ERROR

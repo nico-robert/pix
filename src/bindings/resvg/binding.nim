@@ -3,7 +3,7 @@
 
 import ./types as resvg
 import ../tcl/binding as Tcl
-import ../../core/pixutils as pixUtils
+import ../../core/pixparses
 import std/[strutils, options]
 import pixie
 
@@ -69,7 +69,7 @@ proc toResvgMat*(mat: vmath.Mat3): resvg.transform =
   result.e = mat[2,0].cfloat  # e: translate x > m20
   result.f = mat[2,1].cfloat  # f: translate y > m21
 
-proc parse*(data: string, targetWidth: cint = -1, targetHeight: cint = -1, option: Option[RenderResvgOpts] = none(RenderResvgOpts)): Resvg =
+proc parse*(data: string, targetWidth: int = -1, targetHeight: int = -1, option: Option[RenderResvgOpts] = none(RenderResvgOpts)): Resvg =
   # Parse an SVG string and render it to a pixmap.
   #
   # data         - The SVG string to parse.
@@ -184,9 +184,7 @@ proc options*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderResvgOpts) =
       value = elements[i+1]
     case key:
       of "dpi":
-        var dpi: cdouble
-        if Tcl.GetDoubleFromObj(interp, value, dpi) != Tcl.OK:
-          raise newException(ValueError, $interp)
+        let dpi = getFloat(value, true)
         if dpi <= 0.0:
           raise newException(ValueError, "dpi must be greater than 0.")
         opts.dpi = some(dpi.cfloat)
@@ -205,42 +203,25 @@ proc options*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderResvgOpts) =
       of "languages":
         opts.languages = some(Tcl.GetString(value))
       of "shapeRenderingMode":
-        try:
-          opts.shapeRenderingMode = some(parseEnum[resvg.shape_rendering]($value))
-        except ValueError as e:
-          raise newException(ValueError, move(e.msg))
+          opts.shapeRenderingMode = some(getOptEnum[resvg.shape_rendering]($value))
       of "textRenderingMode":
-        try:
-          opts.textRenderingMode = some(parseEnum[resvg.text_rendering]($value))
-        except ValueError as e:
-          raise newException(ValueError, move(e.msg))
+          opts.textRenderingMode = some(getOptEnum[resvg.text_rendering]($value))
       of "imageRenderingMode":
-        try:
-          opts.imageRenderingMode = some(parseEnum[resvg.image_rendering]($value))
-        except ValueError as e:
-          raise newException(ValueError, move(e.msg))
+          opts.imageRenderingMode = some(getOptEnum[resvg.image_rendering]($value))
       of "fontFamily":
         opts.fontFamily = some(Tcl.GetString(value))
       of "loadFontFile":
         opts.loadFontFile = some(Tcl.GetString(value))
       of "fontSize":
-        var fontSize: cdouble
-        if Tcl.GetDoubleFromObj(interp, value, fontSize) != Tcl.OK:
-          raise newException(ValueError, $interp)
+        let fontSize = getFloat(value, true)
         if fontSize <= 0.0:
           raise newException(ValueError, "fontSize must be greater than 0.")
         opts.fontSize = some(fontSize.cfloat)
       of "loadSystemFonts":
-        var load: cint
-        if Tcl.GetBooleanFromObj(interp, value, load) != Tcl.OK:
-          raise newException(ValueError, $interp)
-        if load.bool:
+        if getBool(value, true):
           opts.loadSystemFonts = some(true)
       of "mtx":
-        var mtx: vmath.Mat3
-        if pixUtils.matrix3x3(interp, value, mtx) != Tcl.OK:
-          raise newException(ValueError, $interp)
-        opts.mtx = some(toResvgMat(mtx))
+        opts.mtx = some(toResvgMat(getMtx(value, true)))
       else:
         raise newException(ValueError, 
           "wrong # args: Key '" & key & "' not supported."

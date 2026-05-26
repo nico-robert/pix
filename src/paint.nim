@@ -48,10 +48,9 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
     return Tcl.ERROR
 
   var
-    x, y, p, opacity: cdouble
+    x, y: float32
     count, subcount, len: Tcl.Size
     elements, subelements, stop: Tcl.PPObj
-    matrix3: vmath.Mat3
 
   # Paint
   let ptable = cast[PixTable](clientData)
@@ -74,18 +73,15 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
         value = elements[i+1]
       case mkey:
         of "color":
-          paint.color = pixUtils.getColor(value)
+          paint.color = value.getColor()
         of "opacity":
-          if Tcl.GetDoubleFromObj(interp, value, opacity) != Tcl.OK: return Tcl.ERROR
-          paint.opacity = opacity
+          paint.opacity = getFloat(value, true)
         of "blendMode":
           paint.blendMode = parseEnum[BlendMode]($value)
         of "image":
           paint.image = ptable.getImage($value)
         of "imageMat":
-          # Matrix 3x3 check
-          if pixUtils.matrix3x3(interp, value, matrix3) != Tcl.OK: return Tcl.ERROR
-          paint.imageMat = matrix3
+          paint.imageMat = getMtx(value, true)
         of "gradientHandlePositions":
           # Positions
           if Tcl.ListObjGetElements(interp, value, subcount, subelements) != Tcl.OK:
@@ -93,10 +89,9 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
           if subcount != 0:
             var positions = newSeq[vmath.Vec2]()
             for j in 0..subcount-1:
-              if pixParses.getListDouble(interp, subelements[j], x, y, 
+              if getListFloat(interp, subelements[j], x, y, 
                 "wrong # args: 'gradient positions' should be {x y}") != Tcl.OK:
                 return Tcl.ERROR
-
               positions.add(vec2(x, y))
             paint.gradientHandlePositions = positions
         of "gradientStops":
@@ -112,10 +107,11 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
                   "wrong # args: 'items' should be 'color' 'position'"
                 )
 
-              if Tcl.GetDoubleFromObj(interp, stop[1], p) != Tcl.OK: 
-                return Tcl.ERROR
-
-              colorstops.add(ColorStop(color: pixUtils.getColor(stop[0]), position: p))
+              colorstops.add(ColorStop(
+                  color: stop[0].getColor(), 
+                  position: getFloat(stop[1], true)
+                )
+              )
             paint.gradientStops = colorstops
         else:
           return pixUtils.errorMSG(interp,
