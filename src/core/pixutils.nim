@@ -168,9 +168,11 @@ proc pix_svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Retrieves all registered object keys from both the context and image tables.
   #
-  # Returns: A Tcl dictionary containing two keys:<br>
-  # `ctx` : A Tcl list of all [ctx] handles.<br>
-  # `img` : A Tcl list of all [img] handles.
+  # Returns: A Tcl dictionary containing two keys:
+  # #Begintable
+  # **ctx** : A Tcl list of all [ctx] handles.
+  # **img** : A Tcl list of all [img] handles.
+  # #EndTable
   let
     dictObj    = Tcl.NewDictObj()
     ptable     = cast[PixTable](clientData)
@@ -241,7 +243,7 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   # Converts an [img] or [ctx] object into raw binary image data.
   #
   # object - [img] or [ctx] object handle.
-  # format - Image format string (png, qoi, bmp, ppm; optional, defaults to `png`).
+  # format - Image format string (png, qoi, bmp, ppm) (optional:png).
   #
   # Returns: A byte array string in binary format.
   if objc notin [2, 3]:
