@@ -168,6 +168,36 @@ template getMtx*(obj: Tcl.PObj, raiseOnError: static bool = false): vmath.Mat3 =
 
   matrix3
 
+proc toDictObj*(rect: bumpy.Rect): Tcl.PObj =
+  # Converts a bumpy rectangle to a Tcl dict.
+  #
+  # rect - The rectangle to convert.
+  #
+  # Returns: A Tcl dict with the rectangle properties.
+
+  let dict = Tcl.NewDictObj()
+
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
+  
+  return dict
+
+proc toDictObj*(img: pixie.Image): Tcl.PObj =
+  # Converts an image size to a Tcl dict.
+  #
+  # img - The image to convert.
+  #
+  # Returns: A Tcl dict with the size properties.
+
+  let dict = Tcl.NewDictObj()
+
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("width", 5),  Tcl.NewIntObj(img.width.cint))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height.cint))
+  
+  return dict
+
 func isHexDigit*(c: char): bool =
   # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).
   return (c >= '0' and c <= '9') or
