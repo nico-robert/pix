@@ -164,7 +164,7 @@ foreach dirName {
         set preamble {{
             #### Note
             This namespace provides a 2D API commonly used on the web.\
-            For more info, see: [https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D]\
+            For more info, see: [ContextRenderingContext2D]\
             (https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D)
 
             #### Struct Context:
@@ -483,7 +483,7 @@ if {$version eq ""} {
 # Syntax highlight.
 foreach nameFile {
     pix-examples.html pix.html pix-pix-ctx.html pix-pix-img.html pix-pix-font.html
-    pix-pix-path.html pix-pix-paint.html pix-pix-svg.html
+    pix-pix-path.html pix-pix-paint.html pix-pix-svg.html pix-pix.html
 } {
     set fp [open [file join [file dirname [info script]] $nameFile] r]
     set html [split [read $fp] \n]
