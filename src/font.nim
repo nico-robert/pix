@@ -272,14 +272,7 @@ proc pix_font_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
       except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let dictObj = Tcl.NewDictObj()
-
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, rect.toDictObj())
 
   return Tcl.OK
 
@@ -958,9 +951,15 @@ proc pix_font_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
       of "lineHeight":
         font.lineHeight = value.getFloat()
       of "paint":
-        font.paint = SomePaint(value.getColor())
+        font.paint = try:
+          SomePaint(value.getColor())
+        except InvalidColor as e:
+          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
       of "color":
-        font.paint.color = value.getColor()
+        font.paint.color = try:
+          value.getColor()
+        except InvalidColor as e:
+          return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
       of "paints":
         if Tcl.ListObjGetElements(interp, value, countP, elementsP) != Tcl.OK:
           return Tcl.ERROR
@@ -998,12 +997,13 @@ proc pix_font_selectionRects(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let dictGlobobj = Tcl.NewDictObj()
 
   for index, rect in arr.selectionRects:
-    let dictObj = Tcl.NewDictObj()
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
-    discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
-    discard Tcl.DictObjPut(nil, dictGlobobj, Tcl.NewIntObj(index.cint), dictObj)
+    if Tcl.DictObjPut(
+      interp, 
+      dictGlobobj, 
+      Tcl.NewIntObj(index.cint), 
+      rect.toDictObj()
+    ): != Tcl.OK:
+      return Tcl.ERROR
 
   Tcl.SetObjResult(interp, dictGlobobj)
 
