@@ -244,7 +244,7 @@ proc pix_image_fillpath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
       if ptable.hasPaint(paintArg): 
         ptable.getPaint(paintArg)
       else: 
-        objv[3].getColor().SomePaint
+        SomePaint(objv[3].getColor())
 
     # Apply fill with or without matrix
     if hasMatrix:
@@ -562,12 +562,7 @@ proc pix_image_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let dictObj = Tcl.NewDictObj()
-
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(img.width.cint))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height.cint))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, img.toDictObj())
 
   return Tcl.OK
 
@@ -1028,16 +1023,9 @@ proc pix_image_opaqueBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-  let
-    rect = img.opaqueBounds()
-    dictObj = Tcl.NewDictObj()
+  let rect = img.opaqueBounds()
 
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, rect.toDictObj())
 
   return Tcl.OK
 
