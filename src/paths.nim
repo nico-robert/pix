@@ -484,14 +484,7 @@ proc pix_path_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let dictObj = Tcl.NewDictObj()
-
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("x", 1),  Tcl.NewDoubleObj(rect.x))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("y", 1),  Tcl.NewDoubleObj(rect.y))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("w", 1),  Tcl.NewDoubleObj(rect.w))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("h", 1),  Tcl.NewDoubleObj(rect.h))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, rect.toDictObj())
 
   return Tcl.OK
 

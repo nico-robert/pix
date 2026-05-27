@@ -2137,12 +2137,7 @@ proc pix_ctx_getSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  let dictObj = Tcl.NewDictObj()
-
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("width", 5), Tcl.NewIntObj(ctx.image.width.cint))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(ctx.image.height.cint))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, ctx.image.toDictObj())
 
   return Tcl.OK
 
