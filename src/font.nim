@@ -1002,7 +1002,7 @@ proc pix_font_selectionRects(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
       dictGlobobj, 
       Tcl.NewIntObj(index.cint), 
       rect.toDictObj()
-    ): != Tcl.OK:
+    ) != Tcl.OK:
       return Tcl.ERROR
 
   Tcl.SetObjResult(interp, dictGlobobj)
