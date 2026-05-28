@@ -1354,6 +1354,12 @@ proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   return Tcl.OK
 
+proc pix_image_getSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # See [img::get] procedure.
+
+  if pix_image_get(clientData, interp, objc, objv) != Tcl.OK:
+    return Tcl.ERROR
+
 proc pix_image_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy the [img] or all images if special word `all` is specified.
   #
