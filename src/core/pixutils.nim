@@ -225,14 +225,9 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
         "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
       )
 
-  let data = try:
-    encodeImage(img, PngFormat)
-  except PixieError as e:
-    return errorMSG(interp, "pix(error): " & e.msg)
-
   let b64 = try:
-    encode(data)
-  except Exception as e:
+    encode(encodeImage(img, PngFormat))
+  except CatchableError as e:
     return errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
