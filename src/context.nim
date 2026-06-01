@@ -2276,8 +2276,7 @@ proc pix_ctx_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 proc pix_ctx_getInfoStruct(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # See [ctx::get] procedure.
 
-  if pix_ctx_get(clientData, interp, objc, objv) != Tcl.OK:
-    return Tcl.ERROR
+  return pix_ctx_get(clientData, interp, objc, objv)
 
 proc pix_ctx_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy the [ctx] or all contexts if special word `all` is specified.
