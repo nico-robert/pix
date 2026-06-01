@@ -203,6 +203,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::img::rotate90"       : pix_image_rotate90,
     "pix::img::shadow"         : pix_image_shadow,
     "pix::img::setPixel"       : pix_image_setPixel,
+    "pix::img::setColor"       : pix_image_setColor,
     "pix::img::strokeText"     : pix_image_strokeText,
     "pix::img::subImage"       : pix_image_subImage,
     "pix::img::superImage"     : pix_image_superImage,
