@@ -573,7 +573,8 @@ proc pix_image_getPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # coordinates  - A list {x y} (x column of the pixel, y row of the pixel)
   #
   # Returns: A Tcl dictionary with keys {r g b a} representing 
-  # the red, green, blue, and alpha (opacity) values of the pixel color.
+  # the red, green, blue, and alpha (opacity) values of the pixel
+  # color in ColorRGBX (premultiplied).
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> {x y}")
     return Tcl.ERROR
@@ -772,7 +773,8 @@ proc pix_image_getColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # coordinates  - A list {x y}
   #
   # Returns: A Tcl dictionary with keys {r g b a} representing
-  # the red, green, blue, and alpha (opacity) values of the pixel color.
+  # the red, green, blue, and alpha (opacity) values of the pixel 
+  # color in Color object format (red (0-1), green (0-1), blue (0-1), alpha (0-1)).
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> coordinates")
     return Tcl.ERROR
