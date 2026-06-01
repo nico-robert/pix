@@ -6,6 +6,12 @@ import std/strutils
 import ./pixobj as pixObj
 import ../bindings/tcl/binding as Tcl
 
+when defined(pixGL):
+  import boxy
+
+when defined(resvg):
+  import ../bindings/resvg/types
+
 type
   RenderOptions* = object
     strokeWidth*: float32        = 1.0
@@ -197,6 +203,34 @@ proc toDictObj*(img: pixie.Image): Tcl.PObj =
   discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height.cint))
   
   return dict
+
+template toHexPtr*[T](obj: T): string =
+  # Converts an object to a hexadecimal string.
+  #
+  # obj - The object to convert.
+  #
+  # Returns: A hexadecimal string according to the type.
+
+  let typeName =
+    when T is pixie.Context     : "ctx"
+    elif T is pixie.Image       : "img"
+    elif T is pixie.Font        : "font"
+    elif T is pixie.Span        : "span"
+    elif T is pixie.Paint       : "paint"
+    elif T is pixie.TypeFace    : "TFace"
+    elif T is pixie.Path        : "path"
+    elif T is Svg               : "svg"
+    elif T is pixie.Arrangement : "arr"
+    else: {.error: "pix type not supported : " & $T .}
+  ("0x" & fmtHexPtr(obj) & "^" & typeName).toLowerAscii
+
+when defined(pixGL):
+  template toHexPtr*(obj: Boxy): string =
+    ("0x" & fmtHexPtr(obj) & "^boxy").toLowerAscii
+
+when defined(resvg):
+  template toHexPtr*(obj: Resvg): string =
+    ("0x" & fmtHexPtr(obj) & "^resvg").toLowerAscii
 
 func isHexDigit*(c: char): bool =
   # Checks whether a character is a hexadecimal digit (0-9, A-F, a-f).

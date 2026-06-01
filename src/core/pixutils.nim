@@ -8,12 +8,6 @@ import ./pixobj as pixObj
 import std/[strutils, sequtils, base64, tables]
 import ../bindings/tcl/binding as Tcl
 
-when defined(pixGL):
-  import boxy
-
-when defined(resvg):
-  import ../bindings/resvg/types
-
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
   # Sets the interpreter result to the error message.
   #
@@ -46,34 +40,6 @@ proc setVar*(interp: Tcl.PInterp, name: string, value: int): cint =
     return errorMSG(interp, "pix(error): " & $interp)
 
   return Tcl.OK
-
-template toHexPtr*[T](obj: T): string =
-  # Converts an object to a hexadecimal string.
-  #
-  # obj - The object to convert.
-  #
-  # Returns: A hexadecimal string according to the type.
-
-  let typeName =
-    when T is pixie.Context     : "ctx"
-    elif T is pixie.Image       : "img"
-    elif T is pixie.Font        : "font"
-    elif T is pixie.Span        : "span"
-    elif T is pixie.Paint       : "paint"
-    elif T is pixie.TypeFace    : "TFace"
-    elif T is pixie.Path        : "path"
-    elif T is Svg               : "svg"
-    elif T is pixie.Arrangement : "arr"
-    else: {.error: "pix type not supported : " & $T .}
-  ("0x" & fmtHexPtr(obj) & "^" & typeName).toLowerAscii
-
-when defined(pixGL):
-  template toHexPtr*(obj: Boxy): string =
-    ("0x" & fmtHexPtr(obj) & "^boxy").toLowerAscii
-
-when defined(resvg):
-  template toHexPtr*(obj: Resvg): string =
-    ("0x" & fmtHexPtr(obj) & "^resvg").toLowerAscii
 
 proc addToListObj*(matrix3: vmath.Mat3): Tcl.PObj =
   # Adds a matrix 3x3 to a Tcl list object.
