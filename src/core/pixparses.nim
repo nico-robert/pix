@@ -183,10 +183,10 @@ proc toDictObj*(rect: bumpy.Rect): Tcl.PObj =
 
   let dict = Tcl.NewDictObj()
 
-  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(rect.x))
-  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(rect.y))
-  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(rect.w))
-  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(rect.h))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("x", 1), Tcl.NewDoubleObj(cdouble(rect.x)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("y", 1), Tcl.NewDoubleObj(cdouble(rect.y)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("w", 1), Tcl.NewDoubleObj(cdouble(rect.w)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("h", 1), Tcl.NewDoubleObj(cdouble(rect.h)))
   
   return dict
 
@@ -203,6 +203,39 @@ proc toDictObj*(img: pixie.Image): Tcl.PObj =
   discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("height", 6), Tcl.NewIntObj(img.height.cint))
   
   return dict
+
+proc toDictObj*(c: Color): Tcl.PObj =
+  # Converts a colour in Color format into a Tcl dictionary.
+  #
+  # c - The color to convert.
+  #
+  # Returns: A Tcl dict with the color properties.
+
+  let dict = Tcl.NewDictObj()
+
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("r", 1), Tcl.NewDoubleObj(cdouble(c.r)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("g", 1), Tcl.NewDoubleObj(cdouble(c.g)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("b", 1), Tcl.NewDoubleObj(cdouble(c.b)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("a", 1), Tcl.NewDoubleObj(cdouble(c.a)))
+
+  return dict
+
+proc toDictObj*(c: ColorRGBX): Tcl.PObj =
+  # Converts a colour in ColorRGBX format into a Tcl dictionary.
+  #
+  # c - The color to convert.
+  #
+  # Returns: A Tcl dict with the color properties.
+
+  let dict = Tcl.NewDictObj()
+
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(cint(c.r)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(cint(c.g)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(cint(c.b)))
+  discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(cint(c.a)))
+
+  return dict
+
 
 template toHexPtr*[T](obj: T): string =
   # Converts an object to a hexadecimal string.

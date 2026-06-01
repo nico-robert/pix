@@ -591,16 +591,9 @@ proc pix_image_getPixel(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
-  let 
-    data = img[x, y]
-    dictObj = Tcl.NewDictObj()
+  let data = img[x, y]
 
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewIntObj(data.r.cint))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewIntObj(data.g.cint))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewIntObj(data.b.cint))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(data.a.cint))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, data.toDictObj())
 
   return Tcl.OK
 
@@ -794,14 +787,7 @@ proc pix_image_getColor(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   # Retrieve the color of the pixel at coordinates {x y} from the image.
   let color = img.getColor(x, y)
 
-  let dictObj = Tcl.NewDictObj()
-
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("r", 1), Tcl.NewDoubleObj(color.r))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("g", 1), Tcl.NewDoubleObj(color.g))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("b", 1), Tcl.NewDoubleObj(color.b))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("a", 1), Tcl.NewDoubleObj(color.a))
-
-  Tcl.SetObjResult(interp, dictObj)
+  Tcl.SetObjResult(interp, color.toDictObj())
 
   return Tcl.OK
 
