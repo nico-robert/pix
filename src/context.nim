@@ -1053,7 +1053,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   # context      - [ctx]
   # coordinates  - A list {x y}
   # size         - A list {width height}
-  # radius       - A list {nw ne se sw}
+  # radius       - Double value or list radius {nw ne se sw}
   #
   # Returns: Nothing.
   if objc != 5:
@@ -1083,16 +1083,19 @@ proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   if Tcl.ListObjGetElements(interp, objv[4], count, radius) != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 4:
-    return pixUtils.errorMSG(interp,
-      "wrong # args: 'radius' should be {nw ne se sw}"
-    )
-
-  let 
-    nw = radius[0].getFloat()
-    ne = radius[1].getFloat()
-    se = radius[2].getFloat()
-    sw = radius[3].getFloat()
+  let (nw, ne, se, sw) =
+    case count:
+      of 1:
+        let r = radius[0].getFloat()
+        (r, r, r, r)
+      of 4:
+          (radius[0].getFloat(), radius[1].getFloat(),
+           radius[2].getFloat(), radius[3].getFloat())
+      else:
+        return pixUtils.errorMSG(interp,
+          "wrong # args: 'radius' should be a single " & 
+          "value or a list of 4 values {nw ne se sw}"
+        )
 
   ctx.roundedRect(x, y, width, height, nw, ne, se, sw)
 
@@ -1134,32 +1137,28 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   if Tcl.ListObjGetElements(interp, objv[4], count, radius) != Tcl.OK:
     return Tcl.ERROR
 
+  let (nw, ne, se, sw) =
+    case count:
+      of 1:
+        let r = radius[0].getFloat()
+        (r, r, r, r)
+      of 4:
+          (radius[0].getFloat(), radius[1].getFloat(),
+           radius[2].getFloat(), radius[3].getFloat())
+      else:
+        return pixUtils.errorMSG(interp,
+          "wrong # args: 'radius' should be a single " & 
+          "value or a list of 4 values {nw ne se sw}"
+        )
+
   let 
     pos = vec2(x, y)
     wh  = vec2(width, height)
 
-  if count == 1:
-    try:
-      ctx.fillRoundedRect(rect(pos, wh), radius[0].getFloat())
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  elif count == 4:
-    let 
-      nw = radius[0].getFloat()
-      ne = radius[1].getFloat()
-      se = radius[2].getFloat()
-      sw = radius[3].getFloat()
-
-    try:
-      ctx.fillRoundedRect(rect(pos, wh), nw, ne, se, sw)
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  else:
-    return pixUtils.errorMSG(interp,
-      "wrong # args: 'radius' should be a list {nw ne se sw}, or a single value."
-    )
+  try:
+    ctx.fillRoundedRect(rect(pos, wh), nw, ne, se, sw)
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -1200,32 +1199,28 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   if Tcl.ListObjGetElements(interp, objv[4], count, radius) != Tcl.OK:
     return Tcl.ERROR
 
+  let (nw, ne, se, sw) =
+    case count:
+      of 1:
+        let r = radius[0].getFloat()
+        (r, r, r, r)
+      of 4:
+          (radius[0].getFloat(), radius[1].getFloat(),
+           radius[2].getFloat(), radius[3].getFloat())
+      else:
+        return pixUtils.errorMSG(interp,
+          "wrong # args: 'radius' should be a single " & 
+          "value or a list of 4 values {nw ne se sw}"
+        )
+
   let 
     pos = vec2(x, y)
     wh  = vec2(width, height)
 
-  if count == 1:
-    try:
-      ctx.strokeRoundedRect(rect(pos, wh), radius[0].getFloat())
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  elif count == 4:
-    let 
-      nw = radius[0].getFloat()
-      ne = radius[1].getFloat()
-      se = radius[2].getFloat()
-      sw = radius[3].getFloat() 
-
-    try:
-      ctx.strokeRoundedRect(rect(pos, wh), nw, ne, se, sw)
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-
-  else:
-    return pixUtils.errorMSG(interp,
-      "wrong # args: 'radius' should be a list {nw ne se sw}, or a single value."
-    )
+  try:
+    ctx.strokeRoundedRect(rect(pos, wh), nw, ne, se, sw)
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -1377,31 +1372,26 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  var
-    x, y: float32
-    value: cint = 0
+  var x, y: float32
 
   # Coordinates
   if getListFloat(interp, objv[2], x, y, 
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
-  if objc == 4:
-    # Path
-    let path = ptable.loadPath(interp, objv[3])
-    if path.isNil: return Tcl.ERROR
-    try:
-      if ctx.isPointInStroke(path, x, y): value = 1
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    # No Path
-    try:
-      if ctx.isPointInStroke(x, y): value = 1
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  let inside = try:
+    if objc == 4:
+      # Path
+      let path = ptable.loadPath(interp, objv[3])
+      if path.isNil: return Tcl.ERROR
+      ctx.isPointInStroke(path, x, y)
+    else:
+      # No Path
+      ctx.isPointInStroke(x, y)
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(inside.cint))
 
   return Tcl.OK
 
@@ -1419,58 +1409,48 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
       "<ctx> coordinates ?<path>? ?enum=WindingRule?"
     )
     return Tcl.ERROR
-  
+
   let ptable = cast[PixTable](clientData)
 
   # Context
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  var
-    x, y: float32
-    value: cint = 0
-
   # Coordinates
-  if getListFloat(interp, objv[2], x, y, 
+  var x, y: float32
+  if getListFloat(interp, objv[2], x, y,
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
-  if objc == 4:
-    # Path
-    let arg3 = $objv[3]
-    if ptable.hasPath(arg3):
-      try:
-        if ctx.isPointInPath(ptable.getPath(arg3), x, y): value = 1
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    else:
-      # Enum
-      try:
-        if ctx.isPointInPath(
-          x, y, 
-          windingRule = parseEnum[WindingRule](arg3)
-        ): value = 1
-      except CatchableError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  elif objc == 5:
-    # Enum + Path
-    let path = ptable.loadPath(interp, objv[3])
-    if path.isNil: return Tcl.ERROR
-    try:
-      if ctx.isPointInPath(
-        path,
-        x, y,
-        windingRule = parseEnum[WindingRule]($objv[4])
-      ): value = 1
-    except CatchableError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    try:
-      if ctx.isPointInPath(x, y): value = 1
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  # Optional path + winding rule
+  var
+    path: Path = nil
+    windingRule = NonZero
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  let inside = try:
+    case objc
+    of 4:
+      # arg3 is either a path or a winding rule enum
+      let arg3 = $objv[3]
+      if ptable.hasPath(arg3):
+        path = ptable.getPath(arg3)
+      else:
+        windingRule = parseEnum[WindingRule](arg3)
+    of 5:
+      path = ptable.loadPath(interp, objv[3])
+      if path.isNil: return Tcl.ERROR
+      windingRule = parseEnum[WindingRule]($objv[4])
+    else:
+      discard
+
+    if path.isNil:
+      ctx.isPointInPath(x, y, windingRule)
+    else:
+      ctx.isPointInPath(path, x, y, windingRule)
+  except CatchableError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(inside.cint))
 
   return Tcl.OK
 

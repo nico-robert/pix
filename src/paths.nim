@@ -636,7 +636,7 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # path         - [path]
   # coordinates  - A list {x y}
   # size         - A list {width height}
-  # radius       - A list {nw ne se sw}
+  # radius       - Double value or list radius {nw ne se sw}
   # ccw          - Boolean value (optional:true)
   #
   # Returns: Nothing.
@@ -671,16 +671,19 @@ proc pix_path_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if Tcl.ListObjGetElements(interp, objv[4], count, radius) != Tcl.OK:
     return Tcl.ERROR
 
-  if count != 4:
-    return pixUtils.errorMSG(interp,
-      "wrong # args: 'radius' should be {nw ne se sw}"
-    )
-
-  let 
-    nw = radius[0].getFloat()
-    ne = radius[1].getFloat()
-    se = radius[2].getFloat()
-    sw = radius[3].getFloat()
+  let (nw, ne, se, sw) =
+    case count:
+      of 1:
+        let r = radius[0].getFloat()
+        (r, r, r, r)
+      of 4:
+          (radius[0].getFloat(), radius[1].getFloat(),
+           radius[2].getFloat(), radius[3].getFloat())
+      else:
+        return pixUtils.errorMSG(interp,
+          "wrong # args: 'radius' should be a single " & 
+          "value or a list of 4 values {nw ne se sw}"
+        )
 
   if objc == 6:
     ccw = objv[5].getBool()
@@ -718,20 +721,18 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let path = ptable.loadPath(interp, objv[1])
   if path.isNil: return Tcl.ERROR
 
-  var value: cint = 0
-
   # Coordinates
   var x, y: float32
   if getListFloat(interp, objv[2], x, y,
     "wrong # args: 'coordinates' should be {x y}") != Tcl.OK:
     return Tcl.ERROR
 
-  try:
+  let inside = try:
     if objc == 4:
       var opts = pixParses.RenderOptions()
       pixParses.dictOptions(interp, objv[3], opts)
 
-      if path.strokeOverlaps(
+      path.strokeOverlaps(
         vec2(x, y),
         transform   = opts.transform,
         strokeWidth = opts.strokeWidth,
@@ -739,13 +740,13 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
         lineJoin    = opts.lineJoin,
         miterLimit  = opts.miterLimit,
         dashes      = opts.dashes
-      ): value = 1
+      )
     else:
-      if path.strokeOverlaps(vec2(x, y)): value = 1
+      path.strokeOverlaps(vec2(x, y))
   except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  Tcl.SetObjResult(interp, Tcl.NewIntObj(value))
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(inside.cint))
 
   return Tcl.OK
 

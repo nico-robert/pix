@@ -76,7 +76,7 @@ requires "pixie >= 5.1.0"
 
 # Task definition for generating the pix Tcl/Tk library
 # Compile bindings for 2 versions of Tcl/Tk.
-task pixTclTkBindings, "Generate pix Tcl library.":
+task pix, "Generate pix Tcl library.":
 
   proc extractPixVersionFromNimble(): string =
     let nimbleContent = readFile("pix.nimble")
