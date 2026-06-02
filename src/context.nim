@@ -1428,20 +1428,20 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     windingRule = NonZero
 
   let inside = try:
-    case objc
-    of 4:
-      # arg3 is either a path or a winding rule enum
-      let arg3 = $objv[3]
-      if ptable.hasPath(arg3):
-        path = ptable.getPath(arg3)
+    case objc:
+      of 4:
+        # arg3 is either a path or a winding rule enum
+        let arg3 = $objv[3]
+        if ptable.hasPath(arg3):
+          path = ptable.getPath(arg3)
+        else:
+          windingRule = parseEnum[WindingRule](arg3)
+      of 5:
+        path = ptable.loadPath(interp, objv[3])
+        if path.isNil: return Tcl.ERROR
+        windingRule = parseEnum[WindingRule]($objv[4])
       else:
-        windingRule = parseEnum[WindingRule](arg3)
-    of 5:
-      path = ptable.loadPath(interp, objv[3])
-      if path.isNil: return Tcl.ERROR
-      windingRule = parseEnum[WindingRule]($objv[4])
-    else:
-      discard
+        discard
 
     if path.isNil:
       ctx.isPointInPath(x, y, windingRule)

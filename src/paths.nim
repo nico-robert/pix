@@ -414,7 +414,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
     return Tcl.ERROR
 
   var windingRule = NonZero
-  var matrix3: vmath.Mat3 = mat3()
+  var matrix3 = mat3()
 
   case objc:
     of 4:
@@ -438,6 +438,7 @@ proc pix_path_fillOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewIntObj(value.cint))
+
   return Tcl.OK
 
 proc pix_path_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
