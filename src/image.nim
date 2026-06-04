@@ -932,17 +932,13 @@ proc pix_image_magnifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if img.isNil: return Tcl.ERROR
 
   # The result is stored in newimg.
-  let newimg = 
+  let newimg = try:
     if objc == 3:
-      try:
-        img.magnifyBy2(objv[2].getInt())
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      img.magnifyBy2(objv[2].getInt())
     else:
-      try:
-        img.magnifyBy2()
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      img.magnifyBy2()
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let imgKey = toHexPtr(newimg)
   ptable.addImage(imgKey, newimg)
@@ -971,18 +967,13 @@ proc pix_image_minifyBy2(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
 
-
-  let newimg =
+  let newimg = try:
     if objc == 3:
-      try:
-        img.minifyBy2(objv[2].getInt())
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      img.minifyBy2(objv[2].getInt())
     else:
-      try:
-        img.minifyBy2()
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      img.minifyBy2()
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let imgKey = toHexPtr(newimg)
   ptable.addImage(imgKey, newimg)

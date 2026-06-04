@@ -260,17 +260,13 @@ proc pix_font_computeBounds(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   let arr = ptable.loadArr(interp, objv[1])
   if arr.isNil: return Tcl.ERROR
 
-  let rect = 
+  let rect = try:
     if objc == 3:
-      try:
-        arr.computeBounds(objv[2].getMtx())
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      arr.computeBounds(objv[2].getMtx())
     else:
-      try:
-        arr.computeBounds()
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      arr.computeBounds()
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, rect.toDictObj())
 
