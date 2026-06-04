@@ -124,10 +124,10 @@ proc pix_svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   except PixieError as e:
     return errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(parse)
-  ptable.addPath(p, parse)
+  let pathKey = toHexPtr(parse)
+  ptable.addPath(pathKey, parse)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(pathKey.cstring, -1))
 
   return Tcl.OK
 
