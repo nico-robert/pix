@@ -703,13 +703,13 @@ proc pix_image_diff(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(newimg)
-  ptable.addImage(p, newimg)
+  let imgKey = toHexPtr(newimg)
+  ptable.addImage(imgKey, newimg)
 
   let dictObj = Tcl.NewDictObj()
 
   discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("score", 5), Tcl.NewDoubleObj(score))
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), Tcl.NewStringObj(p.cstring, -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), Tcl.NewStringObj(imgKey.cstring, -1))
 
   Tcl.SetObjResult(interp, dictObj)
 
