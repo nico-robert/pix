@@ -63,9 +63,10 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
     except ValueError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-    let p = toHexPtr(svg)
-    ptable.addRESVG(p, svg)
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+    let svgKey = toHexPtr(svg)
+    ptable.addRESVG(svgKey, svg)
+
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(svgKey.cstring, -1))
 
   else:
     if objc notin [2, 3]:
@@ -83,9 +84,10 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
     except PixieError as e:
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-    let p = toHexPtr(svg)
-    ptable.addSVG(p, svg)
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+    let svgKey = toHexPtr(svg)
+    ptable.addSVG(svgKey, svg)
+
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(svgKey.cstring, -1))
 
   return Tcl.OK
 
@@ -120,10 +122,10 @@ proc pix_svg_newImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
       except PixieError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(img)
-  ptable.addImage(p, img)
+  let imgKey = toHexPtr(img)
+  ptable.addImage(imgKey, img)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 
