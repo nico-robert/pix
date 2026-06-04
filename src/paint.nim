@@ -19,10 +19,10 @@ proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
   except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-  let p = toHexPtr(paint)
-  ptable.addPaint(p, paint)
+  let paintKey = toHexPtr(paint)
+  ptable.addPaint(paintKey, paint)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(paintKey.cstring, -1))
 
   return Tcl.OK
 
@@ -139,10 +139,10 @@ proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   let copy = paint.copy()
 
-  let p = toHexPtr(copy)
-  ptable.addPaint(p, copy)
+  let paintKey = toHexPtr(copy)
+  ptable.addPaint(paintKey, copy)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(paintKey.cstring, -1))
 
   return Tcl.OK
 
