@@ -151,10 +151,10 @@ proc pix_font_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   else:
     # No Paint object gets the font paint.
     let paint = font.paint
-    let p = toHexPtr(paint)
-    ptable.addPaint(p, paint)
+    let paintKey = toHexPtr(paint)
+    ptable.addPaint(paintKey, paint)
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(paintKey.cstring, -1))
 
   return Tcl.OK
 
@@ -405,10 +405,10 @@ proc pix_font_fallbackTypeface(clientData: Tcl.TClientData, interp: Tcl.PInterp,
         "pix(error): The '<TypeFace>' return object is 'null'."
       )
 
-    let p = toHexPtr(newtface)
-    ptable.addTface(p, newtface)
+    let tFKey = toHexPtr(newtface)
+    ptable.addTface(tFKey, newtface)
 
-    Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+    Tcl.SetObjResult(interp, Tcl.NewStringObj(tFKey.cstring, -1))
 
   return Tcl.OK
 
@@ -886,10 +886,10 @@ proc pix_font_typeset(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   else:
     arr = if hasFont: typeset(font, text) else: typeset(spans)
 
-  let p = toHexPtr(arr)
-  ptable.addArr(p, arr)
+  let arrKey = toHexPtr(arr)
+  ptable.addArr(arrKey, arr)
 
-  Tcl.SetObjResult(interp, Tcl.NewStringObj(p.cstring, -1))
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(arrKey.cstring, -1))
 
   return Tcl.OK
 
