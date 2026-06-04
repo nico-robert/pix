@@ -560,17 +560,17 @@ proc pix_hsl*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv
     s = objv[2].getFloat()
     l = objv[3].getFloat()
 
-  if h notin (0.0'f32..360.0'f32):
+  if h notin (0'f32..360'f32):
     return errorMSG(interp,
       "pix(error): 'hue' value must be between 0 and 360."
     )
 
-  if s notin (0.0'f32..100.0'f32):
+  if s notin (0'f32..100'f32):
     return errorMSG(interp,
       "pix(error): 'saturation' value must be between 0 and 100."
     )
 
-  if l notin (0.0'f32..100.0'f32):
+  if l notin (0'f32..100'f32):
     return errorMSG(interp,
       "pix(error): 'lightness' value must be between 0 and 100."
     )
@@ -631,7 +631,7 @@ proc pix_colorDarken*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   let amount = objv[2].getFloat()
 
-  if amount notin (0.0'f32..1.0'f32):
+  if amount notin (0'f32..1'f32):
     return errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1."
     )
@@ -666,7 +666,7 @@ proc pix_colorLighten*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   let amount = objv[2].getFloat()
 
-  if amount notin (0.0'f32..1.0'f32):
+  if amount notin (0'f32..1'f32):
     return errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1."
     )
@@ -701,7 +701,7 @@ proc pix_colorDesaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   let amount = objv[2].getFloat()
 
-  if amount notin (0.0'f32..1.0'f32):
+  if amount notin (0'f32..1'f32):
     return errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1."
     )
@@ -736,7 +736,7 @@ proc pix_colorSaturate*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   let amount = objv[2].getFloat()
 
-  if amount notin (0.0'f32..1.0'f32):
+  if amount notin (0'f32..1'f32):
     return errorMSG(interp,
       "pix(error): 'amount' value must be between 0 and 1."
     )
@@ -771,7 +771,7 @@ proc pix_colorSpin*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   let degrees = objv[2].getFloat()
 
-  if degrees notin (0.0'f32..360.0'f32):
+  if degrees notin (0'f32..360'f32):
     return errorMSG(interp,
       "pix(error): 'degrees' value must be between 0 and 360."
     )

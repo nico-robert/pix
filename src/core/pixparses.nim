@@ -382,7 +382,7 @@ proc isColorSimpleFormat*(obj: Tcl.PObj, colorSimple: var Color): bool =
       getFloat(elements[i], true)
     except ValueError:
       return false
-    if val notin (0.0'f32..1.0'f32): 
+    if val notin (0'f32..1'f32): 
       return false
     components[i] = val
 
