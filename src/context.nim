@@ -2147,7 +2147,6 @@ proc pix_ctx_getImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-
 proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Sets line dash for current context.
   #
@@ -2202,6 +2201,7 @@ proc pix_ctx_getTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Gets the transformation matrix for the context.
   let matListobj = ctx.getTransform().addToListObj()
+
   Tcl.SetObjResult(interp, matListobj)
 
   return Tcl.OK
@@ -2239,8 +2239,7 @@ proc pix_ctx_fillPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     )
     return Tcl.ERROR
 
-  if pix_image_fillpath(clientData, interp, objc, objv) != Tcl.OK:
-    return Tcl.ERROR
+  return pix_image_fillpath(clientData, interp, objc, objv)
 
 proc pix_ctx_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # See [img::strokePath] procedure.
@@ -2250,8 +2249,7 @@ proc pix_ctx_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
     )
     return Tcl.ERROR
 
-  if pix_image_strokePath(clientData, interp, objc, objv) != Tcl.OK:
-    return Tcl.ERROR
+  return pix_image_strokePath(clientData, interp, objc, objv)
 
 proc pix_ctx_getInfoStruct(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # See [ctx::get] procedure.
