@@ -136,14 +136,18 @@ proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   #
   # Returns: A Tcl dictionary containing two keys:
   # #Begintable
-  # **ctx** : A Tcl list of all [ctx] handles.
-  # **img** : A Tcl list of all [img] handles.
+  # **ctx**  : A Tcl list of all [ctx] handles.
+  # **img**  : A Tcl list of all [img] handles.
+  # **font** : A Tcl list of all [font] handles.
+  # **path** : A Tcl list of all [path] handles.
   # #EndTable
   let
-    dictObj    = Tcl.NewDictObj()
-    ptable     = cast[PixTable](clientData)
-    newListctx = Tcl.NewListObj(Tcl.Size(ptable.ctxTable.len), nil)
-    newListimg = Tcl.NewListObj(Tcl.Size(ptable.imgTable.len), nil)
+    dictObj     = Tcl.NewDictObj()
+    ptable      = cast[PixTable](clientData)
+    newListctx  = Tcl.NewListObj(Tcl.Size(ptable.ctxTable.len), nil)
+    newListimg  = Tcl.NewListObj(Tcl.Size(ptable.imgTable.len), nil)
+    newListfont = Tcl.NewListObj(Tcl.Size(ptable.fontTable.len), nil)
+    newListpath = Tcl.NewListObj(Tcl.Size(ptable.pathTable.len), nil)
 
   for key in ptable.ctxTable.keys:
     discard Tcl.ListObjAppendElement(
@@ -157,8 +161,22 @@ proc pix_getKeys*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
       Tcl.NewStringObj(key.cstring, -1)
     )
 
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("ctx", 3), newListctx)
-  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3), newListimg)
+  for key in ptable.fontTable.keys:
+    discard Tcl.ListObjAppendElement(
+      interp, newListfont,
+      Tcl.NewStringObj(key.cstring, -1)
+    )
+
+  for key in ptable.pathTable.keys:
+    discard Tcl.ListObjAppendElement(
+      interp, newListpath,
+      Tcl.NewStringObj(key.cstring, -1)
+    )
+
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("ctx", 3),  newListctx)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("img", 3),  newListimg)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("font", 4), newListfont)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("path", 4), newListpath)
 
   Tcl.SetObjResult(interp, dictObj)
 
