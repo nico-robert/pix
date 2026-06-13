@@ -508,12 +508,12 @@ proc pix_image_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
   return Tcl.OK
 
 proc pix_image_resize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Resize an image to a given height and width
+  # Resize an image to a given height and width.
   #
   # image  - [img]
   # size   - A list {width height}
   #
-  # Returns: Nothing.
+  # Returns: A new [img] handle.
   if objc != 3:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> size")
     return Tcl.ERROR
