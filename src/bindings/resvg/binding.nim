@@ -137,7 +137,7 @@ proc parse*(data: string, targetWidth: int = -1, targetHeight: int = -1, option:
     width  = twidth.cint
     height = theight.cint
 
-  var pixmap: seq[uint8] = newSeq[uint8](width * height * 4)
+  var pixmap = newSeq[uint8](width * height * 4)
   resvg_render(tree, tr, width, height, pixmap[0].addr)
 
   result = Resvg(width: width, height: height, pixmap: pixmap)
