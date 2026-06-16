@@ -20,6 +20,7 @@ type
     convertedBuffer*: pointer   # Persistent BGRA buffer
     bufferWidth*: cint
     bufferHeight*: cint
+    lastGeneration*: uint64     # Last Master generation converted by this instance
     nextInstance*: ptr PixImageInstance
 
   PixImageMaster* = object
@@ -30,7 +31,7 @@ type
     name*: cstring
     interp*: Tcl.PInterp
     tkMaster*: Tk.ImageMaster
-    needflush*: bool            # Flag centralized in the Master
+    generation*: uint64         # Bumped each time the image data changes
     instances*: ptr PixImageInstance
 
 proc pix_createProc(
@@ -54,14 +55,14 @@ proc pix_createProc(
     master.imageKey = $objv[1]
   else:
     master.imageKey = "" # Empty for now
-
+  
   master.image = nil
   master.width = 0
   master.height = 0
   master.name = imageName
   master.interp = interp
   master.tkMaster = masterPtr
-  master.needflush = false
+  master.generation = 0
   master.instances = nil
 
   clientDataPtr[] = cast[Tcl.TClientData](master)
@@ -95,6 +96,7 @@ proc pix_getProc(tkwin: Tk.Window, masterData: Tcl.TClientData): Tcl.TClientData
   instance.convertedBuffer = nil
   instance.bufferWidth = 0
   instance.bufferHeight = 0
+  instance.lastGeneration = 0
 
   var gcValues: X.GCValues
   gcValues.graphics_exposures = false
@@ -144,6 +146,9 @@ proc updateInstanceBuffer(inst: ptr PixImageInstance, display: ptr X.Display) =
     )
   {.pop.}
 
+  # Mark this instance as up to date with the Master data
+  inst.lastGeneration = master.generation
+
 proc pix_displayProc2(
   instanceData: Tcl.TClientData,
   display: ptr X.Display,
@@ -155,7 +160,6 @@ proc pix_displayProc2(
   drawableX: cint,
   drawableY: cint
 ) {.cdecl.} =
-  # Display with centralized needflush
   # This is an alternative displayProc that bypasses the pixmap 
   # method to avoid X11 BadDrawable with XCopyArea on macOS 9.0.3+
   let inst = cast[ptr PixImageInstance](instanceData)
@@ -164,7 +168,7 @@ proc pix_displayProc2(
   if master == nil or master.image == nil or master.imageKey == "":
     return
 
-  if master.needflush or inst.convertedBuffer == nil:
+  if inst.lastGeneration != master.generation or inst.convertedBuffer == nil:
     updateInstanceBuffer(inst, display)
 
   # Render directly to the drawable 
@@ -203,21 +207,21 @@ proc pix_displayProc(
   drawableX: cint,
   drawableY: cint
 ) {.cdecl.} =
-  # Display with centralized needflush
   let inst = cast[ptr PixImageInstance](instanceData)
   let master = inst.master
 
   if master == nil or master.image == nil or master.imageKey == "":
     return
 
-  # Check the centralized flag of the Master
-  let needsUpdate = master.needflush or inst.pixmap == 0
+  # Per-instance staleness against the shared Master generation
+  let stale = inst.lastGeneration != master.generation or inst.convertedBuffer == nil
 
-  if needsUpdate and master.image != nil:
-    if master.needflush:
-      updateInstanceBuffer(inst, display)
-      master.needflush = false  # Reset of the central flag
+  if stale:
+    # Reconverts the buffer; frees the pixmap on size change; records the generation
+    updateInstanceBuffer(inst, display)
 
+  # (Re)upload to the backing pixmap when content changed or pixmap is missing
+  if (stale or inst.pixmap == 0) and inst.convertedBuffer != nil:
     # Lazy creation of pixmap
     if inst.pixmap == 0:
       let depth = Tk.Depth(inst.tkwin)
@@ -225,7 +229,7 @@ proc pix_displayProc(
                                  inst.bufferWidth, inst.bufferHeight, depth)
 
     # Upload to pixmap via temporary XImage
-    if inst.pixmap != 0 and inst.convertedBuffer != nil:
+    if inst.pixmap != 0:
       let ximage = X.CreateImage(
         display,
         Tk.Visual(inst.tkwin),
@@ -377,7 +381,7 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   master.imageKey  = key
   master.width     = img.width.cint
   master.height    = img.height.cint
-  master.needflush = true
+  inc master.generation
 
   Tk.ImageChanged(master.tkMaster, 0, 0,
                   master.width, master.height,
