@@ -89,14 +89,13 @@ proc pix_ctx_strokeStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   # Paint or string [color].
   let arg2 = $objv[2]
 
-  ctx.strokeStyle =
+  ctx.strokeStyle = try:
     if ptable.hasPaint(arg2):
       ptable.getPaint(arg2) # Paint
     else:
-      try:
-        objv[2].getColor() # Color
-      except InvalidColor as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      objv[2].getColor() # Color
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -144,9 +143,9 @@ proc pix_ctx_textBaseline(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   if ctx.isNil: return Tcl.ERROR
 
   ctx.textBaseline = try:
-      parseEnum[BaselineAlignment]($objv[2])
-    except ValueError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+    parseEnum[BaselineAlignment]($objv[2])
+  except ValueError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
 
   return Tcl.OK
@@ -494,7 +493,7 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
         let myEnum = parseEnum[WindingRule](arg2)
         ctx.clip(myEnum)
     elif objc == 4:
-      # Path
+      # Path + Enum
       let
         path = ptable.getPath($objv[2])
         myEnum = parseEnum[WindingRule]($objv[3])
@@ -946,35 +945,25 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  if objc == 3:
-    # Path
-    let arg2 = $objv[2]
-    if ptable.hasPath(arg2):
-      let path = ptable.getPath(arg2)
-      try:
-        ctx.fill(path)
-      except PixieError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-    else:
-      # Enum only
-      try:
+  try:
+    if objc == 3:
+      # Path
+      let arg2 = $objv[2]
+      if ptable.hasPath(arg2):
+        ctx.fill(ptable.getPath(arg2))
+      else:
+        # Enum only
         ctx.fill(parseEnum[WindingRule](arg2))
-      except CatchableError as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  elif objc == 4:
-    # Path + Enum
-    let path = ptable.loadPath(interp, objv[2])
-    if path.isNil: return Tcl.ERROR
-    try:
+    elif objc == 4:
+      # Path + Enum
+      let path = ptable.loadPath(interp, objv[2])
+      if path.isNil: return Tcl.ERROR
       ctx.fill(path, parseEnum[WindingRule]($objv[3]))
-    except CatchableError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    # No path
-    try:
+    else:
+      # No path
       ctx.fill()
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except CatchableError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -1279,14 +1268,13 @@ proc pix_ctx_fillStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   # Paint or string [color].
   let arg2 = $objv[2]
 
-  ctx.fillStyle =
+  ctx.fillStyle = try:
     if ptable.hasPaint(arg2):
       ptable.getPaint(arg2) # Paint
     else:
-      try:
-        objv[2].getColor() # Color
-      except InvalidColor as e:
-        return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+      objv[2].getColor() # Color
+  except InvalidColor as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
@@ -1512,20 +1500,16 @@ proc pix_ctx_stroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   let ctx = ptable.loadContext(interp, objv[1])
   if ctx.isNil: return Tcl.ERROR
 
-  if objc == 3:
-    # Path
-    let path = ptable.loadPath(interp, objv[2])
-    if path.isNil: return Tcl.ERROR
-
-    try:
+  try:
+    if objc == 3:
+      # Path
+      let path = ptable.loadPath(interp, objv[2])
+      if path.isNil: return Tcl.ERROR
       ctx.stroke(path)
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
-  else:
-    try:
+    else:
       ctx.stroke()
-    except PixieError as e:
-      return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+  except PixieError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   return Tcl.OK
 
