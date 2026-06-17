@@ -1258,54 +1258,39 @@ proc pix_image_toGrayScale(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # Converts an image to grayscale.
   #
   # img         - <img> object
-  # handleAlpha - Boolean value that indicates whether to handle 
+  # handleAlpha - Boolean value that indicates whether to handle
   #               the alpha channel (optional:true).
   #
   # Returns: nothing.
-  
+
   if objc notin [2, 3]:
     Tcl.WrongNumArgs(interp, 1, objv, "<img> ?handleAlpha?")
     return Tcl.ERROR
-  
+
   # Image
   let ptable = cast[PixTable](clientData)
   let img = ptable.loadImage(interp, objv[1])
   if img.isNil: return Tcl.ERROR
-  
-  var handleAlpha: bool = true
-  
+
   # Handle Alpha
+  var handleAlpha = true
   if objc == 3:
     handleAlpha = objv[2].getBool()
-  
-  for y in 0 ..< img.height:
-    for x in 0 ..< img.width:
-      let pixelColor = img.unsafe[x, y]
-      let rgba = pixelColor.rgba()
-      
-      let grayColor =
-        if handleAlpha:
-          # Consider transparency: transparent areas → black
-          let alphaFactor = rgba.a.float / 255.0
-          let grayF = (0.299 * rgba.r.float + 
-                       0.587 * rgba.g.float + 
-                       0.114 * rgba.b.float) * alphaFactor
-          let grayValue = uint8(clamp(grayF, 0.0, 255.0))
-          # Opaque result (alpha = 255) because transparency 
-          # is incorporated into RGB.
-          rgba(grayValue, grayValue, grayValue, 255)
-        else:
-          # Ignore transparency, just convert to gray.
-          let grayValue = uint8(clamp(
-            0.299 * rgba.r.float + 
-            0.587 * rgba.g.float + 
-            0.114 * rgba.b.float,
-            0.0, 255.0
-          ))
-          rgba(grayValue, grayValue, grayValue, rgba.a)
 
-      img.unsafe[x, y] = grayColor.rgbx()
-  
+  if handleAlpha:
+    for px in img.data.mitems:
+      let g = uint8(clamp(
+        0.299 * px.r.float + 0.587 * px.g.float + 0.114 * px.b.float + 0.5,
+        0.0, 255.0))
+      px = ColorRGBX(r: g, g: g, b: g, a: 255)
+  else:
+    for px in img.data.mitems:
+      let c = px.rgba()
+      let g = uint8(clamp(
+        0.299 * c.r.float + 0.587 * c.g.float + 0.114 * c.b.float + 0.5,
+        0.0, 255.0))
+      px = rgba(g, g, g, c.a).rgbx()
+
   return Tcl.OK
 
 proc pix_image_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
