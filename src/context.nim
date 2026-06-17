@@ -147,7 +147,6 @@ proc pix_ctx_textBaseline(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   except ValueError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
-
   return Tcl.OK
 
 proc pix_ctx_restore(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
@@ -1299,7 +1298,7 @@ proc pix_ctx_globalAlpha(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   # Alpha
   let alpha = objv[2].getFloat()
 
-  if alpha < 0.0 or alpha > 1.0:
+  if alpha notin (0'f32..100'f32):
     return pixUtils.errorMSG(interp,
       "pix(error): The global alpha context should be in the range 0 to 1."
     )
@@ -2208,7 +2207,9 @@ proc pix_ctx_getLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   let newSeqListobj = Tcl.NewListObj(0, nil)
 
   for _, value in ctx.getLineDash():
-    if Tcl.ListObjAppendElement(interp, newSeqListobj, Tcl.NewDoubleObj(value)) != Tcl.OK:
+    if Tcl.ListObjAppendElement(
+      interp, newSeqListobj, Tcl.NewDoubleObj(value)
+    ) != Tcl.OK:
       return Tcl.ERROR
 
   Tcl.SetObjResult(interp, newSeqListobj)
