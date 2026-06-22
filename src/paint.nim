@@ -39,7 +39,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
   #  **blendMode**               : Enum value (BlendMode).
   #  **opacity**                 : Double value (0 to 1).
   #  **gradientHandlePositions** : List coordinates {{x y} {x y}}.
-  #  **gradientStops**           : List of color stops {{offset color} {offset1 color1}}.
+  #  **gradientStops**           : List of color stops {{color offset} {color1 offset1}}.
   # #EndTable
   #
   # Returns: Nothing.
