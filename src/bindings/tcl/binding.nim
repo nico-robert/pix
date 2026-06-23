@@ -37,11 +37,13 @@ type
     tcl_GetObjType           : proc(typeName: cstring): Tcl.PObjType {.cdecl.}
     tcl_Alloc                : proc(size: Tcl.HASH_TYPE): pointer {.cdecl.}
     tcl_ObjSetVar2           : proc(interp: Tcl.PInterp, part1Ptr: Tcl.PObj, part2Ptr: Tcl.PObj, newValuePtr: Tcl.PObj, flags: cint): Tcl.PObj {.cdecl.}
+    tcl_GetByteArrayFromObj  : proc(objPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cstring {.cdecl.}
     when defined(tcl9):
       tcl_IncrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
       tcl_DecrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
       tcl_FetchInternalRep   : proc(objPtr: Tcl.PObj, typePtr: Tcl.PObjType): Tcl.PObjInternalRep {.cdecl.}
       tcl_StoreInternalRep   : proc(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjInternalRep) {.cdecl.}
+      tcl_GetBytesFromObj    : proc(objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): cstring {.cdecl.}
     when defined(tcl8):
       tcl_NewIntObj          : proc(intValue: cint): Tcl.PObj {.cdecl.}
       tcl_NewBooleanObj      : proc(intValue: cint): Tcl.PObj {.cdecl.}
@@ -175,6 +177,9 @@ when defined(tcl8):
   proc IncrRefCount*(objPtr: Tcl.PObj) {.cdecl, importc: "Tcl_IncrRefCount", header: "tcl.h".}
   proc DecrRefCount*(objPtr: Tcl.PObj) {.cdecl, importc: "Tcl_DecrRefCount", header: "tcl.h".}
 
+  proc GetBytesFromObj*(objPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cstring =
+    return tclStubsPtr.tcl_GetByteArrayFromObj(objPtr, lengthPtr)
+
 when defined(tcl9):
   proc IncrRefCount*(objPtr: Tcl.PObj) =
     tclStubsPtr.tcl_IncrRefCount(objPtr)
@@ -190,6 +195,9 @@ when defined(tcl9):
 
   proc Eval*(interp: Tcl.PInterp, script: cstring): cint =
     return EvalEx(interp, script, TCL.INDEX_NONE, 0)
+
+  proc GetBytesFromObj*(objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): cstring =
+    return tclStubsPtr.tcl_GetBytesFromObj(objPtr, numBytesPtr)
 
   template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(Tcl.WideInt(value))
   template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(Tcl.WideInt(if intValue != 0: 1 else: 0))
