@@ -706,10 +706,18 @@ proc pix_font_parseOtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
+  var n: Tcl.Size
+
+  let p = Tcl.GetBytesFromObj(interp, objv[1], n)
+  if p.isNil:
+    return Tcl.ERROR
+  var data = newString(n)
+  if n > 0:
+    copyMem(data[0].addr, p, n)
 
   # Buffer
   let typeface = try:
-    parseOtf($objv[1])
+    parseOtf(data)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
@@ -762,10 +770,18 @@ proc pix_font_parseTtf(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
     return Tcl.ERROR
 
   let ptable = cast[PixTable](clientData)
+  var n: Tcl.Size
+
+  let p = Tcl.GetBytesFromObj(interp, objv[1], n)
+  if p.isNil:
+    return Tcl.ERROR
+  var data = newString(n)
+  if n > 0:
+    copyMem(data[0].addr, p, n)
 
   # Buffer
   let typeface = try:
-    parseTtf($objv[1])
+    parseTtf(data)
   except PixieError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
