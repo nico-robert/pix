@@ -43,7 +43,7 @@ type
       tcl_DecrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
       tcl_FetchInternalRep   : proc(objPtr: Tcl.PObj, typePtr: Tcl.PObjType): Tcl.PObjInternalRep {.cdecl.}
       tcl_StoreInternalRep   : proc(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjInternalRep) {.cdecl.}
-      tcl_GetBytesFromObj    : proc(objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): cstring {.cdecl.}
+      tcl_GetBytesFromObj    : proc(interp: Tcl.PInterp, objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): cstring {.cdecl.}
     when defined(tcl8):
       tcl_NewIntObj          : proc(intValue: cint): Tcl.PObj {.cdecl.}
       tcl_NewBooleanObj      : proc(intValue: cint): Tcl.PObj {.cdecl.}
@@ -177,9 +177,6 @@ when defined(tcl8):
   proc IncrRefCount*(objPtr: Tcl.PObj) {.cdecl, importc: "Tcl_IncrRefCount", header: "tcl.h".}
   proc DecrRefCount*(objPtr: Tcl.PObj) {.cdecl, importc: "Tcl_DecrRefCount", header: "tcl.h".}
 
-  proc GetBytesFromObj*(objPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cstring =
-    return tclStubsPtr.tcl_GetByteArrayFromObj(objPtr, lengthPtr)
-
 when defined(tcl9):
   proc IncrRefCount*(objPtr: Tcl.PObj) =
     tclStubsPtr.tcl_IncrRefCount(objPtr)
@@ -196,11 +193,14 @@ when defined(tcl9):
   proc Eval*(interp: Tcl.PInterp, script: cstring): cint =
     return EvalEx(interp, script, TCL.INDEX_NONE, 0)
 
-  proc GetBytesFromObj*(objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): cstring =
-    return tclStubsPtr.tcl_GetBytesFromObj(objPtr, numBytesPtr)
-
   template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(Tcl.WideInt(value))
   template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(Tcl.WideInt(if intValue != 0: 1 else: 0))
+
+proc GetBytesFromObj*(interp: Tcl.PInterp, obj: Tcl.PObj, length: var Tcl.Size): cstring =
+  when defined(tcl9):
+    return tclStubsPtr.tcl_GetBytesFromObj(interp, obj, length)
+  else:
+    return tclStubsPtr.tcl_GetByteArrayFromObj(obj, length)
 
 proc tclInitStubs(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl, importc: "Tcl_InitStubs", header: "tcl.h".}
 
