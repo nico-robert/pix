@@ -1,12 +1,14 @@
 # Data file test.
 # nim to tcl.
-# pixie == 5.0.7
+
 proc getbase64 data {
     return [binary encode base64 -maxlen 80 $data]
 }
 
 proc isEqual {obj b64} {
-    global env
+    global env tolComp
+
+    set tolComp 0.01
 
     if {[string match *ctx* $obj]} {
         set ctxinfo [pix::ctx::get $obj]
@@ -40,9 +42,7 @@ proc isEqual {obj b64} {
 
     catch {file delete $myfile}
 
-    puts stderr [format "isEqual score = %.5f (%.3f)" $score 0.01]
-
-    if {$score > 0.01} {
+    if {$score > $tolComp} {
         pix::img::writeFile $mydiffimg \
             [file join $tmpdir testdiff_[clock click].png]
         return 0
