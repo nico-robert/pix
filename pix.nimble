@@ -72,7 +72,7 @@ srcDir      = "src"
 
 # Dependencies
 requires "nim >= 2.0.6"
-requires "pixie >= 5.1.0"
+requires "pixie >= 5.1.0 & < 6.0.0"
 
 # Task definition for generating the pix Tcl/Tk library
 # Compile bindings for 2 versions of Tcl/Tk.
@@ -158,7 +158,7 @@ task pix, "Generate pix Tcl library.":
   let resvgEnabled = getResvgconfig()
 
   # Generate pix Tcl/Tk library:
-  const baseFlags = " -d:strip -d:useMalloc -d:release"
+  const baseFlags = " -d:strip -d:useMalloc -d:release -d:x11"
   var flags: string
 
   for withResvg in [true, false]:
