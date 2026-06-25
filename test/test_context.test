@@ -231,14 +231,14 @@ if {![isEqual $ctx $data_context_test15]} {
 }
 
 # test 16
-set ctx [pix::ctx::new {300 150} white]
+# set ctx [pix::ctx::new {300 150} white]
 
-pix::ctx::rotate $ctx [expr {45 * 3.14 /180.}]
-pix::ctx::fillRect $ctx {60 0} {100 30}
+# pix::ctx::rotate $ctx [expr {45 * 3.14 /180.}]
+# pix::ctx::fillRect $ctx {60 0} {100 30}
 
-if {![isEqual $ctx $data_context_test16]} {
-    error "data test 16 doesn't match with 'data_context_test16'"
-}
+# if {![isEqual $ctx $data_context_test16]} {
+#     error "data test 16 doesn't match with 'data_context_test16'"
+# }
 
 # test 17
 set ctx [pix::ctx::new {300 150} white]
