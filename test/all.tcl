@@ -16,9 +16,9 @@ foreach fc [split $files "\n"] {
     set file [string trim $fc]
     if {[string length $file] == 0 || [string first "#" $file] > -1} {continue}
     set tclTestFile [file join $dir $file]
-    exec tclsh90 $tclTestFile >@ stdout 2>@ stderr
+    exec tclsh90 $tclTestFile
     puts stdout "Tcl90 : $file > Ok"
-    exec tclsh86 $tclTestFile >@ stdout 2>@ stderr
+    exec tclsh86 $tclTestFile
     puts stdout "Tcl86 : $file > Ok"
 }
 
