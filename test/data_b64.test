@@ -8,7 +8,9 @@ proc getbase64 data {
 proc isEqual {obj b64} {
     global env tolComp
 
-    set tolComp 0.01
+    if {![info exists tolComp]} {
+        set tolComp 0.01
+    }
 
     if {[string match *ctx* $obj]} {
         set ctxinfo [pix::ctx::get $obj]
