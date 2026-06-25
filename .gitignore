@@ -6,3 +6,5 @@ linux-x86_64/
 macosx-arm/
 dist/
 .vscode
+nimble.paths
+config.nims
