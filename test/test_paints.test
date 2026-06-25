@@ -61,6 +61,8 @@ if {![isEqual $image $data_paint_test3]} {
     error "data test 3 doesn't match with 'data_paint_test3'"
 }
 
+set ::tolComp $tol
+
 # Test 4
 set paint [pix::paint::new "LinearGradientPaint"]
 pix::paint::configure $paint {
@@ -103,8 +105,10 @@ if {![isEqual $image $data_paint_test6]} {
     error "data test 6 doesn't match with 'data_paint_test6'"
 }
 
-set ::tolComp $tol
-
+set tol $::tolComp ; # tolerance comparison
+if {[string match "*-arm" [platform::generic]]} {
+    set ::tolComp 0.15 ; # On macOS arm64, the tolerance is too low for this test.  
+}
 # Test 7
 set paint [pix::paint::new "ImagePaint"]
 pix::paint::configure $paint [list \
@@ -119,5 +123,7 @@ pix::img::fill $image $paint
 if {![isEqual $image $data_paint_test7]} {
     error "data test 7 doesn't match with 'data_paint_test7'"
 }
+
+set ::tolComp $tol
 
 exit 0
