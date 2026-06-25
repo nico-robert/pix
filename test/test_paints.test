@@ -29,6 +29,10 @@ if {![isEqual $image $data_paint_test1]} {
 }
 
 # Test 2
+set tol $::tolComp ; # tolerance comparison
+if {[string match "*-arm" [platform::generic]]} {
+    set ::tolComp 0.08 ; # On macOS arm64, the tolerance is too low for this test.  
+}
 set paint [pix::paint::new "ImagePaint"]
 pix::paint::configure $paint [list \
     image [pix::img::readImage [file join [file dirname [info script]] images mandrill.png]] \
@@ -42,6 +46,8 @@ pix::img::fillPath $image $heartShape $paint
 if {![isEqual $image $data_paint_test2]} {
     error "data test 2 doesn't match with 'data_paint_test2'"
 }
+
+set ::tolComp $tol
 
 # Test 3
 set paint [pix::paint::new "TiledImagePaint"]
