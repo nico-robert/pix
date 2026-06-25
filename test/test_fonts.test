@@ -244,9 +244,10 @@ if {![isEqual $image $data_font_test16]} {
 }
 
 # Test 17
-
 set tol $::tolComp ; # tolerance comparison
-set ::tolComp 0.02 ; # On macOS arm64, the tolerance is too low for this test.
+if {[string match "*-arm" [platform::generic]]} {
+    set ::tolComp 0.02 ; # On macOS arm64, the tolerance is too low for this test.  
+}
 set font [pix::font::readFont [file join [file dirname [info script]] fonts Roboto-Regular_1.ttf]]
 pix::font::configure $font {size 24 strikethrough true paint "rgba(0, 0, 0, 0.5)"}
 
