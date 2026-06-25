@@ -40,6 +40,8 @@ proc isEqual {obj b64} {
 
     catch {file delete $myfile}
 
+    puts stderr [format "isEqual score = %.5f (%.3f)" $score 0.01]
+
     if {$score > 0.01} {
         pix::img::writeFile $mydiffimg \
             [file join $tmpdir testdiff_[clock click].png]
