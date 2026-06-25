@@ -24,24 +24,24 @@ proc isEqual {obj b64} {
             break
         }
     }
-    # Temp directory not found, writes file 
-    # according to script directory.
-    if {$tmpdir eq ""} {set tmpdir [file dirname [info script]]}
-    
-    set p [image create photo -data $b64]
+    if {$tmpdir eq ""} {
+        set tmpdir [file dirname [info script]]
+    }
+
     set myfile [file join $tmpdir test_[clock click].png]
-    $p write $myfile
-    
+    set fh [open $myfile wb]
+    puts -nonewline $fh [binary decode base64 $b64]
+    close $fh
+
     set imgtest   [pix::img::readImage $myfile]
     set diffimage [pix::img::diff $img $imgtest]
     set mydiffimg [dict get $diffimage img]
     set score     [dict get $diffimage score]
-    
+
     catch {file delete $myfile}
 
     if {$score > 0.01} {
-        pix::img::writeFile \
-            $mydiffimg \
+        pix::img::writeFile $mydiffimg \
             [file join $tmpdir testdiff_[clock click].png]
         return 0
     }
