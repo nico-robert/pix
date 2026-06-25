@@ -47,8 +47,6 @@ if {![isEqual $image $data_paint_test2]} {
     error "data test 2 doesn't match with 'data_paint_test2'"
 }
 
-set ::tolComp $tol
-
 # Test 3
 set paint [pix::paint::new "TiledImagePaint"]
 pix::paint::configure $paint [list \
@@ -104,6 +102,8 @@ pix::img::fillPath $image $heartShape $paint
 if {![isEqual $image $data_paint_test6]} {
     error "data test 6 doesn't match with 'data_paint_test6'"
 }
+
+set ::tolComp $tol
 
 # Test 7
 set paint [pix::paint::new "ImagePaint"]
