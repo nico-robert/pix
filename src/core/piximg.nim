@@ -336,7 +336,7 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   let ptable = cast[PixTable](clientData)
   var key: string
   var pixPhotoName: string
-  var dummyImgType: Tk.ImageType
+  var dummyImgType: ptr Tk.ImageType
 
   # Parse arguments
   if objc == 2:
