@@ -1,3 +1,6 @@
+# Copyright (c) 2024-2026 Nicolas ROBERT.
+# Distributed under MIT license. Please see LICENSE for details.
+
 const
   OK*    = 0
   ERROR* = 1
@@ -6,7 +9,7 @@ const
 
 when defined(tcl9):
   type
-    Size* {.importc: "Tcl_Size", header: "tcl.h".} = clong
+    Size* {.importc: "Tcl_Size", header: "tcl.h".} = int
     HASH_TYPE* = csize_t
 else:
   type
@@ -14,10 +17,10 @@ else:
     HASH_TYPE* = cuint
 
 type
-  TInterp*{.incompleteStruct.} = object
+  TInterp*{.importc: "Tcl_Interp", header: "tcl.h", incompleteStruct.} = object
   PInterp* = ptr TInterp
 
-  TNamespace*{.incompleteStruct.} = object
+  TNamespace*{.importc: "Tcl_Namespace", header: "tcl.h", incompleteStruct.} = object
   PNamespace* = ptr TNamespace
 
   TClientData* = pointer
@@ -28,15 +31,47 @@ type
     clientData: TClientData
     ) {.cdecl.}
 
-  TCommand*{.incompleteStruct.} = object
+  TCommand*{.importc: "struct Tcl_Command_", header: "tcl.h", incompleteStruct.} = object
   PCommand* = ptr TCommand
 
-  ObjType* = object
+  WideInt* = clonglong
+
+  TwoPtrValue* = object
+    ptr1*: pointer
+    ptr2*: pointer
+
+  PtrAndLongRep* = object
+    ptr1*: pointer
+    value*: culong
+
+when defined(tcl9):
+  type
+    TObjInternalRep* {.importc: "Tcl_ObjInternalRep", header: "tcl.h", union.} = object
+      longValue*: clong
+      doubleValue*: cdouble
+      otherValuePtr*: pointer
+      wideValue*: clonglong
+      twoPtrValue*: TwoPtrValue
+      ptrAndLongRep*: PtrAndLongRep
+else:
+  type
+    TObjInternalRep* {.union.} = object
+      longValue*: clong
+      doubleValue*: cdouble
+      otherValuePtr*: pointer
+      wideValue*: clonglong
+      twoPtrValue*: TwoPtrValue
+      ptrAndLongRep*: PtrAndLongRep
+
+type
+  PObjInternalRep* = ptr TObjInternalRep
+
+  ObjType* {.importc: "Tcl_ObjType", header: "tcl.h".} = object
     name*:             cstring
-    freeIntRepProc*:   proc(objPtr: PObj) {.cdecl.}
-    dupIntRepProc*:    proc(srcPtr: PObj, dupPtr: PObj) {.cdecl.}
-    updateStringProc*: proc(objPtr: PObj) {.cdecl.}
-    setFromAnyProc*:   proc(interp: PInterp, objPtr: PObj): cint {.cdecl.}
+    freeIntRepProc*:   proc(objPtr: PObj) {.cdecl, gcsafe.}
+    dupIntRepProc*:    proc(srcPtr: PObj, dupPtr: PObj) {.cdecl, gcsafe.}
+    updateStringProc*: proc(objPtr: PObj) {.cdecl, gcsafe.}
+    setFromAnyProc*:   proc(interp: PInterp, objPtr: PObj): cint {.cdecl, gcsafe.}
     when defined(tcl9):
       version*: csize_t
       lengthProc*: pointer      # TODO: Tcl_ObjTypeLengthProc
@@ -50,25 +85,7 @@ type
 
   PObjType* = ptr ObjType
 
-  TwoPtrValue* = object
-    ptr1*: pointer
-    ptr2*: pointer
-
-  PtrAndLongRep* = object
-    ptr1*: pointer
-    value*: culong
-
-  TObjInternalRep* {.union.} = object
-    longValue*: clong
-    doubleValue*: cdouble
-    otherValuePtr*: pointer
-    wideValue*: clonglong
-    twoPtrValue*: TwoPtrValue
-    ptrAndLongRep*: PtrAndLongRep
-
-  PObjInternalRep*  = ptr TObjInternalRep
-
-  TObj* = object
+  TObj* {.importc: "Tcl_Obj", header: "tcl.h".} = object
     refCount*   : Size
     bytes*      : cstring
     length*     : Size
@@ -78,7 +95,6 @@ type
   PObj*  = ptr TObj
   PPObj* = ptr UncheckedArray[PObj]
 
-  WideInt*        = clonglong
   PCmdDeleteProc* {.importc: "Tcl_CmdDeleteProc", header: "tcl.h".} = proc(
                   clientData: TClientData
                   ) {.cdecl.}
