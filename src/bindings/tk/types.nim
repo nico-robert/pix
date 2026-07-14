@@ -1,18 +1,23 @@
+# Copyright (c) 2024-2026 Nicolas ROBERT.
+# Distributed under MIT license. Please see LICENSE for details.
+
 when defined(x11):
   import ../tcl/types as Tcl
   import ../x11/types as X
 
-const 
+const
   PHOTO_COMPOSITE_OVERLAY* = 0
   PHOTO_COMPOSITE_SET*     = 1
-  
+
 type
   ImageMaster*{.importc: "Tk_ImageMaster", header: "tk.h".} = distinct pointer
   Window*     {.importc: "Tk_Window", header: "tk.h".}      = distinct pointer
 
+  PhotoHandle* = pointer
+
 when defined(x11):
   type
-    ImageType* = object
+    ImageType* {.importc: "Tk_ImageType", header: "tk.h".} = object
       name*           : cstring
       createProc*     : proc(interp: Tcl.PInterp, imageName: cstring, objc: cint, objv: Tcl.PPObj, typePtr: ptr ImageType, masterPtr: ImageMaster, clientDataPtr: Tcl.PClientData): cint {.cdecl.}
       getProc*        : proc(tkwin: Window, masterData: Tcl.TClientData): Tcl.TClientData {.cdecl.}
@@ -21,13 +26,12 @@ when defined(x11):
       deleteProc*     : proc(instanceData: Tcl.TClientData) {.cdecl.}
 
 type
-  PhotoHandle*     = pointer
-  PhotoImageBlock* = TBlock
-
-  TBlock* = object
+  TBlock* {.importc: "Tk_PhotoImageBlock", header: "tk.h".} = object
     pixelPtr* : ptr UncheckedArray[uint8]
     width*    : cint
     height*   : cint
     pitch*    : cint
     pixelSize*: cint
     offset*   : array[4, cint]
+
+  PhotoImageBlock* = TBlock
