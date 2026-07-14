@@ -4,150 +4,145 @@
 import ./types as Tcl
 export Tcl
 
-type
-  TclStubs {.importc.} = object
-    tcl_PkgProvideEx         : proc(interp: Tcl.PInterp, name: cstring, version: cstring, clientData: Tcl.TClientData): cint {.cdecl.}
-    tcl_GetBooleanFromObj    : proc(interp: Tcl.PInterp, objPtr: Tcl.PObj, boolPtr: var cint): cint {.cdecl.}
-    tcl_GetDoubleFromObj     : proc(interp: Tcl.PInterp, objPtr: Tcl.PObj, doublePtr: var cdouble): cint {.cdecl.}
-    tcl_GetIntFromObj        : proc(interp: Tcl.PInterp, objPtr: Tcl.PObj, intPtr: var cint): cint {.cdecl.}
-    tcl_GetString            : proc(objPtr: Tcl.PObj): cstring {.cdecl.}
-    tcl_ListObjAppendElement : proc(interp: Tcl.PInterp, listPtr: Tcl.PObj, objPtr: Tcl.PObj): cint {.cdecl.}
-    tcl_ListObjGetElements   : proc(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size, objvPtr: var Tcl.PPObj): cint {.cdecl.}
-    tcl_ListObjLength        : proc(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cint {.cdecl.}
-    tcl_NewDoubleObj         : proc(doubleValue: cdouble): Tcl.PObj {.cdecl.}
-    tcl_NewWideIntObj        : proc(wideValue: Tcl.WideInt): Tcl.PObj {.cdecl.}
-    tcl_NewListObj           : proc(objc: Tcl.Size, objv: Tcl.PPObj): Tcl.PObj {.cdecl.}
-    tcl_NewStringObj         : proc(bytes: cstring, length: Tcl.Size): Tcl.PObj {.cdecl.}
-    tcl_CreateObjCommand     : proc(interp: Tcl.PInterp, cmdName: cstring, callback: Tcl.PObjCmdProc, clientData: Tcl.TClientData, deleteProc: Tcl.PCmdDeleteProc): Tcl.PCommand {.cdecl.}
-    tcl_SetObjResult         : proc(interp: Tcl.PInterp, resultObjPtr: Tcl.PObj) {.cdecl.}
-    tcl_DictObjPut           : proc(interp: Tcl.PInterp, dictPtr: Tcl.PObj, keyPtr: Tcl.PObj, valuePtr: Tcl.PObj): cint {.cdecl.}
-    tcl_NewDictObj           : proc(): Tcl.PObj {.cdecl.}
-    tcl_CreateNamespace      : proc(interp: Tcl.PInterp, name: cstring, clientData: Tcl.TClientData, deleteProc: Tcl.PNamespaceDeleteProc): Tcl.PNamespace {.cdecl.}
-    tcl_FindNamespace        : proc(interp: Tcl.PInterp, name: cstring, contextNsPtr: Tcl.PNamespace, flags: cint): Tcl.PNamespace {.cdecl.}
-    tcl_WrongNumArgs         : proc(interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj, message: cstring) {.cdecl.}
-    tcl_GetObjResult         : proc(interp: Tcl.PInterp): Tcl.PObj {.cdecl.}
-    tcl_NewByteArrayObj      : proc(bytes: cstring, length: Tcl.Size): Tcl.PObj {.cdecl.}
-    tcl_EvalObjv             : proc(interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj, flags: cint): cint {.cdecl.}
-    tcl_Panic                : proc(format: cstring) {.cdecl.}
-    tcl_VarEval              : proc(interp: Tcl.PInterp): cint {.cdecl.}
-    tcl_EvalEx               : proc(interp: Tcl.PInterp, script: cstring, numBytes: Tcl.Size, flags: cint): cint {.cdecl.}
-    tcl_RegisterObjType      : proc(typePtr: Tcl.PObjType) {.cdecl.}
-    tcl_InvalidateStringRep  : proc(objPtr: Tcl.PObj) {.cdecl.}
-    tcl_NewObj               : proc(): Tcl.PObj {.cdecl.}
-    tcl_GetObjType           : proc(typeName: cstring): Tcl.PObjType {.cdecl.}
-    tcl_Alloc                : proc(size: Tcl.HASH_TYPE): pointer {.cdecl.}
-    tcl_ObjSetVar2           : proc(interp: Tcl.PInterp, part1Ptr: Tcl.PObj, part2Ptr: Tcl.PObj, newValuePtr: Tcl.PObj, flags: cint): Tcl.PObj {.cdecl.}
-    tcl_GetByteArrayFromObj  : proc(objPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cstring {.cdecl.}
-    when defined(tcl9):
-      tcl_IncrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
-      tcl_DecrRefCount       : proc(objPtr: Tcl.PObj) {.cdecl.}
-      tcl_FetchInternalRep   : proc(objPtr: Tcl.PObj, typePtr: Tcl.PObjType): Tcl.PObjInternalRep {.cdecl.}
-      tcl_StoreInternalRep   : proc(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjInternalRep) {.cdecl.}
-      tcl_GetBytesFromObj    : proc(interp: Tcl.PInterp, objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): cstring {.cdecl.}
-    when defined(tcl8):
-      tcl_NewIntObj          : proc(intValue: cint): Tcl.PObj {.cdecl.}
-      tcl_NewBooleanObj      : proc(intValue: cint): Tcl.PObj {.cdecl.}
-      tcl_Eval               : proc(interp: Tcl.PInterp, script: cstring): cint {.cdecl.}
-
-var tclStubsPtr   {.importc: "tclStubsPtr", header: "tclDecls.h".} : ptr TclStubs
 var tclVersion    {.importc: "TCL_VERSION", header: "tcl.h".}: cstring
 var tclPatchLevel {.importc: "TCL_PATCH_LEVEL", header: "tcl.h".}: cstring
 
 proc VERSION*(): string     = return $tclVersion
 proc PATCH_LEVEL*(): string = return $tclPatchLevel
 
-proc PkgProvideEx*(interp: Tcl.PInterp, name: cstring, version: cstring, clientData: Tcl.TClientData): cint =
-  return tclStubsPtr.tcl_PkgProvideEx(interp, name, version, clientData)
+proc PkgProvideEx*(interp: Tcl.PInterp, name: cstring, version: cstring, clientData: Tcl.TClientData): cint
+  {.cdecl, importc: "Tcl_PkgProvideEx", header: "tcl.h".}
 
-proc GetBooleanFromObj*(interp: Tcl.PInterp, objPtr: Tcl.PObj, boolPtr: var cint): cint =
-  return tclStubsPtr.tcl_GetBooleanFromObj(interp, objPtr, boolPtr)
+proc GetBooleanFromObj*(interp: Tcl.PInterp, objPtr: Tcl.PObj, boolPtr: var cint): cint
+  {.cdecl, importc: "Tcl_GetBooleanFromObj", header: "tcl.h".}
 
-proc GetDoubleFromObj*(interp: Tcl.PInterp, objPtr: Tcl.PObj, doublePtr: var cdouble): cint =
-  return tclStubsPtr.tcl_GetDoubleFromObj(interp, objPtr, doublePtr)
+proc GetDoubleFromObj*(interp: Tcl.PInterp, objPtr: Tcl.PObj, doublePtr: var cdouble): cint
+  {.cdecl, importc: "Tcl_GetDoubleFromObj", header: "tcl.h".}
 
-proc GetIntFromObj*(interp: Tcl.PInterp, objPtr: Tcl.PObj, intPtr: var cint): cint =
-  return tclStubsPtr.tcl_GetIntFromObj(interp, objPtr, intPtr)
+proc GetIntFromObj*(interp: Tcl.PInterp, objPtr: Tcl.PObj, intPtr: var cint): cint
+  {.cdecl, importc: "Tcl_GetIntFromObj", header: "tcl.h".}
 
-proc GetString*(objPtr: Tcl.PObj): cstring =
-  return tclStubsPtr.tcl_GetString(objPtr)
+proc GetString*(objPtr: Tcl.PObj): cstring
+  {.cdecl, importc: "Tcl_GetString", header: "tcl.h".}
 
-proc ListObjAppendElement*(interp: Tcl.PInterp, listPtr: Tcl.PObj, objPtr: Tcl.PObj): cint =
-  return tclStubsPtr.tcl_ListObjAppendElement(interp, listPtr, objPtr)
+proc ListObjAppendElement*(interp: Tcl.PInterp, listPtr: Tcl.PObj, objPtr: Tcl.PObj): cint
+  {.cdecl, importc: "Tcl_ListObjAppendElement", header: "tcl.h".}
 
-proc ListObjGetElements*(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size, objvPtr: var Tcl.PPObj): cint =
-  return tclStubsPtr.tcl_ListObjGetElements(interp, listPtr, lengthPtr, objvPtr)
+proc ListObjGetElements*(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size, objvPtr: var Tcl.PPObj): cint
+  {.cdecl, importc: "Tcl_ListObjGetElements", header: "tcl.h".}
 
-proc ListObjLength*(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cint =
-  return tclStubsPtr.tcl_ListObjLength(interp, listPtr, lengthPtr)
+proc ListObjLength*(interp: Tcl.PInterp, listPtr: Tcl.PObj, lengthPtr: var Tcl.Size): cint
+  {.cdecl, importc: "Tcl_ListObjLength", header: "tcl.h".}
 
-proc NewDoubleObj*(doubleValue: cdouble): Tcl.PObj =
-  return tclStubsPtr.tcl_NewDoubleObj(doubleValue)
+proc NewDoubleObj*(doubleValue: cdouble): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewDoubleObj", header: "tcl.h".}
 
-proc NewWideIntObj*(wideValue: Tcl.WideInt): Tcl.PObj =
-  return tclStubsPtr.tcl_NewWideIntObj(wideValue)
+proc NewWideIntObj*(wideValue: Tcl.WideInt): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewWideIntObj", header: "tcl.h".}
 
-proc NewListObj*(objc: Tcl.Size, objv: Tcl.PPObj): Tcl.PObj =
-  return tclStubsPtr.tcl_NewListObj(objc, objv)
+proc NewListObj*(objc: Tcl.Size, objv: Tcl.PPObj): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewListObj", header: "tcl.h".}
 
-proc NewStringObj*(bytes: cstring, length: Tcl.Size): Tcl.PObj =
-  return tclStubsPtr.tcl_NewStringObj(bytes, length)
+proc NewStringObj*(bytes: cstring, length: Tcl.Size): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewStringObj", header: "tcl.h".}
 
-proc CreateObjCommand*(interp: Tcl.PInterp, cmdName: cstring, callback: Tcl.PObjCmdProc, clientData: Tcl.TClientData, deleteProc: Tcl.PCmdDeleteProc): Tcl.PCommand =
-  return tclStubsPtr.tcl_CreateObjCommand(interp, cmdName, callback, clientData, deleteProc)
+proc CreateObjCommand*(interp: Tcl.PInterp, cmdName: cstring, callback: Tcl.PObjCmdProc, clientData: Tcl.TClientData, deleteProc: Tcl.PCmdDeleteProc): Tcl.PCommand
+  {.cdecl, importc: "Tcl_CreateObjCommand", header: "tcl.h".}
 
-proc SetObjResult*(interp: Tcl.PInterp, resultObjPtr: Tcl.PObj) =
-  tclStubsPtr.tcl_SetObjResult(interp, resultObjPtr)
+proc SetObjResult*(interp: Tcl.PInterp, resultObjPtr: Tcl.PObj)
+  {.cdecl, importc: "Tcl_SetObjResult", header: "tcl.h".}
 
-proc DictObjPut*(interp: Tcl.PInterp, dictPtr: Tcl.PObj, keyPtr: Tcl.PObj, valuePtr: Tcl.PObj): cint =
-  return tclStubsPtr.tcl_DictObjPut(interp, dictPtr, keyPtr, valuePtr)
+proc DictObjPut*(interp: Tcl.PInterp, dictPtr: Tcl.PObj, keyPtr: Tcl.PObj, valuePtr: Tcl.PObj): cint
+  {.cdecl, importc: "Tcl_DictObjPut", header: "tcl.h".}
 
-proc NewDictObj*(): Tcl.PObj =
-  return tclStubsPtr.tcl_NewDictObj()
+proc NewDictObj*(): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewDictObj", header: "tcl.h".}
 
-proc CreateNamespace*(interp: Tcl.PInterp, name: cstring, clientData: Tcl.TClientData, deleteProc: Tcl.PNamespaceDeleteProc): Tcl.PNamespace =
-  return tclStubsPtr.tcl_CreateNamespace(interp, name, clientData, deleteProc)
+proc CreateNamespace*(interp: Tcl.PInterp, name: cstring, clientData: Tcl.TClientData, deleteProc: Tcl.PNamespaceDeleteProc): Tcl.PNamespace
+  {.cdecl, importc: "Tcl_CreateNamespace", header: "tcl.h".}
 
-proc FindNamespace*(interp: Tcl.PInterp, name: cstring, contextNsPtr: Tcl.PNamespace, flags: cint): Tcl.PNamespace =
-  return tclStubsPtr.tcl_FindNamespace(interp, name, contextNsPtr, flags)
+proc FindNamespace*(interp: Tcl.PInterp, name: cstring, contextNsPtr: Tcl.PNamespace, flags: cint): Tcl.PNamespace
+  {.cdecl, importc: "Tcl_FindNamespace", header: "tcl.h".}
 
-proc WrongNumArgs*(interp: Tcl.PInterp, argc: cint, objv: Tcl.PPObj, message: cstring) =
-  tclStubsPtr.tcl_WrongNumArgs(interp, argc, objv, message)
+proc WrongNumArgs*(interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj, message: cstring)
+  {.cdecl, importc: "Tcl_WrongNumArgs", header: "tcl.h".}
 
-proc GetObjResult*(interp: Tcl.PInterp): Tcl.PObj =
-  return tclStubsPtr.tcl_GetObjResult(interp)
+proc GetObjResult*(interp: Tcl.PInterp): Tcl.PObj
+  {.cdecl, importc: "Tcl_GetObjResult", header: "tcl.h".}
 
-proc NewByteArrayObj*(bytes: cstring, length: Tcl.Size): Tcl.PObj =
-  return tclStubsPtr.tcl_NewByteArrayObj(bytes, length)
+proc NewByteArrayObj*(bytes: pointer, length: Tcl.Size): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewByteArrayObj", header: "tcl.h".}
 
-proc EvalObjv*(interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj, flags: cint): cint =
-  return tclStubsPtr.tcl_EvalObjv(interp, objc, objv, flags)
+proc EvalObjv*(interp: Tcl.PInterp, objc: Tcl.Size, objv: Tcl.PPObj, flags: cint): cint
+  {.cdecl, importc: "Tcl_EvalObjv", header: "tcl.h".}
 
-proc Panic*(format: cstring) {.varargs, noreturn.} =
-  tclStubsPtr.tcl_Panic(format)
+proc Panic*(format: cstring)
+  {.cdecl, varargs, noreturn, importc: "Tcl_Panic", header: "tcl.h".}
 
-proc VarEval*(interp: Tcl.PInterp): cint {.varargs.} =
-  return tclStubsPtr.tcl_VarEval(interp)
+proc VarEval*(interp: Tcl.PInterp): cint
+  {.cdecl, varargs, importc: "Tcl_VarEval", header: "tcl.h".}
 
-proc EvalEx*(interp: Tcl.PInterp, script: cstring, numBytes: Tcl.Size, flags: cint): cint =
-  tclStubsPtr.tcl_EvalEx(interp, script, numBytes, flags)
+proc EvalEx*(interp: Tcl.PInterp, script: cstring, numBytes: Tcl.Size, flags: cint): cint
+  {.cdecl, importc: "Tcl_EvalEx", header: "tcl.h".}
 
-proc RegisterObjType*(typePtr: Tcl.PObjType) =
-  tclStubsPtr.tcl_RegisterObjType(typePtr)
+proc RegisterObjType*(typePtr: Tcl.PObjType)
+  {.cdecl, importc: "Tcl_RegisterObjType", header: "tcl.h".}
 
-proc InvalidateStringRep*(objPtr: Tcl.PObj) =
-  tclStubsPtr.tcl_InvalidateStringRep(objPtr)
+proc InvalidateStringRep*(objPtr: Tcl.PObj)
+  {.cdecl, importc: "Tcl_InvalidateStringRep", header: "tcl.h".}
 
-proc NewObj*(): Tcl.PObj =
-  return tclStubsPtr.tcl_NewObj()
+proc NewObj*(): Tcl.PObj
+  {.cdecl, importc: "Tcl_NewObj", header: "tcl.h".}
 
-proc GetObjType*(typeName: cstring): Tcl.PObjType =
-  return tclStubsPtr.tcl_GetObjType(typeName)
+proc GetObjType*(typeName: cstring): Tcl.PObjType
+  {.cdecl, importc: "Tcl_GetObjType", header: "tcl.h".}
 
-proc Alloc*(size: Tcl.HASH_TYPE): pointer =
-  return tclStubsPtr.tcl_Alloc(size)
+proc Alloc*(size: Tcl.HASH_TYPE): pointer
+  {.cdecl, importc: "Tcl_Alloc", header: "tcl.h".}
 
-proc ObjSetVar2*(interp: Tcl.PInterp, part1Ptr: Tcl.PObj, part2Ptr: Tcl.PObj, newValuePtr: Tcl.PObj, flags: cint): Tcl.PObj =
-  return tclStubsPtr.tcl_ObjSetVar2(interp, part1Ptr, part2Ptr, newValuePtr, flags)
+proc ObjSetVar2*(interp: Tcl.PInterp, part1Ptr: Tcl.PObj, part2Ptr: Tcl.PObj, newValuePtr: Tcl.PObj, flags: cint): Tcl.PObj
+  {.cdecl, importc: "Tcl_ObjSetVar2", header: "tcl.h".}
+
+proc IncrRefCount*(objPtr: Tcl.PObj)
+  {.cdecl, importc: "Tcl_IncrRefCount", header: "tcl.h".}
+
+proc DecrRefCount*(objPtr: Tcl.PObj)
+  {.cdecl, importc: "Tcl_DecrRefCount", header: "tcl.h".}
+
+when defined(tcl8):
+  proc NewIntObj*(intValue: cint): Tcl.PObj
+    {.cdecl, importc: "Tcl_NewIntObj", header: "tcl.h".}
+
+  proc NewBooleanObj*(intValue: cint): Tcl.PObj
+    {.cdecl, importc: "Tcl_NewBooleanObj", header: "tcl.h".}
+
+  proc Eval*(interp: Tcl.PInterp, script: cstring): cint
+    {.cdecl, importc: "Tcl_Eval", header: "tcl.h".}
+
+  proc tclGetByteArrayFromObj(objPtr: Tcl.PObj, lengthPtr: var Tcl.Size): pointer
+    {.cdecl, importc: "Tcl_GetByteArrayFromObj", header: "tcl.h".}
+
+when defined(tcl9):
+  proc FetchInternalRep*(objPtr: Tcl.PObj, typePtr: Tcl.PObjType): Tcl.PObjInternalRep
+    {.cdecl, importc: "Tcl_FetchInternalRep", header: "tcl.h".}
+
+  proc StoreInternalRep*(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjInternalRep)
+    {.cdecl, importc: "Tcl_StoreInternalRep", header: "tcl.h".}
+
+  proc tclGetBytesFromObj(interp: Tcl.PInterp, objPtr: Tcl.PObj, numBytesPtr: var Tcl.Size): pointer
+    {.cdecl, importc: "Tcl_GetBytesFromObj", header: "tcl.h".}
+
+  proc Eval*(interp: Tcl.PInterp, script: cstring): cint =
+    return EvalEx(interp, script, Tcl.INDEX_NONE, 0)
+
+  template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(Tcl.WideInt(value))
+  template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(Tcl.WideInt(if intValue != 0: 1 else: 0))
+
+proc GetBytesFromObj*(interp: Tcl.PInterp, obj: Tcl.PObj, length: var Tcl.Size): cstring =
+  when defined(tcl9):
+    return cast[cstring](tclGetBytesFromObj(interp, obj, length))
+  else:
+    return cast[cstring](tclGetByteArrayFromObj(obj, length))
 
 proc GetStringResult*(interp: Tcl.PInterp): cstring {.cdecl.} =
   return GetString(GetObjResult(interp))
@@ -164,45 +159,5 @@ proc `$`*(interp: Tcl.PInterp): string =
     return ""
   return $s
 
-when defined(tcl8):
-  proc NewIntObj*(intValue: cint): Tcl.PObj =
-    return tclStubsPtr.tcl_NewIntObj(intValue)
-
-  proc NewBooleanObj*(intValue: cint): Tcl.PObj =
-    return tclStubsPtr.tcl_NewBooleanObj(intValue)
-
-  proc Eval*(interp: Tcl.PInterp, script: cstring): cint =
-    return tclStubsPtr.tcl_Eval(interp, script)
-
-  proc IncrRefCount*(objPtr: Tcl.PObj) {.cdecl, importc: "Tcl_IncrRefCount", header: "tcl.h".}
-  proc DecrRefCount*(objPtr: Tcl.PObj) {.cdecl, importc: "Tcl_DecrRefCount", header: "tcl.h".}
-
-when defined(tcl9):
-  proc IncrRefCount*(objPtr: Tcl.PObj) =
-    tclStubsPtr.tcl_IncrRefCount(objPtr)
-
-  proc DecrRefCount*(objPtr: Tcl.PObj) =
-    tclStubsPtr.tcl_DecrRefCount(objPtr)
-
-  proc FetchInternalRep*(objPtr: Tcl.PObj, typePtr: Tcl.PObjType): Tcl.PObjInternalRep =
-    tclStubsPtr.tcl_FetchInternalRep(objPtr, typePtr)
-
-  proc StoreInternalRep*(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjInternalRep) =
-    tclStubsPtr.tcl_StoreInternalRep(objPtr, typePtr, irPtr)
-
-  proc Eval*(interp: Tcl.PInterp, script: cstring): cint =
-    return EvalEx(interp, script, TCL.INDEX_NONE, 0)
-
-  template NewIntObj*(value: untyped)       : untyped = NewWideIntObj(Tcl.WideInt(value))
-  template NewBooleanObj*(intValue: untyped): untyped = NewWideIntObj(Tcl.WideInt(if intValue != 0: 1 else: 0))
-
-proc GetBytesFromObj*(interp: Tcl.PInterp, obj: Tcl.PObj, length: var Tcl.Size): cstring =
-  when defined(tcl9):
-    return tclStubsPtr.tcl_GetBytesFromObj(interp, obj, length)
-  else:
-    return tclStubsPtr.tcl_GetByteArrayFromObj(obj, length)
-
-proc tclInitStubs(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl, importc: "Tcl_InitStubs", header: "tcl.h".}
-
-proc InitStubs*(interp: Tcl.PInterp, version: cstring, exact: cint): cstring {.cdecl.} =
-  return tclInitStubs(interp, version, exact)
+proc InitStubs*(interp: Tcl.PInterp, version: cstring, exact: cint): cstring
+  {.cdecl, importc: "Tcl_InitStubs", header: "tcl.h".}
