@@ -107,7 +107,7 @@ proc fetchInternalRep(objPtr: Tcl.PObj, typePtr: Tcl.PObjType): Tcl.PObjInternal
     return Tcl.FetchInternalRep(objPtr, typePtr)
   else:
     if objPtr.typePtr == typePtr:
-      return addr objPtr.internalRep
+      return cast[Tcl.PObjInternalRep](addr objPtr.internalRep)
     return nil
 
 proc storeInternalRep(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjInternalRep) =
@@ -133,7 +133,7 @@ proc storeInternalRep(objPtr: Tcl.PObj, typePtr: Tcl.PObjType, irPtr: Tcl.PObjIn
       Tcl.InvalidateStringRep(objPtr)
 
     objPtr.typePtr = typePtr
-    objPtr.internalRep = irPtr[]
+    copyMem(addr objPtr.internalRep, irPtr, sizeof(Tcl.TObjInternalRep))
 
 proc createColorObj*(color: Color): Tcl.PObj =
   # Creates a new color object.
