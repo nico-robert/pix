@@ -1,9 +1,9 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
-# Distributed under MIT license. Please see LICENSE for details
+# Copyright (c) 2024-2026 Nicolas ROBERT.
+# Distributed under MIT license. Please see LICENSE for details.
 
 const GXcopy* = 0x3.cint  # src
 
-const 
+const
   GCFunction*          = 1'u32 shl 0
   GCPlaneMask*         = 1'u32 shl 1
   GCForeground*        = 1'u32 shl 2
@@ -38,6 +38,11 @@ else:
 # X11 types declarations first
 type
   XPointer* = ptr char
+
+  Display*{.importc: "Display", header: "X11/Xlib.h", incompleteStruct.} = object
+
+  GC*{.importc: "GC", header: "X11/Xlib.h".} = distinct pointer
+
   Color*{.importc: "XColor", header: "X11/Xlib.h".} = object
     pixel*  : culong
     red*    : cushort
@@ -71,18 +76,15 @@ type
     dash_offset*        : cint
     dashes*             : cchar
 
-  GC* = ptr GCValues
-  Display*{.final.} = object
-
   PXExtData* = ptr XExtData
-  XExtData*{.final.} = object
+  XExtData*{.importc: "XExtData", header: "X11/Xlib.h".} = object
     number*      : cint
     next*        : PXExtData
     free_private*: proc (extension: PXExtData): cint {.cdecl.}
     private_data*: XPointer
 
   PVisual* = ptr Visual
-  Visual*{.final.} = object
+  Visual*{.importc: "Visual", header: "X11/Xlib.h".} = object
     ext_data*     : PXExtData
     visualid*     : culong
     class*        : cint
@@ -94,7 +96,7 @@ type
 
   Uid* = cstring
 
-  Screen* = object
+  Screen*{.importc: "Screen", header: "X11/Xlib.h".} = object
     white_pixel*: culong    # Value white pixel
     black_pixel*: culong    # Value black pixel
 
@@ -124,12 +126,12 @@ type
   XImageFuncs* = object
     create_image*   : proc(display: ptr Display, visual: PVisual, depth: cuint,
                           format: cint, offset: cint, data: cstring, width: cuint,
-                          height: cuint, bitmap_pad: cint, bytes_per_line: cint): PXImage {.cdecl.}
-    destroy_image*  : proc(ximage: PXImage): cint {.cdecl.}
-    get_pixel*      : proc(ximage: PXImage, x, y: cint): culong {.cdecl.}
-    put_pixel*      : proc(ximage: PXImage, x, y: cint, pixel: culong): cint {.cdecl.}
-    sub_image*      : proc(ximage: PXImage, x, y: cint, width, height: cuint): PXImage {.cdecl.}
-    add_pixel*      : proc(ximage: PXImage, value: clong): cint {.cdecl.}
+                          height: cuint, bitmap_pad: cint, bytes_per_line: cint): PXImage {.cdecl, gcsafe.}
+    destroy_image*  : proc(ximage: PXImage): cint {.cdecl, gcsafe.}
+    get_pixel*      : proc(ximage: PXImage, x, y: cint): culong {.cdecl, gcsafe.}
+    put_pixel*      : proc(ximage: PXImage, x, y: cint, pixel: culong): cint {.cdecl, gcsafe.}
+    sub_image*      : proc(ximage: PXImage, x, y: cint, width, height: cuint): PXImage {.cdecl, gcsafe.}
+    add_pixel*      : proc(ximage: PXImage, value: clong): cint {.cdecl, gcsafe.}
 
   XImage*{.importc: "XImage", header: "X11/Xlib.h".} = object
     width*           : cint
@@ -152,5 +154,11 @@ type
 
   PXImage* = ptr XImage
 
-proc DestroyImage*(ximage: PXImage): cint {.cdecl, importc: "XDestroyImage", header: "X11/Xutil.h".} =
+proc isNil*(gc: GC): bool {.inline.} = pointer(gc).isNil
+
+proc `==`*(x, y: GC): bool {.borrow.}
+proc `==`*(gc: GC, n: typeof(nil)): bool {.inline.} = pointer(gc) == nil
+proc `==`*(n: typeof(nil), gc: GC): bool {.inline.} = pointer(gc) == nil
+
+proc DestroyImage*(ximage: PXImage): cint =
   return ximage.f.destroy_image(ximage)
