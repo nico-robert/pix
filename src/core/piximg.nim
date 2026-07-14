@@ -8,6 +8,10 @@ import ../bindings/tk/binding as Tk
 import ./pixtables
 import ./pixutils as pixUtils
 
+when defined(macosx):
+  # Nim cannot express C const, ABI is identical.
+  {.localPassC: "-Wno-error=incompatible-function-pointer-types".}
+
 # Instance shared by Display
 type
   PixImageInstance* = object
