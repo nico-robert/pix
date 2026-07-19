@@ -64,7 +64,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
     let svgKey = toHexPtr(svg)
-    ptable.addRESVG(svgKey, svg)
+    ptable.add(svgKey, svg)
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(svgKey.cstring, -1))
 
@@ -85,7 +85,7 @@ proc pix_svg_parse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
       return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
     let svgKey = toHexPtr(svg)
-    ptable.addSVG(svgKey, svg)
+    ptable.add(svgKey, svg)
 
     Tcl.SetObjResult(interp, Tcl.NewStringObj(svgKey.cstring, -1))
 
@@ -108,14 +108,14 @@ proc pix_svg_newImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   # Image
   let img =
     when defined(resvg):
-      let svg = ptable.loadRESVG(interp, objv[1])
+      let svg = ptable.load(interp, objv[1], Resvg)
       if svg.isNil: return Tcl.ERROR
       try:
         resvg.toImage(svg)
       except CatchableError as e:
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
     else:
-      let svg = ptable.loadSVG(interp, objv[1])
+      let svg = ptable.load(interp, objv[1], Svg)
       if svg.isNil: return Tcl.ERROR
       try:
         newImage(svg)
@@ -123,7 +123,7 @@ proc pix_svg_newImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
         return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let imgKey = toHexPtr(img)
-  ptable.addImage(imgKey, img)
+  ptable.add(imgKey, img)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
@@ -146,13 +146,13 @@ proc pix_svg_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
   # Svg
   if key == "all":
     when defined(resvg):
-      ptable.clearRESVG() 
+      ptable.clear(Resvg) 
     else:
-      ptable.clearSVG()
+      ptable.clear(Svg)
   else:
     when defined(resvg):
-      ptable.delKeyRESVG(key)
+      ptable.delKey(key, Resvg)
     else:
-      ptable.delKeySVG(key)
+      ptable.delKey(key, Svg)
 
   return Tcl.OK

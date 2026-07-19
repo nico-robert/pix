@@ -341,7 +341,7 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
   # Parse arguments
   if objc == 2:
     let arg1 = $objv[1]
-    if ptable.hasContext(arg1) or ptable.hasImage(arg1):
+    if ptable.has(arg1, pixie.Context) or ptable.has(arg1, pixie.Image):
       # Argument is a data key
       key = arg1
       pixPhotoName = arg1
@@ -358,7 +358,7 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
     key = $objv[1]
     pixPhotoName = $objv[2]
     
-    if not (ptable.hasContext(key) or ptable.hasImage(key)):
+    if not (ptable.has(key, pixie.Context) or ptable.has(key, pixie.Image)):
       return pixUtils.errorMSG(interp, "pix(error): Unknown key: " & key)
 
   # Retrieve the master and image
@@ -369,10 +369,10 @@ proc draw_pix_surface*(clientData: Tcl.TClientData, interp: Tcl.PInterp,
     return pixUtils.errorMSG(interp, "pix(error): Unknown pix photo: " & pixPhotoName)
 
   let img =
-    if ptable.hasContext(key):
-      ptable.getContext(key).image
-    elif ptable.hasImage(key):
-      ptable.getImage(key)
+    if ptable.has(key, pixie.Context):
+      ptable.get(key, pixie.Context).image
+    elif ptable.has(key, pixie.Image):
+      ptable.get(key, pixie.Image)
     else:
       return pixUtils.errorMSG(interp, "pix(error): Unknown key: " & key)
 

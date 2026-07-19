@@ -20,7 +20,7 @@ proc pix_paint(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, obj
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
   let paintKey = toHexPtr(paint)
-  ptable.addPaint(paintKey, paint)
+  ptable.add(paintKey, paint)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(paintKey.cstring, -1))
 
@@ -54,7 +54,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Paint
   let ptable = cast[PixTable](clientData)
-  let paint = ptable.loadPaint(interp, objv[1])
+  let paint = ptable.load(interp, objv[1], pixie.Paint)
   if paint.isNil: return Tcl.ERROR
 
   # Dict
@@ -79,7 +79,7 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
         of "blendMode":
           paint.blendMode = parseEnum[BlendMode]($value)
         of "image":
-          paint.image = ptable.getImage($value)
+          paint.image = ptable.get($value, pixie.Image)
         of "imageMat":
           paint.imageMat = getMtx(value, true)
         of "gradientHandlePositions":
@@ -134,13 +134,13 @@ proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   # Paint
   let ptable = cast[PixTable](clientData)
-  let paint = ptable.loadPaint(interp, objv[1])
+  let paint = ptable.load(interp, objv[1], pixie.Paint)
   if paint.isNil: return Tcl.ERROR
 
   let copy = paint.copy()
 
   let paintKey = toHexPtr(copy)
-  ptable.addPaint(paintKey, copy)
+  ptable.add(paintKey, copy)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(paintKey.cstring, -1))
 
@@ -160,11 +160,11 @@ proc pix_paint_fillGradient(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
   let ptable = cast[PixTable](clientData)
 
   # Paint
-  let paint = ptable.loadPaint(interp, objv[1])
+  let paint = ptable.load(interp, objv[1], pixie.Paint)
   if paint.isNil: return Tcl.ERROR
 
   # Image
-  let img = ptable.loadImage(interp, objv[2])
+  let img = ptable.load(interp, objv[2], pixie.Image)
   if img.isNil: return Tcl.ERROR
 
   try:
@@ -189,8 +189,8 @@ proc pix_paint_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Paint
   if key == "all":
-    ptable.clearPaint()
+    ptable.clear(pixie.Paint)
   else:
-    ptable.delKeyPaint(key)
+    ptable.delKey(key, pixie.Paint)
 
   return Tcl.OK

@@ -98,7 +98,7 @@ proc pix_pathObjToString*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Path
   let ptable = cast[PixTable](clientData)
-  let path = ptable.loadPath(interp, objv[1])
+  let path = ptable.load(interp, objv[1], pixie.Path)
   if path.isNil: return Tcl.ERROR
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(cstring($path), -1))
@@ -125,7 +125,7 @@ proc pix_svgStyleToPathObj*(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
     return errorMSG(interp, "pix(error): " & e.msg)
 
   let pathKey = toHexPtr(parse)
-  ptable.addPath(pathKey, parse)
+  ptable.add(pathKey, parse)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(pathKey.cstring, -1))
 
@@ -200,10 +200,10 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
   let arg1 = $objv[1]
 
   let img =
-    if ptable.hasContext(arg1):
-      ptable.getContext(arg1).image
-    elif ptable.hasImage(arg1):
-      ptable.getImage(arg1)
+    if ptable.has(arg1, pixie.Context):
+      ptable.get(arg1, pixie.Context).image
+    elif ptable.has(arg1, pixie.Image):
+      ptable.get(arg1, pixie.Image)
     else:
       return errorMSG(interp,
         "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"
@@ -233,10 +233,10 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   let arg1 = $objv[1]
 
   let img =
-    if ptable.hasContext(arg1):
-      ptable.getContext(arg1).image
-    elif ptable.hasImage(arg1):
-      ptable.getImage(arg1)
+    if ptable.has(arg1, pixie.Context):
+      ptable.get(arg1, pixie.Context).image
+    elif ptable.has(arg1, pixie.Image):
+      ptable.get(arg1, pixie.Image)
     else:
       return errorMSG(interp,
         "pix(error): unknown <image> or <ctx> key object found '" & arg1 & "'"

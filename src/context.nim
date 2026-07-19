@@ -24,8 +24,8 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   if objc == 2:
     # Image or size coordinates.
     let arg1 = $objv[1]
-    if ptable.hasImage(arg1):
-      img = ptable.getImage(arg1)
+    if ptable.has(arg1, pixie.Image):
+      img = ptable.get(arg1, pixie.Image)
     else:
       # Size
       if getListInt(interp, objv[1], width, height, 
@@ -48,8 +48,8 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
     try:
       img = newImage(width, height)
       # Color gets.
-      if ptable.hasPaint(arg2):
-        img.fill(ptable.getPaint(arg2))
+      if ptable.has(arg2, pixie.Paint):
+        img.fill(ptable.get(arg2, pixie.Paint))
       else:
         img.fill(objv[2].getColor())
     except CatchableError as e:
@@ -61,8 +61,8 @@ proc pix_context(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
     imgKey = toHexPtr(ctx.image)
 
   # Adds img + ctx.
-  ptable.addContext(ctxKey, ctx)
-  ptable.addImage(imgKey, ctx.image)
+  ptable.add(ctxKey, ctx)
+  ptable.add(imgKey, ctx.image)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(ctxKey.cstring, -1))
 
@@ -83,15 +83,15 @@ proc pix_ctx_strokeStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Paint or string [color].
   let arg2 = $objv[2]
 
   ctx.strokeStyle = try:
-    if ptable.hasPaint(arg2):
-      ptable.getPaint(arg2) # Paint
+    if ptable.has(arg2, pixie.Paint):
+      ptable.get(arg2, pixie.Paint) # Paint
     else:
       objv[2].getColor() # Color
   except InvalidColor as e:
@@ -117,7 +117,7 @@ proc pix_ctx_save(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.save()
@@ -139,7 +139,7 @@ proc pix_ctx_textBaseline(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.textBaseline = try:
@@ -162,7 +162,7 @@ proc pix_ctx_restore(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
@@ -186,7 +186,7 @@ proc pix_ctx_saveLayer(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
@@ -210,7 +210,7 @@ proc pix_ctx_strokeSegment(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates segment
@@ -250,7 +250,7 @@ proc pix_ctx_strokeRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -290,7 +290,7 @@ proc pix_ctx_quadraticCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -327,7 +327,7 @@ proc pix_ctx_arc(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -369,7 +369,7 @@ proc pix_ctx_arcTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates1
@@ -410,7 +410,7 @@ proc pix_ctx_bezierCurveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -446,7 +446,7 @@ proc pix_ctx_circle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -477,15 +477,15 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
     if objc == 3:
       # Path
       let arg2 = $objv[2]
-      if ptable.hasPath(arg2):
-        let path = ptable.getPath(arg2)
+      if ptable.has(arg2, pixie.Path):
+        let path = ptable.get(arg2, pixie.Path)
         ctx.clip(path)
       else:
         # Enum
@@ -494,7 +494,7 @@ proc pix_ctx_clip(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
     elif objc == 4:
       # Path + Enum
       let
-        path = ptable.getPath($objv[2])
+        path = ptable.get($objv[2], pixie.Path)
         myEnum = parseEnum[WindingRule]($objv[3])
       ctx.clip(path, myEnum)
     else:
@@ -518,7 +518,7 @@ proc pix_ctx_measureText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Text
@@ -553,7 +553,7 @@ proc pix_ctx_resetTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, ob
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.resetTransform()
@@ -599,11 +599,11 @@ proc pix_ctx_drawImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
   let ptable = cast[PixTable](clientData)
 
   # Context
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Image
-  let img = ptable.loadImage(interp, objv[2])
+  let img = ptable.load(interp, objv[2], pixie.Image)
   if img.isNil: return Tcl.ERROR
 
   var dx, dy, dWidth, dHeight: float32
@@ -679,7 +679,7 @@ proc pix_ctx_ellipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -714,7 +714,7 @@ proc pix_ctx_strokeEllipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -764,7 +764,7 @@ proc pix_ctx_setTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.setTransform(objv[2].getMtx())
@@ -800,7 +800,7 @@ proc pix_ctx_transform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.transform(objv[2].getMtx())
@@ -823,7 +823,7 @@ proc pix_ctx_rotate(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Angle
@@ -854,7 +854,7 @@ proc pix_ctx_translate(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -885,7 +885,7 @@ proc pix_ctx_lineJoin(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
@@ -909,7 +909,7 @@ proc pix_ctx_lineCap(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
@@ -941,21 +941,21 @@ proc pix_ctx_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
     if objc == 3:
       # Path
       let arg2 = $objv[2]
-      if ptable.hasPath(arg2):
-        ctx.fill(ptable.getPath(arg2))
+      if ptable.has(arg2, pixie.Path):
+        ctx.fill(ptable.get(arg2, pixie.Path))
       else:
         # Enum only
         ctx.fill(parseEnum[WindingRule](arg2))
     elif objc == 4:
       # Path + Enum
-      let path = ptable.loadPath(interp, objv[2])
+      let path = ptable.load(interp, objv[2], pixie.Path)
       if path.isNil: return Tcl.ERROR
       ctx.fill(path, parseEnum[WindingRule]($objv[3]))
     else:
@@ -980,7 +980,7 @@ proc pix_ctx_rect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1013,7 +1013,7 @@ proc pix_ctx_fillRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1050,7 +1050,7 @@ proc pix_ctx_roundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var
@@ -1104,7 +1104,7 @@ proc pix_ctx_fillRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var
@@ -1166,7 +1166,7 @@ proc pix_ctx_strokeRoundedRect(clientData: Tcl.TClientData, interp: Tcl.PInterp,
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var
@@ -1226,7 +1226,7 @@ proc pix_ctx_clearRect(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1261,15 +1261,15 @@ proc pix_ctx_fillStyle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Paint or string [color].
   let arg2 = $objv[2]
 
   ctx.fillStyle = try:
-    if ptable.hasPaint(arg2):
-      ptable.getPaint(arg2) # Paint
+    if ptable.has(arg2, pixie.Paint):
+      ptable.get(arg2, pixie.Paint) # Paint
     else:
       objv[2].getColor() # Color
   except InvalidColor as e:
@@ -1292,7 +1292,7 @@ proc pix_ctx_globalAlpha(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Alpha
@@ -1325,7 +1325,7 @@ proc pix_ctx_moveTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1356,7 +1356,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let ptable = cast[PixTable](clientData)
 
   # Context
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var x, y: float32
@@ -1369,7 +1369,7 @@ proc pix_ctx_isPointInStroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
   let inside = try:
     if objc == 4:
       # Path
-      let path = ptable.loadPath(interp, objv[3])
+      let path = ptable.load(interp, objv[3], pixie.Path)
       if path.isNil: return Tcl.ERROR
       ctx.isPointInStroke(path, x, y)
     else:
@@ -1400,7 +1400,7 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   let ptable = cast[PixTable](clientData)
 
   # Context
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1419,12 +1419,12 @@ proc pix_ctx_isPointInPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
       of 4:
         # arg3 is either a path or a winding rule enum
         let arg3 = $objv[3]
-        if ptable.hasPath(arg3):
-          path = ptable.getPath(arg3)
+        if ptable.has(arg3, pixie.Path):
+          path = ptable.get(arg3, pixie.Path)
         else:
           windingRule = parseEnum[WindingRule](arg3)
       of 5:
-        path = ptable.loadPath(interp, objv[3])
+        path = ptable.load(interp, objv[3], pixie.Path)
         if path.isNil: return Tcl.ERROR
         windingRule = parseEnum[WindingRule]($objv[4])
       else:
@@ -1468,7 +1468,7 @@ proc pix_ctx_lineTo(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1496,13 +1496,13 @@ proc pix_ctx_stroke(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   let ptable = cast[PixTable](clientData)
 
   # Context
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
     if objc == 3:
       # Path
-      let path = ptable.loadPath(interp, objv[2])
+      let path = ptable.load(interp, objv[2], pixie.Path)
       if path.isNil: return Tcl.ERROR
       ctx.stroke(path)
     else:
@@ -1525,7 +1525,7 @@ proc pix_ctx_scale(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1563,7 +1563,7 @@ proc pix_ctx_writeFile(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
@@ -1589,7 +1589,7 @@ proc pix_ctx_beginPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.beginPath()
@@ -1610,7 +1610,7 @@ proc pix_ctx_closePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.closePath()
@@ -1630,7 +1630,7 @@ proc pix_ctx_lineWidth(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # LineWidth
@@ -1654,7 +1654,7 @@ proc pix_ctx_miterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.miterLimit = objv[2].getFloat()
@@ -1674,7 +1674,7 @@ proc pix_ctx_font(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   ctx.font = $objv[2]
@@ -1694,7 +1694,7 @@ proc pix_ctx_fontSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Context font size.
@@ -1717,7 +1717,7 @@ proc pix_ctx_fillText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1748,7 +1748,7 @@ proc pix_ctx_fillCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1789,7 +1789,7 @@ proc pix_ctx_fillEllipse(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1826,7 +1826,7 @@ proc pix_ctx_fillPolygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var x, y: float32
@@ -1863,7 +1863,7 @@ proc pix_ctx_polygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var x, y: float32
@@ -1901,7 +1901,7 @@ proc pix_ctx_strokePolygon(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var x, y: float32
@@ -1938,7 +1938,7 @@ proc pix_ctx_strokeCircle(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -1977,7 +1977,7 @@ proc pix_ctx_strokeText(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: 
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Coordinates
@@ -2007,7 +2007,7 @@ proc pix_ctx_textAlign(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   try:
@@ -2057,7 +2057,7 @@ proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   let 
@@ -2097,7 +2097,7 @@ proc pix_ctx_getSize(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   Tcl.SetObjResult(interp, ctx.image.toDictObj())
@@ -2116,12 +2116,12 @@ proc pix_ctx_getImage(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   let imgKey = toHexPtr(ctx.image)
 
-  if not ptable.hasImage(imgKey):
+  if not ptable.has(imgKey, pixie.Image):
     return pixUtils.errorMSG(interp,
       "pix(error): '" & imgKey & "' image from context not found in table."
     )
@@ -2143,7 +2143,7 @@ proc pix_ctx_setLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   var
@@ -2179,7 +2179,7 @@ proc pix_ctx_getTransform(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   # Gets the transformation matrix for the context.
@@ -2201,7 +2201,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   # Context
   let ptable = cast[PixTable](clientData)
-  let ctx = ptable.loadContext(interp, objv[1])
+  let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
   let newSeqListobj = Tcl.NewListObj(0, nil)
@@ -2256,8 +2256,8 @@ proc pix_ctx_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cin
 
   # Context
   if key == "all":
-    ptable.clearContext()
+    ptable.clear(pixie.Context)
   else:
-    ptable.delKeyContext(key)
+    ptable.delKey(key, pixie.Context)
 
   return Tcl.OK

@@ -16,10 +16,10 @@ proc pix_draw_surface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   let key = $objv[1]
 
   let img =
-    if ptable.hasContext(key):
-      ptable.getContext(key).image
-    elif ptable.hasImage(key):
-      ptable.getImage(key)
+    if ptable.has(key, pixie.Context):
+      ptable.get(key, pixie.Context).image
+    elif ptable.has(key, pixie.Image):
+      ptable.get(key, pixie.Image)
     else:
       return pixUtils.errorMSG(interp,
         "pix(error): unknown <image> or <ctx> key object found: '" & key & "'"
