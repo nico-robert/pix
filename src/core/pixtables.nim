@@ -52,7 +52,7 @@ proc label(T: typedesc[pixie.Span]): string        = "Span"
 
 when defined(pixGL):
   proc tbl(pt: PixTable, T: typedesc[Boxy]): var Table[string, Boxy] = pt.boxyTable
-  proc label(T: typedesc[Boxy]): string = "boxy"
+  proc label(T: typedesc[Boxy]): string = "Boxy"
 
 when defined(resvg):
   proc tbl(pt: PixTable, T: typedesc[Resvg]): var Table[string, Resvg] = pt.resvgTable
