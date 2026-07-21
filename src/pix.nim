@@ -10,7 +10,6 @@ when defined(x11):
 
 when defined(resvg):
   import std/options
-  import bindings/resvg/types
   import bindings/resvg/binding as resvg
 
 import bindings/tcl/binding as Tcl
