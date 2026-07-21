@@ -2,6 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import ./types as resvg
+export resvg
 import ../tcl/binding as Tcl
 import ../../core/pixparses
 import std/[strutils, options]
