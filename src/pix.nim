@@ -177,6 +177,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::path::strokeOverlaps"    : pix_path_strokeOverlaps,
     "pix::path::transform"         : pix_path_transform,
     # Undocumented path commands.
+    "pix::path::polyPath"          : pix_path_polyPath,
     "pix::path::destroy"           : pix_path_destroy,
 
     # Image commands

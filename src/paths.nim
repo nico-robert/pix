@@ -751,6 +751,51 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 
   return Tcl.OK
 
+proc pix_path_polyPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Adds a closed polygon sub-path from a list of {x y} points.
+  #
+  # The first point opens a new sub-path (moveTo), each following point is
+  # connected with a straight line (lineTo), then the sub-path is closed.
+  #
+  # path         - [path]
+  # coordinates  - A list of points, each a list {x y}
+  #
+  # Returns: Nothing.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "<path> {{x0 y0} {x1 y1} ...}")
+    return Tcl.ERROR
+
+  # Path
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.load(interp, objv[1], pixie.Path)
+  if path.isNil: return Tcl.ERROR
+
+  # Points
+  var
+    count: Tcl.Size
+    elements: Tcl.PPObj
+
+  if Tcl.ListObjGetElements(interp, objv[2], count, elements) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count == 0:
+    return Tcl.OK
+
+  var x, y: float32
+
+  for i in 0 ..< count:
+    if getListFloat(interp, elements[i], x, y,
+      "wrong # args: each point should be {x y}") != Tcl.OK:
+      return Tcl.ERROR
+    if i == 0:
+      path.moveTo(x, y)
+    else:
+      path.lineTo(x, y)
+
+  path.closePath()
+
+  return Tcl.OK
+
 proc pix_path_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Destroy the [path] or all paths if special word `all` is specified.
   # 
