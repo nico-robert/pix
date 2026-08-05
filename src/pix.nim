@@ -286,6 +286,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::determinantMatrix"     : pix_determinantMatrix,
     "pix::identityMatrix"        : pix_identityMatrix,
     "pix::transformMatrixPoint"  : pix_transformMatrixPoint,
+    "pix::degToRad"              : pix_deg2Rad,
     "pix::color::rgba"           : pix_rgba,
     "pix::color::rgb"            : pix_rgb,
     "pix::color::hsl"            : pix_hsl,

@@ -459,6 +459,22 @@ proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
+proc pix_deg2Rad*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Converts degrees to radians.
+  #
+  # angle - A double value (in degrees).
+  #
+  # Returns: A double value (in radians).
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "angle")
+    return Tcl.ERROR
+
+  let angle = objv[1].getFloat()
+
+  Tcl.SetObjResult(interp, Tcl.NewDoubleObj(angle.toRadians))
+
+  return Tcl.OK
+
 proc pix_rgba*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Creates and returns a new RGBA color object.
   #
