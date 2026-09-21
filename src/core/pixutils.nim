@@ -285,7 +285,7 @@ proc pix_rotMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
   else:
     matrix3 = vmath.mat3()
 
-  matrix3 = matrix3 * vmath.rotate(angle)
+  matrix3 = matrix3 * vmath.rotate(-angle)
 
   Tcl.SetObjResult(interp, matrix3.addToListObj())
 
