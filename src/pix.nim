@@ -178,6 +178,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::path::transform"         : pix_path_transform,
     # Undocumented path commands.
     "pix::path::polyPath"          : pix_path_polyPath,
+    "pix::path::polyLine"          : pix_path_polyLine,
     "pix::path::destroy"           : pix_path_destroy,
 
     # Image commands
