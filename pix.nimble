@@ -72,7 +72,7 @@ srcDir      = "src"
 
 # Dependencies
 requires "nim >= 2.0.6"
-requires "pixie >= 5.1.0 & < 6.0.0"
+requires "pixie#30bb510" # Pixie v6+ with tile correction.
 
 # Task definition for generating the pix Tcl/Tk library
 # Compile bindings for 2 versions of Tcl/Tk.
