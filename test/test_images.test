@@ -218,4 +218,41 @@ if {![isEqual $b $data_image_test22]} {
     error "data test 22 doesn't match with 'data_image_test22'"
 }
 
+# Test 23
+set image [pix::img::new {2 1}]
+pix::img::setColor $image {0 0} "rgba(255, 0, 0, 255)"
+pix::img::setColor $image {1 0} "rgba(0, 0, 255, 128)"
+
+set encoded [pix::toB64 $image]
+set newImage [pix::fromB64 $encoded]
+
+set diff [pix::img::diff $image $newImage]
+
+if {[dict get $diff score] > 0.0} {
+    error "data test 23 doesn't match 'image' with 'newImage'"
+}
+
+# Test 24
+set image [pix::img::new {1 1}]
+pix::img::setColor $image {0 0} "rgba(255, 0, 0, 255)"
+
+set encoded  [pix::toB64 $image]
+set newImage [pix::fromB64 [format "data:image/png;base64,%s" $encoded]]
+
+set diff [pix::img::diff $image $newImage]
+
+if {[dict get $diff score] > 0.0} {
+    error "data test 24 doesn't match 'image' with 'newImage'"
+}
+
+# Test 25
+try {
+    pix::fromB64 "nothing"
+} on error {result options} {
+    set errorinfo [dict get $options -errorinfo]
+    if {![string match "pix(error)*" $errorinfo]} {
+        error "data test 25 doesn't match a valid error message"
+    }
+}
+
 exit 0
