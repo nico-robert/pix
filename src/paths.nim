@@ -753,7 +753,6 @@ proc pix_path_strokeOverlaps(clientData: Tcl.TClientData, interp: Tcl.PInterp, o
 
 proc pix_path_polyPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds a closed polygon sub-path from a list of {x y} points.
-  #
   # The first point opens a new sub-path (moveTo), each following point is
   # connected with a straight line (lineTo), then the sub-path is closed.
   #
@@ -800,9 +799,8 @@ proc pix_path_polyPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: c
 
 proc pix_path_polyLine(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Adds an open polyline sub-path from a list of {x y} points.
-  #
   # The first point opens a new sub-path (moveTo), each following point is
-  # connected with a straight line (lineTo). The sub-path is NOT closed.
+  # connected with a straight line (lineTo). The sub-path is **NOT** closed.
   #
   # path        - [path]
   # coordinates - A list of points, each a list {x y}
