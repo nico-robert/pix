@@ -271,10 +271,11 @@ proc pix_toBinary*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint,
   if objc == 3:
     let format = $objv[2]
     fileFormat = case format.toLowerAscii():
-      of "png": PngFormat
-      of "bmp": BmpFormat
-      of "qoi": QoiFormat
-      of "ppm": PpmFormat
+      of "png":  PngFormat
+      of "bmp":  BmpFormat
+      of "qoi":  QoiFormat
+      of "ppm":  PpmFormat
+      of "webp": WebpFormat
       else:
         return errorMSG(interp,
           "pix(error): format not supported '" & format & "'."
