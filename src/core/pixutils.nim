@@ -5,7 +5,7 @@ import pixie
 import ./pixtables
 import ./pixparses
 import ./pixobj as pixObj
-import std/[strutils, sequtils, base64, tables]
+import std/[strutils, sequtils, tables]
 import ../bindings/tcl/binding as Tcl
 
 proc errorMSG*(interp: Tcl.PInterp, errormsg: string): cint =
@@ -210,11 +210,35 @@ proc pix_toB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, ob
       )
 
   let b64 = try:
-    encode(encodeImage(img, PngFormat))
+    img.encodeBase64()
   except CatchableError as e:
     return errorMSG(interp, "pix(error): " & e.msg)
 
   Tcl.SetObjResult(interp, Tcl.NewStringObj(b64.cstring, -1))
+
+  return Tcl.OK
+
+proc pix_fromB64*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Converts a base64-encoded string or data URL into an [img] object.
+  #
+  # string - Base64-encoded image data or a data URL.
+  #
+  # Returns: An [img] object.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "string")
+    return Tcl.ERROR
+
+  let ptable = cast[PixTable](clientData)
+
+  let img = try:
+    decodeBase64($objv[1])
+  except CatchableError as e:
+    return errorMSG(interp, "pix(error): " & e.msg)
+
+  let imgKey = toHexPtr(img)
+  ptable.add(imgKey, img)
+
+  Tcl.SetObjResult(interp, Tcl.NewStringObj(imgKey.cstring, -1))
 
   return Tcl.OK
 

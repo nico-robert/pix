@@ -278,6 +278,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::svgStyleToPathObj"     : pix_svgStyleToPathObj,
     "pix::getKeys"               : pix_getKeys,
     "pix::toB64"                 : pix_toB64,
+    "pix::fromB64"               : pix_fromB64,
     "pix::toBinary"              : pix_toBinary,
     "pix::rotMatrix"             : pix_rotMatrix,
     "pix::invMatrix"             : pix_invMatrix,
