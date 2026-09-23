@@ -284,26 +284,34 @@ proc pix_image_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
     )
     return Tcl.ERROR
 
-  var img: pixie.Image
+  # Parse the options from the Tcl dict and set the fields of 
+  # the 'RenderOptions' object.
+  var 
+    opts = pixParses.RenderOptions()
+    img: pixie.Image
+
   let ptable = cast[PixTable](clientData)
 
   if $objv[0] == "pix::ctx::strokePath":
     # Context
     let ctx = ptable.load(interp, objv[1], pixie.Context)
     if ctx.isNil: return Tcl.ERROR
+    # Load context information.
     img = ctx.image
+    opts.strokeWidth = ctx.lineWidth
+    opts.lineCap     = ctx.lineCap
+    opts.lineJoin    = ctx.lineJoin
+    opts.miterLimit  = ctx.miterLimit
+    opts.transform   = ctx.getTransform()
+    opts.dashes      = ctx.getLineDash()
   else:
     # Image
     img = ptable.load(interp, objv[1], pixie.Image)
     if img.isNil: return Tcl.ERROR
 
   let
-    somepath = $objv[2]
+    somepath  = $objv[2]
     somepaint = $objv[3]
-
-  # Parse the options from the Tcl dict and set the fields of 
-  # the 'RenderOptions' object.
-  var opts = pixParses.RenderOptions()
 
   try:
     pixParses.dictOptions(interp, objv[4], opts)
