@@ -2218,6 +2218,7 @@ proc pix_ctx_getLineDash(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
 proc pix_ctx_fillPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # See [img::fillPath] procedure.
+  # Deprecated: use [ctx::fill] instead which also honors clip and layers.
   if objc notin [4, 5]:
     Tcl.WrongNumArgs(interp, 1, objv,
       "<ctx> <path>|stringPath 'color|<paint>' ?matrix?"
@@ -2228,6 +2229,7 @@ proc pix_ctx_fillPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
 proc pix_ctx_strokePath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # See [img::strokePath] procedure.
+  # Deprecated: use [ctx::stroke] instead which also honors clip and layers.
   if objc != 5:
     Tcl.WrongNumArgs(interp, 1, objv,
       "<ctx> <path>|stringPath 'color|<paint>' {key value ?key1 value1 ...?}"
