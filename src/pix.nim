@@ -156,6 +156,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     # Path commands
     "pix::path::new"               : pix_path,
     "pix::path::addPath"           : pix_path_addPath,
+    "pix::path::addCopies"         : pix_path_addCopies,
     "pix::path::angleToMiterLimit" : pix_path_angleToMiterLimit,
     "pix::path::arc"               : pix_path_arc,
     "pix::path::arcTo"             : pix_path_arcTo,

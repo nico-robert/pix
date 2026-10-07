@@ -39,6 +39,48 @@ proc pix_path_addPath(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
+proc pix_path_addCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Appends one copy of another path per position to the current path.
+  # Each copy of path2 is translated by its {x y}
+  # (e.g. a marker drawn around {0 0}).
+  #
+  # path1       - destination [path] object handle
+  # path2       - source [path] object handle
+  # coordinates - A flat list {x1 y1 x2 y2 ...}
+  #
+  # Returns: Nothing.
+  if objc != 4:
+    Tcl.WrongNumArgs(interp, 1, objv, "<path1> <path2> coordinates")
+    return Tcl.ERROR
+
+  # Path
+  let ptable = cast[PixTable](clientData)
+  let path = ptable.load(interp, objv[1], pixie.Path)
+  if path.isNil: return Tcl.ERROR
+
+  # Path2
+  let path2 = ptable.load(interp, objv[2], pixie.Path)
+  if path2.isNil: return Tcl.ERROR
+
+  # Coordinates
+  var
+    count: Tcl.Size
+    coords: Tcl.PPObj
+
+  if Tcl.ListObjGetElements(interp, objv[3], count, coords) != Tcl.OK:
+    return Tcl.ERROR
+
+  if count mod 2 != 0:
+    return pixUtils.errorMSG(interp,
+      "wrong # args: 'coordinates' should be {x1 y1 x2 y2 ...}")
+
+  for i in countup(0, count - 1, 2):
+    let copy = path2.copy()
+    copy.transform(translate(vec2(coords[i].getFloat(), coords[i + 1].getFloat())))
+    path.addPath(copy)
+
+  return Tcl.OK
+
 proc pix_path_angleToMiterLimit(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Converts miter-limit-angle to miter-limit-ratio.
   # 
