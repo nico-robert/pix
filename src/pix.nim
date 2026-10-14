@@ -318,6 +318,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     commands["pix::boxy::drawImageRect"]  = pix_boxy_draw_image_rect_cmd
     commands["pix::boxy::drawImage"]      = pix_boxy_draw_image_cmd
     commands["pix::boxy::endFrame"]       = pix_boxy_end_frame_cmd
+    commands["pix::boxy::destroy"]        = pix_boxy_destroy_cmd
 
   # Register all commands
   for cmdName, cmdProc in commands.pairs:
