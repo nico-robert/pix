@@ -17,6 +17,8 @@ type
     paintTable*  : Table[string, pixie.Paint]
     fontTable*   : Table[string, pixie.Font]
     tFaceTable*  : Table[string, pixie.Typeface]
+    # Typefaces shared by contexts (key: font file path)
+    ctxFontTable*: Table[string, pixie.Typeface]
     arrTable*    : Table[string, pixie.Arrangement]
     svgTable*    : Table[string, Svg]
     spanTable*   : Table[string, pixie.Span]
