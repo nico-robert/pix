@@ -2,7 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie, pixie/fileformats/svg
-import std/[strutils, parsecfg, streams, tables, unicode]
+import std/[strutils, parsecfg, streams, tables, unicode, importutils]
 import core/[pixtables, pixparses, pixutils, pixobj]
 
 when defined(x11):
@@ -264,6 +264,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::font::size"                 : pix_font_size,
     "pix::font::color"                : pix_font_color,
     "pix::font::destroy"              : pix_font_destroy,
+    "pix::font::destroyTface"         : pix_font_destroyTface,
 
     # SVG commands
     "pix::svg::parse"    : pix_svg_parse,
