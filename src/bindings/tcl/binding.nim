@@ -154,6 +154,8 @@ proc `$`*(obj: Tcl.PObj): string =
   return $s
 
 proc `$`*(interp: Tcl.PInterp): string =
+  if interp.isNil:
+    return ""
   let s = GetStringResult(interp)
   if s.isNil:
     return ""
