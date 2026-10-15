@@ -1677,7 +1677,21 @@ proc pix_ctx_font(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
-  ctx.font = $objv[2]
+  let filePath = $objv[2]
+  ctx.font = filePath
+
+  # pixie keeps its typefaces per context, so every new context would read
+  # the font file again. Load it once into the pix table and share it.
+  # 'typefaces' is not exported by pixie, hence privateAccess.
+  privateAccess(pixie.Context)
+  if not ptable.ctxFontTable.hasKey(filePath):
+    try:
+      ptable.ctxFontTable[filePath] = readTypeface(filePath)
+    except PixieError:
+      # Unreadable font: pixie reports the error when the font is used.
+      return Tcl.OK
+
+  ctx.typefaces[filePath] = ptable.ctxFontTable[filePath]
 
   return Tcl.OK
 
