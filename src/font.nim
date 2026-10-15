@@ -1041,3 +1041,24 @@ proc pix_font_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
     ptable.delKey(key, pixie.Font)
 
   return Tcl.OK
+
+proc pix_font_destroyTface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Destroy the [TypeFace] or all typefaces if special word `all` is specified.
+  #
+  # value - [font::readTypeface] or string
+  #
+  # Returns: Nothing.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<TypeFace>|string('all')")
+    return Tcl.ERROR
+
+  let ptable = cast[PixTable](clientData)
+  let key = $objv[1]
+
+  # TypeFace
+  if key == "all":
+    ptable.clear(pixie.Typeface)
+  else:
+    ptable.delKey(key, pixie.Typeface)
+
+  return Tcl.OK
