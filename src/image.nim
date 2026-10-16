@@ -116,6 +116,111 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 
   return Tcl.OK
 
+proc pix_image_drawCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Draws a path at many positions: filled, then stroked, like one shape
+  # drawn after the other.
+  #
+  # image       - [img]
+  # path        - [path] the shape, around {0 0}
+  # coordinates - A flat list {x1 y1 x2 y2 ...}
+  # fillColor   - string [color]
+  # strokeColor - string [color]
+  # options     - A Tcl dict, the options of [img::strokePath] (optional).
+  #
+  # The options are those of [img::strokePath]: **strokeWidth** (in path
+  # units, 0 to fill only), **transform** (the matrix of the whole drawing:
+  # the shapes take its linear part, the positions the whole matrix),
+  # **lineCap**, **lineJoin**, **miterLimit** and **dashes**.
+  #
+  # The shape is rendered once for each quarter-pixel offset, then copied at
+  # every position (the nearest quarter pixel), in the order of the list.
+  #
+  # Returns: Nothing.
+  if objc notin [6, 7]:
+    Tcl.WrongNumArgs(interp, 1, objv,
+      "<img> <path> coordinates fillColor strokeColor ?{?strokeWidth value transform value ...?}?")
+    return Tcl.ERROR
+
+  let ptable = cast[PixTable](clientData)
+
+  # Image
+  let img = ptable.load(interp, objv[1], pixie.Image)
+  if img.isNil: return Tcl.ERROR
+
+  # Path
+  let path = ptable.load(interp, objv[2], pixie.Path)
+  if path.isNil: return Tcl.ERROR
+
+  # Coordinates
+  var
+    count: Tcl.Size
+    coords: Tcl.PPObj
+  if Tcl.ListObjGetElements(interp, objv[3], count, coords) != Tcl.OK:
+    return Tcl.ERROR
+  if count mod 2 != 0:
+    return pixUtils.errorMSG(interp,
+      "wrong # args: 'coordinates' should be {x1 y1 x2 y2 ...}")
+
+  try:
+    var opts = pixParses.RenderOptions()
+    if objc == 7:
+      pixParses.dictOptions(interp, objv[6], opts)
+    let
+      matrix = opts.transform
+      hasStroke = opts.strokeWidth > 0
+      fill = newPaint(SolidPaint)
+      stroke = newPaint(SolidPaint)
+    fill.color = objv[4].getColor()
+    if hasStroke:
+      stroke.color = objv[5].getColor()
+
+    # A shape takes the matrix without its translation: the positions carry
+    # it. Stamp box: the shape, the stroke reach (miter joins, square caps)
+    # and room for antialiasing and the quarter-pixel shift.
+    var shape = matrix
+    shape[2, 0] = 0
+    shape[2, 1] = 0
+    var factor = 1.0'f32
+    if opts.lineJoin == MiterJoin: factor = max(factor, opts.miterLimit)
+    if opts.lineCap == SquareCap: factor = max(factor, sqrt(2.0'f32))
+    let
+      shapeScale = max(vec2(shape[0, 0], shape[0, 1]).length,
+                       vec2(shape[1, 0], shape[1, 1]).length)
+      reach = (if hasStroke: opts.strokeWidth / 2 * factor * shapeScale else: 0'f32) + 2
+      b = path.computeBounds(shape)
+      x0 = floor(b.x - reach).int
+      y0 = floor(b.y - reach).int
+      w = ceil(b.x + b.w + reach).int - x0 + 1
+      h = ceil(b.y + b.h + reach).int - y0 + 1
+
+    # stamps[4 * qy + qx]: the shape shifted by {qx/4 qy/4}.
+    var stamps: seq[pixie.Image]
+    for q in 0 ..< 16:
+      let
+        stamp = newImage(w, h)
+        shift = vec2(float32(q mod 4) / 4 - x0.float32, float32(q div 4) / 4 - y0.float32)
+      stamp.fillPath(path, fill, translate(shift) * shape)
+      if hasStroke:
+        stamp.strokePath(path, stroke, translate(shift) * shape, opts.strokeWidth,
+          opts.lineCap, opts.lineJoin, opts.miterLimit, opts.dashes)
+      stamps.add(stamp)
+
+    for i in countup(0, count - 1, 2):
+      let p = matrix * vec2(coords[i].getFloat(true), coords[i + 1].getFloat(true))
+      # Far positions are skipped before the conversion to integers.
+      if abs(p.x) > 1e7 or abs(p.y) > 1e7: continue
+
+      # Position in quarter pixels: the whole pixel and the stamp.
+      let
+        qx = int(floor(p.x * 4 + 0.5))
+        qy = int(floor(p.y * 4 + 0.5))
+      img.blendAt(stamps[4 * (qy and 3) + (qx and 3)],
+        floorDiv(qx, 4) + x0, floorDiv(qy, 4) + y0)
+  except CatchableError as e:
+    return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
+
+  return Tcl.OK
+
 proc pix_image_fill(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Fills the entire image with a solid color or a paint pattern.
   #
