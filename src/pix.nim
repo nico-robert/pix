@@ -2,8 +2,8 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie, pixie/fileformats/svg
-import std/[strutils, parsecfg, streams, tables, unicode, importutils]
-import core/[pixtables, pixparses, pixutils, pixobj]
+import std/[strutils, parsecfg, streams, tables, unicode]
+import core/[pixtables, pixparses, pixutils, pixobj, pixieprivate]
 
 when defined(x11):
   import core/piximg as X11
@@ -189,6 +189,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::img::ceil"           : pix_image_ceil,
     "pix::img::diff"           : pix_image_diff,
     "pix::img::draw"           : pix_image_draw,
+    "pix::img::drawCopies"     : pix_image_drawCopies,
     "pix::img::fill"           : pix_image_fill,
     "pix::img::flipHorizontal" : pix_image_flipHorizontal,
     "pix::img::flipVertical"   : pix_image_flipVertical,
@@ -227,6 +228,7 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::paint::new"          : pix_paint,
     "pix::paint::copy"         : pix_paint_copy,
     "pix::paint::fillGradient" : pix_paint_fillGradient,
+    "pix::paint::get"          : pix_paint_get,
     # Undocumented paint commands
     "pix::paint::configure"    : pix_paint_configure,
     "pix::paint::destroy"      : pix_paint_destroy,
@@ -304,6 +306,11 @@ proc Pix_Init(interp: Tcl.PInterp): cint {.exportc, dynlib.} =
     "pix::color::almostEqual"    : pix_colorAlmostEqual,
     "pix::color::mix"            : pix_colorMix,
     "pix::color::spin"           : pix_colorSpin,
+    # Commands built on private pixie fields.
+    "pix::ctx::isClipped"        : pix_ctx_isClipped,
+    "pix::ctx::fillBounded"      : pix_ctx_fillBounded,
+    "pix::ctx::strokeBounded"    : pix_ctx_strokeBounded,
+    "pix::ctx::fontCached"       : pix_ctx_fontCached,
     # ...
   }.toTable
 
