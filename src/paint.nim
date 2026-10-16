@@ -122,6 +122,69 @@ proc pix_paint_configure(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc:
 
   return Tcl.OK
 
+proc pix_paint_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Gets the parameters of a paint object.
+  #
+  # paint - [paint] object handle
+  #
+  # The dictionary includes the keys of [paint::configure], plus **kind**:
+  #
+  # #Begintable
+  #  **kind**                    : Enum value (PaintKind).
+  #  **blendMode**               : Enum value (BlendMode).
+  #  **opacity**                 : Double value (0 to 1).
+  #  **color**                   : Color string, rgba(r, g, b, a).
+  #  **image**                   : [img] object handle, or an empty string.
+  #  **imageMat**                : 3x3 transformation matrix (list of 9 numbers).
+  #  **gradientHandlePositions** : List coordinates {{x y} {x y}}.
+  #  **gradientStops**           : List of color stops {{color offset} {color1 offset1}}.
+  # #EndTable
+  #
+  # Returns: A Tcl dictionary object.
+  if objc != 2:
+    Tcl.WrongNumArgs(interp, 1, objv, "<paint>")
+    return Tcl.ERROR
+
+  # Paint
+  let ptable = cast[PixTable](clientData)
+  let paint = ptable.load(interp, objv[1], pixie.Paint)
+  if paint.isNil: return Tcl.ERROR
+
+  # Image handle only when the image is one of the pix table.
+  var imgKey = ""
+  if paint.image != nil:
+    let key = toHexPtr(paint.image)
+    if ptable.has(key, pixie.Image):
+      imgKey = key
+
+  let positionsObj = Tcl.NewListObj(0, nil)
+  for p in paint.gradientHandlePositions:
+    let pointObj = Tcl.NewListObj(0, nil)
+    discard Tcl.ListObjAppendElement(nil, pointObj, Tcl.NewDoubleObj(p.x))
+    discard Tcl.ListObjAppendElement(nil, pointObj, Tcl.NewDoubleObj(p.y))
+    discard Tcl.ListObjAppendElement(nil, positionsObj, pointObj)
+
+  let stopsObj = Tcl.NewListObj(0, nil)
+  for s in paint.gradientStops:
+    let stopObj = Tcl.NewListObj(0, nil)
+    discard Tcl.ListObjAppendElement(nil, stopObj, Tcl.NewStringObj(s.color.toHtmlRgba().cstring, -1))
+    discard Tcl.ListObjAppendElement(nil, stopObj, Tcl.NewDoubleObj(s.position))
+    discard Tcl.ListObjAppendElement(nil, stopsObj, stopObj)
+
+  let dictObj = Tcl.NewDictObj()
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("kind", 4), Tcl.NewStringObj(cstring($paint.kind), -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("blendMode", 9), Tcl.NewStringObj(cstring($paint.blendMode), -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("opacity", 7), Tcl.NewDoubleObj(paint.opacity))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("color", 5), Tcl.NewStringObj(paint.color.toHtmlRgba().cstring, -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("image", 5), Tcl.NewStringObj(imgKey.cstring, -1))
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("imageMat", 8), paint.imageMat.addToListObj())
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("gradientHandlePositions", 23), positionsObj)
+  discard Tcl.DictObjPut(nil, dictObj, Tcl.NewStringObj("gradientStops", 13), stopsObj)
+
+  Tcl.SetObjResult(interp, dictObj)
+
+  return Tcl.OK
+
 proc pix_paint_copy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Creates a copy of the specified paint object.
   #
