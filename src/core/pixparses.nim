@@ -4,6 +4,7 @@
 import pixie
 import std/strutils
 import ./pixobj as pixObj
+import ./pixtables
 import ../bindings/tcl/binding as Tcl
 
 when defined(pixGL):
@@ -235,7 +236,6 @@ proc toDictObj*(c: ColorRGBX): Tcl.PObj =
   discard Tcl.DictObjPut(nil, dict, Tcl.NewStringObj("a", 1), Tcl.NewIntObj(cint(c.a)))
 
   return dict
-
 
 template toHexPtr*[T](obj: T): string =
   # Converts an object to a hexadecimal string.
@@ -540,6 +540,25 @@ proc getColor*(obj: Tcl.PObj): Color =
         myColor
       else:
         chroma.parseHtmlName(scolor)
+
+proc styleValue*(ptable: PixTable, paint: pixie.Paint): string =
+  # Describes a fill or stroke style of a context.
+  #
+  # ptable - The pix tables.
+  # paint  - The style.
+  #
+  # Returns: The [paint] handle when the paint is in the pix table (the
+  # context keeps it alive, so its address cannot be another paint's), the
+  # color as an rgba string for a color, or an empty string.
+  if paint.isNil:
+    return ""
+  let key = toHexPtr(paint)
+  if ptable.has(key, pixie.Paint):
+    return key
+  if paint.kind == SolidPaint:
+    return paint.color.toHtmlRgba()
+
+  return ""
 
 proc shadowOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderShadow) =
   # Parse the options from the Tcl dict and set the fields of the 'RenderShadow' object.
