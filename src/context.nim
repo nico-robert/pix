@@ -1677,21 +1677,7 @@ proc pix_ctx_font(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, 
   let ctx = ptable.load(interp, objv[1], pixie.Context)
   if ctx.isNil: return Tcl.ERROR
 
-  let filePath = $objv[2]
-  ctx.font = filePath
-
-  # pixie keeps its typefaces per context, so every new context would read
-  # the font file again. Load it once into the pix table and share it.
-  # 'typefaces' is not exported by pixie, hence privateAccess.
-  privateAccess(pixie.Context)
-  if not ptable.ctxFontTable.hasKey(filePath):
-    try:
-      ptable.ctxFontTable[filePath] = readTypeface(filePath)
-    except PixieError:
-      # Unreadable font: pixie reports the error when the font is used.
-      return Tcl.OK
-
-  ctx.typefaces[filePath] = ptable.ctxFontTable[filePath]
+  ctx.font = $objv[2]
 
   return Tcl.OK
 
@@ -2061,6 +2047,9 @@ proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   # * **transform**    : A list of 9 values representing the transformation matrix applied to the context.
   # * **textAlign**    : An enum value that specifies the horizontal alignment of text within the context.
   # * **textBaseline** : An enum value that specifies the vertical alignment of text within the context.
+  # * **fillStyle**    : The [paint] object handle given to [ctx::fillStyle], the color
+  #                    (rgba string) when a color was given, or an empty string.
+  # * **strokeStyle**  : The same for [ctx::strokeStyle].
   #
   # Returns: 
   # A Tcl dictionary object that contains various properties (see above) of the context,
@@ -2093,6 +2082,8 @@ proc pix_ctx_get(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, o
   discard Tcl.DictObjPut(nil, dictObj,    Tcl.NewStringObj("transform", 9),     ctx.getTransform().addToListObj())
   discard Tcl.DictObjPut(nil, dictObj,    Tcl.NewStringObj("textAlign", 9),     Tcl.NewStringObj(cstring($ctx.textAlign), -1))
   discard Tcl.DictObjPut(nil, dictObj,    Tcl.NewStringObj("textBaseline", 12), Tcl.NewStringObj(cstring($ctx.textBaseline), -1))
+  discard Tcl.DictObjPut(nil, dictObj,    Tcl.NewStringObj("fillStyle", 9),     Tcl.NewStringObj(ptable.styleValue(ctx.fillStyle).cstring, -1))
+  discard Tcl.DictObjPut(nil, dictObj,    Tcl.NewStringObj("strokeStyle", 11),  Tcl.NewStringObj(ptable.styleValue(ctx.strokeStyle).cstring, -1))
 
   Tcl.SetObjResult(interp, dictObj)
 
