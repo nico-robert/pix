@@ -2,6 +2,7 @@
 # Distributed under MIT license. Please see LICENSE for details.
 
 import pixie
+import pixie/blends
 import ./pixtables
 import ./pixparses
 import ./pixobj as pixObj
@@ -59,18 +60,31 @@ proc addToListObj*(matrix3: vmath.Mat3): Tcl.PObj =
 
   return listMtxobj
 
-proc blendAt*(dst, stamp: pixie.Image, ox, oy: int) {.raises: [].} =
-  # Draws an image onto another at a whole-pixel offset (normal blend of
-  # premultiplied colors), clipped to the destination.
+proc blendAt*(dst, stamp: pixie.Image, ox, oy: int, blendMode = NormalBlend) {.raises: [].} =
+  # Draws an image onto another at a whole-pixel offset, clipped to the
+  # destination.
   #
-  # dst   - The destination image.
-  # stamp - The image drawn onto dst.
-  # ox    - The column of dst where the left edge of stamp goes (may be
-  #         negative: the part outside dst is skipped).
-  # oy    - The row of dst where the top edge of stamp goes (same).
+  # dst       - The destination image.
+  # stamp     - The image drawn onto dst.
+  # ox        - The column of dst where the left edge of stamp goes (may be
+  #             negative: the part outside dst is skipped).
+  # oy        - The row of dst where the top edge of stamp goes (same).
+  # blendMode - How stamp combines with dst (optional:NormalBlend). The
+  #             pixels stamp leaves transparent are kept.
   #
-  # The blend is written here with the checks off: pixie's blendNormal
-  # computes the same.
+  # The normal blend is written here with the checks off: pixie's
+  # blendNormal computes the same. Other modes use pixie's blender.
+  if blendMode != NormalBlend:
+    let blend = blender(blendMode)
+    {.push checks: off.}
+    for sy in max(0, -oy) ..< min(stamp.height, dst.height - oy):
+      for sx in max(0, -ox) ..< min(stamp.width, dst.width - ox):
+        let s = stamp.unsafe[sx, sy]
+        if s.a == 0: continue
+        dst.unsafe[ox + sx, oy + sy] = blend(dst.unsafe[ox + sx, oy + sy], s)
+    {.pop.}
+    return
+
   {.push checks: off.}
   for sy in max(0, -oy) ..< min(stamp.height, dst.height - oy):
     for sx in max(0, -ox) ..< min(stamp.width, dst.width - ox):
