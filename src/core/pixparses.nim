@@ -21,6 +21,7 @@ type
     lineJoin*: LineJoin          = MiterJoin
     miterLimit*: float32         = pixie.defaultMiterLimit
     dashes*: seq[float32]        = @[]
+    blendMode*: BlendMode        = NormalBlend
     hAlign*: HorizontalAlignment = LeftAlign
     vAlign*: VerticalAlignment   = TopAlign
     bounds*: Vec2                = vec2(0, 0)
@@ -639,6 +640,8 @@ proc dictOptions*(interp: Tcl.PInterp, objv: Tcl.PObj, opts: var RenderOptions) 
         opts.miterLimit = getFloat(value, true)
       of "lineJoin":
           opts.lineJoin = getOptEnum[LineJoin]($value)
+      of "blendMode":
+          opts.blendMode = getOptEnum[BlendMode]($value)
       of "dashes":
         if Tcl.ListObjGetElements(interp, value, dashescount, dasheselements) != Tcl.OK:
           raise newException(ValueError, $interp)
