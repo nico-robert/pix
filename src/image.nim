@@ -130,7 +130,10 @@ proc pix_image_drawCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # The options are those of [img::strokePath]: **strokeWidth** (in path
   # units, 0 to fill only), **transform** (the matrix of the whole drawing:
   # the shapes take its linear part, the positions the whole matrix),
-  # **lineCap**, **lineJoin**, **miterLimit** and **dashes**.
+  # **lineCap**, **lineJoin**, **miterLimit**, **dashes** and **blendMode**
+  # (Enum, optional:NormalBlend): how each copy combines with the image,
+  # e.g. SubtractMaskBlend erases the image under the copies (their colors
+  # are then not used).
   #
   # The shape is rendered once for each quarter-pixel offset, then copied at
   # every position (the nearest quarter pixel), in the order of the list.
@@ -194,7 +197,7 @@ proc pix_image_drawCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
       h = ceil(b.y + b.h + reach).int - y0 + 1
 
     # stamps[4 * qy + qx]: the shape shifted by {qx/4 qy/4}.
-    var stamps: seq[pixie.Image]
+    var stamps: array[16, pixie.Image]
     for q in 0 ..< 16:
       let
         stamp = newImage(w, h)
@@ -203,19 +206,20 @@ proc pix_image_drawCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
       if hasStroke:
         stamp.strokePath(path, stroke, translate(shift) * shape, opts.strokeWidth,
           opts.lineCap, opts.lineJoin, opts.miterLimit, opts.dashes)
-      stamps.add(stamp)
+      stamps[q] = stamp
 
+    # Far positions are skipped before the conversion to integers.
+    const farPosition = 1e7'f32
     for i in countup(0, count - 1, 2):
       let p = matrix * vec2(coords[i].getFloat(true), coords[i + 1].getFloat(true))
-      # Far positions are skipped before the conversion to integers.
-      if abs(p.x) > 1e7 or abs(p.y) > 1e7: continue
+      if abs(p.x) > farPosition or abs(p.y) > farPosition: continue
 
       # Position in quarter pixels: the whole pixel and the stamp.
       let
         qx = int(floor(p.x * 4 + 0.5))
         qy = int(floor(p.y * 4 + 0.5))
       img.blendAt(stamps[4 * (qy and 3) + (qx and 3)],
-        floorDiv(qx, 4) + x0, floorDiv(qy, 4) + y0)
+        floorDiv(qx, 4) + x0, floorDiv(qy, 4) + y0, opts.blendMode)
   except CatchableError as e:
     return pixUtils.errorMSG(interp, "pix(error): " & e.msg)
 
