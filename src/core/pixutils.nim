@@ -504,6 +504,23 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
+proc pix_nerlyEqualMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+  # Checks whether two matrices are approximately equal.
+  #
+  # matrix1 - A Tcl list of 9 numbers representing an input 3x3 matrix
+  # matrix2 - A Tcl list of 9 numbers representing an input 3x3 matrix
+  #
+  # Returns: 1 if the matrices are approximately equal, 0 otherwise.
+  if objc != 3:
+    Tcl.WrongNumArgs(interp, 1, objv, "matrix1 matrix2")
+    return Tcl.ERROR
+
+  Tcl.SetObjResult(interp, Tcl.NewIntObj(
+    (objv[1].getMtx() ~= objv[2].getMtx()).cint
+  ))
+
+  return Tcl.OK
+
 proc pix_mulMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Multiplies a sequence of 3x3 matrices together.
   #
