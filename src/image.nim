@@ -1374,8 +1374,7 @@ proc pix_image_toGrayScale(clientData: Tcl.TClientData, interp: Tcl.PInterp, obj
   # Converts an image to grayscale.
   #
   # img         - <img> object
-  # handleAlpha - Boolean value that indicates whether to handle
-  #               the alpha channel (optional:true).
+  # handleAlpha - Boolean value that indicates whether to handle the alpha channel (optional:true).
   #
   # Returns: nothing.
 
