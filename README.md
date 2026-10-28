@@ -142,3 +142,20 @@ Changes :
       distributions, one with `resvg` binding and one without.
     - Previous versions `(v0.1-v0.7)` included `Ruff!` documentation    
       assets without proper license attribution. This has been corrected in `v0.8+`.
+*  **28-Oct-2026** : 0.9
+    - Adds `pix::img::drawCopies` and `pix::path::addCopies`: a path drawn at many positions from pre-rendered copies.
+    - Adds new procedures: `pix::fromB64`, `pix::paint::get`, `pix::path::polyPath`, `pix::path::polyLine`, `pix::deg2Rad`, `pix::nearlyEqualMatrix`, `pix::img::setColor`, `pix::img::getSize`, `pix::ctx::getSize`, `pix::ctx::getInfoStruct`, `pix::ctx::getImage`, `pix::font::destroyTface`.
+    - Adds the `WebP` format.
+    - Adds a CI workflow.
+    - `pix::ctx::get` now returns the fill and stroke styles.
+    - `pix::ctx::strokePath` / `pix::ctx::fillPath` are now documented as deprecated in favor of `pix::ctx::stroke` / `pix::ctx::fill`.
+    - Reverse the angle of `pix::rotMatrix` (new version of `treeform/vmath`). **Breaking change**.
+    - Improved compilation support (macOS, Windows with gcc 14+, Linux X11).
+    - Faster `pix::img::toGrayScale` (flat buffer iteration).
+    - Harmonized error messages and refreshed API documentation.
+    - Adjusted test tolerances for macOS arm64.
+    - Fix segfault in `$` when the Tcl interpreter is nil.
+    - Fix swapped `windingRule`/`transform` arguments in `pix::path::fillOverlaps`.
+    - Bump `pixie` to version `6.1.0+` (tile fixes).
+    - Bump `ruff` to version to `3.1.0`
+    - The `X11` library is now part of this project.
