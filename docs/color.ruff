@@ -2,44 +2,38 @@ namespace eval pix::color {
     # Ruff documentation
     variable _ruff_preamble {
 * The following color formats can be used:
-rgba - e.g : *rgba(x,x,x,x)*<br>
-This format takes four arguments, for the *red*, *green*, *blue*, and
-*alpha* components of the color. The arguments are all **integers**
-numbers between **0** and **255**.
+rgba - e.g : *rgba(r,g,b,a)*<br>
+This format takes four arguments: *red*, *green*, and *blue* as **integers**
+between **0** and **255**, and *alpha* as a **floating-point** number between **0.0** and **1.0**.
 hexHtml - e.g : *#F8D1DD*<br>
-This format takes a single argument, which is a string in the
-format of a hex code. The hex code should be **7**
-characters long (including the # symbol), and each character (except #) should be a valid hex digit.
-rgb - e.g : *rgb(x,x,x)*<br>
-This format takes three arguments, for the red, green, and blue
-components of the color. The arguments are all **integers**
-numbers between **0** and **255**.
+This format takes a single string argument representing a hexadecimal color code.
+The hex code must be **7** characters long (including the '#' symbol), and each
+subsequent character must be a valid hexadecimal digit.
+rgb - e.g : *rgb(r,g,b)*<br>
+This format takes three arguments for the *red*, *green*, and *blue*
+components of the color. All arguments are **integer** numbers between **0** and **255**.
 hexalpha - e.g : *FF0000FF*<br>
-Hexadecimal characters (uppercase or lowercase).
-Length of **8** characters (typical for an **RGBA** color)
+A string of **8** hexadecimal characters (case-insensitive), typically representing
+an **RGBA** color format.
 hex - e.g : *FF0000*<br>
-Hexadecimal characters (uppercase or lowercase).
-Length of **6** characters (typical for an **RGB** color)
-rgbx - e.g : *rgbx(x,x,x,x)*<br>
-This format takes four arguments, for the *red*, *green*, *blue*, and
-*alpha* components of the color. The arguments are all **integers**
-numbers between **0** and **255**.
+A string of **6** hexadecimal characters (case-insensitive), typically representing
+an **RGB** color format.
+rgbx - e.g : *rgbx(r,g,b,x)*<br>
+This format takes four arguments: *red*, *green*, *blue*, and *alpha* components.
+Unlike standard rgba, all four arguments in this format are **integers** between **0** and **255**.
 simple color - e.g : *{0.0 0.0 0.0 0.0}* or *{0.0 0.0 0.0}*<br>
-This format takes a list of **three or four**
-floating point numbers between **0.0** and **1.0**. The numbers are the
-*red*, *green*, *blue*, and optionally *alpha* components of the color.
+This format takes a Tcl list of **three or four floating-point** numbers
+between **0.0** and **1.0**, representing the *red*, *green*, *blue*, and optional *alpha* components.
 string color - e.g : *white*<br>
-HTML color as a name.
+A standard HTML or CSS color specified by its name.
 hsv - e.g : *hsv(h,s,v)*<br>
-This format takes three arguments, for the *hue*, *saturation*, and
-*value* components of the color. The arguments are all floating point.
-hue 0 to 360, saturation 0 to 100, and value 0 to 100.
+This format takes three floating-point arguments for *hue* (**0 to 360**),
+*saturation* (**0 to 100**), and *value* (**0 to 100**) components.
 hsl - e.g : *hsl(h,s,l)*<br>
-This format takes three arguments, for the *hue*, *saturation*, and
-*lightness* components of the color. The arguments are all floating point.
-hue 0 to 360, saturation 0 to 100, and lightness 0 to 100.
+This format takes three floating-point arguments for *hue* (**0 to 360**),
+*saturation* (**0 to 100**), and *lightness* (**0 to 100**) components.
 tiny hex - e.g : *#FF6*<br>
-This format is a shorthand hexadecimal notation with **4** characters
-(including the # symbol), where each hex digit is doubled (e.g., #RGB becomes #RRGGBB).
+A shorthand hexadecimal notation of **4** characters (including the '#' symbol),
+where each color digit is automatically doubled (e.g., #RGB expands to #RRGGBB).
 }
 }

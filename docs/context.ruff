@@ -4,7 +4,7 @@ namespace eval ::pix {
                 # Ruff documentation
                 variable _ruff_preamble {
             #### Note
-            This namespace provides a 2D API commonly used on the web. For more info, see: [https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D] (https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D)
+            This namespace provides a 2D API commonly used on the web. For more info, see: [ContextRenderingContext2D] (https://developer.mozilla.org/en-US/docs/Web/API/ContextRenderingContext2D)
 
             #### Struct Context:
             image         - [img]
@@ -15,39 +15,37 @@ namespace eval ::pix {
             miterLimit    - double
             lineCap       - Enum LineCap
             lineJoin      - Enum LineJoin
-            font          - string ## File path to a .ttf or .otf file.
+            font          - string filePath to a .ttf or .otf file.
             fontSize      - double
             textAlign     - Enum HorizontalAlignment
             textBaseline  - Enum BaselineAlignment
 
             #### Enum BaselineAlignment:
-            BaselineAlignment - enum
-            TopBaseline - &nbsp;
-            HangingBaseline - &nbsp;
-            MiddleBaseline - &nbsp;
-            AlphabeticBaseline - &nbsp;
-            IdeographicBaseline - &nbsp;
-            BottomBaseline - &nbsp;
+            * TopBaseline
+            * HangingBaseline
+            * MiddleBaseline
+            * AlphabeticBaseline 
+            * IdeographicBaseline
+            * BottomBaseline
 
         }
             }
         }
-proc pix::ctx::new {size {value {none}}} {
-  # Sets a *new* context.
+proc pix::ctx::new {size {value {}}} {
+  # Creates and sets a *new* drawing context.
   #
-  # size  - list width,height
-  # value - string [color] or [img::new] 
+  # size  - A list {width height}
+  # value - string [color] or [img] 
   #
-  # Returns: A *new* [ctx] object.
+  # Returns: A *new* handle [ctx] object.
 }
 proc pix::ctx::strokeStyle {context color} {
-  # Sets color style current context.
+  # Sets the stroke style for the current context.
   #
-  # context - [ctx::new]
-  # color   - [paint::new] or string [color]
+  # context - [ctx]
+  # color   - [paint] object or color string
   #
-  # If the string is not in the correct format, an error
-  # will be generated.
+  # If the color string format is incorrect, an error will be generated.
   #
   # Returns: Nothing.
 }
@@ -55,23 +53,22 @@ proc pix::ctx::save {context} {
   # Saves the entire state of the context
   # by pushing the current state onto a stack.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
-  # The *pix::ctx::save* procedure adds the current context state
-  # to the stack, and the restore() procedure pops the
+  # The `pix::ctx::save` procedure adds the current context state
+  # to the stack, and the `pix::ctx::restore` procedure pops the
   # top context state from the stack and restores
   # the context state to the top state.
   #
   # Returns: Nothing.
 }
 proc pix::ctx::textBaseline {context baselineAlignment} {
-  # Set the base line alignment for the current context.
+  # Sets the text baseline alignment for the current context.
   #
-  # context           - [ctx::new]
-  # baselineAlignment - Enum value
+  # context           - [ctx]
+  # baselineAlignment - Enum value (BaselineAlignment)
   #
-  # Parse the second argument as an enum value of type `BaselineAlignment`.
-  # This value tells us how to align the text baseline.
+  # This value determines how text is aligned relative to its baseline.
   #
   # Returns: Nothing.
 }
@@ -79,7 +76,7 @@ proc pix::ctx::restore {context} {
   # Restores the most recently saved context state by popping the top entry
   # in the drawing state stack. If there is no saved state, this method does nothing.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
 }
@@ -88,22 +85,16 @@ proc pix::ctx::saveLayer {context} {
   # and allocates a new image layer for subsequent drawing. Calling restore blends
   # the current layer image onto the prior layer or root image.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
 }
 proc pix::ctx::strokeSegment {context coordinates1 coordinates2} {
-  # Strokes a segment (draws a line from ax, ay to bx, by) according to
-  # the current strokeStyle and other context settings.
+  # Draws a line segment from (x, y) to (x1, y1) using the current stroke style.
   #
-  # context       - [ctx::new]
-  # coordinates1  - list x,y
-  # coordinates2  - list x1,y1
-  #
-  # Create a segment using the start and stop vectors
-  # 'start' is the beginning point of the segment *(x, y)*
-  # 'stop' is the end point of the segment (x1, y1)
-  # The segment represents a line that will be drawn from start to stop
+  # context      - [ctx]
+  # coordinates1 - A list {x y}   (start point)
+  # coordinates2 - A list {x1 y1} (end point)
   #
   # Returns: Nothing.
 }
@@ -111,83 +102,86 @@ proc pix::ctx::strokeRect {context coordinates size} {
   # Draws a rectangle that is stroked (outlined) according to the
   # current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - list width,height
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - A list {width height}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::quadraticCurveTo {context coordinates1 coordinates2} {
   # Adds a quadratic Bézier curve to the current sub-path.
+  #
+  # context       - [ctx]
+  # coordinates1  - A list {cpx cpy}
+  # coordinates2  - A list {x y}
+  #
   # It requires two points: the first one is a control point and the second one is the end point.
   # The starting point is the latest point in the current path,
-  # which can be changed using moveTo() before creating the quadratic Bézier curve.
-  #
-  # context       - [ctx::new]
-  # coordinates1  - list cpx,cpy
-  # coordinates2  - list x,y
+  # which can be changed using `pix::ctx::moveTo` before creating the quadratic Bézier curve.
   #
   # Returns: Nothing.
 }
 proc pix::ctx::arc {context coordinates radius angleStart angleEnd {ccw {false}}} {
   # Adds a circular arc to the current sub-path.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # radius      - double value
-  # angleStart  - double value (radian)
-  # angleEnd    - double value (radian)
-  # ccw         - boolean value 
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # radius      - Double value
+  # angleStart  - Double value (radian)
+  # angleEnd    - Double value (radian)
+  # ccw         - Boolean value 
   #
   # Returns: Nothing.
 }
 proc pix::ctx::arcTo {context coordinates1 coordinates2 radius} {
   # Adds a circular arc using the given control points and radius.
   #
-  # context       - [ctx::new]
-  # coordinates1  - list x1,y1
-  # coordinates2  - list x2,y2
-  # radius        - double value
+  # context       - [ctx]
+  # coordinates1  - A list {x1 y1}
+  # coordinates2  - A list {x2 y2}
+  # radius        - Double value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::bezierCurveTo {context coordinates1 coordinates2 coordinates3} {
   # Adds a cubic Bézier curve to the current sub-path.
-  # It requires three points: the first two are control points and the third one is the end point.
-  # The starting point is the latest point in the current path,
-  # which can be changed using moveTo() before creating the Bézier curve.
   #
-  # context      - [ctx::new]
-  # coordinates1 - list cp1x,cp1y
-  # coordinates2 - list cp2x,cp2y
-  # coordinates3 - list x,y
+  # context      - [ctx]
+  # coordinates1 - A list {cp1x cp1y} (first control point)
+  # coordinates2 - A list {cp2x cp2y} (second control point)
+  # coordinates3 - A list {x y} (destination point)
+  #
+  # This operation requires three points: the first two are control points (cp1 and cp2),
+  # and the third one is the final destination point. The curve begins at the current 
+  # pen position (which can be set using *pix::ctx::moveTo*).
   #
   # Returns: Nothing.
 }
 proc pix::ctx::circle {context coordinates radius} {
   # Adds a circle to the current path.
   #
-  # context      - [ctx::new]
-  # coordinates  - list cx,cy
-  # radius       - double value
+  # context      - [ctx]
+  # coordinates  - A list {cx cy}
+  # radius       - Double value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::clip {context {path {}} {windingRule {NonZero}}} {
-  # Turns the path into the current clipping region.
-  # The previous clipping region, if any, is intersected
-  # with the current or given path to create the new clipping region.
+  # Sets the current path as the clipping region.
   #
-  # context     - [ctx::new]
-  # path        - [path::new] 
+  # context     - [ctx]
+  # path        - [path] object 
   # windingRule - Enum value 
+  #
+  # The new clipping region is the intersection of the previous region 
+  # and the current or provided path.
   #
   # Returns: Nothing.
 }
 proc pix::ctx::measureText {context text} {
   # Information about the measured text.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # text     - string
   #
   # Returns: A Tcl dict that contains information
@@ -196,36 +190,36 @@ proc pix::ctx::measureText {context text} {
 proc pix::ctx::resetTransform {context} {
   # Resets the current transform to the identity matrix.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
 }
 proc pix::ctx::drawImage {context image options} {
   # Draws a source image onto the destination image.
   #
-  # context  - [ctx::new]
-  # image    - [img::new]
+  # context  - [ctx]
+  # image    - [img]
   # options  - See description below:
   #
   # There are 3 ways to use this proc:
   #
-  # 1. With simple destination:<br>
+  # 1. simple destination:<br>
   # #Begintable
-  # **destinationXY** :A list destination coordinates dx,dy.
+  # **destinationXY** : A list destination coordinates {dX dY}.
   # #EndTable
   #
-  # 2. With destination + size destination:<br>
+  # 2. destination + size destination:<br>
   # #Begintable
-  # **destinationXY** :A list destination coordinates dx,dy.
-  # **destinationWH** :A list destination size dw,dh.
+  # **destinationXY** : A list destination coordinates {dX dY}.
+  # **destinationWH** : A list destination size {dW dH}.
   # #EndTable
   #
-  # 3. With source + size source + destination + size destination:<br>
+  # 3. source + size source + destination + size destination:<br>
   # #Begintable
-  # **source**         :A list source coordinates sx,sy.
-  # **sourceWH**       :A list source size sW,SH .
-  # **destinationXY**  :A list destination coordinates dx,dy.
-  # **destinationWH**  :A list destination size dw,dh.
+  # **sourceXY**       : A list source coordinates {sx sy}.
+  # **sourceWH**       : A list source size {sW sH}.
+  # **destinationXY**  : A list destination coordinates {dX dY}.
+  # **destinationWH**  : A list destination size {dW dH}.
   # #EndTable
   #
   # Returns: Nothing.
@@ -233,10 +227,10 @@ proc pix::ctx::drawImage {context image options} {
 proc pix::ctx::ellipse {context coordinates radiusx radiusy} {
   # Adds an ellipse to the current sub-path.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # radiusx     - double value
-  # radiusy     - double value
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # radiusx     - Double value
+  # radiusy     - Double value
   #
   # Returns: Nothing.
 }
@@ -244,23 +238,23 @@ proc pix::ctx::strokeEllipse {context coordinates radiusx radiusy} {
   # Draws an ellipse that is stroked (outlined) according
   # to the current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # radiusx     - double value
-  # radiusy     - double value
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # radiusx     - Double value
+  # radiusy     - Double value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::setTransform {context matrix3x3} {
-  # Overrides the transform matrix being applied to the context.
+  # Overrides the current transformation matrix.
   #
-  # context   - [ctx::new]
-  # matrix3x3 - list
+  # context   - [ctx]
+  # matrix3x3 - A list of 9 values
   #
-  # If you want to save the current transform matrix, you can get it by calling
-  # *pix::ctx::getTransform* and later restore it using *pix::ct::setTransform*.
-  # If you want to add a new transform to the current transform matrix, use
-  # *pix::ctx::transform* instead.
+  # You can retrieve the current matrix with `pix::ctx::getTransform` 
+  # and restore it later using `pix::ctx::setTransform`.
+  #
+  # To append a transformation instead of overriding it, use `pix::ctx::transform`.
   #
   # The matrix is a list of 9 values representing a 3x3 matrix.
   # The values are in row order:<br>
@@ -278,43 +272,42 @@ proc pix::ctx::transform {context matrix3x3} {
   # Multiplies the current transform with the matrix
   # described by the arguments of this method.
   #
-  # context   - [ctx::new]
-  # matrix3x3 - list
+  # context   - [ctx]
+  # matrix3x3 - A list
   #
   # This is useful if you want to add a new transform
   # to the current transform matrix without replacing
   # the current transform matrix.
   #
   # For example, if you have set a transform matrix
-  # using *pix::ctx::setTransform* and later want to
+  # using `pix::ctx::setTransform` and later want to
   # add a rotation to the current transform matrix,
-  # you can use *pix::ctx::transform* to add the rotation
+  # you can use `pix::ctx::transform` to add the rotation
   # to the current transform matrix.
   #
   # Another example is if you want to add a scale
   # to the current transform matrix, you can use
-  # *pix::ctx::transform* to add the scale to the current
+  # `pix::ctx::transform` to add the scale to the current
   # transform matrix.
   #
   # Returns: Nothing.
 }
 proc pix::ctx::rotate {context angle} {
-  # Adds a rotation to the transformation matrix.
+  # Applies a rotation to the transformation matrix.
   #
-  # context - [ctx::new]
-  # angle   - double value (radian)
+  # context - [ctx]
+  # angle   - double (radians)
   #
-  # The rotation is around the origin (0,0).
-  # The rotation is counterclockwise.
-  # The angle is in radians.
+  # The rotation is centered at the origin (0,0) and moves 
+  # counter-clockwise.
   #
   # Returns: Nothing.
 }
 proc pix::ctx::translate {context coordinates} {
   # Adds a translation transformation to the current matrix.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
+  # context     - [ctx]
+  # coordinates - A list {x y}
   #
   # The translation is by the given *(x, y)* vector in the current
   # coordinate system.
@@ -322,7 +315,7 @@ proc pix::ctx::translate {context coordinates} {
   # This is the same:
   #```
   # ctx.transform = ctx.transform.translate(vec2(x, y))
-  # Or:
+  # # or:
   # ctx.transform = ctx.transform * Mat3.translation(vec2(x, y))
   #```
   #
@@ -332,7 +325,7 @@ proc pix::ctx::lineJoin {context lineJoin} {
   # Parse the string as an enum value of type LineJoin
   # and assign it to the lineJoin property of the context.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # lineJoin - Enum value
   #
   # The parseEnum function will raise an exception if the string is not a valid
@@ -340,56 +333,65 @@ proc pix::ctx::lineJoin {context lineJoin} {
   #
   # Returns: Nothing.
 }
+proc pix::ctx::lineCap {context enum} {
+  # Sets the style of the end caps for lines.
+  #
+  # context - [ctx]
+  # enum    - Enum value (*ButtCap*, *RoundCap*, or *SquareCap*)
+  #
+  # Returns: Nothing.
+}
 proc pix::ctx::fill {context {path {}} {windingRule {NonZero}}} {
   # Fills the path with the current fillStyle.
   #
-  # context     - [ctx::new]
-  # path        - [path::new] 
+  # context     - [ctx]
+  # path        - [path] 
   # windingRule - Enum value 
   #
-  # If no path is specified, then call *pix::ctx::fill $ctx* with no arguments.
-  # This will fill the current path with the current fillStyle.<br>
-  # If no fillStyle has been set, it will default to *Color(0.0, 0.0, 0.0, 1.0)*.
+  # If no path is specified, then call `pix::ctx::fill $ctx` with no arguments.
+  #
+  # This will fill the current path with the current fillStyle.
+  # If no fillStyle has been set, it will default to `Color(0.0, 0.0, 0.0, 1.0)`.
   # If no path has been set, it will default to an empty path.
-  # If no winding rule has been set, it will default to NonZero.
+  # If no winding rule has been set, it will default to `NonZero`.
   #
   # Returns: Nothing.
 }
 proc pix::ctx::rect {context coordinates size} {
   # Adds a rectangle to the current path.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - list width,height
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - A list {width height}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::fillRect {context coordinates size} {
   # Draws a rectangle that is filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - list width,height
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - A list {width height}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::roundedRect {context coordinates size radius} {
   # Draws a rectangle with rounded corners that is filled according to the current fillStyle.
   #
-  # context      - [ctx::new]
-  # coordinates  - list x,y
-  # size         - list width,height
-  # radius       - list {nw ne se sw}
+  # context      - [ctx]
+  # coordinates  - A list {x y}
+  # size         - A list {width height}
+  # radius       - Double value or list radius {nw ne se sw}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::fillRoundedRect {context coordinates size radius} {
   # Draws a rounded rectangle that is filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - list width,height
-  # radius      - double value or list radius {nw ne se sw}
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - A list {width height}
+  # radius      - Double value or list of {nw ne se sw}
   #
   # Returns: Nothing.
 }
@@ -397,57 +399,49 @@ proc pix::ctx::strokeRoundedRect {context coordinates size radius} {
   # Draws a rounded rectangle that is stroked (outlined) according
   # to the current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - list width,height
-  # radius      - double value or list radius {nw ne se sw}
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - A list {width height}
+  # radius      - Double value or list of {nw ne se sw}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::clearRect {context coordinates size} {
   # Erases the pixels in a rectangular area.
   #
-  # context      - [ctx::new]
-  # coordinates  - list x,y
-  # size         - list width,height
+  # context      - [ctx]
+  # coordinates  - A list {x y}
+  # size         - A list {width height}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::fillStyle {context value} {
   # Fills current style.
   #
-  # context - [ctx::new]
-  # value   - [paint::new] or string [color]
+  # context - [ctx]
+  # value   - [paint] or string [color]
   #
   # Returns: Nothing.
 }
 proc pix::ctx::globalAlpha {context alpha} {
   # Sets color alpha.
   #
-  # context - [ctx::new]
-  # alpha   - double value
+  # context - [ctx]
+  # alpha   - Double value (0.0 to 1.0)
   #
   # This determines the transparency level of the drawing operations.
-  # The alpha value must be a floating-point number between 0.0 (completely transparent)
-  # and 1.0 (completely opaque).
   #
   # Returns: Nothing.
 }
 proc pix::ctx::moveTo {context coordinates} {
-  # Begins a new sub-path at the point *(x, y)*.
+  # Begins a new sub-path at the specified coordinate.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
+  # context     - [ctx]
+  # coordinates - A Tcl list {x y}
   #
-  # This is a fundamental operation,
-  # it clears the current path and starts a new path at the point given.<br>
-  # The subsequent path operations are all relative to this point.
-  # * The point is the starting point of the new path that is being built.
-  # * The point is used as the first point of the path that is being built.
-  # * The point is used as the reference point for all of the relative path
-  # operations, such as lineTo, curveTo, and arc.
-  # * The point is used as the starting point for the built path.
-  # * The point should be the first point that is used in the path.
+  # This operation sets the current pen position without drawing anything, 
+  # establishing a new starting point for subsequent path instructions 
+  # (such as lineTo, curveTo, or arc).
   #
   # Returns: Nothing.
 }
@@ -455,36 +449,34 @@ proc pix::ctx::isPointInStroke {context coordinates {path {}}} {
   # Checks whether or not the specified point is inside the area
   # contained by the stroking of a path.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # path        - [path::new] 
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # path        - [path] 
   #
   # Returns: A Tcl boolean value.
 }
 proc pix::ctx::isPointInPath {context coordinates {path {}} {windingRule {NonZero}}} {
   # Checks whether or not the specified point is contained in the current path.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # path        - [path::new] 
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # path        - [path] 
   # windingRule - Enum value 
   #
   # Returns: A Tcl boolean value.
 }
 proc pix::ctx::lineTo {context coordinates} {
-  # Adds a straight line to the current sub-path by connecting
-  # the sub-path's last point to the specified *(x, y)* coordinates.
+  # Adds a straight line segment to the current sub-path from the current 
+  # pen position to the specified coordinates.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
+  # context     - [ctx]
+  # coordinates - A Tcl list {x y}
   #
-  # The lineTo method can be called multiple times to draw multiple lines.
-  # Each call to lineTo adds a line to the current path, and the stroke
-  # method will draw all of the lines in the path.
+  # Calling this method multiple times allows you to chain multiple segments 
+  # together. The actual lines will be rendered when calling `pix::ctx::stroke`.
   #
-  # For example, to draw a square with the top-left corner at (10, 10)
-  # and the bottom-right corner at (20, 20), you can use the following
-  # code:
+  # Example:<br>
+  # * Drawing an open box shape from (10,10) to (10,20) via (20,10) and (20,20):
   #```
   # pix::ctx::moveTo $ctx {10 10}
   # pix::ctx::lineTo $ctx {20 10}
@@ -493,31 +485,28 @@ proc pix::ctx::lineTo {context coordinates} {
   # pix::ctx::stroke $ctx
   #```
   #
-  # This code will draw a square with the top-left corner at (10, 10)
-  # and the bottom-right corner at (20, 20).
-  #
   # Returns: Nothing.
 }
 proc pix::ctx::stroke {context {path {}}} {
   # Strokes (outlines) the current or given path with the current strokeStyle.
   #
-  # context - [ctx::new]
-  # path    - [path::new] 
+  # context - [ctx]
+  # path    - [path] 
   #
   # Returns: Nothing.
 }
 proc pix::ctx::scale {context coordinates} {
   # Adds a scaling transformation to the context units horizontally and/or vertically.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
+  # context     - [ctx]
+  # coordinates - A list {x y}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::writeFile {context filePath} {
   # Save context to image file.
   #
-  # context  - [ctx::new]
+  # context  - [ctx]
   # filePath - string (\*.png|\*.bmp|\*.qoi|\*.ppm)
   #
   # The context is rendered into an image which is then saved to the
@@ -536,7 +525,7 @@ proc pix::ctx::writeFile {context filePath} {
 proc pix::ctx::beginPath {context} {
   # Starts a new path by emptying the list of sub-paths.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Begin a new path by clearing any existing sub-paths in the context.
   # This is typically used to start drawing a new shape or path.
@@ -548,31 +537,42 @@ proc pix::ctx::closePath {context} {
   # the start of the current sub-path. If the shape has already been
   # closed or has only one point, this function does nothing.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: Nothing.
 }
 proc pix::ctx::lineWidth {context width} {
   # Sets line width for current context.
   #
-  # context - [ctx::new]
-  # width   - double value
+  # context - [ctx]
+  # width   - Double value
   #
   # Returns: Nothing.
 }
-proc pix::ctx::font {context filepath} {
+proc pix::ctx::miterLimit {context miterlimit} {
+  # Sets the miter limit.
+  #
+  # context    - [ctx]
+  # miterlimit - Double value
+  #
+  # This is relevant when `lineJoin` is set to `MiterJoin` and
+  # controls the maximum length of the miter. If the miter limit is exceeded, a bevel join is used instead.
+  #
+  # Returns: Nothing.
+}
+proc pix::ctx::font {context filePath} {
   # Sets font for current context.
   #
-  # context  - [ctx::new]
-  # filepath - string
+  # context  - [ctx]
+  # filePath - string
   #
   # Returns: Nothing.
 }
 proc pix::ctx::fontSize {context size} {
   # Sets font size for current context.
   #
-  # context - [ctx::new]
-  # size    - double value
+  # context - [ctx]
+  # size    - Double value
   #
   # Returns: Nothing.
 }
@@ -580,28 +580,28 @@ proc pix::ctx::fillText {context text coordinates} {
   # Draws a text string at the specified coordinates,
   # filling the string's characters with the current fillStyle.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # text        - string
-  # coordinates - list x,y
+  # coordinates - A list {x y}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::fillCircle {context coordinates radius} {
   # Draws a circle that is filled according to the current fillStyle
   #
-  # context     - [ctx::new]
-  # coordinates - list cx,cy
-  # radius      - double value
+  # context     - [ctx]
+  # coordinates - A list {cx cy}
+  # radius      - Double value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::fillEllipse {context coordinates radiusx radiusy} {
   # Draws an ellipse that is filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # radiusx     - double value
-  # radiusy     - double value
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # radiusx     - Double value
+  # radiusy     - Double value
   #
   # Returns: Nothing.
 }
@@ -609,31 +609,31 @@ proc pix::ctx::fillPolygon {context coordinates size sides} {
   # Draws an n-sided regular polygon at *(x, y)* of size that is 
   # filled according to the current fillStyle.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - double value
-  # sides       - integer value
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - Double value
+  # sides       - Integer value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::polygon {context coordinates size sides} {
   # Adds an n-sided regular polygon at *(x, y)* of size to the current path.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - double value
-  # sides       - integer value
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - Double value
+  # sides       - Integer value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::strokePolygon {context coordinates size sides} {
-  # Draws an n-sided regular polygon at *(x, y)* of size that is stroked
+  # Draws an n-sided regular polygon at {x y} of size that is stroked
   # (outlined) according to the current strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
-  # coordinates - list x,y
-  # size        - double value
-  # sides       - integer value
+  # context     - [ctx]
+  # coordinates - A list {x y}
+  # size        - Double value
+  # sides       - Integer value
   #
   # Returns: Nothing.
 }
@@ -641,25 +641,25 @@ proc pix::ctx::strokeCircle {context coordinates radius} {
   # Draws a circle that is stroked (outlined) according to the current
   # strokeStyle and other context settings.
   #
-  # context     - [ctx::new]
-  # coordinates - list cx,cy
-  # radius      - double value
+  # context     - [ctx]
+  # coordinates - A list {cx cy}
+  # radius      - Double value
   #
   # Returns: Nothing.
 }
 proc pix::ctx::strokeText {context text coordinates} {
   # Draws the outlines of the characters of a text string at the specified coordinates.
   #
-  # context     - [ctx::new]
+  # context     - [ctx]
   # text        - string
-  # coordinates - list x,y
+  # coordinates - A list {x y}
   #
   # Returns: Nothing.
 }
 proc pix::ctx::textAlign {context horizontalAlignment} {
   # Sets text alignment.
   #
-  # context             - [ctx::new]
+  # context             - [ctx]
   # horizontalAlignment - Enum value
   #
   # Returns: Nothing.
@@ -667,7 +667,7 @@ proc pix::ctx::textAlign {context horizontalAlignment} {
 proc pix::ctx::get {context} {
   # Retrieves detailed information about the current context and returns it as a Tcl dictionary.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # The dictionary includes:
   #
@@ -682,47 +682,59 @@ proc pix::ctx::get {context} {
   # * **lineWidth**   : A double value specifying the current line width used for stroking operations.
   #                    This determines the thickness of lines drawn in the context.
   # * **lineCap**     : An enum value describing the style of the end caps for lines. Possible values include
-  #                    'ButtCap', 'RoundCap', and 'SquareCap', which define how the end points of lines are rendered.
+  #                    `ButtCap`, `RoundCap`, and `SquareCap`, which define how the end points of lines are rendered.
   # * **lineJoin**    : An enum value that indicates the style of the join between two lines. Options include
-  #                    'MiterJoin', 'RoundJoin', and 'BevelJoin', each affecting the appearance of corners where lines meet.
-  # * **miterLimit**  : A double value that sets the miter limit. This is relevant when 'lineJoin' is set to 'MiterJoin' and
+  #                    `MiterJoin`, `RoundJoin`, and `BevelJoin`, each affecting the appearance of corners where lines meet.
+  # * **miterLimit**  : A double value that sets the miter limit. This is relevant when `lineJoin` is set to `MiterJoin` and
   #                    controls the maximum length of the miter. If the miter limit is exceeded, a bevel join is used instead.
   # * **font**        : A string representing the font settings for text rendering in the context. This includes font family,
   #                    size, weight, and style, and dictates how text appears when drawn onto the context.
+  # * **fontSize**     : A double value representing the font size for text rendering in the context.
+  # * **transform**    : A list of 9 values representing the transformation matrix applied to the context.
+  # * **textAlign**    : An enum value that specifies the horizontal alignment of text within the context.
+  # * **textBaseline** : An enum value that specifies the vertical alignment of text within the context.
+  # * **fillStyle**    : The [paint] object handle given to [ctx::fillStyle], the color
+  #                    (rgba string) when a color was given, or an empty string.
+  # * **strokeStyle**  : The same for [ctx::strokeStyle].
   #
   # Returns: 
   # A Tcl dictionary object that contains various properties (see above) of the context,
   # which can be useful for introspection or debugging.
 }
+proc pix::ctx::getSize {context} {
+  # Gets the size of the image associated with the context.
+  #
+  # context - [ctx]
+  #
+  # Returns: A Tcl dictionary object that contains the 
+  # width and height of the image.
+}
+proc pix::ctx::getImage {context} {
+  # Gets the image associated with the context.
+  #
+  # context - [ctx]
+  #
+  # Returns: Image key as string.
+}
 proc pix::ctx::setLineDash {context dashes} {
   # Sets line dash for current context.
   #
-  # context - [ctx::new]
-  # dashes  - list
+  # context - [ctx]
+  # dashes  - A list of numbers
   #
   # Returns: Nothing.
 }
 proc pix::ctx::getTransform {context} {
   # Gets matrix for current context.
   #
-  # context - [ctx::new]
-  #
-  # The matrix is represented as a sequence of 3 sequences
-  # of floats, where each inner sequence represents a row
-  # of the matrix.
-  #
-  # The first element of the first row represents the x
-  # component of the transformation, the second element
-  # represents the y component of the transformation, and
-  # the third element represents the z component of the
-  # transformation.
+  # context - [ctx]
   #
   # Returns: A matrix as Tcl list.
 }
 proc pix::ctx::getLineDash {context} {
   # Gets line dash for current context.
   #
-  # context - [ctx::new]
+  # context - [ctx]
   #
   # Returns: A list with current values.
 }
@@ -732,8 +744,11 @@ proc pix::ctx::fillPath {} {
 proc pix::ctx::strokePath {} {
   # See [img::strokePath] procedure.
 }
+proc pix::ctx::getInfoStruct {} {
+  # See [ctx::get] procedure.
+}
 proc pix::ctx::destroy {value} {
-  # Destroy current [ctx] or all contexts if special word `all` is specified.
+  # Destroy the [ctx] or all contexts if special word `all` is specified.
   #
   # value - [ctx] or string value.
   #

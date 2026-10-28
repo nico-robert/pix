@@ -4,60 +4,79 @@ namespace eval ::pix {
                 # Ruff documentation
                 variable _ruff_preamble {
             #### Enum PaintKind:
-            PaintKind             - enum
-            SolidPaint            - &nbsp;
-            ImagePaint            - &nbsp;
-            TiledImagePaint       - &nbsp;
-            LinearGradientPaint   - &nbsp;
-            RadialGradientPaint   - &nbsp;
-            AngularGradientPaint  - &nbsp;
+            * SolidPaint          
+            * ImagePaint          
+            * TiledImagePaint     
+            * LinearGradientPaint 
+            * RadialGradientPaint 
+            * AngularGradientPaint
         }
             }
         }
 proc pix::paint::new {paintKind} {
-  # Sets a new paint.
+  # Creates and returns a new paint object.
   #
-  # paintKind - Enum value
+  # paintKind - Enum value (PaintKind)
   #
-  # Returns: A *new* [paint] object.
+  # Returns: A *new* handle [paint] object.
 }
 proc pix::paint::configure {paint options} {
-  # Configure paint object parameters.
+  # Configures the parameters of a paint object.
   #
-  # paint   - [paint]
-  # options - A Tcl dict (options described below)
+  # paint   - [paint] object handle
+  # options - A Tcl list of key-value pairs (see supported options below).
   #
   # #Begintable
-  #  **image**                   : A object [img].
-  #  **imageMat**                : A list matrix.
-  #  **color**                   : A string [color].
-  #  **blendMode**               : A Enum value.
-  #  **opacity**                 : A double value.
-  #  **gradientHandlePositions** : A list positions {{x y} {x y}}.
-  #  **gradientStops**           : A list [color] + color position (double value).
+  #  **image**                   : [img] object handle.
+  #  **imageMat**                : 3x3 transformation matrix (list of 9 numbers).
+  #  **color**                   : Color string.
+  #  **blendMode**               : Enum value (BlendMode).
+  #  **opacity**                 : Double value (0 to 1).
+  #  **gradientHandlePositions** : List coordinates {{x y} {x y}}.
+  #  **gradientStops**           : List of color stops {{color offset} {color1 offset1}}.
   # #EndTable
   #
   # Returns: Nothing.
 }
+proc pix::paint::get {paint} {
+  # Gets the parameters of a paint object.
+  #
+  # paint - [paint] object handle
+  #
+  # The dictionary includes the keys of [paint::configure], plus **kind**:
+  #
+  # #Begintable
+  #  **kind**                    : Enum value (PaintKind).
+  #  **blendMode**               : Enum value (BlendMode).
+  #  **opacity**                 : Double value (0 to 1).
+  #  **color**                   : Color string, rgba(r, g, b, a).
+  #  **image**                   : [img] object handle, or an empty string.
+  #  **imageMat**                : 3x3 transformation matrix (list of 9 numbers).
+  #  **gradientHandlePositions** : List coordinates {{x y} {x y}}.
+  #  **gradientStops**           : List of color stops {{color offset} {color1 offset1}}.
+  # #EndTable
+  #
+  # Returns: A Tcl dictionary object.
+}
 proc pix::paint::copy {paint} {
-  # Create a new Paint with the same properties.
+  # Creates a copy of the specified paint object.
   #
-  # paint - [paint::new]
+  # paint - [paint] object handle
   #
-  # Returns: A *new* [paint] object.
+  # Returns: A *new* copied type [paint] object.
 }
 proc pix::paint::fillGradient {paint image} {
-  # Fills with the Paint gradient.
+  # Fills an entire image using the gradient settings of the paint object.
   #
-  # paint - [paint::new]
-  # image - [img::new]
+  # paint - [paint] object handle
+  # image - [img] object handle
   #
   # Returns: Nothing.
 }
 proc pix::paint::destroy {value} {
-  # Destroy current [paint] or all paints if special word `all` is specified.
+  # Destroy the [paint] or all paints if special word `all` is specified.
   #
-  # value - [paint::new] object or string.
+  # value - [paint] object or string.
   #
   # Returns: Nothing.
 }

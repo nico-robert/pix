@@ -3,122 +3,130 @@ namespace eval ::pix {
             namespace eval path {
                 # Ruff documentation
                 variable _ruff_preamble {
-            #### Enum Winding rules:
-            WindingRule  - enum
-            NonZero      - &nbsp;
-            EvenOdd      - &nbsp;
-            #### Enum Line cap type for strokes:
-            LineCap      - enum
-            ButtCap      - &nbsp;
-            RoundCap     - &nbsp;
-            SquareCap    - &nbsp;
-            #### Enum Line join type for strokes:
-            LineJoin      - enum
-            MiterJoin    - &nbsp;
-            RoundJoin    - &nbsp;
-            BevelJoin    - &nbsp;
+            #### Enum WindingRule:
+            * NonZero
+            * EvenOdd
+            #### Enum LineCap:
+            * ButtCap  
+            * RoundCap 
+            * SquareCap
+            #### Enum LineJoin:
+            * MiterJoin
+            * RoundJoin
+            * BevelJoin
         }
             }
         }
 proc pix::path::new {} {
-  # Sets a new path.
+  # Creates and returns a new path object.
   #
-  # Returns: A *new* [path] object.
+  # Returns: A *new* handle [path] object.
 }
 proc pix::path::addPath {path1 path2} {
-  # Adds a path to the current path.
+  # Appends the geometry of another path to the current path.
   # 
-  # path1 - [path]
-  # path2 - [path]
+  # path1 - destination [path] object handle
+  # path2 - source [path] object handle
+  #
+  # Returns: Nothing.
+}
+proc pix::path::addCopies {path1 path2 coordinates} {
+  # Appends one copy of another path per position to the current path.
+  # Each copy of path2 is translated by its {x y}
+  # (e.g. a marker drawn around {0 0}).
+  #
+  # path1       - destination [path] object handle
+  # path2       - source [path] object handle
+  # coordinates - A flat list {x1 y1 x2 y2 ...}
   #
   # Returns: Nothing.
 }
 proc pix::path::angleToMiterLimit {angle} {
   # Converts miter-limit-angle to miter-limit-ratio.
   # 
-  # angle - double value (radian)
+  # angle - Double value (radian)
   #
   # Returns: A Tcl double value.
 }
 proc pix::path::miterLimitToAngle {angle} {
   # Converts miter-limit-ratio to miter-limit-angle.
   # 
-  # angle - double value (radian)
+  # angle - Double value (radian)
   #
   # Returns: A Tcl double value.
 }
 proc pix::path::arc {path coordinates radius angle0 angle1 {ccw {false}}} {
   # Adds a circular arc to the current sub-path.
   # 
-  # path         - [path::new]
-  # coordinates  - list x,y
-  # radius       - double value
-  # angle0       - double value (radian)
-  # angle1       - double value (radian)
-  # ccw          - boolean value 
+  # path         - [path]
+  # coordinates  - A list {x y}
+  # radius       - Double value
+  # angle0       - Double value (radian)
+  # angle1       - Double value (radian)
+  # ccw          - Boolean value 
   #
   # Returns: Nothing.
 }
 proc pix::path::arcTo {path coordinates1 coordinates2 radius} {
   # Adds a circular arc using the given control points and radius.
-  # Commonly used for making rounded corners.
   # 
-  # path          - [path::new]
-  # coordinates1  - list x1,y1
-  # coordinates2  - list x2,y2
-  # radius        - double value
+  # path          - [path]
+  # coordinates1  - A list {x1 y1}
+  # coordinates2  - A list {x2 y2}
+  # radius        - Double value
   #
   # Returns: Nothing.
 }
 proc pix::path::bezierCurveTo {path coordinates1 coordinates2 coordinates3} {
   # Adds a cubic Bézier curve to the current sub-path.
   # 
-  # path          - [path::new]
-  # coordinates1  - list x1,y1
-  # coordinates2  - list x2,y2
-  # coordinates3  - list x3,y3
+  # path          - [path]
+  # coordinates1  - A list {x1 y1}
+  # coordinates2  - A list {x2 y2}
+  # coordinates3  - A list {x3 y3}
   #
-  # It requires three points:
+  # It requires three points:<br>
   # the first two are control points and the third one is the end point.
   # The starting point is the latest point in the current path, 
-  # which can be changed using *pix::path::moveTo* before creating the Bézier curve.
+  # which can be changed using `pix::path::moveTo` before creating the Bézier curve.
   #
   # Returns: Nothing.
 }
 proc pix::path::moveTo {path coordinates} {
-  # Begins a new sub-path at the point (x, y).
+  # Begins a new sub-path at the point {x y}.
   # 
   # path         - [path]
-  # coordinates  - list x,y
+  # coordinates  - A list {x y}
   #
   # Returns: Nothing.
 }
 proc pix::path::lineTo {path coordinates} {
   # Adds a straight line to the current sub-path by connecting
-  # the sub-path's last point to the specified (x, y) coordinates.
+  # the sub-path's last point to the specified {x y} coordinates.
   # 
   # path         - [path]
-  # coordinates  - list x,y
+  # coordinates  - A list {x y}
   #
   # Returns: Nothing.
 }
 proc pix::path::closePath {path} {
   # Attempts to add a straight line from the current point to the start
-  # of the current sub-path. If the shape has already been closed or
-  # has only one point, this function does nothing.
+  # of the current sub-path.
   # 
   # path - [path]
+  #
+  # If the shape has already been closed or
+  # has only one point, this function does nothing.
   #
   # Returns: Nothing.
 }
 proc pix::path::polygon {path coordinates size sides} {
-  # Adds an n-sided regular polygon at (x, y) with the parameter size.
-  # Polygons "face" north.
+  # Adds an n-sided regular polygon at {x y} with the parameter size.
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # size         - double value
-  # sides        - integer value
+  # coordinates  - A list {x y}
+  # size         - Double value
+  # sides        - Integer value
   #
   # Returns: Nothing.
 }
@@ -127,9 +135,9 @@ proc pix::path::rect {path coordinates size {ccw {true}}} {
   # a rect from a path when using even-odd winding rule.
   # 
   # path          - [path]
-  # coordinates   - list x,y
-  # size          - list width,height
-  # ccw           - boolean value 
+  # coordinates   - A list {x y}
+  # size          - A list {width height}
+  # ccw           - Boolean value 
   #
   # Returns: Nothing.
 }
@@ -137,82 +145,78 @@ proc pix::path::circle {path coordinates radius} {
   # Adds a circle.
   # 
   # path          - [path]
-  # coordinates   - list cx,cy
-  # radius        - double value
+  # coordinates   - A list {cx cy}
+  # radius        - Double value
   #
   # Returns: Nothing.
 }
-proc pix::path::fillOverlaps {path coordinates {matrix {mat3}} {windingRule {NonZero}}} {
-  # Returns whether or not the specified point is contained in the current path.
-  # 
-  # path          - [path]
-  # coordinates   - list x,y
-  # matrix        - list 
-  # windingRule   - Enum value 
+proc pix::path::fillOverlaps {path coordinates windingRule {transform {identityMatrix}}} {
+  # Checks whether a given point is inside the filled region of the path.
   #
-  # The point is transformed into the path's coordinate system
-  # before the overlap check is done. The transformation matrix is
-  # given in the 'matrix' argument, which is a list of 9 double values.
-  # If the 'matrix' argument is not given, the identity matrix is used.
-  # The overlap check is done with the given 'windingRule' argument,
-  # which is a enum value. If the 'windingRule' argument is not given,
-  # the default value 'NonZero' is used.
+  # path        - [path] object handle
+  # coordinates - A Tcl list {x y} (the point to test)
+  # windingRule - Optional enum value (WindingRule, defaults to `NonZero`)
+  # transform   - An optional 3x3 transformation matrix 
+  #
+  # Returns: True if the point overlaps the filled area, false otherwise.
 }
-proc pix::path::transform {path matrix} {
-  # Apply a matrix transform to a path.
-  # 
-  # path    - [path]
-  # matrix  - list
+proc pix::path::transform {path matrix3x3} {
+  # Applies an affine transformation matrix to the path.
+  #
+  # path      - [path] object handle
+  # matrix3x3 - A 3x3 transformation matrix (list of 9 numbers)
   #
   # Returns: Nothing.
 }
-proc pix::path::computeBounds {path {matrix {}}} {
-  # Compute the bounds of the path.
-  # 
-  # path    - [path]
-  # matrix  - list (9 values) 
+proc pix::path::computeBounds {path {transform {identityMatrix}}} {
+  # Computes the bounding box enclosing the path.
   #
-  # Returns: A Tcl dictionary with keys *(x, y, w, h)*.
+  # path      - [path] object handle
+  # transform - An optional 3x3 transformation matrix 
+  #
+  # Returns: A Tcl dictionary with keys {x y w h} representing the bounding box.
 }
 proc pix::path::copy {path} {
   # Copy path.
   #
   # path - [path]
   #
-  # Returns: A *new* [path] object.
+  # Returns: A *new* handle [path] object.
 }
 proc pix::path::ellipse {path coordinates rx ry} {
   # Adds a ellipse.
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # rx           - double value
-  # ry           - double value
+  # coordinates  - A list {x y}
+  # rx           - Double value
+  # ry           - Double value
   #
   # Returns: Nothing.
 }
-proc pix::path::ellipticalArcTo {path coordinates_radius xAxisRotation largeArcFlag sweepFlag coordinates} {
+proc pix::path::ellipticalArcTo {path coordinates xAxisRotation largeArcFlag sweepFlag coordinates} {
   # Adds an elliptical arc to the current sub-path, 
   # using the given radius ratios, sweep flags, and end position. 
   # 
-  # path                - [path]
-  # coordinates_radius  - list rx,ry
-  # xAxisRotation       - double value
-  # largeArcFlag        - boolean value
-  # sweepFlag           - boolean value
-  # coordinates         - list x,y 
+  # path           - [path]
+  # coordinates    - A list {rx ry}
+  # xAxisRotation  - Double value
+  # largeArcFlag   - Boolean value
+  # sweepFlag      - Boolean value
+  # coordinates    - A list {x y} 
   #
   # Returns: Nothing.
 }
 proc pix::path::quadraticCurveTo {path coordinates1 coordinates2} {
-  # Adds a quadratic Bézier curve to the current sub-path. It requires two points:
-  # the first one is a control point and the second one is the end point.
-  # The starting point is the latest point in the current path, which can be changed
-  # using moveTo() before creating the quadratic Bézier curve.
+  # Adds a quadratic Bézier curve to the current sub-path.
   # 
   # path         - [path]
-  # coordinates1 - list x1,y1
-  # coordinates2 - list x2,y2
+  # coordinates1 - A list {x1 y1}
+  # coordinates2 - A list {x2 y2}
+  #
+  # It requires two points:<br>
+  # The first one is a control point and the second one is the end point.
+  # The starting point is the latest point in the current path, which can be changed
+  # using `pix::path::moveTo` before creating the quadratic Bézier curve.
   #
   # Returns: Nothing.
 }
@@ -221,19 +225,19 @@ proc pix::path::roundedRect {path coordinates size radius {ccw {true}}} {
   # rect from a path when using even-odd winding rule. 
   # 
   # path         - [path]
-  # coordinates  - list x,y
-  # size         - list width,height
-  # radius       - list {nw ne se sw}
-  # ccw          - boolean value 
+  # coordinates  - A list {x y}
+  # size         - A list {width height}
+  # radius       - Double value or list radius {nw ne se sw}
+  # ccw          - Boolean value 
   #
   # Returns: Nothing.
 }
 proc pix::path::strokeOverlaps {path coordinates {options {}}} {
-  # Checks if a point is inside the stroking of a path.
+  # Checks whether a given point intersects the stroked outline of the path.
   #
-  # path         - The [path] object to check.
-  # coordinates  - The coordinates x,y to check against the path.
-  # options      - Tcl dictionary 
+  # path        - [path] object handle
+  # coordinates - A Tcl list {x y} (the point to test)
+  # options     - An optional dictionary of stroke rendering settings .
   # 
   # If the dictionary is present it should contain the following keys:<br>
   # #Begintable
@@ -245,13 +249,30 @@ proc pix::path::strokeOverlaps {path coordinates {options {}}} {
   # **dashes**      : The dashes to apply to the stroke.
   # #EndTable
   #
-  # Returns whether or not the specified point is inside the area
-  # contained by the stroking of a path. The point is considered
-  # inside if it is contained in the stroked path and not in any
-  # holes.
+  # Returns: True if the point overlaps the stroke outline, false otherwise.
+}
+proc pix::path::polyPath {path coordinates} {
+  # Adds a closed polygon sub-path from a list of {x y} points.
+  # The first point opens a new sub-path (moveTo), each following point is
+  # connected with a straight line (lineTo), then the sub-path is closed.
+  #
+  # path         - [path]
+  # coordinates  - A list of points, each a list {x y}
+  #
+  # Returns: Nothing.
+}
+proc pix::path::polyLine {path coordinates} {
+  # Adds an open polyline sub-path from a list of {x y} points.
+  # The first point opens a new sub-path (moveTo), each following point is
+  # connected with a straight line (lineTo). The sub-path is **NOT** closed.
+  #
+  # path        - [path]
+  # coordinates - A list of points, each a list {x y}
+  #
+  # Returns: Nothing.
 }
 proc pix::path::destroy {value} {
-  # Destroy current path or all paths if special word `all` is specified.
+  # Destroy the [path] or all paths if special word `all` is specified.
   # 
   # value - [path] object or string.
   #

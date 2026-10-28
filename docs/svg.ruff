@@ -9,7 +9,7 @@ proc pix::svg::parse {svg {size {SVGviewbox}} {opts {}}} {
   # Parse SVG XML. Defaults to the SVG's view box size.
   #
   # svg  - string data
-  # size - list width,height 
+  # size - A list {width height} 
   # opts - dict options (if compiled with **resvg** lib) 
   #
   #  **resvg** dictionary options. The options are:<br>
@@ -32,17 +32,17 @@ proc pix::svg::parse {svg {size {SVGviewbox}} {opts {}}} {
   #  **loadSystemFonts**    : Loads system fonts into the internal fonts database.
   #  #EndTable
   #
-  # Returns: A *new* [svg] object.
+  # Returns: A *new* handle [svg] object.
 }
 proc pix::svg::newImage {svg} {
   # Render SVG and return the image.
   #
   # svg - [svg::parse]
   #
-  # Returns: A *new* [img] object.
+  # Returns: A *new* handle [img] object.
 }
 proc pix::svg::destroy {value} {
-  # Destroy current svg or all svgs if special word `all` is specified.
+  # Destroy the [svg] or all svgs if special word `all` is specified.
   #
   # value - [svg::parse] or string.
   #
