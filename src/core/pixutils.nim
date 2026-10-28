@@ -504,7 +504,7 @@ proc pix_transMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
 
   return Tcl.OK
 
-proc pix_nerlyEqualMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
+proc pix_nearlyEqualMatrix*(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Checks whether two matrices are approximately equal.
   #
   # matrix1 - A Tcl list of 9 numbers representing an input 3x3 matrix
