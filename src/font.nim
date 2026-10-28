@@ -1043,7 +1043,7 @@ proc pix_font_destroy(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: ci
   return Tcl.OK
 
 proc pix_font_destroyTface(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
-  # Destroy the [TypeFace] or all typefaces if special word `all` is specified.
+  # Destroy the [font::readTypeface] or all typefaces if special word `all` is specified.
   #
   # value - [font::readTypeface] or string
   #

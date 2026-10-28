@@ -119,15 +119,6 @@ proc pix_image_draw(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint
 proc pix_image_drawCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc: cint, objv: Tcl.PPObj): cint {.cdecl.} =
   # Draws a path at many positions: filled, then stroked, like one shape
   # drawn after the other.
-  # The options are those of [img::strokePath]: **strokeWidth** (in path
-  # units, 0 to fill only), **transform** (the matrix of the whole drawing:
-  # the shapes take its linear part, the positions the whole matrix),
-  # **lineCap**, **lineJoin**, **miterLimit**, **dashes** and **blendMode**
-  # (Enum, optional:NormalBlend): how each copy combines with the image,
-  # e.g. SubtractMaskBlend erases the image under the copies (their colors
-  # are then not used).
-  # The shape is rendered once for each quarter-pixel offset, then copied at
-  # every position (the nearest quarter pixel), in the order of the list.
   #
   # image       - [img]
   # path        - [path] the shape, around {0 0}
@@ -135,6 +126,16 @@ proc pix_image_drawCopies(clientData: Tcl.TClientData, interp: Tcl.PInterp, objc
   # fillColor   - string [color]
   # strokeColor - string [color]
   # options     - A Tcl dict, the options of [img::strokePath] (optional).
+  #
+  # The options are those of [img::strokePath]: **strokeWidth** (in path
+  # units, 0 to fill only), **transform** (the matrix of the whole drawing:
+  # the shapes take its linear part, the positions the whole matrix),
+  # **lineCap**, **lineJoin**, **miterLimit**, **dashes** and **blendMode**
+  # (Enum, optional:NormalBlend): how each copy combines with the image,
+  # e.g. SubtractMaskBlend erases the image under the copies (their colors
+  # are then not used).<br>
+  # The shape is rendered once for each quarter-pixel offset, then copied at
+  # every position (the nearest quarter pixel), in the order of the list.
   #
   # Returns: Nothing.
   if objc notin [6, 7]:
