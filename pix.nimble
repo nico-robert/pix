@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Nicolas ROBERT.
+# Copyright (c) 2024-2026 Nicolas ROBERT.
 # Distributed under MIT license. Please see LICENSE for details.
 # pix - Tcl wrapper around Pixie, a full-featured 2D graphics library written in Nim.
 # (https://github.com/treeform/pixie)
@@ -62,8 +62,28 @@
                # Previous versions `(v0.1-v0.7)` included Ruff! documentation 
                # assets without proper license attribution. This has been corrected 
                # in `v0.8+`.
+# 26-Oct-2026 : v0.9
+               # Adds `pix::img::drawCopies` and `pix::path::addCopies`: a path drawn at many positions from pre-rendered copies.
+               # Adds new procedures: `pix::fromB64`, `pix::paint::get`, `pix::path::polyPath`, `pix::path::polyLine`, `pix::deg2Rad`, 
+               # `pix::nearlyEqualMatrix`, `pix::img::setColor`, `pix::img::getSize`, `pix::ctx::getSize`, `pix::ctx::getInfoStruct`, 
+               # `pix::ctx::getImage`, `pix::font::destroyTface`.
+               # Adds the `WebP` format.
+               # Adds a CI workflow.
+               # `pix::ctx::get` now returns the fill and stroke styles.
+               # `pix::ctx::strokePath` / `pix::ctx::fillPath` are now documented as deprecated in favor of 
+               # `pix::ctx::stroke` / `pix::ctx::fill`.
+               # Reverse the angle of `pix::rotMatrix` (new version of `treeform/vmath`). **Breaking change**.
+               # Improved compilation support (macOS, Windows with gcc 14+, Linux X11).
+               # Faster `pix::img::toGrayScale` (flat buffer iteration).
+               # Harmonized error messages and refreshed API documentation.
+               # Adjusted test tolerances for macOS arm64.
+               # Fix segfault in `$` when the Tcl interpreter is nil.
+               # Fix swapped `windingRule`/`transform` arguments in `pix::path::fillOverlaps`.
+               # Bump `pixie` to version `6.1.0+` (tile fixes).
+               # Bump `ruff` to version to `3.1.0`
+               # The `X11` library is now part of this project.
 
-version     = "0.8"
+version     = "0.9"
 author      = "Nicolas ROBERT"
 description = "Tcl wrapper around Pixie (https://github.com/treeform/pixie), " &
               "a full-featured 2D graphics library written in Nim."
@@ -72,7 +92,7 @@ srcDir      = "src"
 
 # Dependencies
 requires "nim >= 2.0.6"
-requires "pixie#30bb510" # Pixie v6+ with tile correction.
+requires "pixie#30bb510" # Pixie v6.1.0+ with tile correction.
 
 # Task definition for generating the pix Tcl/Tk library
 # Compile bindings for 2 versions of Tcl/Tk.
