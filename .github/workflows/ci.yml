@@ -1,0 +1,412 @@
+name: Build and Install Tcl/Tk and Nim
+
+on:
+  workflow_dispatch:
+
+env:
+  TCL_86_VERSION: "8.6.16"
+  TCL_90_VERSION: "9.0.3"
+  NIM_VERSION: "2.2.4"
+  RESVG_VERSION: "0.45.1"
+  # SHA256 checksums of the sources (verified on every run)
+  TCL_86_SHA256: "91cb8fa61771c63c262efb553059b7c7ad6757afa5857af6265e4b0bdc2a14a5"
+  TK_86_SHA256:  "be9f94d3575d4b3099d84bc3c10de8994df2d7aa405208173c709cc404a7e5fe"
+  TCL_90_SHA256: "2537ba0c86112c8c953f7c09d33f134dd45c0fb3a71f2d7f7691fd301d2c33a6"
+  TK_90_SHA256:  "bf344efadb618babb7933f69275620f72454d1c8220130da93e3f7feb0efbf9b"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    env:
+      BUILD_DIR: ${{ github.workspace }}/tcl_build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-2022, macos-latest, macos-15-intel]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            tcl86_prefix: /opt/tcl86
+            tcl90_prefix: /opt/tcl90
+            resvg_prefix: /opt/resvg
+          # IMPORTANT: these paths MUST match pix.nim.cfg (Windows)
+          # -> in the .cfg, use C:/dev/Tcl86, C:/dev/Tcl90, C:/dev/resvg/0.45.1
+          - os: windows-2022
+            platform: windows
+            tcl86_prefix: C:/dev/Tcl86
+            tcl90_prefix: C:/dev/Tcl90
+            resvg_prefix: C:/dev/resvg
+          # macOS ARM (Apple Silicon): macos-latest points to arm64.
+          - os: macos-latest
+            platform: macos
+            tcl86_prefix: /opt/tcl86
+            tcl90_prefix: /opt/tcl90
+            resvg_prefix: /usr/local/Cellar/resvg
+          # macos-15-intel is the last Intel runner.
+          - os: macos-15-intel
+            platform: macos
+            tcl86_prefix: /opt/tcl86
+            tcl90_prefix: /opt/tcl90
+            resvg_prefix: /usr/local/Cellar/resvg
+
+    steps:
+    - name: Checkout pix project
+      uses: actions/checkout@v5
+
+    # Tcl/Tk sources: download + checksum verification
+    - name: Cache Tcl/Tk sources
+      uses: actions/cache@v5
+      id: cache-sources
+      with:
+        path: |
+          ./tcl${{ env.TCL_86_VERSION }}-src.tar.gz
+          ./tk${{ env.TCL_86_VERSION }}-src.tar.gz
+          ./tcl${{ env.TCL_90_VERSION }}-src.tar.gz
+          ./tk${{ env.TCL_90_VERSION }}-src.tar.gz
+        key: tcl-tk-sources-${{ env.TCL_86_VERSION }}-${{ env.TCL_90_VERSION }}
+        restore-keys: |
+          tcl-tk-sources-
+
+    # shell: bash also works on Windows runners (Git Bash)
+    - name: Download Tcl/Tk sources
+      if: steps.cache-sources.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        base="https://sourceforge.net/projects/tcl/files/Tcl"
+        for v in "$TCL_86_VERSION" "$TCL_90_VERSION"; do
+          curl -fL -o "tcl${v}-src.tar.gz" "$base/${v}/tcl${v}-src.tar.gz"
+          curl -fL -o "tk${v}-src.tar.gz"  "$base/${v}/tk${v}-src.tar.gz"
+        done
+        echo "Sources downloaded."
+
+    # Always verify (even on cache hit):
+    # detects a corrupted cache or a SourceForge HTML page instead of the tarball.
+    - name: Verify checksums
+      shell: bash
+      run: |
+        check() { echo "${1}  ${2}" | sha256sum -c -; }
+        check "$TCL_86_SHA256" "tcl${TCL_86_VERSION}-src.tar.gz"
+        check "$TK_86_SHA256"  "tk${TCL_86_VERSION}-src.tar.gz"
+        check "$TCL_90_SHA256" "tcl${TCL_90_VERSION}-src.tar.gz"
+        check "$TK_90_SHA256"  "tk${TCL_90_VERSION}-src.tar.gz"
+        echo "Checksums OK."
+
+    - name: Extract sources
+      shell: bash
+      run: |
+        for v in "$TCL_86_VERSION" "$TCL_90_VERSION"; do
+          tar -xzf "tcl${v}-src.tar.gz"
+          tar -xzf "tk${v}-src.tar.gz"
+        done
+        echo "Sources extracted."
+
+    # Toolchains: Nim, Rust, resvg source
+    - name: Install Nim
+      uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: ${{ env.NIM_VERSION }}
+
+    - name: Install Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Clone resvg at specific release
+      run: |
+        git clone --depth 1 --branch v${{ env.RESVG_VERSION }} https://github.com/linebender/resvg.git resvg-source
+
+    # Platform-specific dependencies
+    - name: Cache MinGW 15.2.0
+      if: matrix.platform == 'windows'
+      id: cache-mingw
+      uses: actions/cache@v4
+      with:
+        path: C:\ProgramData\mingw64
+        key: mingw-15.2.0-x86_64
+
+    - name: Install MinGW GCC 15.2.0
+      if: matrix.platform == 'windows' && steps.cache-mingw.outputs.cache-hit != 'true'
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/niXman/mingw-builds-binaries/releases/download/15.2.0-rt_v13-rev1/x86_64-15.2.0-release-posix-seh-msvcrt-rt_v13-rev1.7z" -OutFile mingw.7z
+        7z x mingw.7z -oC:\ProgramData\mingw64
+        Remove-Item mingw.7z
+
+    - name: Setup GCC 15.2.0 in PATH
+      if: matrix.platform == 'windows'
+      run: |
+        echo "C:\ProgramData\mingw64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    # The Windows Tcl/Tk build runs in "shell: msys2 {0}": this step
+    # registers that shell AND provides make + zip (zip is required by
+    # Tk 9's zipfs, otherwise: "No rule to make target 'minizip'").
+    - name: Setup MSYS2
+      if: matrix.platform == 'windows'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          base-devel
+          mingw-w64-x86_64-gcc
+          make
+          zip
+
+    - name: Setup Linux dependencies
+      if: matrix.platform == 'linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libx11-dev libxft-dev libxext-dev zlib1g-dev xvfb
+        echo "CPPFLAGS=-I/usr/include/X11/" >> $GITHUB_ENV
+        echo "LDFLAGS=-L/usr/lib/x86_64-linux-gnu/" >> $GITHUB_ENV
+
+    # Build + install resvg
+    - name: Cache compiled resvg
+      uses: actions/cache@v4
+      id: cache-resvg
+      with:
+        path: ${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}
+        key: resvg-${{ matrix.os }}-${{ env.RESVG_VERSION }}-v1
+
+    - name: Build resvg (Unix)
+      if: steps.cache-resvg.outputs.cache-hit != 'true' && matrix.platform != 'windows'
+      working-directory: ./resvg-source/crates/c-api
+      run: |
+        RUSTFLAGS="-A mismatched-lifetime-syntaxes" cargo build --release
+
+    - name: Build resvg (Windows)
+      if: steps.cache-resvg.outputs.cache-hit != 'true' && matrix.platform == 'windows'
+      working-directory: ./resvg-source/crates/c-api
+      shell: pwsh
+      run: |
+        $env:RUSTFLAGS = "-A mismatched-lifetime-syntaxes"
+        rustup target add x86_64-pc-windows-gnu --quiet
+        cargo build --release --target x86_64-pc-windows-gnu
+
+    # Linux and macOS: identical installation -> a single step.
+    # include/resvg/  =>  matches --cincludes ".../include/resvg" in the .cfg
+    - name: Install resvg (Unix)
+      if: steps.cache-resvg.outputs.cache-hit != 'true' && matrix.platform != 'windows'
+      run: |
+        sudo mkdir -p "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/lib"
+        sudo mkdir -p "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/include/resvg"
+        sudo cp ./resvg-source/target/release/libresvg.a "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/lib/"
+        sudo cp ./resvg-source/crates/c-api/resvg.h "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/include/resvg/"
+        echo "resvg installed in ${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}:"
+        ls -la "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/lib/"
+        ls -la "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/include/resvg/"
+
+    # Windows: header in include/ (no resvg subfolder),
+    # matching --cincludes "C:/dev/resvg/0.45.1/include" in the .cfg
+    - name: Install resvg (Windows)
+      if: steps.cache-resvg.outputs.cache-hit != 'true' && matrix.platform == 'windows'
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force -Path "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/lib"
+        New-Item -ItemType Directory -Force -Path "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/include"
+        Copy-Item -Path "./resvg-source/target/x86_64-pc-windows-gnu/release/libresvg.a" -Destination "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/lib/" -Force
+        Copy-Item -Path "./resvg-source/crates/c-api/resvg.h" -Destination "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/include/" -Force
+        Write-Host "resvg installed in ${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}:"
+        Get-ChildItem -Path "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/lib/"
+        Get-ChildItem -Path "${{ matrix.resvg_prefix }}/${{ env.RESVG_VERSION }}/include/"
+
+    # Build Tcl/Tk
+    - name: Prepare macOS directories
+      if: matrix.platform == 'macos'
+      run: |
+        mkdir -p "${{ env.BUILD_DIR }}"
+        sudo mkdir -p "${{ matrix.tcl86_prefix }}" "${{ matrix.tcl90_prefix }}"
+        sudo chmod 755 /opt "${{ matrix.tcl86_prefix }}" "${{ matrix.tcl90_prefix }}"
+
+    - name: Restore compiled Tcl/Tk
+      uses: actions/cache/restore@v4
+      id: cache-compiled
+      with:
+        path: |
+          ${{ matrix.platform == 'macos' && env.BUILD_DIR || matrix.tcl86_prefix }}
+          ${{ matrix.platform == 'macos' && env.BUILD_DIR || matrix.tcl90_prefix }}
+        key: tcl-tk-compiled-${{ matrix.os }}-${{ env.TCL_86_VERSION }}-${{ env.TCL_90_VERSION }}-v8
+
+    - name: Build Tcl/Tk (Linux/macOS)
+      if: steps.cache-compiled.outputs.cache-hit != 'true' && matrix.platform != 'windows'
+      run: |
+        if [ "${{ matrix.platform }}" = "macos" ]; then
+          NPROC=$(sysctl -n hw.ncpu)
+          TK_EXTRA="--enable-aqua"   # Native Tk Aqua (like Homebrew), not X11
+        else
+          NPROC=$(nproc)
+          TK_EXTRA=""                # Tk X11 (system libX11)
+        fi
+
+        build_unix() {
+          local version=$1 prefix=$2
+          echo "Building Tcl/Tk $version -> $prefix"
+
+          cd "tcl${version}/unix"
+          ./configure --prefix="$prefix" --enable-shared
+          make -j"$NPROC"
+          make install
+          cd ../..
+
+          cd "tk${version}/unix"
+          ./configure --prefix="$prefix" --with-tcl="../../tcl${version}/unix" --enable-shared $TK_EXTRA
+          make -j"$NPROC"
+          make install
+          # Tk internal headers (tkInt.h, tkIntXlibDecls.h, ...) are NOT installed
+          # by "make install" but are required by pix's x11 binding.
+          cp ../generic/*.h "$prefix/include/" 2>/dev/null || true
+          # macOS/Aqua: Tk's INTERNAL X11 shim (consistent with tkIntXlibDecls.h),
+          # instead of the real XQuartz Xlib -> avoids the XKeycodeToKeysym conflict.
+          if [ "${{ matrix.platform }}" = "macos" ]; then
+            mkdir -p "$prefix/include/X11"
+            cp ../xlib/*.h     "$prefix/include/"     2>/dev/null || true
+            cp ../xlib/X11/*.h "$prefix/include/X11/"  2>/dev/null || true
+          fi
+          cd ../..
+        }
+
+        # On macOS we build in BUILD_DIR, then copy to /opt (next step).
+        if [ "${{ matrix.platform }}" = "macos" ]; then
+          build_unix "${{ env.TCL_86_VERSION }}" "${{ env.BUILD_DIR }}/tcl86"
+          build_unix "${{ env.TCL_90_VERSION }}" "${{ env.BUILD_DIR }}/tcl90"
+        else
+          build_unix "${{ env.TCL_86_VERSION }}" "${{ matrix.tcl86_prefix }}"
+          build_unix "${{ env.TCL_90_VERSION }}" "${{ matrix.tcl90_prefix }}"
+        fi
+
+    - name: Build Tcl/Tk (Windows)
+      if: steps.cache-compiled.outputs.cache-hit != 'true' && matrix.platform == 'windows'
+      shell: msys2 {0}
+      run: |
+        build_version() {
+          local version=$1 prefix=$2
+          echo "Building Tcl/Tk $version -> $prefix"
+
+          cd "tcl${version}/win"
+          ./configure --prefix="$prefix" --enable-shared
+          make -s -j"$(nproc)"
+          make install
+          cd ../..
+
+          cd "tk${version}/win"
+          ./configure --prefix="$prefix" --with-tcl="../../tcl${version}/win" --enable-shared
+          make -s -j"$(nproc)"
+          make install
+          # Tk internal headers required by the binding (not installed by make install)
+          cp ../generic/*.h "$prefix/include/" 2>/dev/null || true
+          # Windows emulates Xlib: Tk's internal X11 shim (provides X11/Xlib.h for types.nim)
+          mkdir -p "$prefix/include/X11"
+          cp ../xlib/*.h     "$prefix/include/"     2>/dev/null || true
+          cp ../xlib/X11/*.h "$prefix/include/X11/"  2>/dev/null || true
+          cd ../..
+        }
+
+        build_version "${{ env.TCL_86_VERSION }}" "${{ matrix.tcl86_prefix }}"
+        build_version "${{ env.TCL_90_VERSION }}" "${{ matrix.tcl90_prefix }}"
+
+    # Save the cache right after compilation (and only if it succeeded:
+    # a step without "if: always()" is skipped when an earlier step fails).
+    # if cache-hit != true -> we don't overwrite an already existing key.
+    - name: Save compiled Tcl/Tk
+      if: steps.cache-compiled.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          ${{ matrix.platform == 'macos' && env.BUILD_DIR || matrix.tcl86_prefix }}
+          ${{ matrix.platform == 'macos' && env.BUILD_DIR || matrix.tcl90_prefix }}
+        key: tcl-tk-compiled-${{ matrix.os }}-${{ env.TCL_86_VERSION }}-${{ env.TCL_90_VERSION }}-v8
+
+    # macOS: copy to /opt + Cellar tree expected by the .cfg
+    - name: Copy build to /opt (macOS)
+      if: matrix.platform == 'macos'
+      run: |
+        [ -d "${{ env.BUILD_DIR }}/tcl86" ] && sudo cp -R "${{ env.BUILD_DIR }}/tcl86/"* "${{ matrix.tcl86_prefix }}/"
+        [ -d "${{ env.BUILD_DIR }}/tcl90" ] && sudo cp -R "${{ env.BUILD_DIR }}/tcl90/"* "${{ matrix.tcl90_prefix }}/"
+        sudo chmod -R 755 "${{ matrix.tcl86_prefix }}" "${{ matrix.tcl90_prefix }}"
+
+    # Recreates the /usr/local/Cellar tree expected by pix.nim.cfg.
+    # Versions come from the env variables (avoids any 9.0.1 vs 9.0.3 mismatch).
+    # The X11/ subfolder (Tk shim) is picked up automatically via include/*.
+    - name: Setup macOS Cellar symlinks
+      if: matrix.platform == 'macos'
+      run: |
+        CELLAR8="/usr/local/Cellar/tcl-tk@8/${TCL_86_VERSION}"
+        CELLAR9="/usr/local/Cellar/tcl-tk/${TCL_90_VERSION}"
+
+        sudo mkdir -p "$CELLAR8/include/tcl-tk" "$CELLAR9/include/tcl-tk"
+
+        sudo ln -sf "${{ matrix.tcl86_prefix }}/lib" "$CELLAR8/lib"
+        sudo ln -sf "${{ matrix.tcl90_prefix }}/lib" "$CELLAR9/lib"
+
+        sudo ln -sf "${{ matrix.tcl86_prefix }}"/include/* "$CELLAR8/include/tcl-tk/" 2>/dev/null || true
+        sudo ln -sf "${{ matrix.tcl90_prefix }}"/include/* "$CELLAR9/include/tcl-tk/" 2>/dev/null || true
+
+    # tclsh/wish symlinks (Linux + macOS)
+    # Required because test/all.tcl internally runs "exec tclsh90 ...".
+    # On Unix the binaries are tclsh9.0/wish9.0 -> create dot-less aliases.
+    - name: Create tclsh/wish symlinks (Unix)
+      if: matrix.platform != 'windows'
+      run: |
+        link_if_exists() { [ -f "$1" ] && sudo ln -sf "$1" "$2" || true; }
+        link_if_exists "${{ matrix.tcl86_prefix }}/bin/tclsh8.6" "${{ matrix.tcl86_prefix }}/bin/tclsh86"
+        link_if_exists "${{ matrix.tcl86_prefix }}/bin/wish8.6"  "${{ matrix.tcl86_prefix }}/bin/wish86"
+        link_if_exists "${{ matrix.tcl90_prefix }}/bin/tclsh9.0" "${{ matrix.tcl90_prefix }}/bin/tclsh90"
+        link_if_exists "${{ matrix.tcl90_prefix }}/bin/wish9.0"  "${{ matrix.tcl90_prefix }}/bin/wish90"
+        echo "Binaries in ${{ matrix.tcl90_prefix }}/bin:"
+        ls -la "${{ matrix.tcl90_prefix }}/bin/"
+
+    # Environment variables
+    - name: Setup environment variables (Unix)
+      if: matrix.platform != 'windows'
+      run: |
+        if [ "${{ matrix.platform }}" = "linux" ]; then
+          echo "LDFLAGS=-L${{ matrix.tcl86_prefix }}/lib -L${{ matrix.tcl90_prefix }}/lib" >> $GITHUB_ENV
+          echo "TCL_LIBRARY=${{ matrix.tcl86_prefix }}/lib/tcl8.6:${{ matrix.tcl90_prefix }}/lib/tcl9.0" >> $GITHUB_ENV
+          echo "TK_LIBRARY=${{ matrix.tcl86_prefix }}/lib/tk8.6:${{ matrix.tcl90_prefix }}/lib/tk9.0" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${{ matrix.tcl86_prefix }}/lib:${{ matrix.tcl90_prefix }}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        fi
+        echo "${{ matrix.tcl86_prefix }}/bin" >> $GITHUB_PATH
+        echo "${{ matrix.tcl90_prefix }}/bin" >> $GITHUB_PATH
+
+    - name: Setup environment variables (Windows)
+      if: matrix.platform == 'windows'
+      shell: pwsh
+      run: |
+        echo "${{ matrix.tcl86_prefix }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "${{ matrix.tcl90_prefix }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "TCL_LIBRARY=${{ matrix.tcl86_prefix }}/lib/tcl8.6" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "TK_LIBRARY=${{ matrix.tcl86_prefix }}/lib/tk8.6" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    # Nim project build + tests
+    - name: Setup locked dependencies
+      run: nimble setup
+
+    - name: Build Nim project
+      run: nimble pix
+
+    - name: Run tests (Windows)
+      if: matrix.platform == 'windows'
+      run: |
+        ${{ matrix.tcl90_prefix }}/bin/tclsh90.exe test/all.tcl
+
+    - name: Run tests (Linux)
+      if: matrix.platform == 'linux'
+      run: |
+        Xvfb :99 -screen 0 1024x768x24 2>/dev/null &
+        export DISPLAY=:99
+        sleep 2
+        ${{ matrix.tcl90_prefix }}/bin/tclsh90 test/all.tcl
+
+    # macOS: Tk Aqua doesn't need an X display (no Xvfb).
+    - name: Run tests (macOS)
+      if: matrix.platform == 'macos'
+      run: |
+        ${{ matrix.tcl90_prefix }}/bin/tclsh90 test/all.tcl
+
+    # Artifacts
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: tcl-wrapper-${{ matrix.platform }}-${{ runner.arch }}
+        path: |
+          ${{ matrix.platform == 'linux' && '*linux*/*.so' || matrix.platform == 'windows' && '*win32*/*.dll' || '*macosx*/*.dylib' }}
+        retention-days: 30
