@@ -70,7 +70,7 @@ Dependencies (Pixie) will be installed automatically:
 ```bash
 # Compile libraries for both Tcl/Tk 8.6 and 9.0
 cd path/to/pix
-nimble pixTclTkBindings
+nimble pix
 ```
 
 This command automatically generates libraries in the appropriate folders according to your architecture:
